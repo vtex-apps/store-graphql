@@ -1,0 +1,13 @@
+{
+  "vendor": "vtex",
+  "name": "test-app",
+  "version": "0.0.1",
+  "title": "Test App",
+  "description": "Used for testing creation of a vtex app from scratch.",
+  "dependencies": {
+    "vtex.render": "0.x"
+  },
+  "mustUpdateAt": "2017-09-05",
+  "categories": [],
+  "settingsSchema": {}
+}
