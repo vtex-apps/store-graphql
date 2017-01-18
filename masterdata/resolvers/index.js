@@ -1,6 +1,7 @@
 import httpResolver from './httpResolver'
 import paths from './paths'
-import {profileResolver} from './profileResolver'
+import {profileCustomHeaders, profileResolver} from './profileResolver'
+import {merge} from 'ramda'
 
 const facadeHeaders = {'accept': 'application/vnd.vtex.search-api.v0+json'}
 
@@ -42,6 +43,59 @@ export default {
     profile: profileResolver,
     autocomplete: httpResolver({
       url: (_, {maxRows, searchTerm}, ctx) => paths(ctx.account).autocomplete(maxRows, searchTerm),
+    }),
+  },
+  Mutation: {
+    addItem: httpResolver({
+      method: 'POST',
+      enableCookies: true,
+      url: (_, {orderFormId}, ctx) => paths(ctx.account).addItem(orderFormId),
+      data: (_, {items}) => ({ orderItems: items, expectedOrderFormSections: ['items'] }),
+    }),
+    cancelOrder: httpResolver({
+      method: 'POST',
+      enableCookies: true,
+      url: (_, {orderFormId}, ctx) => paths(ctx.account).cancelOrder(orderFormId),
+      data: (_, {reason}) => ({ reason }),
+      callback: () => ({ success: true }),
+    }),
+    updateItems: httpResolver({
+      method: 'POST',
+      enableCookies: true,
+      url: (_, {orderFormId}, ctx) => paths(ctx.account).updateItems(orderFormId),
+      data: (_, {items}) => ({ orderItems: items, expectedOrderFormSections: ['items'] }),
+    }),
+    updateProfile: httpResolver({
+      method: 'PATCH',
+      url: (_, {id}, ctx) => paths(ctx.account).profile.profile(id),
+      data: (_, {fields}) => merge({}, fields),
+      headers: profileCustomHeaders,
+      callback: ({id, fields}) => merge({id}, fields),
+    }),
+    updateAddress: httpResolver({
+      method: 'PATCH',
+      url: (_, {id}, ctx) => paths(ctx.account).profile.address(id),
+      data: (_, {fields}) => merge({}, fields),
+      headers: profileCustomHeaders,
+      callback: ({id, fields}) => merge({id}, fields),
+    }),
+    createAddress: httpResolver({
+      method: 'PATCH',
+      url: (_, args, ctx) => paths(ctx.account).profile.address(''),
+      data: (_, {fields}) => merge({}, fields),
+      headers: profileCustomHeaders,
+      callback: ({id, fields}) => merge({id}, fields),
+    }),
+    deleteAddress: httpResolver({
+      method: 'DELETE',
+      url: (_, {id}, ctx) => paths(ctx.account).profile.address(id),
+      headers: profileCustomHeaders,
+    }),
+    setPlaceholder: httpResolver({
+      method: 'PUT',
+      enableCookies: true,
+      url: (_, args, ctx) => paths(ctx.account).placeholders,
+      data: (_, {fields}) => merge({}, fields, {settings: JSON.parse(fields.settings)}),
     }),
   },
 }

@@ -8,6 +8,13 @@ type Product {
   brand: Brand
   properties: [Property]
   categories: [Category]
+  validUntil: String
+  seller: Seller
+}
+
+type Seller {
+  id: String
+  name: String
 }
 
 type Recommendation {

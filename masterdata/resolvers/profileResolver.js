@@ -4,17 +4,24 @@ import { parse } from 'cookie'
 import { pipe, path, pickBy, head, merge, values, prop } from 'ramda'
 import fetchVtexToken from './vtexToken'
 
-export const profileCustomHeaders = (appToken) => ({
-  'x-vtex-api-appKey': 'vtexappkey-appvtex',
-  'x-vtex-api-appToken': appToken,
-  'Content-Type': 'application/json',
-  'Accept': 'application/vnd.vtex.ds.v10+json',
-})
+export async function profileCustomHeaders () {
+  const vtexToken = await fetchVtexToken()
+  return profileCustomHeadersWithToken(vtexToken)
+}
+
+function profileCustomHeadersWithToken (vtexToken) {
+  return {
+    'x-vtex-api-appKey': 'vtexappkey-appvtex',
+    'x-vtex-api-appToken': vtexToken,
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.vtex.ds.v10+json',
+  }
+}
 
 const configRequest = (url, appToken) => ({
   url,
   method: 'GET',
-  headers: profileCustomHeaders(appToken),
+  headers: profileCustomHeadersWithToken(appToken),
 })
 
 const profile = (appToken, account) => async (data) => {
@@ -33,7 +40,7 @@ const profile = (appToken, account) => async (data) => {
 }
 
 export async function profileResolver (root, args, ctx) {
-  const cookie = path(['req', 'headers', 'cookie'], ctx)
+  const cookie = path(['req', 'headers', 'vtex-token'], ctx)
   const parsedCookies = parse(cookie)
 
   var startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')

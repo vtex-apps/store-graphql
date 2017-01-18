@@ -1,0 +1,10 @@
+type Suggestions {
+  itemsReturned: [Items]
+}
+
+type Items {
+  thumb: String
+  name: String
+  href: String
+  criteria: String
+}

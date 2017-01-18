@@ -14,11 +14,11 @@ export default ({method = 'GET', url, data, headers = {}, enableCookies, callbac
   return async (root, args, ctx) => {
     const builtUrl = (typeof url === 'function') ? url(root, args, ctx) : url
     const builtData = (typeof data === 'function') ? data(root, args) : data
-    const builtHeaders = (typeof headers === 'function') ? headers(ctx) : headers
+    const builtHeaders = (typeof headers === 'function') ? await headers(ctx) : headers
 
     const config = { method, url: builtUrl, data: builtData, headers: builtHeaders }
     if (enableCookies) {
-      const cookie = path(['req', 'headers', 'cookie'], ctx)
+      const cookie = path(['req', 'headers', 'vtex-token'], ctx)
       if (cookie) {
         config.headers.cookie = cookie
       }
