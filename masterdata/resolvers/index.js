@@ -40,5 +40,8 @@ export default {
       url: (_, args, ctx) => paths(ctx.account).orders,
     }),
     profile: profileResolver,
+    autocomplete: httpResolver({
+      url: (_, {maxRows, searchTerm}, ctx) => paths(ctx.account).autocomplete(maxRows, searchTerm),
+    }),
   },
 }

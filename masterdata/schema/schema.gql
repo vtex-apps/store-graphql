@@ -21,4 +21,6 @@ type Query {
   orders: [Order]
 
   profile: Profile
+
+  autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 }
