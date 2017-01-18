@@ -1,0 +1,45 @@
+type Product {
+  slug: String
+  id: String
+  name: String
+  description: String
+  skus: [SKU]
+  recommendations: Recommendation
+  brand: Brand
+  properties: [Property]
+  categories: [Category]
+}
+
+type Recommendation {
+  buy: [Product]
+  view: [Product]
+}
+
+type SKU {
+  id: String
+  name: String
+  images: [Image]
+  offers: [Offer]
+  properties: [Property]
+}
+
+type Offer {
+  availability: Int
+  price: Float
+  listPrice: Float
+}
+
+type Image {
+  src: String
+  title: String
+}
+
+type Property {
+  facet: Facet
+}
+
+type Facet {
+  slug: String
+  name: String
+  values: [String]
+}

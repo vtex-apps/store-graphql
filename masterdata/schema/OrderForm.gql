@@ -1,0 +1,20 @@
+type OrderForm {
+  orderFormId: String
+  value: Float
+  items: [OrderFormItem]
+}
+
+type OrderFormItem {
+  detailUrl: String
+  imageUrl: String
+  skuName: String
+  price: String
+  quantity: Float
+}
+
+input OrderFormItemInput {
+  id: Int,
+  index: Int,
+  quantity: Int,
+  seller: Int,
+}

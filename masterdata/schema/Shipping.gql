@@ -1,0 +1,15 @@
+type ShippingData {
+  logisticsInfo: [LogisticsInfo]
+}
+
+type LogisticsInfo {
+  itemId: String
+  slas: [ShippingSLA]
+}
+
+type ShippingSLA {
+  id: String
+  name: String
+  price: Float
+  shippingEstimate: String
+}

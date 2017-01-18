@@ -1,5 +1,5 @@
 {
-  "index": {
+  "test": {
     "path": "/test",
     "component": "Main.js"
   }

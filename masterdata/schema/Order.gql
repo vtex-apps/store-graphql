@@ -1,0 +1,104 @@
+type Order {
+  allowCancellation: Boolean
+  orderId: String
+  orderGroup: String
+  state: String
+  value: Float
+  salesChannel: String
+  creationDate: String
+  lastChange: String
+  timeZoneCreationDate: String
+  timeZoneLastChange: String
+  isCompleted: Boolean
+  items: [OrderItem]
+  sellers: [OrderItemSeller]
+  totals: [OrderItemTotal]
+  paymentData: OrderItemPaymentData
+  shippingData: OrderItemShippingData
+  storePreferencesData: OrderItemStorePreferencesData
+}
+
+type OrderItem {
+  uniqueId: String
+  id: String
+  productId: String
+  refId: String
+  name: String
+  skuName: String
+  tax: Float
+  price: Float
+  listPrice: Float
+  sellingPrice: Float
+  rewardValue: Float
+  additionalInfo: OrderItemAdditionalInfo
+  preSaleDate: String
+  handling: Boolean
+  isGift: Boolean
+  quantity: Int
+  seller: String
+  imageUrl: String
+  detailUrl: String
+  availability: String
+  measurementUnit: String
+  unitMultiplier: Int
+}
+
+type OrderItemAdditionalInfo {
+  brandName: String
+  brandId: String
+}
+
+type OrderItemSeller {
+  id: String
+  name: String
+  logo: String
+}
+
+type OrderItemTotal {
+  id: String
+  name: String
+  value: Float
+}
+
+type OrderItemPaymentData {
+  payments: [OrderItemPayment]
+}
+
+type OrderItemPayment {
+  paymentSystemName: String
+  value: Float
+  installments: Int
+  connectorResponses: OrderItemPaymentConnectorResponse
+  lastDigits: String
+  group: String
+}
+
+type OrderItemPaymentConnectorResponse {
+  tid: String
+  returnCode: String
+  message: String
+}
+
+type OrderItemShippingData {
+  logisticsInfo: [LogisticsInfo]
+  address: OrderItemShippingDataAddress
+}
+
+type OrderItemShippingDataAddress {
+  receiverName: String
+  postalCode: String
+  city: String
+  state: String
+  country: String
+  street: String
+  number: String
+  neighborhood: String
+  complement: String
+  reference: String
+}
+
+type OrderItemStorePreferencesData {
+  currencyCode: String
+  countryCode: String
+  currencySymbol: String
+}

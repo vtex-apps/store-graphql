@@ -1,0 +1,22 @@
+type Query {
+  product(slug: String): Product
+  products(
+    query: String = "",
+    category: String = "",
+    brands: String = "",
+    collection: String = "",
+    pageSize: Int = 10,
+    availableOnly: Boolean = false,
+    sort: String = ""
+  ): [Product]
+
+  category(slug: String): Category
+  categories: [Category]
+
+  brand(slug: String): Brand
+
+  shipping(skuId: String, postalCode: String): ShippingData
+
+  orderForm: OrderForm
+  orders: [Order]
+}

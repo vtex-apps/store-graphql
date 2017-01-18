@@ -1,0 +1,6 @@
+type Brand {
+  name: String
+  slug: String
+  logo: String
+  description: String
+}

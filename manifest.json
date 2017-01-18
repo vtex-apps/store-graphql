@@ -5,7 +5,9 @@
   "title": "Test App",
   "description": "Used for testing creation of a vtex app from scratch.",
   "dependencies": {
-    "vtex.render": "0.x"
+    "vtex.render": "0.x",
+    "npm:axios": "^0.15.3",
+    "npm:ramda": "^0.23.0"
   },
   "mustUpdateAt": "2017-09-05",
   "categories": [],

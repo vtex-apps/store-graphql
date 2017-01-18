@@ -1,0 +1,6 @@
+type Category {
+  href: String
+  slug: String
+  name: String
+  children: [Category]
+}
