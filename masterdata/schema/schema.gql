@@ -19,4 +19,6 @@ type Query {
 
   orderForm: OrderForm
   orders: [Order]
+
+  profile: Profile
 }

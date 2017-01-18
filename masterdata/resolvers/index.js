@@ -1,7 +1,8 @@
 import httpResolver from './httpResolver'
 import paths from './paths'
+import {profileResolver} from './profileResolver'
 
-const facadeHeaders = { 'accept': 'application/vnd.vtex.search-api.v0+json' }
+const facadeHeaders = {'accept': 'application/vnd.vtex.search-api.v0+json'}
 
 export default {
   Query: {
@@ -38,5 +39,6 @@ export default {
       enableCookies: true,
       url: (_, args, ctx) => paths(ctx.account).orders,
     }),
+    profile: profileResolver,
   },
 }

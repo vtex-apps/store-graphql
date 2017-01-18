@@ -7,7 +7,11 @@
   "dependencies": {
     "vtex.render": "0.x",
     "npm:axios": "^0.15.3",
-    "npm:ramda": "^0.23.0"
+    "npm:aws-sdk": "^2.7.24",
+    "npm:bluebird": "^3.4.1",
+    "npm:cookie": "^0.3.1",
+    "npm:ramda": "^0.23.0",
+    "npm:redis": "^2.6.3"
   },
   "mustUpdateAt": "2017-09-05",
   "categories": [],

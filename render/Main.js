@@ -17,13 +17,15 @@ Product.propTypes = {
   description: React.PropTypes.string,
 }
 
-const Library = ({data: {products, orders}}) => {
+const Library = ({data: {profile, products, orders}}) => {
   return (
     <div>
-      <h1>Products</h1>
+      <h1>{profile.firstName} {profile.lastName}</h1>
+
+      <h2>Products</h2>
       {products.map(book => <Product key={book.slug} {...book} />)}
 
-      <h1>Orders</h1>
+      <h2>Orders</h2>
       <div>
         {orders.map(order => {
           return (
@@ -53,6 +55,10 @@ const query = gql`{
     items {
       name
     }
+  },
+  profile {
+    firstName,
+    lastName
   }
 }
 `

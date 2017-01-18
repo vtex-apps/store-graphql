@@ -1,0 +1,56 @@
+type Profile {
+  id: String,
+  userId: String,
+  firstName: String,
+  lastName: String,
+  birthDate: String,
+  gender: String,
+  homePhone: String,
+  businessPhone: String,
+  document: String,
+  email: String,
+  address: [Address],
+}
+
+input ProfileInput {
+  firstName: String,
+  lastName: String,
+  birthDate: String,
+  gender: String,
+  homePhone: String,
+  businessPhone: String,
+  document: String,
+  email: String,
+}
+
+type Address {
+  id: String,
+  userId: String,
+  receiverName: String,
+  complement: String,
+  neighborhood: String,
+  state: String,
+  number: String,
+  street: String,
+  postalCode: String,
+  city: String,
+  reference: String,
+  addressName: String,
+  addressType: String,
+}
+
+input AddressInput {
+  id: String,
+  userId: String,
+  receiverName: String,
+  complement: String,
+  neighborhood: String,
+  state: String,
+  number: String,
+  street: String,
+  postalCode: String,
+  city: String,
+  reference: String,
+  addressName: String,
+  addressType: String,
+}
