@@ -18,7 +18,7 @@ export default ({method = 'GET', url, data, headers = {}, enableCookies, callbac
 
     const config = { method, url: builtUrl, data: builtData, headers: builtHeaders }
     if (enableCookies) {
-      const cookie = path(['req', 'headers', 'vtex-token'], ctx)
+      const cookie = path(['req', 'headers', 'cookie'], ctx)
       if (cookie) {
         config.headers.cookie = cookie
       }

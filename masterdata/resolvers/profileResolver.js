@@ -40,7 +40,7 @@ const profile = (appToken, account) => async (data) => {
 }
 
 export async function profileResolver (root, args, ctx) {
-  const cookie = path(['req', 'headers', 'vtex-token'], ctx)
+  const cookie = path(['req', 'headers', 'cookie'], ctx)
   const parsedCookies = parse(cookie)
 
   var startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
