@@ -1,6 +1,7 @@
 import httpResolver from './httpResolver'
 import paths from './paths'
 import {profileCustomHeaders, profileResolver} from './profileResolver'
+import recommendations from './recomendations'
 import {merge} from 'ramda'
 
 const facadeHeaders = {'accept': 'application/vnd.vtex.search-api.v0+json'}
@@ -97,5 +98,8 @@ export default {
       url: (_, args, ctx) => paths(ctx.account).placeholders,
       data: (_, {fields}) => merge({}, fields, {settings: JSON.parse(fields.settings)}),
     }),
+  },
+  Product: {
+    recommendations,
   },
 }
