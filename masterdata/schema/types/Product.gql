@@ -4,7 +4,7 @@ type Product {
   name: String
   description: String
   skus: [SKU]
-  recommendations: Recommendation
+  recommendations: Recommendation @resolve
   brand: Brand
   properties: [Property]
   categories: [Category]

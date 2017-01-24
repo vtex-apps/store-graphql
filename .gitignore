@@ -1,1 +1,4 @@
 node_modules
+service/**/*.js
+service/**/*.js.map
+service/token.json
