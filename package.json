@@ -5,7 +5,6 @@
   "main": "service/main.js",
   "scripts": {
     "build": "babel src -d service",
-    "credentials": "node ./buildCredentialsScript.js",
     "watch": "babel --watch src -d service"
   },
   "repository": {
