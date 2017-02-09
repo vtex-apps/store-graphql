@@ -18,3 +18,26 @@ input OrderFormItemInput {
   quantity: Int,
   seller: Int,
 }
+
+type IgnoreProfileInput {
+    expectedOrderFormSections: [String],
+    ignoreProfileData: Boolean
+}
+
+type OrderFormAddress {
+    expectedOrderFormSections: [String],
+    postalCode: String,
+    country: String,
+    addressType: String,
+    receiverName: String,
+    city: String,
+    state: String,
+    street: String,
+    number: String,
+    neighborhood: String
+}
+
+type OrderFormProfileInput {
+    expectedOrderFormSections: [String],
+    email: String
+}
