@@ -4,8 +4,8 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
   updateProfile(orderFormId: String, fields: ProfileInput): OrderForm
   updateAddress(orderFormId: String, fields: AddressInput): OrderForm
-  updateOrderFormProfile(orderFormId: String, fields: ProfileInput): OrderForm
-  updateOrderFormAddress(orderFormId: String, fields: OrderFormAddress): OrderForm
+  updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
+  updateOrderFormAddress(orderFormId: String, fields: OrderFormAddressInput): OrderForm
   updateOrderFormIgnoreProfile(orderFormId: String, fields: IgnoreProfileInput): String
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
