@@ -10,5 +10,5 @@ type Mutation {
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
   setPlaceholder(fields: PlaceholderInput): Boolean
-  createPayment(fields: PaymentInput): Payment
+  createPayment(fields: PaymentInput): String
 }
