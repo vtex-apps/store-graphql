@@ -127,7 +127,7 @@ const api = {
   '/mutation/updateOrderFormProfile': handleEndpoint({
     method: 'PUT',
     url: paths.orderFormProfile,
-    data: ({id, fields}) => merge({id}, fields)
+    data: ({id, fields}) => merge({id, expectedOrderFormSections: ['items']}, fields)
   }),
 
   '/mutation/updateOrderFormShipping': handleEndpoint({
