@@ -7,17 +7,17 @@ import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
 
 const vtexToken = readJsonSync(join(__dirname, 'token.json')).token
-export const profileCustomHeaders = {
+export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => ({
   'x-vtex-api-appKey': 'vtexappkey-appvtex',
   'x-vtex-api-appToken': vtexToken,
   'Content-Type': 'application/json',
-  'Accept': 'application/vnd.vtex.ds.v10+json',
-}
+  'Accept': accept,
+})
 
 const configRequest = url => ({
   url,
   method: 'GET',
-  headers: profileCustomHeaders,
+  headers: profileCustomHeaders(),
 })
 
 const profile = (account) => async (data) => {
