@@ -111,19 +111,19 @@ const api = {
   }),
 
   '/mutation/updateOrderFormProfile': handleEndpoint({
-    method: 'PUT',
+    method: 'POST',
     url: paths.orderFormProfile,
     data: ({id, fields}) => merge({id, expectedOrderFormSections: ['items']}, fields)
   }),
 
   '/mutation/updateOrderFormShipping': handleEndpoint({
-    method: 'PUT',
+    method: 'POST',
     url: paths.orderFormShipping,
     data: ({id, fields}) => merge({id}, fields)
   }),
 
   '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
-    method: 'PUT',
+    method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
     data: ({id, fields}) => merge({id}, fields)
   }),
