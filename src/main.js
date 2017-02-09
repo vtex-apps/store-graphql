@@ -7,6 +7,19 @@ import {merge} from 'ramda'
 
 const facadeHeaders = {accept: 'application/vnd.vtex.search-api.v0+json'}
 
+const handler = (req, res, ctx) => {
+  const prefix = `/${ctx.account}/${ctx.workspace}`
+  const methodHandlers = api[req.path.substr(prefix.length)]
+  if (!methodHandlers) {
+    return
+  }
+
+  const handle = methodHandlers[req.method.toLowerCase()]
+  if (handle) {
+    return handle(req, res, ctx)
+  }
+}
+
 const api = {
   '/query/product': handleEndpoint({
     url: paths.product,
@@ -113,4 +126,4 @@ const api = {
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 
-export default {api}
+export default {handler}
