@@ -19,12 +19,12 @@ input OrderFormItemInput {
   seller: Int,
 }
 
-type IgnoreProfileInput {
+input IgnoreProfileInput {
     expectedOrderFormSections: [String],
     ignoreProfileData: Boolean
 }
 
-type OrderFormAddress {
+input OrderFormAddressInput {
     expectedOrderFormSections: [String],
     postalCode: String,
     country: String,
@@ -37,7 +37,7 @@ type OrderFormAddress {
     neighborhood: String
 }
 
-type OrderFormProfileInput {
+input OrderFormProfileInput {
     expectedOrderFormSections: [String],
     email: String
 }
