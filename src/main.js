@@ -110,6 +110,24 @@ const api = {
     data: ({fields}) => merge({}, fields, {settings: JSON.parse(fields.settings)}),
   }),
 
+  '/mutation/updateOrderFormProfile': handleEndpoint({
+    method: 'PUT',
+    url: paths.orderFormProfile,
+    data: ({id, fields}) => merge({id}, fields)
+  }),
+
+  '/mutation/updateOrderFormShipping': handleEndpoint({
+    method: 'PUT',
+    url: paths.orderFormShipping,
+    data: ({id, fields}) => merge({id}, fields)
+  }),
+
+  '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
+    method: 'PUT',
+    url: paths.orderFormIgnoreProfile,
+    data: ({id, fields}) => merge({id}, fields)
+  }),
+
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 
