@@ -1,11 +1,12 @@
-import Promise from 'bluebird'
 import handleEndpoint from './handleEndpoint'
 import {profileCustomHeaders, handleProfileEndpoint} from './handleProfileEndpoint'
 import handleRecommendationsEndpoint from './handleRecommendationsEndpoint'
 import paths from './paths'
 import {merge} from 'ramda'
 
-const facadeHeaders = {accept: 'application/vnd.vtex.search-api.v0+json'}
+Promise = require('bluebird')
+
+const facadeHeaders = { accept: 'application/vnd.vtex.search-api.v0+json' }
 
 const handler = (req, res, ctx) => {
   const prefix = `/${ctx.account}/${ctx.workspace}`
@@ -62,7 +63,7 @@ const api = {
 
   '/query/profile': handleProfileEndpoint,
 
-  '/query/autocomplete': handleEndpoint({url: paths.autocomplete}),
+  '/query/autocomplete': handleEndpoint({ url: paths.autocomplete }),
 
   '/mutation/addItem': handleEndpoint({
     method: 'POST',
@@ -99,7 +100,7 @@ const api = {
     url: (account, {id}) => paths.profile(account).address(id),
     data: ({fields}) => fields,
     headers: profileCustomHeaders,
-    callback: ({id, fields}) => merge({id}, fields),
+    merge: ({id, fields}) => merge({id}, fields),
   }),
 
   '/mutation/createAddress': handleEndpoint({
@@ -107,7 +108,7 @@ const api = {
     url: account => paths.profile(account).address(''),
     data: ({fields}) => fields,
     headers: profileCustomHeaders,
-    callback: ({id, fields}) => merge({id}, fields),
+    merge: ({id, fields}) => merge({id}, fields),
   }),
 
   '/mutation/deleteAddress': handleEndpoint({
@@ -120,10 +121,10 @@ const api = {
     method: 'PUT',
     enableCookies: true,
     url: paths.placeholders,
-    data: ({fields}) => merge({}, fields, {settings: JSON.parse(fields.settings)}),
+    data: ({fields}) => merge(merge({}, fields), {settings: JSON.parse(fields.settings)}),
   }),
 
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 
-export default {handler}
+export default { handler }

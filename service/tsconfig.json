@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "types": [
+      "bluebird-global",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": false,
+    "outDir": "service",
+    "allowJs": true
+  },
+  "typeAcquisition": {
+    "enable": false
+  },
+  "include": [
+    "typings.d.ts",
+    "./**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compileOnSave": true
+}

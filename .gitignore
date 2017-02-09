@@ -1,4 +1,5 @@
 node_modules
-service/**/*.js
+service/**/!(main).js
 service/**/*.js.map
 service/token.json
+.vscode/

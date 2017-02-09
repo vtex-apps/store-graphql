@@ -1,12 +1,14 @@
 import paths from './paths'
 import http from 'axios'
-import parse from 'co-body'
+import {json as parseJson} from 'co-body'
 import {parse as parseCookie} from 'cookie'
-import {readJsonSync} from 'fs-promise'
+import {readJson} from 'fs-promise'
 import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
 
-const vtexToken = readJsonSync(join(__dirname, 'token.json')).token
+let vtexToken
+readJson(join(__dirname, 'token.json')).then(({token}) => vtexToken = token)
+
 export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => ({
   'x-vtex-api-appKey': 'vtexappkey-appvtex',
   'x-vtex-api-appToken': vtexToken,
@@ -29,7 +31,7 @@ const profile = (account) => async (data) => {
   const profileRequest = configRequest(paths.profile(account).filterUser(user))
   const profile = await http.request(profileRequest).then(pipe(prop('data'), head))
 
-  const addressRequest = profile && configRequest(paths.profile(account).filterAddress(profile.id), vtexToken)
+  const addressRequest = profile && configRequest(paths.profile(account).filterAddress(profile.id))
   const address = addressRequest && await http.request(addressRequest).then(prop('data'))
 
   return merge({address}, profile)
@@ -37,7 +39,7 @@ const profile = (account) => async (data) => {
 
 export const handleProfileEndpoint = {
   post: async (req, res, ctx) => {
-    const body = await parse.json(req)
+    const body = await parseJson(req)
     const parsedCookies = parseCookie(body.cookie)
 
     var startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')

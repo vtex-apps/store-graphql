@@ -1,14 +1,17 @@
 import axios from 'axios'
-import parse from 'co-body'
+import {json as parseJson} from 'co-body'
 import {prop, map} from 'ramda'
 
 const defaultMerge = (bodyData, resData) => resData
 const removeDomain = (cookie) => cookie.replace(/domain=.+?(;|$)/, '')
 
-export default ({method = 'GET', url, data, headers = {}, enableCookies, merge = defaultMerge}) => {
+export default (
+    {method = 'GET', url, data = null, headers = {}, enableCookies = false, merge = defaultMerge}:
+    {method?: string, url?: any, data?: any, headers?: any, enableCookies?: boolean, merge?: Function}
+  ) => {
   return {
     post: async (req, res, ctx) => {
-      const body = await parse.json(req)
+      const body = await parseJson(req)
 
       const builtUrl = (typeof url === 'function') ? url(ctx.account, body.data, body.root) : url
       const builtData = (typeof data === 'function') ? data(body.data) : data

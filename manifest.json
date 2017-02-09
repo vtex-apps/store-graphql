@@ -13,7 +13,15 @@
     "npm:co-body": "^4.2.0",
     "npm:cookie": "^0.3.1",
     "npm:fs-promise": "^1.0.0",
-    "npm:ramda": "^0.23.0"
+    "npm:ramda": "^0.23.0",
+    "npm:ts-node": "^2.0.0",
+    "npm:typescript": "^2.1.5",
+    "npm:@vtex/npm-ramda": "^0.23.0-RC1",
+    "npm:@types/bluebird": "^3.0.37",
+    "npm:@types/bluebird-global": "^3.0.1",
+    "npm:@types/es6-shim": "^0.31.32",
+    "npm:@types/fs-promise": "^1.0.1",
+    "npm:@types/node": "^6.0.58"
   },
   "mustUpdateAt": "2017-09-05",
   "categories": [],
