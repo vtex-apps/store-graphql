@@ -25,6 +25,10 @@ input IgnoreProfileInput {
 }
 
 input OrderFormAddressInput {
+    address: OrderFormAddress
+}
+
+input OrderFormAddress {
     expectedOrderFormSections: [String],
     postalCode: String,
     country: String,
