@@ -6,8 +6,7 @@ import {readJson} from 'fs-promise'
 import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
 
-let vtexToken
-readJson(join(__dirname, 'token.json')).then(({token}) => vtexToken = token)
+const vtexToken = require('./token.json').token
 
 export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => ({
   'x-vtex-api-appKey': 'vtexappkey-appvtex',
