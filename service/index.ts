@@ -135,14 +135,14 @@ const api = {
     method: 'POST',
     url: paths.orderFormShipping,
     headers: profileCustomHeaders('application/json'),
-    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
+    data: (data) => merge({expectedOrderFormSections: ['items']}, data)
   }),
 
   '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
     method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
     headers: profileCustomHeaders('application/json'),
-    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
+    data: ({ignoreProfileData}) => merge({expectedOrderFormSections: ['items']}, ignoreProfileData)
   }),
 
   '/product/recommendations': handleRecommendationsEndpoint,

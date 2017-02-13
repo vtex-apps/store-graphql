@@ -5,8 +5,8 @@ type Mutation {
   updateProfile(orderFormId: String, fields: ProfileInput): OrderForm
   updateAddress(orderFormId: String, fields: AddressInput): OrderForm
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
-  updateOrderFormShipping(orderFormId: String, fields: OrderFormAddressInput): OrderForm
-  updateOrderFormIgnoreProfile(orderFormId: String, fields: IgnoreProfileInput): OrderForm
+  updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
+  updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
   setPlaceholder(fields: PlaceholderInput): Boolean
