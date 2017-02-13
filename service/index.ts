@@ -145,27 +145,6 @@ const api = {
     data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
   }),
 
-  '/mutation/updateOrderFormProfile': handleEndpoint({
-    method: 'POST',
-    url: paths.orderFormProfile,
-    headers: profileCustomHeaders,
-    data: ({id, fields}) => merge({id, expectedOrderFormSections: ['items']}, fields)
-  }),
-
-  '/mutation/updateOrderFormShipping': handleEndpoint({
-    method: 'POST',
-    url: paths.orderFormShipping,
-    headers: profileCustomHeaders,
-    data: ({id, fields}) => merge({id}, fields)
-  }),
-
-  '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
-    method: 'PATCH',
-    url: paths.orderFormIgnoreProfile,
-    headers: profileCustomHeaders,
-    data: ({id, fields}) => merge({id}, fields)
-  }),
-
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 
