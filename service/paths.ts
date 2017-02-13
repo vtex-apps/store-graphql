@@ -18,13 +18,13 @@ const paths = {
   shipping: (account, {skuId, postalCode}) =>
     `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
 
-  orderForm: account => `http://${account}.vtexcommercebeta.com.br/api/checkout/pub/orderForm`,
+  orderForm: (account, env = 'stable') => `http://${account}.vtexcommerce${env}.com.br/api/checkout/pub/orderForm`,
     
-  orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/attachments/clientProfileData`,
+  orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/clientProfileData`,
 
-  orderFormShipping: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/attachments/shippingData`,
+  orderFormShipping: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/shippingData`,
 
-  orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/profile`,
+  orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/profile`,
 
   addItem: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/items`,
 
