@@ -128,21 +128,21 @@ const api = {
     method: 'POST',
     url: paths.orderFormProfile,
     headers: profileCustomHeaders('application/json'),
-    data: ({id, fields}) => merge({id, expectedOrderFormSections: ['items']}, fields)
+    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
   }),
 
   '/mutation/updateOrderFormShipping': handleEndpoint({
     method: 'POST',
     url: paths.orderFormShipping,
     headers: profileCustomHeaders('application/json'),
-    data: ({id, fields}) => merge({id, expectedOrderFormSections: ['items']}, fields)
+    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
   }),
 
   '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
     method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
     headers: profileCustomHeaders('application/json'),
-    data: ({id, fields}) => merge({id, expectedOrderFormSections: ['items']}, fields)
+    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
   }),
 
   '/product/recommendations': handleRecommendationsEndpoint,
