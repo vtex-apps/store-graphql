@@ -2,9 +2,13 @@ type Mutation {
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
   cancelOrder(orderFormId: String, reason: String): Boolean
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-  updateProfile(id: String, fields: ProfileInput): Profile
-  updateAddress(id: String, fields: AddressInput): Profile
+  updateProfile(orderFormId: String, fields: ProfileInput): OrderForm
+  updateAddress(orderFormId: String, fields: AddressInput): OrderForm
+  updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
+  updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
+  updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
   setPlaceholder(fields: PlaceholderInput): Boolean
+  createPayment(fields: PaymentInput): String
 }

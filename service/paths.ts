@@ -18,7 +18,13 @@ const paths = {
   shipping: (account, {skuId, postalCode}) =>
     `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
 
-  orderForm: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
+  orderForm: (account, env = 'stable') => `http://${account}.vtexcommerce${env}.com.br/api/checkout/pub/orderForm`,
+    
+  orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/clientProfileData`,
+
+  orderFormShipping: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/shippingData`,
+
+  orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/profile`,
 
   addItem: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/items`,
 
@@ -27,6 +33,8 @@ const paths = {
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
 
   cancelOrder: (account, {orderFormId}) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
+
+
 
   identity: (account, {token}) => `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
 

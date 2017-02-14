@@ -18,3 +18,31 @@ input OrderFormItemInput {
   quantity: Int,
   seller: Int,
 }
+
+input OrderFormAddressInput {
+    postalCode: String,
+    country: String,
+    addressType: String,
+    receiverName: String,
+    city: String,
+    state: String,
+    street: String,
+    number: String,
+    complement: String,
+    neighborhood: String
+}
+
+input OrderFormProfileInput {
+    email: String,
+    isCorporate: Boolean,
+    corporateDocument: String,
+    corporateName: String,
+    corporatePhone: String,
+    document: String,
+    documentType: String,
+    firstName: String,
+    lastName: String,
+    phone: String,
+    stateInscription: String,
+    tradeName: String
+}
