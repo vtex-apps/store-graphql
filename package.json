@@ -1,6 +1,6 @@
 {
   "name": "store-data-graphql",
-  "version": "0.0.0",
+  "version": null,
   "description": "GraphQL schema and resolvers for the VTEX api for the catalog and orders.",
   "main": "service/main.js",
   "scripts": {
