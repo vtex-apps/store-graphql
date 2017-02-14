@@ -142,7 +142,7 @@ const api = {
     method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
     headers: profileCustomHeaders('application/json'),
-    data: ({ignoreProfileData}) => merge({expectedOrderFormSections: ['items']}, ignoreProfileData)
+    data: ({ignoreProfileData}) => ({expectedOrderFormSections: ['items'], ignoreProfileData})
   }),
 
   '/product/recommendations': handleRecommendationsEndpoint,
