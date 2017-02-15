@@ -34,6 +34,8 @@ type Offer {
   availability: Int
   price: Float
   listPrice: Float
+  validUntil: String
+  seller: Seller
 }
 
 type Image {
