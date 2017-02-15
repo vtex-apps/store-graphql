@@ -25,5 +25,8 @@
   },
   "mustUpdateAt": "2017-09-05",
   "categories": [],
-  "settingsSchema": {}
+  "settingsSchema": {},
+  "scripts": {
+    "postreleasy": "vtex publish"
+  }
 }
