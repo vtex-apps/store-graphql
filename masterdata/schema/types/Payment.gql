@@ -1,0 +1,35 @@
+type PaymentSession {
+    id: String,
+    name: String,
+    expiresAt: String,
+}
+
+type PaymentToken {
+    token: String,
+    bin: String,
+    lastDigits: String,
+    expiresAt: String,
+}
+
+input PaymentInput {
+    paymentSystem: String,
+    cardHolder: String,
+    cardNumber: String,
+    expiryDate: String,
+    csc: String,
+    document: String,
+    documentType: String,
+    partnerId: String,
+    address: PaymentAddress,
+}
+
+input PaymentAddress {
+    postalCode: String,
+    street: String,
+    neighborhood: String,
+    city: String,
+    state: String,
+    country: String,
+    number: String,
+    complement: String,
+  }

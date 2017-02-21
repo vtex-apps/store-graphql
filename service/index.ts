@@ -141,6 +141,19 @@ const api = {
     data: ({ignoreProfileData}) => ({expectedOrderFormSections: ['items'], ignoreProfileData}),
   }),
 
+  '/mutation/createPaymentSession': handleEndpoint({
+    method: 'POST',
+    url: paths.gatewayPaymentSession,
+    headers: profileCustomHeaders('application/json'),
+  }),
+
+  '/mutation/createPaymentToken': handleEndpoint({
+    method: 'POST',
+    url: paths.gatewayTokenizePayment,
+    headers: profileCustomHeaders('application/json'),
+    data: ({payments}) => payments,
+  }),
+
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 

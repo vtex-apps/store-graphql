@@ -9,5 +9,7 @@ type Mutation {
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
+  createPaymentSession: PaymentSession
+  createPaymentToken(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
 }

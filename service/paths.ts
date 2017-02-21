@@ -34,8 +34,6 @@ const paths = {
 
   cancelOrder: (account, {orderFormId}) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
 
-
-
   identity: (account, {token}) => `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
 
   profile: account => ({
@@ -44,6 +42,12 @@ const paths = {
     profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
   }),
+
+  gateway: account => `https://${account}.vtexpayments.com.br/api`,
+  
+  gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
+
+  gatewayTokenizePayment: (account, sessionId) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
   placeholders: account => `http://${account}.myvtex.com/placeholders`,
 
