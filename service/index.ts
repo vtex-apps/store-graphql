@@ -8,19 +8,6 @@ Promise = require('bluebird')
 
 const facadeHeaders = { accept: 'application/vnd.vtex.search-api.v0+json' }
 
-const handler = (req, res, ctx) => {
-  const prefix = `/${ctx.account}/${ctx.workspace}`
-  const methodHandlers = api[req.path.substr(prefix.length)]
-  if (!methodHandlers) {
-    return
-  }
-
-  const handle = methodHandlers[req.method.toLowerCase()]
-  if (handle) {
-    return handle(req, res, ctx)
-  }
-}
-
 const api = {
   '/query/product': handleEndpoint({
     url: paths.product,
@@ -63,7 +50,7 @@ const api = {
 
   '/query/profile': handleProfileEndpoint,
 
-  '/query/autocomplete': handleEndpoint({ url: paths.autocomplete }),
+  '/query/autocomplete': handleEndpoint({url: paths.autocomplete}),
 
   '/mutation/addItem': handleEndpoint({
     method: 'POST',
@@ -128,24 +115,41 @@ const api = {
     method: 'POST',
     url: paths.orderFormProfile,
     headers: profileCustomHeaders('application/json'),
-    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields)
+    data: ({fields}) => merge({expectedOrderFormSections: ['items']}, fields),
   }),
 
   '/mutation/updateOrderFormShipping': handleEndpoint({
     method: 'POST',
     url: paths.orderFormShipping,
     headers: profileCustomHeaders('application/json'),
-    data: (data) => merge({expectedOrderFormSections: ['items']}, data)
+    data: (data) => merge({expectedOrderFormSections: ['items']}, data),
   }),
 
   '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
     method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
     headers: profileCustomHeaders('application/json'),
-    data: ({ignoreProfileData}) => ({expectedOrderFormSections: ['items'], ignoreProfileData})
+    data: ({ignoreProfileData}) => ({expectedOrderFormSections: ['items'], ignoreProfileData}),
   }),
 
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 
-export default { handler }
+const handler = (req, res, ctx) => {
+  const prefix = `/${ctx.account}/${ctx.workspace}`
+  const methodHandlers = api[req.path.substr(prefix.length)]
+  if (!methodHandlers) {
+    return
+  }
+
+  const handle = methodHandlers[req.method.toLowerCase()]
+  if (handle) {
+    try {
+      return handle(req, res, ctx)
+    } catch(error) {
+      console.log('STORE-DATA-GRAPHQL: error', error)
+    }
+  }
+}
+
+export default {handler}

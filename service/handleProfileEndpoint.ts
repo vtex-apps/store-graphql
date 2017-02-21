@@ -12,7 +12,7 @@ export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json'
   'x-vtex-api-appKey': 'vtexappkey-appvtex',
   'x-vtex-api-appToken': vtexToken,
   'Content-Type': 'application/json',
-  'Accept': accept,
+  Accept: accept,
 })
 
 const configRequest = url => ({
@@ -28,12 +28,12 @@ const profile = (account) => async (data) => {
 
   const {user} = data
   const profileRequest = configRequest(paths.profile(account).filterUser(user))
-  const profile = await http.request(profileRequest).then(pipe(prop('data'), head))
+  const profileData = await http.request(profileRequest).then(pipe(prop('data'), head))
 
-  const addressRequest = profile && configRequest(paths.profile(account).filterAddress(profile.id))
+  const addressRequest = profileData && configRequest(paths.profile(account).filterAddress(profileData.id))
   const address = addressRequest && await http.request(addressRequest).then(prop('data'))
 
-  return merge({address}, profile)
+  return merge({address}, profileData)
 }
 
 export const handleProfileEndpoint = {
@@ -41,7 +41,7 @@ export const handleProfileEndpoint = {
     const body = await parseJson(req)
     const parsedCookies = parseCookie(body.cookie)
 
-    var startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
+    const startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
     const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
     if (!token) {
       throw new Error('User is not authenticated.')
