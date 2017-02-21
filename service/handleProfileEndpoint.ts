@@ -5,6 +5,7 @@ import {parse as parseCookie} from 'cookie'
 import {readJson} from 'fs-promise'
 import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
+import ResolverError from './ResolverError'
 
 const vtexToken = require('./token.json').token
 
@@ -39,12 +40,12 @@ const profile = (account) => async (data) => {
 export const handleProfileEndpoint = {
   post: async (req, res, ctx) => {
     const body = await parseJson(req)
-    const parsedCookies = parseCookie(body.cookie)
+    const parsedCookies = parseCookie(body.cookie || '')
 
     const startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
     const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
     if (!token) {
-      throw new Error('User is not authenticated.')
+      throw new ResolverError('User is not authenticated.', 401)
     }
     const config = {
       url: paths.identity(ctx.account, {token}),

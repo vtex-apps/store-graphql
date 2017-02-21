@@ -1,12 +1,21 @@
+import {merge} from 'ramda'
 import handleEndpoint from './handleEndpoint'
 import {profileCustomHeaders, handleProfileEndpoint} from './handleProfileEndpoint'
 import handleRecommendationsEndpoint from './handleRecommendationsEndpoint'
 import paths from './paths'
-import {merge} from 'ramda'
+import ResolverError from './ResolverError'
+
+import axios from 'axios'
+axios.interceptors.response.use(response => response, function (error) {
+  if (error.response) {
+    throw new ResolverError(error.response.data, error.response.status)
+  }
+  throw error
+})
 
 Promise = require('bluebird')
 
-const facadeHeaders = { accept: 'application/vnd.vtex.search-api.v0+json' }
+const facadeHeaders = {accept: 'application/vnd.vtex.search-api.v0+json'}
 
 const api = {
   '/query/product': handleEndpoint({
@@ -135,20 +144,23 @@ const api = {
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 
-const handler = (req, res, ctx) => {
-  const prefix = `/${ctx.account}/${ctx.workspace}`
-  const methodHandlers = api[req.path.substr(prefix.length)]
-  if (!methodHandlers) {
-    return
-  }
-
-  const handle = methodHandlers[req.method.toLowerCase()]
-  if (handle) {
-    try {
-      return handle(req, res, ctx)
-    } catch(error) {
-      console.log('STORE-DATA-GRAPHQL: error', error)
+const handler = async (req, res, ctx) => {
+  try {
+    const prefix = `/${ctx.account}/${ctx.workspace}`
+    const resolverPath = req.path.substr(prefix.length)
+    const methodHandlers = api[resolverPath]
+    if (!methodHandlers) {
+      throw new ResolverError(`No resolver found for the path "${resolverPath}"`, 404)
     }
+
+    const handle = methodHandlers[req.method.toLowerCase()]
+    if (handle) {
+      return await handle(req, res, ctx)
+    }
+  } catch (error) {
+    res.set('Content-Type', 'application/json')
+    res.status = error.statusCode || 500
+    res.body = {error: error.message}
   }
 }
 
