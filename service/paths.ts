@@ -47,7 +47,7 @@ const paths = {
   
   gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
 
-  gatewayTokenizePayment: (account, sessionId) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
+  gatewayTokenizePayment: (account, {sessionId}) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
   placeholders: account => `http://${account}.myvtex.com/placeholders`,
 
