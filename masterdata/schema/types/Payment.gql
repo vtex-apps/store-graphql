@@ -28,6 +28,7 @@ input PaymentAddress {
     street: String,
     neighborhood: String,
     city: String,
+    receiverName: String,
     state: String,
     country: String,
     number: String,
