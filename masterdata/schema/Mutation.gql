@@ -10,6 +10,6 @@ type Mutation {
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
   createPaymentSession: PaymentSession
-  createPaymentToken(sessionId: String, payments: [PaymentInput]): [PaymentToken]
+  createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
 }

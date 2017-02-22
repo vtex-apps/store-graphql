@@ -147,7 +147,7 @@ const api = {
     headers: profileCustomHeaders('application/json'),
   }),
 
-  '/mutation/createPaymentToken': handleEndpoint({
+  '/mutation/createPaymentTokens': handleEndpoint({
     method: 'POST',
     url: paths.gatewayTokenizePayment,
     headers: profileCustomHeaders('application/json'),
