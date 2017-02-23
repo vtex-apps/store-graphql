@@ -15,9 +15,9 @@ export default (
 
       const builtUrl = (typeof url === 'function') ? url(ctx.account, body.data, body.root) : url
       const builtData = (typeof data === 'function') ? data(body.data) : data
-      const builtHeaders = (typeof headers === 'function') ? headers() : headers
+      const builtHeaders = (typeof headers === 'function') ? await headers(req, ctx) : headers
 
-      const config = { method, url: builtUrl, data: builtData, headers: builtHeaders }
+      const config = {method, url: builtUrl, data: builtData, headers: builtHeaders}
       if (enableCookies && body.cookie) {
         config.headers.cookie = body.cookie
       }

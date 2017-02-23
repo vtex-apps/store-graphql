@@ -27,7 +27,6 @@
   "categories": [],
   "settingsSchema": {},
   "scripts": {
-    "prereleasy": "test -e service/token.json",
     "postreleasy": "vtex publish"
   }
 }

@@ -87,7 +87,7 @@ const api = {
     method: 'PATCH',
     url: (account, {id}) => paths.profile(account).profile(id),
     data: ({fields}) => fields,
-    headers: profileCustomHeaders,
+    headers: profileCustomHeaders(),
     merge: ({id, fields}) => merge({id}, fields),
   }),
 
@@ -95,7 +95,7 @@ const api = {
     method: 'PATCH',
     url: (account, {id}) => paths.profile(account).address(id),
     data: ({fields}) => fields,
-    headers: profileCustomHeaders,
+    headers: profileCustomHeaders(),
     merge: ({id, fields}) => merge({id}, fields),
   }),
 
@@ -103,14 +103,14 @@ const api = {
     method: 'PATCH',
     url: account => paths.profile(account).address(''),
     data: ({fields}) => fields,
-    headers: profileCustomHeaders,
+    headers: profileCustomHeaders(),
     merge: ({id, fields}) => merge({id}, fields),
   }),
 
   '/mutation/deleteAddress': handleEndpoint({
     method: 'DELETE',
     url: (account, {id}) => paths.profile(account).address(id),
-    headers: profileCustomHeaders,
+    headers: profileCustomHeaders(),
   }),
 
   '/mutation/setPlaceholder': handleEndpoint({
