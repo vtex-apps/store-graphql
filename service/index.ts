@@ -154,6 +154,14 @@ const api = {
     data: ({payments}) => payments,
   }),
 
+  '/mutation/setOrderFormCustomData': handleEndpoint({
+    method: 'PUT',
+    url: paths.orderFormCustomData,
+    headers: profileCustomHeaders('application/json'),
+    data: ({value}) => ({expectedOrderFormSections: ['customData'], value}),
+  }),
+
+
   '/product/recommendations': handleRecommendationsEndpoint,
 }
 

@@ -26,6 +26,8 @@ const paths = {
 
   orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/profile`,
 
+  orderFormCustomData: (account, {orderFormId, appId, field}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/customData/${appId}/${field}`,
+
   addItem: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/items`,
 
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
