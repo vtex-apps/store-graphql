@@ -32,6 +32,17 @@ input OrderFormAddressInput {
     neighborhood: String
 }
 
+input OrderFormPaymentInput {
+    payments: [OrderFormPayment],
+    availableAccounts: [String],
+}
+
+input OrderFormPayment {
+    paymentSystem: Int,
+    referenceValue: Float,
+    bin: Int,
+}
+
 input OrderFormProfileInput {
     email: String,
     isCorporate: Boolean,

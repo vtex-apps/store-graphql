@@ -24,6 +24,8 @@ const paths = {
 
   orderFormShipping: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/shippingData`,
 
+  orderFormPayment: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/paymentData`,
+
   orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/profile`,
 
   orderFormCustomData: (account, {orderFormId, appId, field}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/customData/${appId}/${field}`,
