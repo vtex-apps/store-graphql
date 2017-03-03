@@ -33,11 +33,6 @@ input OrderFormAddressInput {
 }
 
 input OrderFormPaymentInput {
-    payments: [OrderFormPayment],
-    availableAccounts: [String],
-}
-
-input OrderFormPayment {
     paymentSystem: Int,
     referenceValue: Float,
     bin: Int,

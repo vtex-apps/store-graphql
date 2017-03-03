@@ -138,7 +138,7 @@ const api = {
     method: 'POST',
     url: paths.orderFormPayment,
     headers: profileCustomHeaders('application/json'),
-    data: (data) => merge({expectedOrderFormSections: ['items']}, data),
+    data: ({payments}) => merge({expectedOrderFormSections: ['items']}, {payments: payments}),
   }),
 
   '/mutation/updateOrderFormIgnoreProfile': handleEndpoint({
