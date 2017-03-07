@@ -1,5 +1,4 @@
 import http from 'axios'
-import parse from 'co-body'
 import {reject, isNil, prop} from 'ramda'
 import paths from './paths'
 
@@ -22,25 +21,20 @@ const getProductById = account => async ({Target: id}) => {
   }
 }
 
-export default {
-  post: async (req, res, ctx) => {
-    const body = await parse.json(req)
-    const id = body.root.id
+export default async (body, ctx) => {
+  const id = body.root.id
 
-    const [prodViews, prodBuy] = await Promise.all<{Target: any}[], {Target: any}[]>([
-      http.get(paths.recommendation(ctx.account, {id, type: 'ProdView'})).then(prop('data')),
-      http.get(paths.recommendation(ctx.account, {id, type: 'ProdBuy'})).then(prop('data')),
-    ])
-    const [buy, view] = await Promise.all([
-      Promise.map(prodViews, getProductById(ctx.account)),
-      Promise.map(prodBuy, getProductById(ctx.account)),
-    ])
+  const [prodViews, prodBuy] = await Promise.all<{Target: any}[], {Target: any}[]>([
+    http.get(paths.recommendation(ctx.account, {id, type: 'ProdView'})).then(prop('data')),
+    http.get(paths.recommendation(ctx.account, {id, type: 'ProdBuy'})).then(prop('data')),
+  ])
+  const [buy, view] = await Promise.all([
+    Promise.map(prodViews, getProductById(ctx.account)),
+    Promise.map(prodBuy, getProductById(ctx.account)),
+  ])
 
-    res.set('Content-Type', 'application/json')
-    res.status = 200
-    res.body = {data: {
-      buy: reject(isNil, buy),
-      view: reject(isNil, view)
-    }}
-  }
+  return {data: {
+    buy: reject(isNil, buy),
+    view: reject(isNil, view)
+  }}
 }

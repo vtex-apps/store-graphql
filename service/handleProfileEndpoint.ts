@@ -1,11 +1,10 @@
 import paths from './paths'
 import http from 'axios'
-import {json as parseJson} from 'co-body'
 import {parse as parseCookie} from 'cookie'
 import {readJson} from 'fs-promise'
 import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
-import ResolverError from './ResolverError'
+import {ResolverError} from 'vtex-graphql-builder'
 
 let vtexToken
 
@@ -52,26 +51,19 @@ const profile = (req, ctx) => async (data) => {
   return merge({address}, profileData)
 }
 
-export const handleProfileEndpoint = {
-  post: async (req, res, ctx) => {
-    const {account, workspace} = ctx
-    const body = await parseJson(req)
-    const parsedCookies = parseCookie(body.cookie || '')
+export const handleProfileEndpoint = async (body, ctx, req) => {
+  const {account, workspace} = ctx
+  const parsedCookies = parseCookie(body.cookie || '')
 
-    const startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
-    const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
-    if (!token) {
-      throw new ResolverError('User is not authenticated.', 401)
-    }
+  const startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
+  const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
+  if (!token) {
+    throw new ResolverError('User is not authenticated.', 401)
+  }
 
-    const config = {
-      url: paths.identity(account, {token}),
-      method: 'GET',
-    }
-    const data = await http.request(config).then(prop('data')).then(profile(req, ctx))
-
-    res.set('Content-Type', 'application/json')
-    res.status = 200
-    res.body = {data}
-  },
+  const config = {
+    url: paths.identity(account, {token}),
+    method: 'GET',
+  }
+  return {data: await http.request(config).then(prop('data')).then(profile(req, ctx))}
 }
