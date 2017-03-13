@@ -1,3 +1,9 @@
 {
-  "memory": 256
+  "stack": "nodejs",
+  "memory": 256,
+  "runtimeArgs": [
+    "--max-semi-space-size=1",
+    "--max-old-space-size=128",
+    "--max-executable-size=96"
+  ]
 }
