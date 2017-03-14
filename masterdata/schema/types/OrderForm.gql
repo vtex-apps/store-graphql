@@ -36,6 +36,7 @@ input OrderFormPaymentInput {
     paymentSystem: Int,
     referenceValue: Float,
     bin: Int,
+    tokenId: String
 }
 
 input OrderFormProfileInput {
@@ -51,4 +52,12 @@ input OrderFormProfileInput {
     phone: String,
     stateInscription: String,
     tradeName: String
+}
+
+input OrderFormPaymentTokenInput {
+  tokenId: String,
+  cardNumber: String,
+  bin: String,
+  paymentSystem: String,
+  paymentSystemName: String
 }

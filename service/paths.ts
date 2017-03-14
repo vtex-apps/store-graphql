@@ -19,12 +19,14 @@ const paths = {
     `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
 
   orderForm: (account, env = 'stable') => `http://${account}.vtexcommerce${env}.com.br/api/checkout/pub/orderForm`,
-    
+
   orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/clientProfileData`,
 
   orderFormShipping: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/shippingData`,
 
   orderFormPayment: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/paymentData`,
+
+  orderFormPaymentToken: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/paymentData/paymentToken`,
 
   orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/profile`,
 
@@ -48,7 +50,7 @@ const paths = {
   }),
 
   gateway: account => `https://${account}.vtexpayments.com.br/api`,
-  
+
   gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
 
   gatewayTokenizePayment: (account, {sessionId}) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,

@@ -9,6 +9,8 @@ type PaymentToken {
     bin: String,
     lastDigits: String,
     expiresAt: String,
+    paymentSystem: String,
+    paymentSystemName: String,
 }
 
 input PaymentInput {

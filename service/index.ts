@@ -144,6 +144,13 @@ export default buildResolvers({
       data: ({payments}) => merge({expectedOrderFormSections: ['items']}, {payments}),
     }),
 
+    addOrderFormPaymentToken: handleEndpoint({
+      method: 'PUT',
+      url: paths.orderFormPaymentToken,
+      headers: profileCustomHeaders('application/json'),
+      data: ({paymentToken}) => merge({expectedOrderFormSections: ['items']}, {paymentToken}),
+    }),
+
     updateOrderFormIgnoreProfile: handleEndpoint({
       method: 'PATCH',
       url: paths.orderFormIgnoreProfile,
