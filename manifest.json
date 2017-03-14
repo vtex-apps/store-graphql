@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-data-graphql",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "title": "GraphQL API for store data",
   "description": "GraphQL schema and resolvers for the VTEX api for the catalog and orders.",
   "dependencies": {
