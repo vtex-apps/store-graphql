@@ -4,6 +4,7 @@ import {profileCustomHeaders, handleProfileEndpoint} from './handleProfileEndpoi
 import handleRecommendationsEndpoint from './handleRecommendationsEndpoint'
 import paths from './paths'
 import {buildResolvers, ResolverError} from 'vtex-graphql-builder'
+import handlePaymentTokenEndpoint from './handlePaymentTokenEndpoint'
 
 import axios from 'axios'
 axios.interceptors.response.use(response => response, function (error) {
@@ -144,12 +145,7 @@ export default buildResolvers({
       data: ({payments}) => merge({expectedOrderFormSections: ['items']}, {payments}),
     }),
 
-    addOrderFormPaymentToken: handleEndpoint({
-      method: 'PUT',
-      url: paths.orderFormPaymentToken,
-      headers: profileCustomHeaders('application/json'),
-      data: ({paymentToken}) => merge({expectedOrderFormSections: ['items']}, {paymentToken}),
-    }),
+    addOrderFormPaymentToken: handlePaymentTokenEndpoint,
 
     updateOrderFormIgnoreProfile: handleEndpoint({
       method: 'PATCH',

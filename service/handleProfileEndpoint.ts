@@ -5,20 +5,7 @@ import {readJson} from 'fs-promise'
 import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
 import {ResolverError} from 'vtex-graphql-builder'
-
-let vtexToken
-
-async function fetchVtexToken({account, workspace}, vtexId) {
-  if (!vtexToken) {
-    const response = await http.request({
-      url: `http://router.aws-us-east-1.vtex.io/${account}/${workspace}/tokens/legacy`,
-      method: 'GET',
-      headers: {Authorization: vtexId},
-    })
-    vtexToken = response.data
-  }
-  return vtexToken
-}
+import fetchVtexToken from './credentials'
 
 export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => async (req, ctx) => {
   const {appToken, appKey} = await fetchVtexToken(ctx, req.headers['x-vtex-id'])

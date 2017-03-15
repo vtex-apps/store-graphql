@@ -28,6 +28,8 @@ const paths = {
 
   orderFormPaymentToken: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/paymentData/paymentToken`,
 
+  orderFormPaymentTokenId: (account, {orderFormId, tokenId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/paymentData/paymentToken/${tokenId}`,
+
   orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/profile`,
 
   orderFormCustomData: (account, {orderFormId, appId, field}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/customData/${appId}/${field}`,
