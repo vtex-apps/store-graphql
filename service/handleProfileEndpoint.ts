@@ -8,7 +8,7 @@ import {ResolverError} from 'vtex-graphql-builder'
 import fetchVtexToken from './credentials'
 
 export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => async (req, ctx) => {
-  const {appToken, appKey} = await fetchVtexToken(ctx, req.headers['x-vtex-id'])
+  const {appToken, appKey} = await fetchVtexToken(ctx)
   return {
     'x-vtex-api-appKey': appKey,
     'x-vtex-api-appToken': appToken,

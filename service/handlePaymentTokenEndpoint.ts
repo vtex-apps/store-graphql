@@ -28,7 +28,7 @@ const createClient = (account, orderFormId, {appToken, appKey}) => {
 }
 
 export default async (body, ctx, req) => {
-  const credentials = await fetchVtexToken(ctx, req.headers['x-vtex-id'])
+  const credentials = await fetchVtexToken(ctx)
 
   const {data: {orderFormId, paymentToken}} = body
   const checkout = createClient(ctx.account, orderFormId, credentials)
