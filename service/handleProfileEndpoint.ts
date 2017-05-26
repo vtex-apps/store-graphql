@@ -5,13 +5,10 @@ import {readJson} from 'fs-promise'
 import {join} from 'path'
 import {pipe, path, pickBy, head, merge, values, prop} from 'ramda'
 import {ResolverError} from 'vtex-graphql-builder'
-import fetchVtexToken from './credentials'
 
-export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => async (req, ctx) => {
-  const {appToken, appKey} = await fetchVtexToken(ctx)
+export const profileCustomHeaders = (accept = 'application/vnd.vtex.ds.v10+json') => async (req, {authToken}) => {
   return {
-    'x-vtex-api-appKey': appKey,
-    'x-vtex-api-appToken': appToken,
+    Authorization: `bearer ${authToken}`,
     'Content-Type': 'application/json',
     Accept: accept,
   }

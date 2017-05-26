@@ -1,13 +1,11 @@
 import {merge, reject, propEq, last} from 'ramda'
 import paths from './paths'
 import http from 'axios'
-import fetchVtexToken from './credentials'
 
-const createClient = (account, orderFormId, {appToken, appKey}) => {
+const createClient = (account, orderFormId, authToken) => {
 
   const headers = {
-    'x-vtex-api-appKey': appKey,
-    'x-vtex-api-appToken': appToken,
+    Authorization: `bearer ${authToken}`,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   }
@@ -28,10 +26,8 @@ const createClient = (account, orderFormId, {appToken, appKey}) => {
 }
 
 export default async (body, ctx, req) => {
-  const credentials = await fetchVtexToken(ctx)
-
   const {data: {orderFormId, paymentToken}} = body
-  const checkout = createClient(ctx.account, orderFormId, credentials)
+  const checkout = createClient(ctx.account, orderFormId, ctx.authToken)
 
   const response = await checkout.addToken(paymentToken)
 
