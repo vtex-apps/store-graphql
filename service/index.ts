@@ -9,7 +9,11 @@ import handlePaymentTokenEndpoint from './handlePaymentTokenEndpoint'
 import axios from 'axios'
 axios.interceptors.response.use(response => response, function (error) {
   if (error.response) {
-    throw new ResolverError(error.response.data, error.response.status)
+    let message = error.response.data
+    if (!message) {
+      message = `A request to ${error.config.url} failed with message: ${error.message}.`
+    }
+    throw new ResolverError(message, error.response.status)
   }
   throw error
 })
