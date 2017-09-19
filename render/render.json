@@ -1,0 +1,10 @@
+{
+  "routes": {
+    "store-graphql-example": {
+      "path": "/_v/store-graphql-example",
+      "component": "./index",
+      "theme": "./theme.css",
+      "auth": true
+    }
+  }
+}

@@ -2,10 +2,8 @@
 .git
 node_modules/
 service/node_modules/
-service/package.json
 service/yarn.lock
 service/tslint.json
-service/tsconfig.json
 .vscode/
 .gitignore
 typings.d.ts

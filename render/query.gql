@@ -1,0 +1,5 @@
+query Products($query: String) {
+  products(query: $query) {
+    name
+  }
+}

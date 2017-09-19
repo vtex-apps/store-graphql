@@ -1,5 +1,5 @@
 {
-  "name": "store-graphql",
+  "name": "vtex.store-graphql",
   "version": null,
   "dependencies": {
     "axios": "0.16.2",
@@ -7,9 +7,11 @@
     "cookie": "^0.3.1",
     "fs-extra": "^3.0.1",
     "ramda": "^0.24.1",
-    "ts-node": "^3.3.0",
+    "ts-node": "3.3.0",
     "typescript": "^2.5.2",
-    "vtex-graphql-builder": "^0.0.5",
+    "vtex-graphql-builder": "^0.0.5"
+  },
+  "devDependencies": {
     "@types/ramda": "^0.24.10",
     "@types/bluebird": "^3.5.0",
     "@types/bluebird-global": "^3.5.0",
