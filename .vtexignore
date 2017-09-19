@@ -1,10 +1,12 @@
 .DS_Store
 .git
 node_modules/
-package.json
+service/node_modules/
+service/package.json
+service/yarn.lock
+service/tslint.json
+service/tsconfig.json
 .vscode/
 .gitignore
-tsconfig.json
-tslint.json
 typings.d.ts
 yarn.lock

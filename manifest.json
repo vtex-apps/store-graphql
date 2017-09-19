@@ -1,35 +1,25 @@
 {
   "vendor": "vtex",
-  "name": "store-data-graphql",
-  "version": "0.0.17",
-  "title": "GraphQL API for store data",
-  "description": "GraphQL schema and resolvers for the VTEX api for the catalog and orders.",
+  "name": "store-graphql",
+  "version": "0.0.1",
+  "title": "GraphQL API for the VTEX store APIs",
+  "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "registries": [
     "smartcheckout"
   ],
   "dependencies": {
-    "vtex.masterdata-graphql": "0.x",
-    "infra:colossus-js": "0.x",
-    "npm:axios": "^0.15.3",
-    "npm:babel-runtime": "^6.20.0",
-    "npm:bluebird": "^3.4.1",
-    "npm:cookie": "^0.3.1",
-    "npm:fs-promise": "^1.0.0",
-    "npm:ramda": "^0.23.0",
-    "npm:ts-node": "^2.0.0",
-    "npm:typescript": "^2.1.5",
-    "npm:vtex-graphql-builder": "^0.0.5",
-    "npm:@vtex/npm-ramda": "^0.23.0-RC1",
-    "npm:@types/bluebird": "^3.0.37",
-    "npm:@types/bluebird-global": "^3.0.1",
-    "npm:@types/es6-shim": "^0.31.32",
-    "npm:@types/fs-promise": "^1.0.1",
-    "npm:@types/node": "^6.0.58"
+    "vtex.masterdata-graphql": "0.x"
+  },
+  "builders": {
+    "service-js": "0.x"
   },
   "mustUpdateAt": "2017-09-05",
-  "categories": [],
-  "settingsSchema": {},
   "scripts": {
     "postreleasy": "vtex publish"
-  }
+  },
+  "policies": [
+    {
+      "name": "full-access"
+    }
+  ]
 }

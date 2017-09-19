@@ -1,0 +1,20 @@
+{
+  "name": "store-graphql",
+  "version": null,
+  "dependencies": {
+    "axios": "0.16.2",
+    "bluebird": "^3.5.0",
+    "cookie": "^0.3.1",
+    "fs-extra": "^3.0.1",
+    "ramda": "^0.24.1",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.2",
+    "vtex-graphql-builder": "^0.0.5",
+    "@types/ramda": "^0.24.10",
+    "@types/bluebird": "^3.5.0",
+    "@types/bluebird-global": "^3.5.0",
+    "@types/es6-shim": "^0.31.32",
+    "@types/fs-extra": "^3.0.1",
+    "@types/node": "^7.0.8"
+  }
+}

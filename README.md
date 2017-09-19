@@ -1,3 +1,3 @@
-# store-data-graphql
+# vtex.store-graphql
 
-GraphQL schema and resolvers for the VTEX api for the catalog and orders.
+GraphQL schema and resolvers for the VTEX api.
