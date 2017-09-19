@@ -1,15 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {FormattedMessage} from 'react-intl'
-import {compose, graphql} from 'react-apollo'
-
-import query from './query.gql'
+import {graphql, gql} from 'react-apollo'
 
 function Example ({data: {loading, products}}) {
   return (
     <section className="pl3 ph4-ns pv3-ns pr3 p0-ns">
       <div>
-        <h1 className="font-display f2 f1-ns fw6 mt4 mb2">
+        <h1 className="font-display f2 f1-ns fw6 mb2">
           <FormattedMessage id="extension-store.explore" />
         </h1>
       </div>
@@ -23,7 +21,16 @@ Example.propTypes = {
   data: PropTypes.object,
 }
 
-const queryOptions = {
+const query = gql`
+query Products($query: String) {
+  products(query: $query) {
+    name
+    slug
+    description
+  }
+}`
+
+const options = {
   options: {
     variables: {
       query: 'test',
@@ -31,4 +38,4 @@ const queryOptions = {
   },
 }
 
-export default graphql(query, queryOptions)(Example)
+export default graphql(query, options)(Example)
