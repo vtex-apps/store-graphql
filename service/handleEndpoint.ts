@@ -19,6 +19,7 @@ export default (
     }
 
     const vtexResponse = await axios.request(config)
+
     let cookie
     if (enableCookies) {
       const setCookie = prop('set-cookie', vtexResponse.headers)

@@ -8,8 +8,7 @@ type Product {
   brand: Brand
   properties: [Property]
   categories: [Category]
-  validUntil: String
-  seller: Seller
+  measurement: Measurement
 }
 
 type Seller {
@@ -51,4 +50,9 @@ type Facet {
   slug: String
   name: String
   values: [String]
+}
+
+type Measurement {
+  unit: String,
+  multiplier: Float
 }

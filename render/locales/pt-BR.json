@@ -1,3 +1,5 @@
 {
-  "store-graphql.title": "VTEX Store GraphQL"
+  "store-graphql.title": "VTEX Store GraphQL",
+  "store-graphql.product-example": "Exemplo Produto",
+  "store-graphql.loading": "Carregando..."
 }

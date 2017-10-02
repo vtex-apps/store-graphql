@@ -1,41 +1,77 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import {FormattedMessage} from 'react-intl'
-import {graphql, gql} from 'react-apollo'
+import { App } from './components'
+import { QueryForm } from './containers'
+import { Products, Categories } from './components'
 
-function Example ({data: {loading, products}}) {
-  return (
-    <section className="pl3 ph4-ns pv3-ns pr3 p0-ns">
-      <div>
-        <h1 className="font-display f2 f1-ns fw6 mb2">
-          <FormattedMessage id="extension-store.explore" />
-        </h1>
-      </div>
-      {loading && "Carregando..."}
-      {!loading && JSON.stringify(products)}
-    </section>
-  )
-}
+const Example = () => (
+  <App>
+    <QueryForm
+      titleId="store-graphql.products-example"
+      QueryComponent={Products}
+      fields={[
+        {
+          key: 'query',
+          value: 'test',
+          intl: {
+            name: 'store-graphql.forms.query.name',
+            optional: 'store-graphql.forms.optional',
+            desc: 'store-graphql.forms.query.desc',
+          },
+        },
+        {
+          key: 'pageSize',
+          value: 12,
+          type: 'number',
+          intl: {
+            name: 'store-graphql.forms.page-size.name',
+            optional: 'store-graphql.forms.optional',
+            desc: 'store-graphql.forms.page-size.desc',
+          },
+        },
+        {
+          key: 'category',
+          value: '',
+          intl: {
+            name: 'store-graphql.forms.category.name',
+            optional: 'store-graphql.forms.optional',
+            desc: 'store-graphql.forms.category.desc',
+          },
+        },
+        {
+          key: 'brand',
+          value: '',
+          intl: {
+            name: 'store-graphql.forms.brand.name',
+            optional: 'store-graphql.forms.optional',
+            desc: 'store-graphql.forms.brand.desc',
+          },
+        },
+        {
+          key: 'collection',
+          value: '',
+          intl: {
+            name: 'store-graphql.forms.collection.name',
+            optional: 'store-graphql.forms.optional',
+            desc: 'store-graphql.forms.collection.desc',
+          },
+        },
+        {
+          key: 'availableOnly',
+          value: false,
+          type: 'checkbox',
+          inputClassName: 'mr2 mb4',
+          intl: {
+            name: 'store-graphql.forms.available.name',
+            optional: 'store-graphql.forms.optional',
+            desc: 'store-graphql.forms.available.desc',
+          },
+        },
+      ]}
+    />
+    <QueryForm
+      titleId="store-graphql.categories-example"
+      QueryComponent={Categories}
+    />
+  </App>
+)
 
-Example.propTypes = {
-  data: PropTypes.object,
-}
-
-const query = gql`
-query Products($query: String) {
-  products(query: $query) {
-    name
-    slug
-    description
-  }
-}`
-
-const options = {
-  options: {
-    variables: {
-      query: 'test',
-    },
-  },
-}
-
-export default graphql(query, options)(Example)
+export default Example

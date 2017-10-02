@@ -1,0 +1,22 @@
+{
+  "store-graphql.title": "VTEX Store GraphQL",
+  "store-graphql.loading": "Loading...",
+  "store-graphql.products-example": "Products Example",
+  "store-graphql.categories-example": "Categories Example",
+  "store-graphql.forms.optional": "(optional)",
+  "store-graphql.forms.query.name": "Query",
+  "store-graphql.forms.query.desc": "Filters products by name",
+  "store-graphql.forms.page-size.name": "Page Size",
+  "store-graphql.forms.page-size.desc": "Quantity of products to fetch",
+  "store-graphql.forms.category.name": "Category",
+  "store-graphql.forms.category.desc": "Filters by category",
+  "store-graphql.forms.brand.name": "Brand",
+  "store-graphql.forms.brand.desc": "Filters by brand",
+  "store-graphql.forms.collection.name": "Collection",
+  "store-graphql.forms.collection.desc":
+    "Filters products in this collection id",
+  "store-graphql.forms.available.name": "Available Only",
+  "store-graphql.forms.available.desc": "Filters out unavailable products",
+  "store-graphql.forms.sort.name": "Sort",
+  "store-graphql.forms.sort.desc": "Sorts the results"
+}
