@@ -9,10 +9,8 @@ import handlePaymentTokenEndpoint from './handlePaymentTokenEndpoint'
 import axios from 'axios'
 axios.interceptors.response.use(response => response, function (error) {
   if (error.response) {
-    let message = error.response.data
-    if (!message) {
-      message = `A request to ${error.config.url} failed with message: ${error.message}.`
-    }
+    const responseData = typeof error.response.data === 'object' ? JSON.stringify(error.response.data) : error.response.data
+    const message = `External HTTP request failed. method=${error.response.config.method} status=${error.response.status} url=${error.config.url} data=${responseData}`
     throw new ResolverError(message, error.response.status)
   }
   throw error
