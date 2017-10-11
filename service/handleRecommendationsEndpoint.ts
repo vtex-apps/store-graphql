@@ -23,7 +23,6 @@ const getProductById = account => async ({Target: id}) => {
 
 export default async (body, ctx) => {
   const id = body.root.id
-
   const [prodViews, prodBuy] = await Promise.all<{Target: any}[], {Target: any}[]>([
     http.get(paths.recommendation(ctx.account, {id, type: 'ProdView'})).then(prop('data')),
     http.get(paths.recommendation(ctx.account, {id, type: 'ProdBuy'})).then(prop('data')),

@@ -1,19 +1,28 @@
 type Product {
-  slug: String
-  id: String
-  name: String
+  productId: ID
+  productName: String
+  brand: String
+  linkText: String
+  productReference: String
+  categoryId: ID
+  categories: [String]
+  categoriesIds: [String]
+  link: String
   description: String
-  skus: [SKU]
-  recommendations: Recommendation @resolve
-  brand: Brand
-  properties: [Property]
-  categories: [Category]
-  measurement: Measurement
+  items: [SKU]
+  properties: [Property] @resolve
+  # TODO
+  # clusterHighlights
+  # Características
+  # specification groups
 }
 
 type Seller {
-  id: String
-  name: String
+  sellerId: ID
+  sellerName: String
+  addToCartLink: String
+  sellerDefault: Boolean
+  commertialOffer: Offer
 }
 
 type Recommendation {
@@ -22,37 +31,60 @@ type Recommendation {
 }
 
 type SKU {
-  id: String
+  itemId: ID
   name: String
+  nameComplete: String
+  complementName: String
+  ean: String
+  measurementUnit: String
+  unitMultiplier: Float
   images: [Image]
-  offers: [Offer]
-  properties: [Property]
+  sellers: [Seller]
+  variations: [String]
+
+  # TODO
+  # modalType
 }
 
 type Offer {
-  availability: Int
-  price: Float
-  listPrice: Float
-  validUntil: String
-  seller: Seller
+  Installments: [Installment]
+  Price: Float
+  ListPrice: Float
+  PriceWithoutDiscount: Float
+  RewardValue: Float
+  PriceValidUntil: String
+  AvailableQuantity: Float
+  Tax: Float
+  CacheVersionUsedToCallCheckout: String
+
+  # TODO
+  # DeliverySlaSamplesPerRegion
+  # DeliverySlaSamples
+  # DiscountHighlught
+  # GiftSkuIds
+  # Teasers
+  # BuyTogether
 }
 
 type Image {
-  src: String
-  title: String
+  imageId: ID
+  imageLabel: String
+  imageTag: String
+  imageUrl: String
+  imageText: String
 }
 
 type Property {
-  facet: Facet
-}
-
-type Facet {
-  slug: String
   name: String
   values: [String]
 }
 
-type Measurement {
-  unit: String,
-  multiplier: Float
+type Installment {
+  Value: Float
+  InterestRate: Float
+  TotalValuePlusInterestRate: Float
+  NumberOfInstallments: Int
+  PaymentSystemName: String
+  PaymentSystemGroupName: String
+  Name: String
 }

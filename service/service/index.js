@@ -8,12 +8,11 @@ const paths_1 = require("./paths");
 const vtex_graphql_builder_1 = require("vtex-graphql-builder");
 const handlePaymentTokenEndpoint_1 = require("./handlePaymentTokenEndpoint");
 const axios_1 = require("axios");
-axios_1.default.interceptors.response.use(response => response, function (error) {
+axios_1.default.interceptors.response.use(response => { console.log(response); return response; }, function (error) {
     if (error.response) {
-        let message = error.response.data;
-        if (!message) {
-            message = `A request to ${error.config.url} failed with message: ${error.message}.`;
-        }
+        console.log(error);
+        const responseData = typeof error.response.data === 'object' ? JSON.stringify(error.response.data) : error.response.data;
+        const message = `External HTTP request failed. method=${error.response.config.method} status=${error.response.status} url=${error.config.url} data=${responseData}`;
         throw new vtex_graphql_builder_1.ResolverError(message, error.response.status);
     }
     throw error;
@@ -55,6 +54,10 @@ exports.default = vtex_graphql_builder_1.buildResolvers({
         }),
         profile: handleProfileEndpoint_1.handleProfileEndpoint,
         autocomplete: handleEndpoint_1.default({ url: paths_1.default.autocomplete }),
+        search: handleEndpoint_1.default({
+            url: paths_1.default.search,
+            headers: facadeHeaders
+        })
     },
     Mutation: {
         addItem: handleEndpoint_1.default({

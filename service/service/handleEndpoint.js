@@ -15,6 +15,7 @@ const removeDomain = (cookie) => cookie.replace(/domain=.+?(;|$)/, '');
 exports.default = ({ method = 'GET', url, data = null, headers = {}, enableCookies = false, merge = defaultMerge }) => {
     return (body, ctx, req) => __awaiter(this, void 0, void 0, function* () {
         const builtUrl = (typeof url === 'function') ? url(ctx.account, body.data, body.root) : url;
+        console.log(builtUrl);
         const builtData = (typeof data === 'function') ? data(body.data) : data;
         const builtHeaders = (typeof headers === 'function') ? yield headers(req, ctx) : headers;
         const config = { method, url: builtUrl, data: builtData, headers: builtHeaders };
@@ -22,7 +23,6 @@ exports.default = ({ method = 'GET', url, data = null, headers = {}, enableCooki
             config.headers.cookie = body.cookie;
         }
         const vtexResponse = yield axios_1.default.request(config);
-        console.log(vtexResponse);
         let cookie;
         if (enableCookies) {
             const setCookie = ramda_1.prop('set-cookie', vtexResponse.headers);

@@ -60,6 +60,9 @@ const paths = {
   placeholders: account => `http://${account}.myvtex.com/placeholders`,
 
   autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+
+  search: (account, {query = ''}) =>
+    `http://vitao.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}`,
 }
 
 export default paths
