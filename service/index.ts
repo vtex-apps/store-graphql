@@ -8,7 +8,8 @@ import handleRecommendationsEndpoint from './handleRecommendationsEndpoint'
 import paths from './paths'
 import { buildResolvers, ResolverError } from 'vtex-graphql-builder'
 import handlePaymentTokenEndpoint from './handlePaymentTokenEndpoint'
-import handleSpecification from './handleSpecification'
+import handleProductsEndpoint from './handleProductsEndpoint'
+import resolveSpecification from './resolveSpecification'
 
 import axios from 'axios'
 axios.interceptors.response.use(
@@ -39,7 +40,7 @@ export default buildResolvers({
       headers: facadeHeaders,
     }),
 
-    products: handleEndpoint({
+    products: handleProductsEndpoint({
       url: paths.products,
       headers: facadeHeaders,
     }),
@@ -206,7 +207,7 @@ export default buildResolvers({
 
   Product: {
     recommendations: handleRecommendationsEndpoint,
-    properties: handleSpecification,
+    properties: resolveSpecification,
     propertyGroups: async (body) => {
       const root = Object.assign({}, body.root)
       delete root.productId
@@ -225,13 +226,12 @@ export default buildResolvers({
       delete root.allSpecifications
 
       const names = Object.getOwnPropertyNames(root).map(name => ({name, properties: body.root[name]})) || []
-      console.log(names)
       return {data: names}
     },
     clusterHighlights: async(body) => ({data:(Object.getOwnPropertyNames(body.root.clusterHighlights).map(id=>({id, name: body.root.clusterHighlights[id]})) || [])}),
   },
 
-  SKU: { variations: handleSpecification },
+  SKU: { variations: resolveSpecification },
 
   Attachment: {domainValues: async (body) => ({data:JSON.parse(body.root.domainValues)})}
 })

@@ -73,13 +73,6 @@ type Offer {
   Tax: Float
   CacheVersionUsedToCallCheckout: String
   DeliverySlaSamples: [DeliverySlaSamples]
-  # TODO
-  # DeliverySlaSamplesPerRegion
-  # DeliverySlaSamples
-  # DiscountHighlight
-  # GiftSkuIds
-  # Teasers
-  # BuyTogether
 }
 
 type DeliverySlaSamples {
