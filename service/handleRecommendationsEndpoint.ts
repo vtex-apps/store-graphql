@@ -12,7 +12,7 @@ const getProductById = account => async ({Target: id}) => {
       headers: {accept: 'application/vnd.vtex.search-api.v0+json' },
     }
     const {data} = await http.request(config)
-    return data
+    return data[0]
   } catch (err) {
     if (err.response && err.response.status === 404) {
       return null
@@ -22,12 +22,12 @@ const getProductById = account => async ({Target: id}) => {
 }
 
 export default async (body, ctx) => {
-  const id = body.root.id
-
+  const id = body.root.productId
   const [prodViews, prodBuy] = await Promise.all<{Target: any}[], {Target: any}[]>([
     http.get(paths.recommendation(ctx.account, {id, type: 'ProdView'})).then(prop('data')),
     http.get(paths.recommendation(ctx.account, {id, type: 'ProdBuy'})).then(prop('data')),
   ])
+
   const [buy, view] = await Promise.all([
     Promise.map(prodViews, getProductById(ctx.account)),
     Promise.map(prodBuy, getProductById(ctx.account)),

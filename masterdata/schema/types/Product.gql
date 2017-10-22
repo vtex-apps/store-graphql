@@ -1,19 +1,32 @@
 type Product {
-  slug: String
-  id: String
-  name: String
+  brand: String
+  categoryId: ID
+  categories: [String]
+  categoriesIds: [String]
+  clusterHighlights: [ClusterHighlight] @resolve
   description: String
-  skus: [SKU]
+  items: [SKU]
+  link: String
+  linkText: String
+  productId: ID
+  productName: String
+  properties: [Property] @resolve
+  propertyGroups: [PropertyGroup] @resolve
+  productReference: String
   recommendations: Recommendation @resolve
-  brand: Brand
-  properties: [Property]
-  categories: [Category]
-  measurement: Measurement
+}
+
+type ClusterHighlight {
+  id: ID
+  name: String
 }
 
 type Seller {
-  id: String
-  name: String
+  sellerId: ID
+  sellerName: String
+  addToCartLink: String
+  sellerDefault: Boolean
+  commertialOffer: Offer
 }
 
 type Recommendation {
@@ -22,37 +35,96 @@ type Recommendation {
 }
 
 type SKU {
-  id: String
+  itemId: ID
   name: String
+  nameComplete: String
+  complementName: String
+  ean: String
+  referenceId: [Reference]
+  measurementUnit: String
+  unitMultiplier: Float
   images: [Image]
-  offers: [Offer]
-  properties: [Property]
+  sellers: [Seller]
+  variations: [Property] @resolve
+  attachments: [Attachment]
+}
+
+type Attachment {
+  id: ID
+  name: String
+  required: Boolean
+  domainValues: [DomainValues] @resolve
+}
+
+type DomainValues {
+  FieldName: String
+  MaxCaracters: String
+  DomainValues: String
 }
 
 type Offer {
-  availability: Int
-  price: Float
-  listPrice: Float
-  validUntil: String
-  seller: Seller
+  Installments: [Installment]
+  Price: Float
+  ListPrice: Float
+  PriceWithoutDiscount: Float
+  RewardValue: Float
+  PriceValidUntil: String
+  AvailableQuantity: Float
+  Tax: Float
+  CacheVersionUsedToCallCheckout: String
+  DeliverySlaSamples: [DeliverySlaSamples]
+}
+
+type DeliverySlaSamples {
+  DeliverySlaPerTypes: [DeliverySlaPerTypes]
+  Region: Region
+}
+
+type DeliverySlaPerTypes {
+  TypeName: String
+  Price: Float
+  EstimatedTimeSpanToDelivery: String
+}
+
+type Region {
+  IsPersisted: Boolean
+  IsRemoved: Boolean
+  Id: ID
+  Name: String
+  CountryCode: String
+  ZipCode: String
+  CultureInfoName: String
 }
 
 type Image {
-  src: String
-  title: String
+  imageId: ID
+  imageLabel: String
+  imageTag: String
+  imageUrl: String
+  imageText: String
 }
 
 type Property {
-  facet: Facet
-}
-
-type Facet {
-  slug: String
   name: String
   values: [String]
 }
 
-type Measurement {
-  unit: String,
-  multiplier: Float
+type PropertyGroup {
+  name: String
+  properties: [String]
+}
+
+type Installment {
+  Value: Float
+  InterestRate: Float
+  TotalValuePlusInterestRate: Float
+  NumberOfInstallments: Int
+  PaymentSystemName: String
+  PaymentSystemGroupName: String
+  Name: String
+}
+
+type Reference {
+  Key: String
+  Value: String
 }

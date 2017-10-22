@@ -32,11 +32,11 @@ class QueryForm extends Component {
           </h1>
         )}
         <Form>
-          {fields.map(({ key, type, intl, inputClassName }) => (
+          {fields.map(({ key, type, intl, inputClassName, optional, options }) => (
             <FormGroup
               value={self.state[key]}
               onChange={self.onChangeField.bind(self, key)}
-              {...{ intl, type, key, inputClassName }}
+              {...{ intl, type, key, inputClassName, optional, options }}
             />
           ))}
         </Form>

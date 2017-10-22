@@ -19,111 +19,146 @@ ProductsExample.propTypes = {
 const query = gql`
   query Products(
     $query: String
-    $pageSize: Int
     $category: String
-    $brands: String
+    $specificationFilters: [String]
+    $priceRange: String
     $collection: String
-    $availableOnly: Boolean
-    $sort: String
+    $orderBy: String
+    $from: Int
+    $to: Int
   ) {
     products(
       query: $query
-      pageSize: $pageSize
       category: $category
-      brands: $brands
+      specificationFilters: $specificationFilters
+      priceRange: $priceRange
       collection: $collection
-      availableOnly: $availableOnly
-      sort: $sort
+      orderBy: $orderBy
+      from: $from
+      to: $to
     ) {
-      brand {
-        href
-        description
-        logo
-        name
-        slug
-      }
-      description
-      id
-      name
-      skus {
+      productId
+      productName
+      brand
+      linkText
+      productReference
+      categoryId
+      categories
+      categoriesIds
+      clusterHighlights {
         id
         name
+      }
+      link
+      description
+      items {
+        itemId
+        name
+        nameComplete
+        complementName
+        ean
+        referenceId {
+          Key
+          Value
+        }
+        measurementUnit
+        unitMultiplier
         images {
-          src
-          title
+          imageId
+          imageLabel
+          imageTag
+          imageUrl
+          imageText
         }
-        offers {
-          availability
-          price
-          listPrice
-          validUntil
-          seller {
-            id
-            name
+        sellers {
+          sellerId
+          sellerName
+          addToCartLink
+          sellerDefault
+          commertialOffer {
+            Installments {
+              Value
+              InterestRate
+              TotalValuePlusInterestRate
+              NumberOfInstallments
+              PaymentSystemName
+              PaymentSystemGroupName
+              Name
+            }
+            Price
+            ListPrice
+            PriceWithoutDiscount
+            RewardValue
+            PriceValidUntil
+            AvailableQuantity
+            Tax
+            CacheVersionUsedToCallCheckout
+            DeliverySlaSamples {
+              DeliverySlaPerTypes {
+                TypeName
+                Price
+                EstimatedTimeSpanToDelivery
+              }
+              Region {
+                IsPersisted
+                IsRemoved
+                Id
+                Name
+                CountryCode
+                ZipCode
+                CultureInfoName
+              }
+            }
           }
         }
-        properties {
-          facet {
-            slug
-            name
-            values
-          }
-        }
-      }
-      recommendations {
-        buy {
-          id
-          slug
-        }
-        view {
-          id
-          slug
-        }
-      }
-      properties {
-        facet {
-          slug
+        variations {
           name
           values
         }
-      }
-      categories {
-        href
-        slug
-        name
-        children {
-          href
-          slug
+        attachments {
+          id
           name
+          required
+          domainValues {
+            FieldName
+            MaxCaracters
+            DomainValues
+          }
         }
       }
-      slug
-      measurement {
-        unit
-        multiplier
+      properties {
+        name
+        values
+      }
+      propertyGroups {
+        name
+        properties
+      }
+      recommendations {
+        buy {
+          productId
+          productName
+        }
+        view {
+          productId
+          productName
+        }
       }
     }
   }
 `
 
 const options = {
-  options: ({
-    query = 'test',
-    pageSize = 12,
-    category = '',
-    brands = '',
-    collection = '',
-    availableOnly = false,
-    sort = '',
-  }) => ({
+  options: ({ query = '', category = '', specificationFilters = '', priceRange = '', collection = '', orderBy = '', from = 0, to = 10 }) => ({
     variables: {
       query,
-      pageSize,
       category,
-      brands,
+      specificationFilters: specificationFilters?[specificationFilters]:[],
+      priceRange,
       collection,
-      availableOnly,
-      sort,
+      orderBy,
+      from,
+      to
     },
   }),
 }

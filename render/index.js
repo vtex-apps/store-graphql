@@ -1,6 +1,6 @@
 import { App } from './components'
 import { QueryForm } from './containers'
-import { Products, Categories } from './components'
+import { Products } from './components'
 
 const Example = () => (
   <App>
@@ -11,66 +11,92 @@ const Example = () => (
         {
           key: 'query',
           value: 'test',
+          optional: true,
           intl: {
             name: 'store-graphql.forms.query.name',
-            optional: 'store-graphql.forms.optional',
             desc: 'store-graphql.forms.query.desc',
-          },
-        },
-        {
-          key: 'pageSize',
-          value: 12,
-          type: 'number',
-          intl: {
-            name: 'store-graphql.forms.page-size.name',
-            optional: 'store-graphql.forms.optional',
-            desc: 'store-graphql.forms.page-size.desc',
           },
         },
         {
           key: 'category',
           value: '',
+          optional: true,
           intl: {
             name: 'store-graphql.forms.category.name',
-            optional: 'store-graphql.forms.optional',
             desc: 'store-graphql.forms.category.desc',
-          },
+          }
         },
         {
-          key: 'brand',
+          key: 'specificationFilters',
           value: '',
+          optional: true,
           intl: {
-            name: 'store-graphql.forms.brand.name',
-            optional: 'store-graphql.forms.optional',
-            desc: 'store-graphql.forms.brand.desc',
-          },
+            name: 'store-graphql.forms.spec.name',
+            desc: 'store-graphql.forms.spec.desc',
+          }
+        },
+        {
+          key: 'priceRange',
+          value: '',
+          optional: true,
+          intl: {
+            name: 'store-graphql.forms.price.name',
+            desc: 'store-graphql.forms.price.desc',
+          }
         },
         {
           key: 'collection',
           value: '',
+          optional: true,
           intl: {
             name: 'store-graphql.forms.collection.name',
-            optional: 'store-graphql.forms.optional',
             desc: 'store-graphql.forms.collection.desc',
-          },
+          }
         },
         {
-          key: 'availableOnly',
-          value: false,
-          type: 'checkbox',
-          inputClassName: 'mr2 mb4',
+          key: 'orderBy',
+          type: 'select',
+          value: 'OrderByPriceDESC',
+          options: [
+            'OrderByPriceDESC',
+            'OrderByPriceASC',
+            'OrderByTopSaleDESC',
+            'OrderByReviewRateDESC',
+            'OrderByNameASC',
+            'OrderByNameDESC',
+            'OrderByReleaseDateDESC',
+            'OrderByBestDiscountDESC'
+          ],
           intl: {
-            name: 'store-graphql.forms.available.name',
-            optional: 'store-graphql.forms.optional',
-            desc: 'store-graphql.forms.available.desc',
-          },
+            name: 'store-graphql.forms.order.name',
+            desc: 'store-graphql.forms.order.desc',
+          }
         },
+        {
+          key: 'from',
+          value: 0,
+          type: 'number',
+          optional: true,
+          intl: {
+            name: 'store-graphql.forms.pagingFrom.name',
+            desc: 'store-graphql.forms.pagingFrom.desc',
+          }
+        },
+        {
+          key: 'to',
+          value: 9,
+          type: 'number',
+          intl: {
+            name: 'store-graphql.forms.pagingTo.name',
+            desc: 'store-graphql.forms.pagingTo.desc',
+          }
+        }
       ]}
     />
-    <QueryForm
+    {/* <QueryForm
       titleId="store-graphql.categories-example"
       QueryComponent={Categories}
-    />
+    /> */}
   </App>
 )
 
