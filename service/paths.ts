@@ -1,13 +1,21 @@
+const buildFilters = (specificationFilters = []) => {
+  let filters = ''
+  for (const filter of specificationFilters) filters += 'fq=specificationFilter_' + filter + ','
+  return filters ? '&' + filters.replace(/,$/,'') : ''
+}
+
 const paths = {
-  product: (account, {slug}) => `http://api.vtex.com/${account}/products/${slug}`,
+  product: (account, {slug}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search$/${slug}/p`,
 
-  productById: (account, {id}) => `http://api.vtex.com/${account}/products/?id=${id}`,
+  productById: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=productId:${id}`,
 
-  products: (account, {query, category, brands, collection, pageSize, availableOnly, sort}) =>
-    `http://api.vtex.com/${account}/products/?query=${encodeURIComponent(query)}&category=${category}&brands=${brands}&collection=${collection}&pageSize=${pageSize}&availableOnly=${availableOnly}&sort=${sort}`,
+  productBySku: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId=${id}`,
+  productByReference: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_RefId=${id}`,
+  productByEan: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_Ean=${id}`,
 
-  recommendation: (account, {id, type}) =>
-    `http://edge.vtexcommerce.com.br/api/pub/edge/Entries/MarketPlace/${account}/${id}/${type}?limit=8`,
+  products: (account, {query = '', fulltext = '', category ='', specificationFilters, priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${buildFilters(specificationFilters)}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:true`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
+
+  recommendation: (account, {id, type}) => `http://edge.vtexcommerce.com.br/api/pub/edge/Entries/MarketPlace/${account}/${id}/${type}?limit=8`,
 
   category: (account, {slug}) => `http://api.vtex.com/${account}/categories/${slug}`,
 
@@ -60,9 +68,6 @@ const paths = {
   placeholders: account => `http://${account}.myvtex.com/placeholders`,
 
   autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
-
-  search: (account, {query = ''}) =>
-    `http://vitao.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}`,
 }
 
 export default paths

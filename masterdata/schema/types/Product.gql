@@ -11,6 +11,7 @@ type Product {
   description: String
   items: [SKU]
   properties: [Property] @resolve
+  recommendations: Recommendation @resolve
   # TODO
   # clusterHighlights
   # Características
@@ -36,14 +37,29 @@ type SKU {
   nameComplete: String
   complementName: String
   ean: String
+  referenceId: [Reference]
   measurementUnit: String
   unitMultiplier: Float
   images: [Image]
   sellers: [Seller]
   variations: [String]
-
+  attachments: [Attachment]
   # TODO
   # modalType
+  # attachments
+}
+
+type Attachment {
+  id: ID
+  name: String
+  require: Boolean
+  domainValues: DomainValues @resolve
+}
+
+type DomainValues {
+  FieldName: String
+  MaxCaracters: Int
+  DomainValues: String
 }
 
 type Offer {
@@ -60,7 +76,7 @@ type Offer {
   # TODO
   # DeliverySlaSamplesPerRegion
   # DeliverySlaSamples
-  # DiscountHighlught
+  # DiscountHighlight
   # GiftSkuIds
   # Teasers
   # BuyTogether
@@ -87,4 +103,9 @@ type Installment {
   PaymentSystemName: String
   PaymentSystemGroupName: String
   Name: String
+}
+
+type Reference {
+  Key: String
+  Value: String
 }

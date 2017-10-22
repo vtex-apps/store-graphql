@@ -1,9 +1,11 @@
 import { FormattedMessage } from 'react-intl'
 
 const FormGroup = ({
-  intl: { name, optional, desc },
+  intl: { name, desc },
   inputClassName = 'input-reset ba b--black-20 pa2 mb2 db w-100',
   value,
+  options,
+  optional,
   onChange,
   type = 'text',
 }) => (
@@ -12,16 +14,21 @@ const FormGroup = ({
       <FormattedMessage id={name} />{' '}
       {optional && (
         <span className="normal black-60">
-          <FormattedMessage id={optional} />
+          <FormattedMessage id="store-graphql.forms.optional" />
         </span>
       )}
     </label>
-    <input
-      id={name}
-      className={inputClassName}
-      aria-describedby={desc ? `${name}-desc` : false}
-      {...{ value, onChange, type }}
-    />
+    { type != 'select' ?
+      <input
+        id={name}
+        className={inputClassName}
+        aria-describedby={desc ? `${name}-desc` : false}
+        {...{ value, onChange, type }}
+      />
+      : <select onChange={onChange} value={value}>
+        {options.map(option => <option value={option}>{option}</option> )}
+      </select>
+    }
     {desc && (
       <small id={`${name}-desc`} className="f6 black-60 db mb2">
         <FormattedMessage id={desc} />

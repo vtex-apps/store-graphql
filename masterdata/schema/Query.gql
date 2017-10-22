@@ -1,14 +1,14 @@
 type Query {
   product(slug: String): Product
-  products(
-    query: String = "",
-    category: String = "",
-    brands: String = "",
-    collection: String = "",
-    pageSize: Int = 10,
-    availableOnly: Boolean = false,
-    sort: String = ""
-  ): [Product]
+  # products(
+  #   query: String = "",
+  #   category: String = "",
+  #   brands: String = "",
+  #   collection: String = "",
+  #   pageSize: Int = 10,
+  #   availableOnly: Boolean = false,
+  #   sort: String = ""
+  # ): [Product]
 
   category(slug: String): Category
   categories: [Category]
@@ -24,5 +24,5 @@ type Query {
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 
-  search(query: String): [Product]
+  products(query: String, category: String, specificationFilters: [String], priceRange: String, collection: String, salesChannel: Int, orderBy: String, from: Int, to: Int): [Product]
 }

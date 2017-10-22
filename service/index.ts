@@ -75,11 +75,6 @@ export default buildResolvers({
     profile: handleProfileEndpoint,
 
     autocomplete: handleEndpoint({ url: paths.autocomplete }),
-
-    search: handleEndpoint({
-      url: paths.search,
-      headers: facadeHeaders,
-    }),
   },
 
   Mutation: {
@@ -219,4 +214,11 @@ export default buildResolvers({
       return {data: specs}
     },
   },
+
+  Attachment: {
+    domainValues: async (body) => {
+      console.log(body.root.productId)
+      return {data:null}
+    }
+  }
 })
