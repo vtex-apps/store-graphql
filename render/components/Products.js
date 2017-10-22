@@ -95,7 +95,10 @@ const query = gql`
             CacheVersionUsedToCallCheckout
           }
         }
-        variations
+        variations {
+          name
+          values
+        }
         attachments {
           id
           name

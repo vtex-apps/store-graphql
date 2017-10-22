@@ -44,7 +44,7 @@ type SKU {
   unitMultiplier: Float
   images: [Image]
   sellers: [Seller]
-  variations: [String]
+  variations: [Property] @resolve
   attachments: [Attachment]
   # TODO
   # modalType

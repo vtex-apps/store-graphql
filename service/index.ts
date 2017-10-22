@@ -206,14 +206,7 @@ export default buildResolvers({
 
   Product: {
     recommendations: handleRecommendationsEndpoint,
-    properties: async (body) => {
-      const root = body.root
-      const specs = (root.allSpecifications || []).map(spec => ({
-        name: spec,
-        values: root[spec]
-      }))
-      return {data: specs}
-    },
+    properties: handleSpecification,
     clusterHighlights: async(body) => ({data:(Object.getOwnPropertyNames(body.root.clusterHighlights).map(id=>({id, name: body.root.clusterHighlights[id]})) || [])}),
   },
 
