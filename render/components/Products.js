@@ -92,6 +92,16 @@ const query = gql`
           }
         }
         variations
+        attachments {
+          id
+          name
+          required
+          domainValues {
+            FieldName
+            MaxCaracters
+            DomainValues
+          }
+        }
       }
       properties {
         name

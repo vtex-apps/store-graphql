@@ -52,13 +52,13 @@ type SKU {
 type Attachment {
   id: ID
   name: String
-  require: Boolean
-  domainValues: DomainValues @resolve
+  required: Boolean
+  domainValues: [DomainValues] @resolve
 }
 
 type DomainValues {
   FieldName: String
-  MaxCaracters: Int
+  MaxCaracters: String
   DomainValues: String
 }
 

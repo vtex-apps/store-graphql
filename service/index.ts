@@ -215,10 +215,5 @@ export default buildResolvers({
     },
   },
 
-  Attachment: {
-    domainValues: async (body) => {
-      console.log(body.root.productId)
-      return {data:null}
-    }
-  }
+  Attachment: {domainValues: async (body) => ({data:JSON.parse(body.root.domainValues)})}
 })
