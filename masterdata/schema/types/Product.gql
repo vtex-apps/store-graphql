@@ -11,6 +11,7 @@ type Product {
   productId: ID
   productName: String
   properties: [Property] @resolve
+  propertyGroups: [String] @resolve
   productReference: String
   recommendations: Recommendation @resolve
 }
@@ -46,8 +47,6 @@ type SKU {
   sellers: [Seller]
   variations: [Property] @resolve
   attachments: [Attachment]
-  # TODO
-  # modalType
 }
 
 type Attachment {

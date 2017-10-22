@@ -114,6 +114,7 @@ const query = gql`
         name
         values
       }
+      propertyGroups
       recommendations {
         buy {
           productId

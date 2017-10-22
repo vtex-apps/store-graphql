@@ -207,6 +207,27 @@ export default buildResolvers({
   Product: {
     recommendations: handleRecommendationsEndpoint,
     properties: handleSpecification,
+    propertyGroups: async (body) => {
+      const root = Object.assign({}, body.root)
+      delete root.productId
+      delete root.productName
+      delete root.brand
+      delete root.link
+      delete root.linkText
+      delete root.productReference
+      delete root.items
+      delete root.categoryId
+      delete root.categories
+      delete root.categoriesIds
+      delete root.clusterHighlights
+      delete root.description
+      if (root.allSpecifications) for (const spec of root.allSpecifications) delete root[spec]
+      delete root.allSpecifications
+
+      const names = Object.getOwnPropertyNames(root) || []
+      console.log(names)
+      return {data: names}
+    },
     clusterHighlights: async(body) => ({data:(Object.getOwnPropertyNames(body.root.clusterHighlights).map(id=>({id, name: body.root.clusterHighlights[id]})) || [])}),
   },
 
