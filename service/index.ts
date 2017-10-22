@@ -224,16 +224,14 @@ export default buildResolvers({
       if (root.allSpecifications) for (const spec of root.allSpecifications) delete root[spec]
       delete root.allSpecifications
 
-      const names = Object.getOwnPropertyNames(root) || []
+      const names = Object.getOwnPropertyNames(root).map(name => ({name, properties: body.root[name]})) || []
       console.log(names)
       return {data: names}
     },
     clusterHighlights: async(body) => ({data:(Object.getOwnPropertyNames(body.root.clusterHighlights).map(id=>({id, name: body.root.clusterHighlights[id]})) || [])}),
   },
 
-  SKU: {
-    variations: handleSpecification
-  },
+  SKU: { variations: handleSpecification },
 
   Attachment: {domainValues: async (body) => ({data:JSON.parse(body.root.domainValues)})}
 })

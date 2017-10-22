@@ -11,7 +11,7 @@ type Product {
   productId: ID
   productName: String
   properties: [Property] @resolve
-  propertyGroups: [String] @resolve
+  propertyGroups: [PropertyGroup] @resolve
   productReference: String
   recommendations: Recommendation @resolve
 }
@@ -72,7 +72,7 @@ type Offer {
   AvailableQuantity: Float
   Tax: Float
   CacheVersionUsedToCallCheckout: String
-
+  DeliverySlaSamples: [DeliverySlaSamples]
   # TODO
   # DeliverySlaSamplesPerRegion
   # DeliverySlaSamples
@@ -80,6 +80,27 @@ type Offer {
   # GiftSkuIds
   # Teasers
   # BuyTogether
+}
+
+type DeliverySlaSamples {
+  DeliverySlaPerTypes: [DeliverySlaPerTypes]
+  Region: Region
+}
+
+type DeliverySlaPerTypes {
+  TypeName: String
+  Price: Float
+  EstimatedTimeSpanToDelivery: String
+}
+
+type Region {
+  IsPersisted: Boolean
+  IsRemoved: Boolean
+  Id: ID
+  Name: String
+  CountryCode: String
+  ZipCode: String
+  CultureInfoName: String
 }
 
 type Image {
@@ -93,6 +114,11 @@ type Image {
 type Property {
   name: String
   values: [String]
+}
+
+type PropertyGroup {
+  name: String
+  properties: [String]
 }
 
 type Installment {

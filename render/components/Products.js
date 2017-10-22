@@ -93,6 +93,22 @@ const query = gql`
             AvailableQuantity
             Tax
             CacheVersionUsedToCallCheckout
+            DeliverySlaSamples {
+              DeliverySlaPerTypes {
+                TypeName
+                Price
+                EstimatedTimeSpanToDelivery
+              }
+              Region {
+                IsPersisted
+                IsRemoved
+                Id
+                Name
+                CountryCode
+                ZipCode
+                CultureInfoName
+              }
+            }
           }
         }
         variations {
@@ -114,7 +130,10 @@ const query = gql`
         name
         values
       }
-      propertyGroups
+      propertyGroups {
+        name
+        properties
+      }
       recommendations {
         buy {
           productId
