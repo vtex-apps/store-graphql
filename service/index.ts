@@ -8,6 +8,7 @@ import handleRecommendationsEndpoint from './handleRecommendationsEndpoint'
 import paths from './paths'
 import { buildResolvers, ResolverError } from 'vtex-graphql-builder'
 import handlePaymentTokenEndpoint from './handlePaymentTokenEndpoint'
+import handleSpecification from './handleSpecification'
 
 import axios from 'axios'
 axios.interceptors.response.use(
@@ -213,6 +214,11 @@ export default buildResolvers({
       }))
       return {data: specs}
     },
+    clusterHighlights: async(body) => ({data:(Object.getOwnPropertyNames(body.root.clusterHighlights).map(id=>({id, name: body.root.clusterHighlights[id]})) || [])}),
+  },
+
+  SKU: {
+    variations: handleSpecification
   },
 
   Attachment: {domainValues: async (body) => ({data:JSON.parse(body.root.domainValues)})}

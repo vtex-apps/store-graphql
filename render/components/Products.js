@@ -45,6 +45,10 @@ const query = gql`
       categoryId
       categories
       categoriesIds
+      clusterHighlights {
+        id
+        name
+      }
       link
       description
       items {

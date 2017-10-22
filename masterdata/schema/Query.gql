@@ -1,14 +1,16 @@
 type Query {
   product(slug: String): Product
-  # products(
-  #   query: String = "",
-  #   category: String = "",
-  #   brands: String = "",
-  #   collection: String = "",
-  #   pageSize: Int = 10,
-  #   availableOnly: Boolean = false,
-  #   sort: String = ""
-  # ): [Product]
+  products(
+    query: String = "",
+    category: String = "",
+    specificationFilters: [String],
+    priceRange: String = "",
+    collection: String = "",
+    salesChannel: String = "",
+    orderBy: String = "OrderByPriceDESC",
+    from: Int = 0,
+    to: Int = 9
+  ): [Product]
 
   category(slug: String): Category
   categories: [Category]
@@ -23,6 +25,4 @@ type Query {
   profile: Profile
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
-
-  products(query: String, category: String, specificationFilters: [String], priceRange: String, collection: String, salesChannel: Int, orderBy: String, from: Int, to: Int): [Product]
 }

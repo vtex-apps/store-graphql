@@ -1,21 +1,23 @@
 type Product {
-  productId: ID
-  productName: String
   brand: String
-  linkText: String
-  productReference: String
   categoryId: ID
   categories: [String]
   categoriesIds: [String]
-  link: String
+  clusterHighlights: [ClusterHighlight] @resolve
   description: String
   items: [SKU]
+  link: String
+  linkText: String
+  productId: ID
+  productName: String
   properties: [Property] @resolve
+  productReference: String
   recommendations: Recommendation @resolve
-  # TODO
-  # clusterHighlights
-  # Características
-  # specification groups
+}
+
+type ClusterHighlight {
+  id: ID
+  name: String
 }
 
 type Seller {
@@ -46,7 +48,6 @@ type SKU {
   attachments: [Attachment]
   # TODO
   # modalType
-  # attachments
 }
 
 type Attachment {
