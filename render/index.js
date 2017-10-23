@@ -1,6 +1,6 @@
 import { App } from './components'
 import { QueryForm } from './containers'
-import { Products } from './components'
+import { Products, Facets } from './components'
 
 const Example = () => (
   <App>
@@ -93,10 +93,20 @@ const Example = () => (
         }
       ]}
     />
-    {/* <QueryForm
-      titleId="store-graphql.categories-example"
-      QueryComponent={Categories}
-    /> */}
+    <QueryForm
+      titleId="store-graphql.facets-example"
+      fields={[
+        {
+          key: 'facets',
+          value: 'testing-category?map=c',
+          intl: {
+            name: 'store-graphql.forms.facets.name',
+            desc: 'store-graphql.forms.facets.desc',
+          }
+        }
+      ]}
+      QueryComponent={Facets}
+    />
   </App>
 )
 

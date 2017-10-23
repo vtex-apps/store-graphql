@@ -2,12 +2,13 @@ const paths = {
   product: (account, {slug}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search$/${slug}/p`,
 
   productById: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=productId:${id}`,
-
   productBySku: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId=${id}`,
   productByReference: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_RefId=${id}`,
   productByEan: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_Ean=${id}`,
 
   products: (account, {query = '', fulltext = '', category ='', specificationFilters, priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${specificationFilters && '&' + specificationFilters}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:true`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
+
+  facets: (account, {facets=''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
 
   recommendation: (account, {id, type}) => `http://edge.vtexcommerce.com.br/api/pub/edge/Entries/MarketPlace/${account}/${id}/${type}?limit=8`,
 
