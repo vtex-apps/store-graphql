@@ -2,6 +2,16 @@ type OrderForm {
   orderFormId: String
   value: Float
   items: [OrderFormItem]
+  salesChannel: String
+  loggedIn: Boolean
+  isCheckedIn: Boolean
+  storeId: String
+  allowManualPrice: Boolean
+  canEditData: Boolean
+  userProfileId: String
+  userType: String
+  ignoreProfileData: Boolean
+  totalizers: [Totalizer]
 }
 
 type OrderFormItem {
@@ -10,6 +20,12 @@ type OrderFormItem {
   skuName: String
   price: String
   quantity: Float
+}
+
+type Totalizer {
+  id: ID
+  name: String
+  value: Float
 }
 
 input OrderFormItemInput {

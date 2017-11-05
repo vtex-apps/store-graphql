@@ -18,7 +18,7 @@ const paths = {
   shipping: (account, {skuId, postalCode}) =>
     `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
 
-  orderForm: (account, env = 'stable') => `http://${account}.vtexcommerce${env}.com.br/api/checkout/pub/orderForm`,
+  orderForm: (account, env = 'stable') => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
 
   orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/clientProfileData`,
 

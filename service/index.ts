@@ -55,7 +55,7 @@ export default buildResolvers({
       method: 'POST',
       enableCookies: true,
       url: paths.orderForm,
-      data: {expectedOrderFormSections: ['items']},
+      data: { expectedOrderFormSections: ['items', 'totalizers'] },
     }),
 
     orders: handleEndpoint({
