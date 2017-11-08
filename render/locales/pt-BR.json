@@ -3,6 +3,7 @@
   "store-graphql.loading": "Carregando...",
   "store-graphql.products-example": "Exemplo Produto",
   "store-graphql.categories-example": "Exemplo Categorias",
+  "store-graphql.facets-example": "Exemplo Facets",
   "store-graphql.forms.optional": "(opcional)",
   "store-graphql.forms.query.name": "Query",
   "store-graphql.forms.query.desc": "Filtra produtos por nome",
@@ -20,5 +21,7 @@
   "store-graphql.forms.pagingFrom.name": "Paginação De",
   "store-graphql.forms.pagingFrom.desc": "de",
   "store-graphql.forms.pagingTo.name": "Paginação Até",
-  "store-graphql.forms.pagingTo.desc": "até"
+  "store-graphql.forms.pagingTo.desc": "até",
+  "store-graphql.forms.facets.name": "Facets e mapeamentos",
+  "store-graphql.forms.facets.desc": "Formatado como {facet1}/{facet2}?map={facet1type},{facet2type}, etc..."
 }

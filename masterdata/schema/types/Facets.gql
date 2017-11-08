@@ -1,0 +1,18 @@
+type Facets {
+	Departments: [Facet]
+	Brands: [Facet]
+	SpecificationFilters: [Filter] @resolve
+	CategoriesTrees: [Facet]
+}
+
+type Facet {
+	Quantity: Int
+	Name: String
+	Link: String
+	Children: [Facet]
+}
+
+type Filter {
+	name: String
+	facets: [Facet]
+}

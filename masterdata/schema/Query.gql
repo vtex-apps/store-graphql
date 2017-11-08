@@ -12,6 +12,8 @@ type Query {
     to: Int = 9
   ): [Product]
 
+  facets(facets: String = ""): Facets
+
   category(slug: String): Category
   categories: [Category]
 
