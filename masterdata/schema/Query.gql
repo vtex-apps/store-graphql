@@ -3,11 +3,13 @@ type Query {
   products(
     query: String = "",
     category: String = "",
-    brands: String = "",
+    specificationFilters: [String],
+    priceRange: String = "",
     collection: String = "",
-    pageSize: Int = 10,
-    availableOnly: Boolean = false,
-    sort: String = ""
+    salesChannel: String = "",
+    orderBy: String = "OrderByPriceDESC",
+    from: Int = 0,
+    to: Int = 9
   ): [Product]
 
   category(slug: String): Category
