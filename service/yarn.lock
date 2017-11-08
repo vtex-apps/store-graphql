@@ -22,11 +22,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*":
-  version "8.0.28"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.28.tgz#86206716f8d9251cf41692e384264cbd7058ad60"
-
-"@types/node@^7.0.8":
+"@types/node@*", "@types/node@^7.0.8":
   version "7.0.43"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.43.tgz#a187e08495a075f200ca946079c914e1a5fe962c"
 
@@ -220,7 +216,7 @@ supports-color@^4.0.0:
   dependencies:
     has-flag "^2.0.0"
 
-ts-node@^3.3.0:
+ts-node@3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-3.3.0.tgz#c13c6a3024e30be1180dd53038fc209289d4bf69"
   dependencies:

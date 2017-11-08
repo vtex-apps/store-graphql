@@ -4,11 +4,18 @@ import {prop, map} from 'ramda'
 const defaultMerge = (bodyData, resData) => resData
 const removeDomain = (cookie) => cookie.replace(/domain=.+?(;|$)/, '')
 
+const buildFilters = (specificationFilters = []) => {
+  let filters = ''
+  for (const filter of specificationFilters) filters += 'fq=specificationFilter_' + filter + '&'
+  return filters ? '&' + filters.replace(/&$/,'') : ''
+}
+
 export default (
     {method = 'GET', url, data = null, headers = {}, enableCookies = false, merge = defaultMerge}:
     {method?: string, url?: any, data?: any, headers?: any, enableCookies?: boolean, merge?: Function}
   ) => {
   return async (body, ctx, req) => {
+		body.data.specificationFilters = buildFilters(body.data.specificationFilters)
     const builtUrl = (typeof url === 'function') ? url(ctx.account, body.data, body.root) : url
     const builtData = (typeof data === 'function') ? data(body.data) : data
     const builtHeaders = (typeof headers === 'function') ? await headers(req, ctx) : headers
