@@ -1,13 +1,13 @@
-import {merge, reject, propEq, last} from 'ramda'
-import paths from './paths'
 import http from 'axios'
+import {last, merge, propEq, reject} from 'ramda'
+import paths from '../paths'
 
 const createClient = (account, orderFormId, authToken) => {
 
   const headers = {
+    Accept: 'application/json',
     Authorization: `bearer ${authToken}`,
     'Content-Type': 'application/json',
-    Accept: 'application/json',
   }
 
   return {
@@ -25,9 +25,9 @@ const createClient = (account, orderFormId, authToken) => {
   }
 }
 
-export default async (body, ctx, req) => {
+export default async (body, ioContext) => {
   const {data: {orderFormId, paymentToken}} = body
-  const checkout = createClient(ctx.account, orderFormId, ctx.authToken)
+  const checkout = createClient(ioContext.account, orderFormId, ioContext.authToken)
 
   const response = await checkout.addToken(paymentToken)
 
@@ -38,6 +38,6 @@ export default async (body, ctx, req) => {
     return {data: merge(body.data, response.data)}
   }
 
-  const lastDeleteResponse = await Promise.mapSeries(tokensToRemove, ({tokenId}) => checkout.removeToken(tokenId)).then(last)
-  return {data: merge(body.data, lastDeleteResponse['data'])}
+  const lastDeleteResponse = await Promise.mapSeries(tokensToRemove, ({tokenId}) => checkout.removeToken(tokenId)).then<any>(last)
+  return {data: merge(body.data, lastDeleteResponse.data)}
 }

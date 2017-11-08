@@ -11,7 +11,7 @@
     "vtex.masterdata-graphql": "0.x"
   },
   "builders": {
-    "service-js": "0.x",
+    "service-js": "1.x",
     "render": "3.x"
   },
   "mustUpdateAt": "2017-09-05",
