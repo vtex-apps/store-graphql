@@ -12,7 +12,7 @@
   },
   "builders": {
     "service-js": "1.x",
-    "render": "3.x"
+    "render": "4.x"
   },
   "mustUpdateAt": "2017-09-05",
   "scripts": {
