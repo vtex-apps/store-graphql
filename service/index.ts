@@ -45,6 +45,11 @@ export default buildResolvers({
       headers: facadeHeaders,
     }),
 
+    facets: handleEndpoint({
+      url: paths.facets,
+      headers: facadeHeaders
+    }),
+
     category: handleEndpoint({
       url: paths.category,
       headers: facadeHeaders,
@@ -233,5 +238,16 @@ export default buildResolvers({
 
   SKU: { variations: resolveSpecification },
 
-  Attachment: {domainValues: async (body) => ({data:JSON.parse(body.root.domainValues)})}
+  Attachment: {domainValues: async (body) => ({data:JSON.parse(body.root.domainValues)})},
+
+  Facets: {
+    SpecificationFilters: async (body) => {
+      const { SpecificationFilters } = body.root
+      const builtFilters = (Object.getOwnPropertyNames(SpecificationFilters).map(name => ({
+        name,
+        facets: SpecificationFilters[name]
+      })) || [])
+      return ({data: builtFilters })
+    }
+  }
 })
