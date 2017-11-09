@@ -1,4 +1,5 @@
 type Brand {
+  href: String
   name: String
   slug: String
   logo: String
