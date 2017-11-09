@@ -1,13 +1,15 @@
 const paths = {
-  product: (account, {slug}) => `http://api.vtex.com/${account}/products/${slug}`,
+  product: (account, {slug}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search$/${slug}/p`,
+  productByEan: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_Ean=${id}`,
+  productById: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=productId:${id}`,
+  productByReference: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_RefId=${id}`,
+  productBySku: (account, {id}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId=${id}`,
 
-  productById: (account, {id}) => `http://api.vtex.com/${account}/products/?id=${id}`,
+  products: (account, {query = '', fulltext = '', category ='', specificationFilters, priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9}) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${specificationFilters && '&' + specificationFilters}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:true`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
-  products: (account, {query, category, brands, collection, pageSize, availableOnly, sort}) =>
-    `http://api.vtex.com/${account}/products/?query=${encodeURIComponent(query)}&category=${category}&brands=${brands}&collection=${collection}&pageSize=${pageSize}&availableOnly=${availableOnly}&sort=${sort}`,
+  facets: (account, {facets=''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
 
-  recommendation: (account, {id, type}) =>
-    `http://edge.vtexcommerce.com.br/api/pub/edge/Entries/MarketPlace/${account}/${id}/${type}?limit=8`,
+  recommendation: (account, {id, type}) => `http://edge.vtexcommerce.com.br/api/pub/edge/Entries/MarketPlace/${account}/${id}/${type}?limit=8`,
 
   category: (account, {slug}) => `http://api.vtex.com/${account}/categories/${slug}`,
 
@@ -45,10 +47,10 @@ const paths = {
   identity: (account, {token}) => `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
 
   profile: account => ({
-    filterUser: (email) => `http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email`,
-    filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,state,number,street,postalCode,city,reference,addressName,addressType`,
-    profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
+    filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,state,number,street,postalCode,city,reference,addressName,addressType`,
+    filterUser: (email) => `http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email`,
+    profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
   }),
 
   gateway: account => `https://${account}.vtexpayments.com.br/api`,
@@ -56,8 +58,6 @@ const paths = {
   gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
 
   gatewayTokenizePayment: (account, {sessionId}) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
-
-  placeholders: account => `http://${account}.myvtex.com/placeholders`,
 
   autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 }

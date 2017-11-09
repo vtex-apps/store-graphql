@@ -1,0 +1,27 @@
+{
+  "store-graphql.title": "VTEX Store GraphQL",
+  "store-graphql.loading": "Loading...",
+  "store-graphql.products-example": "Products Example",
+  "store-graphql.categories-example": "Categories Example",
+  "store-graphql.facets-example": "Facets Example",
+  "store-graphql.forms.optional": "(optional)",
+  "store-graphql.forms.query.name": "Query",
+  "store-graphql.forms.query.desc": "Filters products by name",
+  "store-graphql.forms.category.name": "Category",
+  "store-graphql.forms.category.desc": "Category Ids, separated by /",
+  "store-graphql.forms.spec.name": "Specification Filter",
+  "store-graphql.forms.spec.desc": "Specification, formatted as `{id}:{value}`",
+  "store-graphql.forms.price.name": "Price Range",
+  "store-graphql.forms.price.desc": "Price from and to, formatted as `{from} TO {to}`",
+  "store-graphql.forms.collection.name": "Collection",
+  "store-graphql.forms.collection.desc":
+    "Filters products in this collection id",
+  "store-graphql.forms.order.name": "Sort",
+  "store-graphql.forms.order.desc": "Sorts the results",
+  "store-graphql.forms.pagingFrom.name": "Paging From",
+  "store-graphql.forms.pagingFrom.desc": "from",
+  "store-graphql.forms.pagingTo.name": "Paging To",
+  "store-graphql.forms.pagingTo.desc": "to",
+  "store-graphql.forms.facets.name": "Facets and mappings",
+  "store-graphql.forms.facets.desc": "Formatted as {facet1}/{facet2}?map={facet1type},{facet2type}, etc..."
+}
