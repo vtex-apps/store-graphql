@@ -15,11 +15,15 @@ type OrderForm {
 }
 
 type OrderFormItem {
+  id: ID
+  name: String
   detailUrl: String
   imageUrl: String
   skuName: String
   price: String
   quantity: Float
+  listPrice: Float
+  uniqueId: String
 }
 
 type Totalizer {
