@@ -20,10 +20,21 @@ type OrderFormItem {
   detailUrl: String
   imageUrl: String
   skuName: String
-  price: String
   quantity: Float
-  listPrice: Float
   uniqueId: String
+  id: String
+  productId: String
+  refId: String
+  ean: String
+  name: String
+  priceValidUntil: String
+  price: Int
+  tax: Int
+  listPrice: Int
+  sellingPrice: Int
+  rewardValue: Int
+  isGift: Boolean
+  imageUrl: String
 }
 
 type Totalizer {
@@ -33,52 +44,52 @@ type Totalizer {
 }
 
 input OrderFormItemInput {
-  id: Int,
-  index: Int,
-  quantity: Int,
-  seller: Int,
+  id: Int
+  index: Int
+  quantity: Int
+  seller: Int
 }
 
 input OrderFormAddressInput {
-    addressType: String,
-    postalCode: String,
-    country: String,
-    addressType: String,
-    receiverName: String,
-    city: String,
-    state: String,
-    street: String,
-    number: String,
-    complement: String,
-    neighborhood: String
+  addressType: String
+  postalCode: String
+  country: String
+  addressType: String
+  receiverName: String
+  city: String
+  state: String
+  street: String
+  number: String
+  complement: String
+  neighborhood: String
 }
 
 input OrderFormPaymentInput {
-    paymentSystem: Int,
-    referenceValue: Float,
-    bin: Int,
-    tokenId: String
+  paymentSystem: Int
+  referenceValue: Float
+  bin: Int
+  tokenId: String
 }
 
 input OrderFormProfileInput {
-    email: String,
-    isCorporate: Boolean,
-    corporateDocument: String,
-    corporateName: String,
-    corporatePhone: String,
-    document: String,
-    documentType: String,
-    firstName: String,
-    lastName: String,
-    phone: String,
-    stateInscription: String,
-    tradeName: String
+  email: String
+  isCorporate: Boolean
+  corporateDocument: String
+  corporateName: String
+  corporatePhone: String
+  document: String
+  documentType: String
+  firstName: String
+  lastName: String
+  phone: String
+  stateInscription: String
+  tradeName: String
 }
 
 input OrderFormPaymentTokenInput {
-  tokenId: String,
-  cardNumber: String,
-  bin: String,
-  paymentSystem: String,
+  tokenId: String
+  cardNumber: String
+  bin: String
+  paymentSystem: String
   paymentSystemName: String
 }
