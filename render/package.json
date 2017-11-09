@@ -7,6 +7,8 @@
   "dependencies": {
     "is-mobile": "^0.2.2",
     "normalize.css": "5.0.0",
-    "prop-types": "^15.5.10"
+    "prop-types": "^15.5.10",
+    "react-json-tree": "0.x",
+    "react-toolbox": "1.x"
   }
 }

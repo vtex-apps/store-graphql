@@ -1,9 +1,109 @@
 {
   "stack": "nodejs",
   "memory": 256,
-  "runtimeArgs": [
-    "--max-semi-space-size=1",
-    "--max-old-space-size=128",
-    "--max-executable-size=96"
-  ]
+  "runtimeArgs": ["--max_old_space_size=200"],
+  "routes": {
+    "product": {
+      "path": "/query/product"
+    },
+    "products": {
+      "path": "/query/products"
+    },
+    "facets": {
+      "path": "/query/facets"
+    },
+    "category": {
+      "path": "/query/category"
+    },
+    "categories": {
+      "path": "/query/categories"
+    },
+    "brand": {
+      "path": "/query/brand"
+    },
+    "shipping": {
+      "path": "/query/shipping"
+    },
+    "orderForm": {
+      "path": "/query/orderForm"
+    },
+    "orders": {
+      "path": "/query/orders"
+    },
+    "profile": {
+      "path": "/query/profile"
+    },
+    "autocomplete": {
+      "path": "/query/autocomplete"
+    },
+    "addItem": {
+      "path": "/mutation/addItem"
+    },
+    "cancelOrder": {
+      "path": "/mutation/cancelOrder"
+    },
+    "updateItems": {
+      "path": "/mutation/updateItems"
+    },
+    "updateProfile": {
+      "path": "/mutation/updateProfile"
+    },
+    "updateAddress": {
+      "path": "/mutation/updateAddress"
+    },
+    "createAddress": {
+      "path": "/mutation/createAddress"
+    },
+    "deleteAddress": {
+      "path": "/mutation/deleteAddress"
+    },
+    "setPlaceholder": {
+      "path": "/mutation/setPlaceholder"
+    },
+    "updateOrderFormProfile": {
+      "path": "/mutation/updateOrderFormProfile"
+    },
+    "updateOrderFormShipping": {
+      "path": "/mutation/updateOrderFormShipping"
+    },
+    "updateOrderFormPayment": {
+      "path": "/mutation/updateOrderFormPayment"
+    },
+    "addOrderFormPaymentToken": {
+      "path": "/mutation/addOrderFormPaymentToken"
+    },
+    "updateOrderFormIgnoreProfile": {
+      "path": "/mutation/updateOrderFormIgnoreProfile"
+    },
+    "createPaymentSession": {
+      "path": "/mutation/createPaymentSession"
+    },
+    "createPaymentTokens": {
+      "path": "/mutation/createPaymentTokens"
+    },
+    "setOrderFormCustomData": {
+      "path": "/mutation/setOrderFormCustomData"
+    },
+    "productRecommendations": {
+      "path": "/Product/recommendations"
+    },
+    "productProperties": {
+      "path": "/Product/properties"
+    },
+    "productPropertyGroups": {
+      "path": "/Product/propertyGroups"
+    },
+    "productClusterHighlights": {
+      "path": "/Product/clusterHighlights"
+    },
+    "skuVariations": {
+      "path": "/SKU/variations"
+    },
+    "attachmentDomainValues": {
+      "path": "/Attachment/domainValues"
+    },
+    "facetsSpecificationFilters": {
+      "path": "/Facets/SpecificationFilters"
+    }
+  }
 }
