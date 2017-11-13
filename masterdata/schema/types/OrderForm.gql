@@ -11,9 +11,12 @@ type OrderForm {
   userProfileId: String
   userType: String
   ignoreProfileData: Boolean
+  totalizers: [Totalizer]
 }
 
 type OrderFormItem {
+  id: ID
+  name: String
   detailUrl: String
   imageUrl: String
   skuName: String
@@ -32,6 +35,12 @@ type OrderFormItem {
   rewardValue: Int
   isGift: Boolean
   imageUrl: String
+}
+
+type Totalizer {
+  id: ID
+  name: String
+  value: Float
 }
 
 input OrderFormItemInput {
