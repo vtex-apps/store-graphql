@@ -9,13 +9,7 @@ const paths = {
 
   facets: (account, {facets=''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
 
-  recommendation: (account, {id, type}) => `http://edge.vtexcommerce.com.br/api/pub/edge/Entries/MarketPlace/${account}/${id}/${type}?limit=8`,
-
-  category: (account, {slug}) => `http://api.vtex.com/${account}/categories/${slug}`,
-
-  categories: account => `http://api.vtex.com/${account}/categories`,
-
-  brand: (account, {slug}) => `http://api.vtex.com/${account}/brands/${slug}`,
+  crossSelling: (account, id, type) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/crossselling/${type}/${id}`,
 
   shipping: (account, {skuId, postalCode}) =>
     `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,

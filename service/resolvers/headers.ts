@@ -1,7 +1,4 @@
 export const headers = {
-  facade: {
-    accept: 'application/vnd.vtex.search-api.v0+json',
-  },
   json: {
     accept: 'application/json',
     'content-type': 'application/json',

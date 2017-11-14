@@ -1,7 +1,7 @@
 type Facets {
 	Departments: [Facet]
 	Brands: [Facet]
-	SpecificationFilters: [Filter] @resolve
+	SpecificationFilters: [Filter]
 	CategoriesTrees: [Facet]
 }
 
