@@ -20,6 +20,6 @@
     "tslint-config-vtex": "^2.0.0"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json './**/*.ts'"
+    "lint": "tsc --noEmit && tslint -c tslint.json './**/*.ts'"
   }
 }
