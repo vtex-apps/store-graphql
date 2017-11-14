@@ -1,14 +1,32 @@
-import axios from 'axios'
+import axios, {AxiosResponse} from 'axios'
+import {IOContext} from 'colossus'
+import {GraphqlRequestBody} from 'graphql'
 import {map, prop} from 'ramda'
 
 const defaultMerge = (bodyData, resData) => resData
 const removeDomain = (cookie) => cookie.replace(/domain=.+?(;|$)/, '')
 
-export default (
-    {method = 'GET', url, data = null, headers = {}, enableCookies = false, merge = defaultMerge}:
-    {method?: string, url?: any, data?: any, headers?: any, enableCookies?: boolean, merge?: (bodyData: any, responseData: any) => any},
-  ) => {
-  return async (body, ioContext) => {
+export type URLBuilder = (account: string, data: any, root: any) => string
+
+export type DataBuilder = (data: any) => any
+
+export type HeadersBuider = (ioContext: IOContext) => Record<string, string>
+
+export type ResponseMerger = (bodyData: any, responseData: any) => any
+
+export interface HttpResolverOptions {
+  method?: string
+  url: string | URLBuilder
+  data?: any | DataBuilder
+  headers?: Record<string, string> | HeadersBuider,
+  enableCookies?: boolean,
+  merge?: ResponseMerger
+}
+
+export default (options: HttpResolverOptions) => {
+  return async (body: GraphqlRequestBody, ioContext: IOContext) => {
+    const {url, enableCookies, data, method='GET', headers={}, merge=defaultMerge} = options
+
     const builtUrl = (typeof url === 'function') ? url(ioContext.account, body.data, body.root) : url
     const builtData = (typeof data === 'function') ? data(body.data) : data
     const builtHeaders = (typeof headers === 'function') ? await headers(ioContext) : headers
