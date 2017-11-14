@@ -1,9 +1,9 @@
 import {json} from 'co-body'
 import {EndpointHandler} from 'colossus'
-import {GraphqlRequestHandler} from 'graphql'
+import {GraphqlResolver} from 'graphql'
 import {map} from 'ramda'
 
-export default map((handler: GraphqlRequestHandler) => {
+export default map((handler: GraphqlResolver) => {
   return async (ctx) => {
     const body = await json(ctx.request)
     const response = await handler(body, ctx.vtex)
