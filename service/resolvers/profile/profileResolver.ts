@@ -20,7 +20,7 @@ const profile = (ctx) => async (data) => {
 
   const {user} = data
   const profileRequest = await configRequest(ctx, paths.profile(ctx.account).filterUser(user))
-  const profileData = await http.request(profileRequest).then(pipe(prop('data'), head))
+  const profileData = await http.request(profileRequest).then<any>(pipe(prop('data'), head))
 
   const addressRequest = profileData && await configRequest(ctx, paths.profile(ctx.account).filterAddress(profileData.id))
   const address = addressRequest && await http.request(addressRequest).then(prop('data'))
