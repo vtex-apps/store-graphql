@@ -1,6 +1,7 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { Form, FormGroup } from '../components'
+import Form from '../components/Form'
+import FormGroup from '../components/FormGroup'
 
 class QueryForm extends Component {
   constructor(props) {
@@ -12,12 +13,11 @@ class QueryForm extends Component {
   }
 
   onChangeField(key, { currentTarget }) {
-    const state = Object.assign({}, this.state)
-    state[key] =
-      currentTarget.type === 'checkbox'
-        ? currentTarget.checked
-        : currentTarget.value
-    this.setState(state)
+    this.setState({
+      [key]: currentTarget.type === 'checkbox'
+              ? currentTarget.checked
+              : currentTarget.value
+    })
   }
 
   render() {
