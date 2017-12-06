@@ -13,7 +13,7 @@
   },
   "builders": {
     "service-js": "1.x",
-    "render": "4.x"
+    "react": "0.x"
   },
   "mustUpdateAt": "2017-09-05",
   "scripts": {

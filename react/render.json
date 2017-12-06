@@ -2,7 +2,6 @@
   "extensions": {
     "store-graphql-example": {
       "component": "./index",
-      "theme": "./theme.css",
       "route": {
         "path": "/_v/store-graphql-example",
         "auth": true

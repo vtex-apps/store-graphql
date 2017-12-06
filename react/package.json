@@ -1,9 +1,6 @@
 {
   "name": "vtex.store-graphql",
   "version": "0.0.1",
-  "vtexDependencies": {
-    "vtex.onda": "0.x"
-  },
   "dependencies": {
     "is-mobile": "^0.2.2",
     "normalize.css": "5.0.0",
