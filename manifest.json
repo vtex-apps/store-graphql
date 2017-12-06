@@ -16,7 +16,7 @@
   },
   "mustUpdateAt": "2017-09-05",
   "scripts": {
-    "postreleasy": "vtex publish"
+    "postreleasy": "vtex publish --public"
   },
   "policies": [
     {
