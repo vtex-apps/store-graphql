@@ -1,6 +1,8 @@
+import React from 'react'
 import PropTypes from 'prop-types'
 import { FormattedMessage } from 'react-intl'
-import { graphql, gql } from 'react-apollo'
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 import JSONTree from 'react-json-tree'
 
 function FacetsExample({ data: { loading, facets } }) {

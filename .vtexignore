@@ -4,6 +4,7 @@ node_modules/
 service/node_modules/
 service/yarn.lock
 service/tslint.json
+react/node_modules/
 .vscode/
 .gitignore
 typings.d.ts
