@@ -1,3 +1,4 @@
+import React from 'react'
 import { FormattedMessage } from 'react-intl'
 
 const FormGroup = ({
@@ -18,16 +19,20 @@ const FormGroup = ({
         </span>
       )}
     </label>
-    { type != 'select' ?
+    { type !== 'select' ?
       <input
         id={name}
         className={inputClassName}
         aria-describedby={desc ? `${name}-desc` : false}
         {...{ value, onChange, type }}
       />
-      : <select onChange={onChange} value={value}>
-        {options.map(option => <option value={option}>{option}</option> )}
-      </select>
+      : (
+        <select onChange={onChange} value={value}>
+          {options.map(option =>
+            <option key={option} value={option}>{option}</option>
+          )}
+        </select>
+      )
     }
     {desc && (
       <small id={`${name}-desc`} className="f6 black-60 db mb2">
