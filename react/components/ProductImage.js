@@ -53,7 +53,7 @@ ProductImage.defaultProps = {
 }
 
 ProductImage.propTypes = {
-  width: PropTypes.string,
+  width: PropTypes.number,
   heigth: PropTypes.string,
   className: PropTypes.string,
   url: PropTypes.string.isRequired,

@@ -11,7 +11,6 @@ class Shelf extends Component {
 
     return (
       <div>
-        <div>{JSON.stringify(data.variables, null, 2)}</div>
         {data.loading
           ? <FormattedMessage id="store-graphql.loading" />
           : data.products

@@ -10,8 +10,8 @@
     "store-graphql-example-shelf": {
       "component": "./ShelfExample",
       "route": {
-        "path": "/_v/shelf",
-        "auth": true
+        "path": "/legacy-extensions/shelf",
+        "public": true
       }
     }
   }
