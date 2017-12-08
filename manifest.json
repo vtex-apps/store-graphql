@@ -19,6 +19,7 @@
   "scripts": {
     "postreleasy": "vtex publish --public"
   },
+  "credentialType": "absolute",
   "policies": [
     {
       "name": "full-access"
