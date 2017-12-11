@@ -11,6 +11,7 @@ export default {
       orderItems: items,
     }),
     enableCookies: true,
+    headers: withAuthToken(headers.json),
     method: 'POST',
     url: paths.addItem,
   }),
@@ -22,6 +23,7 @@ export default {
     enableCookies: true,
     merge: () => ({ success: true }),
     method: 'POST',
+    headers: withAuthToken(headers.json),
     url: paths.cancelOrder,
   }),
 
@@ -41,12 +43,14 @@ export default {
   orderForm: httpResolver({
     data: { expectedOrderFormSections: ['items'] },
     enableCookies: true,
+    headers: withAuthToken(headers.json),
     method: 'POST',
     url: paths.orderForm,
   }),
 
   orders: httpResolver({
     enableCookies: true,
+    headers: withAuthToken(headers.json),
     url: paths.orders,
   }),
 
@@ -62,6 +66,7 @@ export default {
 
   shipping: httpResolver({
     url: paths.shipping,
+    headers: withAuthToken(headers.json),
   }),
 
   updateItems: httpResolver({
@@ -71,6 +76,7 @@ export default {
     }),
     enableCookies: true,
     method: 'POST',
+    headers: withAuthToken(headers.json),
     url: paths.updateItems,
   }),
 
