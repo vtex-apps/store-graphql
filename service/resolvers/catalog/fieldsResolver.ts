@@ -72,7 +72,7 @@ export const resolveLocalProductFields = (product) => {
   return {...product, clusterHighlights, items, properties, propertyGroups}
 }
 
-export const resolveProductFields = async (account: string, product: any, fields: any) => {
+export const resolveProductFields = async (ioContext: IOContext, product: any, fields: any) => {
   const resolvedProduct = resolveLocalProductFields(product)
 
   if (!fields.Product || !fields.Product.recommendations) {
@@ -80,8 +80,8 @@ export const resolveProductFields = async (account: string, product: any, fields
   }
 
   const [view, buy] = await Promise.all([
-    resolveView(account, product),
-    resolveBuy(account, product)
+    resolveView(ioContext.account, product),
+    resolveBuy(ioContext.account, product)
   ])
 
   return {...resolvedProduct, recommendations: {buy, view}}
