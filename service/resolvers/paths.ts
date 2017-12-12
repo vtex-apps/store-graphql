@@ -12,9 +12,9 @@ const paths = {
   crossSelling: (account, id, type) => `https://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/crossselling/${type}/${id}`,
 
   shipping: (account, {skuId, postalCode}) =>
-    `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
+    `https://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
 
-  orderForm: (account, env = 'stable') => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
+  orderForm: (account, env = 'stable') => `https://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
 
   orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account, 'beta')}/${orderFormId}/attachments/clientProfileData`,
 
@@ -34,17 +34,17 @@ const paths = {
 
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
-  orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
+  orders: account => `https://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
 
   cancelOrder: (account, {orderFormId}) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
 
-  identity: (account, {token}) => `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
+  identity: (account, {token}) => `https://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
 
   profile: account => ({
-    address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
-    filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,state,number,street,postalCode,city,reference,addressName,addressType`,
-    filterUser: (email) => `http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email`,
-    profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
+    address: (id) => `https://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
+    filterAddress: (id) => `https://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,state,number,street,postalCode,city,reference,addressName,addressType`,
+    filterUser: (email) => `https://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email`,
+    profile: (id) => `https://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
   }),
 
   gateway: account => `https://${account}.vtexpayments.com.br/api`,
@@ -53,7 +53,7 @@ const paths = {
 
   gatewayTokenizePayment: (account, {sessionId}) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
-  autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+  autocomplete: (account, {maxRows, searchTerm}) => `https://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 }
 
 export default paths
