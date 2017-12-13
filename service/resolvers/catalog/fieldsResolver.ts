@@ -80,8 +80,8 @@ export const resolveProductFields = async (ioContext: IOContext, product: any, f
   }
 
   const [view, buy] = await Promise.all([
-    resolveView(ioContext.account, product),
-    resolveBuy(ioContext.account, product)
+    resolveView(ioContext, product),
+    resolveBuy(ioContext, product)
   ])
 
   return {...resolvedProduct, recommendations: {buy, view}}
