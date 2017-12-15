@@ -14,10 +14,10 @@ type Query {
 
   facets(facets: String = ""): Facets
 
-  category(slug: String): Category
-  categories: [Category]
+  category(id: Int): Category
+  categories(treeLevel: Int = 3): [Category]
 
-  brand(slug: String): Brand
+  brand(id: Int): Brand
 
   shipping(skuId: String, postalCode: String): ShippingData
 

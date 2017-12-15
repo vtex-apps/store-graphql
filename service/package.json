@@ -4,6 +4,7 @@
   "dependencies": {
     "axios": "0.16.2",
     "bluebird": "^3.5.0",
+    "slugify": "^1.2.6",
     "co-body": "^5.1.1",
     "cookie": "^0.3.1",
     "ramda": "^0.24.1",

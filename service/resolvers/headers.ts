@@ -12,5 +12,6 @@ export const headers = {
 export const withAuthToken = (currentHeaders = {}) => (ioContext) => ({
   ...currentHeaders,
   Authorization: `bearer ${ioContext.authToken}`,
-  'Proxy-Authorization': `bearer ${ioContext.authToken}`
+  'Proxy-Authorization': `bearer ${ioContext.authToken}`,
+  VtexIdclientAutCookie: ioContext.authToken
 })

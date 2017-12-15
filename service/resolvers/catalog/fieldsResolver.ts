@@ -1,7 +1,8 @@
 import axios from 'axios'
 import {IOContext} from 'colossus'
-import {compose, evolve, juxt, map, omit, path, pick, prop, propOr, toPairs} from 'ramda'
+import {compose, evolve, juxt, map, omit, path, pick, prop, propOr, toPairs, assoc, last, split} from 'ramda'
 import paths from './../paths'
+import slugify from 'slugify'
 import {resolveBuy, resolveView} from './recommendationsResolver'
 
 const knownNotPG = [
@@ -91,3 +92,19 @@ export const resolveFacetFields = (facets) => {
   const SpecificationFilters = resolvers.specificationFilters(facets)
   return {...facets, SpecificationFilters}
 }
+
+export const resolveCategoryFields = (category) => ({
+  href: category.url,
+  slug: category.url ? compose(last, split('/'), prop('url'))(category) : null,
+  children: category.children ? map(resolveCategoryFields, category.children): [],
+  name: category.name,
+  id: category.id,
+  hasChildren: category.hasChildren
+})
+
+export const resolveBrandFields = (brand) => ({
+  id: brand.id,
+  name: brand.name,
+  active: brand.isActive,
+  // slug: slugify(brand.name, {lower: true})
+})
