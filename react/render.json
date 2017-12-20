@@ -6,13 +6,6 @@
         "path": "/_v/store-graphql-example",
         "auth": true
       }
-    },
-    "store-graphql-example-shelf": {
-      "component": "./ShelfExample",
-      "route": {
-        "path": "/legacy-extensions/shelf",
-        "public": true
-      }
     }
   }
 }
