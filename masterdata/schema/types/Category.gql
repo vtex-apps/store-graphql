@@ -3,4 +3,6 @@ type Category {
   slug: String
   name: String
   children: [Category]
+  id: Int
+  hasChildren: Boolean
 }

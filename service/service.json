@@ -3,6 +3,15 @@
   "memory": 256,
   "runtimeArgs": ["--max_old_space_size=200"],
   "routes": {
+    "brand": {
+      "path": "/query/brand"
+    },
+    "category": {
+      "path": "/query/category"
+    },
+    "categories": {
+      "path": "/query/categories"
+    },
     "product": {
       "path": "/query/product"
     },

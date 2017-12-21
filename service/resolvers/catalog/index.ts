@@ -2,7 +2,9 @@ import axios, {AxiosResponse} from 'axios'
 import {IOContext} from 'colossus'
 import {GraphqlRequestBody} from 'graphql'
 import paths from '../paths'
-import {resolveFacetFields, resolveProductFields} from './fieldsResolver'
+import ResolverError from '../../errors/resolverError'
+import {map, find, equals, prop, compose} from 'ramda'
+import {resolveFacetFields, resolveProductFields, resolveCategoryFields, resolveBrandFields} from './fieldsResolver'
 import {withAuthToken} from '../headers'
 
 export default {
@@ -35,5 +37,28 @@ export default {
     const resolvedProducts = await Promise.map(products, product => resolveProductFields(ioContext, product, fields))
 
     return {data: resolvedProducts}
+  },
+
+  brand: async ({data, fields, cookie}: GraphqlRequestBody, ioContext: IOContext) => {
+    const url = paths.brand(ioContext.account)
+    const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
+
+    const brand = find(compose(equals(data.id), prop('id')), brands)
+    if (!brand) {
+      throw new ResolverError(`Brand with id ${data.id} not found`, 404)
+    }
+    return {data: resolveBrandFields(brand)}
+  },
+
+  category: async ({data, fields, cookie}: GraphqlRequestBody, ioContext: IOContext) => {
+    const url = paths.category(ioContext.account, data)
+    const {data: category} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
+    return {data: resolveCategoryFields(category)}
+  },
+
+  categories: async ({data, fields}: GraphqlRequestBody, ioContext: IOContext) => {
+    const url = paths.categories(ioContext.account, data)
+    const {data: categories} = await axios.get(url, {headers: withAuthToken()(ioContext) })
+    return {data: map(resolveCategoryFields, categories)}
   }
 }

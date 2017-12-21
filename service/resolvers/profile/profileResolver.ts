@@ -21,7 +21,6 @@ const profile = (ctx) => async (data) => {
   const {user} = data
   const profileRequest = await configRequest(ctx, paths.profile(ctx.account).filterUser(user))
   const profileData = await http.request(profileRequest).then<any>(pipe(prop('data'), head))
-
   const addressRequest = profileData && await configRequest(ctx, paths.profile(ctx.account).filterAddress(profileData.id))
   const address = addressRequest && await http.request(addressRequest).then(prop('data'))
 
@@ -37,7 +36,7 @@ export default async (body, ioContext) => {
   if (!token) {
     throw new ResolverError('User is not authenticated.', 401)
   }
-
-  const data = await http.get(paths.identity(account, {token})).then(prop('data')).then(profile(ioContext))
+  const addressRequest = await configRequest(ioContext, paths.identity(account, {token}))
+  const data = await http.request(addressRequest).then(prop('data')).then(profile(ioContext))
   return {data}
 }
