@@ -4,11 +4,13 @@
   "dependencies": {
     "axios": "0.16.2",
     "bluebird": "^3.5.0",
+    "slugify": "^1.2.6",
     "co-body": "^5.1.1",
     "cookie": "^0.3.1",
     "ramda": "^0.24.1",
     "ts-node": "3.3.0",
-    "typescript": "^2.5.2"
+    "typescript": "^2.5.2",
+    "url-parse": "^1.2.0"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.0",
