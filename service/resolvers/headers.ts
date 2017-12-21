@@ -1,3 +1,5 @@
+import * as cookies from 'cookie'
+
 export const headers = {
   json: {
     accept: 'application/json',
@@ -9,9 +11,16 @@ export const headers = {
   },
 }
 
-export const withAuthToken = (currentHeaders = {}) => (ioContext) => ({
-  ...currentHeaders,
-  Authorization: `bearer ${ioContext.authToken}`,
-  'Proxy-Authorization': `bearer ${ioContext.authToken}`,
-  VtexIdclientAutCookie: ioContext.authToken
-})
+export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null) => {
+  let VtexIdclientAutCookie
+  let ans = {...currentHeaders}
+  if (cookie) {
+    const parsedCookie = cookies.parse(cookie)
+    ans['VtexIdclientAutCookie'] = parsedCookie.VtexIdclientAutCookie
+  }
+  return {
+    ...ans,
+    Authorization: `${ioContext.authToken}`,
+    'Proxy-Authorization': `${ioContext.authToken}`
+  }
+}

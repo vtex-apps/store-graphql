@@ -2,7 +2,7 @@ import axios from 'axios'
 import {IOContext} from 'colossus'
 import {compose, evolve, juxt, map, omit, path, pick, prop, propOr, toPairs, assoc, last, split} from 'ramda'
 import paths from './../paths'
-import slugify from 'slugify'
+import * as slugify from 'slugify'
 import {resolveBuy, resolveView} from './recommendationsResolver'
 
 const knownNotPG = [
@@ -106,5 +106,5 @@ export const resolveBrandFields = (brand) => ({
   id: brand.id,
   name: brand.name,
   active: brand.isActive,
-  // slug: slugify(brand.name, {lower: true})
+  slug: slugify(brand.name, {lower: true})
 })

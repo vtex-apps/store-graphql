@@ -39,9 +39,9 @@ export default {
     return {data: resolvedProducts}
   },
 
-  brand: async ({data, fields}: GraphqlRequestBody, ioContext: IOContext) => {
+  brand: async ({data, fields, cookie}: GraphqlRequestBody, ioContext: IOContext) => {
     const url = paths.brand(ioContext.account)
-    const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext) })
+    const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
 
     const brand = find(compose(equals(data.id), prop('id')), brands)
     if (!brand) {
@@ -50,9 +50,9 @@ export default {
     return {data: resolveBrandFields(brand)}
   },
 
-  category: async ({data, fields}: GraphqlRequestBody, ioContext: IOContext) => {
+  category: async ({data, fields, cookie}: GraphqlRequestBody, ioContext: IOContext) => {
     const url = paths.category(ioContext.account, data)
-    const {data: category} = await axios.get(url, {headers: withAuthToken()(ioContext) })
+    const {data: category} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
     return {data: resolveCategoryFields(category)}
   },
 

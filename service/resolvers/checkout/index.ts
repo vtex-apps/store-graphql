@@ -28,8 +28,10 @@ export default {
   }),
 
   createPaymentSession: httpResolver({
-    headers: withAuthToken(headers.json),
+    headers: withAuthToken({...headers.json}),
     method: 'POST',
+    enableCookies: true,
+    secure: true,
     url: paths.gatewayPaymentSession,
   }),
 
