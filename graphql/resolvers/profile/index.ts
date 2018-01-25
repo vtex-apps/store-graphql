@@ -4,7 +4,7 @@ import httpResolver from '../httpResolver'
 import paths from '../paths'
 import profileResolver from './profileResolver'
 
-export default {
+export const mutations = {
   createAddress: httpResolver({
     data: ({ fields }) => fields,
     headers: withAuthToken(headers.profile),
@@ -27,9 +27,6 @@ export default {
     url: (account, { id }) => paths.profile(account).address(id),
   }),
 
-  // tslint:disable-next-line:object-literal-sort-keys
-  profile: profileResolver,
-
   updateProfile: httpResolver({
     data: ({ fields }) => fields,
     headers: withAuthToken(headers.profile),
@@ -37,4 +34,8 @@ export default {
     method: 'PATCH',
     url: (account, { id }) => paths.profile(account).profile(id),
   }),
+}
+
+export const queries = {
+  profile: profileResolver,
 }

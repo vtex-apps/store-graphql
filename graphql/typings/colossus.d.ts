@@ -15,6 +15,4 @@ declare module 'colossus' {
   export interface ColossusContext extends KoaContext {
     vtex: IOContext
   }
-
-  type EndpointHandler = (ctx: ColossusContext) => void
 }

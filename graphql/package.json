@@ -4,10 +4,11 @@
   "dependencies": {
     "axios": "0.16.2",
     "bluebird": "^3.5.0",
-    "slugify": "^1.2.6",
     "co-body": "^5.1.1",
     "cookie": "^0.3.1",
+    "graphql-fields": "^1.0.2",
     "ramda": "^0.24.1",
+    "slugify": "^1.2.6",
     "ts-node": "3.3.0",
     "typescript": "^2.5.2",
     "url-parse": "^1.2.0"

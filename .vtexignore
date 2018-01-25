@@ -1,9 +1,9 @@
 .DS_Store
 .git
 node_modules/
-service/node_modules/
-service/yarn.lock
-service/tslint.json
+node/node_modules/
+node/yarn.lock
+node/tslint.json
 react/node_modules/
 .vscode/
 .gitignore
