@@ -1,45 +1,46 @@
 import axios, {AxiosResponse} from 'axios'
-import {IOContext} from 'colossus'
-import {GraphqlRequestBody} from 'graphql'
-import paths from '../paths'
+import {ColossusContext} from 'colossus'
+import graphqlFields from 'graphql-fields'
+import {compose, equals, find, map, prop} from 'ramda'
 import ResolverError from '../../errors/resolverError'
-import {map, find, equals, prop, compose} from 'ramda'
-import {resolveFacetFields, resolveProductFields, resolveCategoryFields, resolveBrandFields} from './fieldsResolver'
 import {withAuthToken} from '../headers'
+import paths from '../paths'
+import {resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields} from './fieldsResolver'
 
 export default {
-  autocomplete: async ({data}: GraphqlRequestBody, ioContext: IOContext) => {
+  autocomplete: async (_, data, {vtex: ioContext}: ColossusContext) => {
     const url = paths.autocomplete(ioContext.account, data)
     const {data: resolvedAutocomplete} = await axios.get(url, { headers: withAuthToken()(ioContext) })
 
-    return {resolvedAutocomplete}
+    return resolvedAutocomplete
   },
 
-  facets: async ({data}: GraphqlRequestBody, ioContext: IOContext) => {
+  facets: async (_, data, {vtex: ioContext}: ColossusContext) => {
     const url = paths.facets(ioContext.account, data)
     const {data: facets} = await axios.get(url, { headers: withAuthToken()(ioContext) })
     const resolvedFacets = resolveFacetFields(facets)
 
-    return {data: resolvedFacets}
+    return resolvedFacets
   },
 
-  product: async ({data, fields}: GraphqlRequestBody, ioContext: IOContext) => {
+  product: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
     const url = paths.product(ioContext.account, data)
     const {data: product} = await axios.get(url, { headers: withAuthToken()(ioContext) })
-    const resolvedProduct = await resolveProductFields(ioContext, product, fields)
+    const resolvedProduct = await resolveProductFields(ioContext, product, graphqlFields(info))
 
-    return {data: resolvedProduct}
+    return resolvedProduct
   },
 
-  products: async ({data, fields}: GraphqlRequestBody, ioContext: IOContext) => {
+  products: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
     const url = paths.products(ioContext.account, data)
     const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const fields = graphqlFields(info)
     const resolvedProducts = await Promise.map(products, product => resolveProductFields(ioContext, product, fields))
 
-    return {data: resolvedProducts}
+    return resolvedProducts
   },
 
-  brand: async ({data, fields, cookie}: GraphqlRequestBody, ioContext: IOContext) => {
+  brand: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
     const url = paths.brand(ioContext.account)
     const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
 
@@ -47,18 +48,18 @@ export default {
     if (!brand) {
       throw new ResolverError(`Brand with id ${data.id} not found`, 404)
     }
-    return {data: resolveBrandFields(brand)}
+    return resolveBrandFields(brand)
   },
 
-  category: async ({data, fields, cookie}: GraphqlRequestBody, ioContext: IOContext) => {
+  category: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
     const url = paths.category(ioContext.account, data)
     const {data: category} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
-    return {data: resolveCategoryFields(category)}
+    return resolveCategoryFields(category)
   },
 
-  categories: async ({data, fields}: GraphqlRequestBody, ioContext: IOContext) => {
+  categories: async (_, data, {vtex: ioContext}: ColossusContext) => {
     const url = paths.categories(ioContext.account, data)
     const {data: categories} = await axios.get(url, {headers: withAuthToken()(ioContext) })
-    return {data: map(resolveCategoryFields, categories)}
+    return map(resolveCategoryFields, categories)
   }
 }

@@ -27,9 +27,9 @@ const profile = (ctx) => async (data) => {
   return merge({address}, profileData)
 }
 
-export default async (body, ioContext) => {
+export default async (_, args, {vtex: ioContext, request: {headers: {cookie}}}) => {
   const {account, workspace} = ioContext
-  const parsedCookies = parseCookie(body.cookie || '')
+  const parsedCookies = parseCookie(cookie || '')
 
   const startsWithVtexId = (val, key) => key.startsWith('VtexIdclientAutCookie')
   const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
@@ -37,6 +37,5 @@ export default async (body, ioContext) => {
     throw new ResolverError('User is not authenticated.', 401)
   }
   const addressRequest = await configRequest(ioContext, paths.identity(account, {token}))
-  const data = await http.request(addressRequest).then(prop('data')).then(profile(ioContext))
-  return {data}
+  return await http.request(addressRequest).then(prop('data')).then(profile(ioContext))
 }
