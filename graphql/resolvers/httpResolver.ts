@@ -45,7 +45,7 @@ export default (options: HttpResolverOptions) => {
     if (enableCookies) {
       const setCookie = prop('set-cookie', vtexResponse.headers)
       if (setCookie) {
-        response.headers['Set-Cookie'] = map(removeDomain, setCookie)
+        response.set('Set-Cookie', map(removeDomain, setCookie))
       }
     }
     return merge(args, vtexResponse.data)
