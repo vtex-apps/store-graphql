@@ -1,4 +1,4 @@
 node_modules
-service/**/!(main).js
-service/**/*.js.map
+node/**/!(main).js
+node/**/*.js.map
 .vscode/

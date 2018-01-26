@@ -4,7 +4,28 @@ import httpResolver from '../httpResolver'
 import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
 
-export default {
+export const queries = {
+  orderForm: httpResolver({
+    data: {expectedOrderFormSections: ['items']},
+    enableCookies: true,
+    headers: withAuthToken(headers.json),
+    method: 'POST',
+    url: paths.orderForm,
+  }),
+
+  orders: httpResolver({
+    enableCookies: true,
+    headers: withAuthToken(headers.json),
+    url: paths.orders,
+  }),
+
+  shipping: httpResolver({
+    headers: withAuthToken(headers.json),
+    url: paths.shipping,
+  }),
+}
+
+export const mutations = {
   addItem: httpResolver({
     data: ({ items }) => ({
       expectedOrderFormSections: ['items'],
@@ -42,20 +63,6 @@ export default {
     url: paths.gatewayTokenizePayment,
   }),
 
-  orderForm: httpResolver({
-    data: { expectedOrderFormSections: ['items'] },
-    enableCookies: true,
-    headers: withAuthToken(headers.json),
-    method: 'POST',
-    url: paths.orderForm,
-  }),
-
-  orders: httpResolver({
-    enableCookies: true,
-    headers: withAuthToken(headers.json),
-    url: paths.orders,
-  }),
-
   setOrderFormCustomData: httpResolver({
     data: ({ value }) => ({
       expectedOrderFormSections: ['customData'],
@@ -64,11 +71,6 @@ export default {
     headers: withAuthToken(headers.json),
     method: 'PUT',
     url: paths.orderFormCustomData,
-  }),
-
-  shipping: httpResolver({
-    url: paths.shipping,
-    headers: withAuthToken(headers.json),
   }),
 
   updateItems: httpResolver({

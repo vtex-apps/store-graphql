@@ -1,6 +1,5 @@
 import axios, {AxiosResponse} from 'axios'
-import {IOContext} from 'colossus'
-import {GraphqlRequestBody} from 'graphql'
+import {ColossusContext, IOContext} from 'colossus'
 import {map, prop} from 'ramda'
 import * as parse from 'url-parse'
 
@@ -26,16 +25,16 @@ export interface HttpResolverOptions {
 }
 
 export default (options: HttpResolverOptions) => {
-  return async (body: GraphqlRequestBody, ioContext: IOContext) => {
+  return async (root, args, {vtex: ioContext, request: {headers: {cookie}}, response}: ColossusContext) => {
     const {secure=false, url, enableCookies, data, method='GET', headers={}, merge=defaultMerge} = options
 
-    const builtUrl = (typeof url === 'function') ? url(ioContext.account, body.data, body.root) : url
-    const builtData = (typeof data === 'function') ? data(body.data) : data
+    const builtUrl = (typeof url === 'function') ? url(ioContext.account, args, root) : url
+    const builtData = (typeof data === 'function') ? data(args) : data
     const builtHeaders = (typeof headers === 'function') ? await headers(ioContext) : headers
 
     const config = {method, url: builtUrl, data: builtData, headers: builtHeaders}
-    if (enableCookies && body.cookie) {
-      config.headers.cookie = body.cookie
+    if (enableCookies && cookie) {
+      config.headers.cookie = cookie
     }
     if (secure) {
       config.headers['X-Vtex-Proxy-To'] = `https://${parse(builtUrl).hostname}`
@@ -43,13 +42,12 @@ export default (options: HttpResolverOptions) => {
 
     const vtexResponse = await axios.request(config)
 
-    let cookie
     if (enableCookies) {
       const setCookie = prop('set-cookie', vtexResponse.headers)
       if (setCookie) {
-        cookie = map(removeDomain, setCookie)
+        response.headers['Set-Cookie'] = map(removeDomain, setCookie)
       }
     }
-    return {cookie, data: merge(body.data, vtexResponse.data)}
+    return merge(args, vtexResponse.data)
   }
 }
