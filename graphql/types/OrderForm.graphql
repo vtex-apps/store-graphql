@@ -22,11 +22,9 @@ type OrderFormItem {
   skuName: String
   quantity: Float
   uniqueId: String
-  id: String
   productId: String
   refId: String
   ean: String
-  name: String
   priceValidUntil: String
   price: Int
   tax: Int
@@ -34,7 +32,6 @@ type OrderFormItem {
   sellingPrice: Int
   rewardValue: Int
   isGift: Boolean
-  imageUrl: String
 }
 
 type Totalizer {
