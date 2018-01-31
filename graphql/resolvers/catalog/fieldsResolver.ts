@@ -1,7 +1,6 @@
 import axios from 'axios'
 import {IOContext} from 'colossus'
-import {compose, evolve, juxt, map, omit, path, pick, prop, propOr, toPairs, assoc, last, split} from 'ramda'
-import paths from './../paths'
+import {compose, juxt, last, map, omit, prop, split, toPairs} from 'ramda'
 import * as slugify from 'slugify'
 import {resolveBuy, resolveView} from './recommendationsResolver'
 
@@ -94,17 +93,17 @@ export const resolveFacetFields = (facets) => {
 }
 
 export const resolveCategoryFields = (category) => ({
-  href: category.url,
-  slug: category.url ? compose(last, split('/'), prop('url'))(category) : null,
   children: category.children ? map(resolveCategoryFields, category.children): [],
-  name: category.name,
+  hasChildren: category.hasChildren,
+  href: category.url,
   id: category.id,
-  hasChildren: category.hasChildren
+  name: category.name,
+  slug: category.url ? compose(last, split('/'), prop('url'))(category) : null,
 })
 
 export const resolveBrandFields = (brand) => ({
+  active: brand.isActive,
   id: brand.id,
   name: brand.name,
-  active: brand.isActive,
-  slug: slugify(brand.name, {lower: true})
+  slug: slugify(brand.name, {lower: true}),
 })

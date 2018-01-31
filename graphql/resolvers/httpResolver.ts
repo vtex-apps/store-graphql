@@ -6,7 +6,7 @@ import * as parse from 'url-parse'
 const defaultMerge = (bodyData, resData) => resData
 const removeDomain = (cookie) => cookie.replace(/domain=.+?(;|$)/, '')
 
-export type URLBuilder = (account: string, data: any, root: any) => string
+export type URLBuilder = (account: string, data: any) => string
 
 export type DataBuilder = (data: any) => any
 
@@ -25,10 +25,10 @@ export interface HttpResolverOptions {
 }
 
 export default (options: HttpResolverOptions) => {
-  return async (root, args, {vtex: ioContext, request: {headers: {cookie}}, response}: ColossusContext) => {
+  return async (_, args, {vtex: ioContext, request: {headers: {cookie}}, response}: ColossusContext) => {
     const {secure=false, url, enableCookies, data, method='GET', headers={}, merge=defaultMerge} = options
 
-    const builtUrl = (typeof url === 'function') ? url(ioContext.account, args, root) : url
+    const builtUrl = (typeof url === 'function') ? url(ioContext.account, args) : url
     const builtData = (typeof data === 'function') ? data(args) : data
     const builtHeaders = (typeof headers === 'function') ? await headers(ioContext) : headers
 

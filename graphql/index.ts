@@ -8,13 +8,13 @@ Promise = require('bluebird')
 Promise.config({longStackTraces: true})
 
 export const resolvers = {
+  Mutation: {
+    ...profileMutations,
+    ...checkoutMutations,
+  },
   Query: {
     ...catalogQueries,
     ...profileQueries,
     ...checkoutQueries,
-  },
-  Mutation: {
-    ...profileMutations,
-    ...checkoutMutations,
   },
 }

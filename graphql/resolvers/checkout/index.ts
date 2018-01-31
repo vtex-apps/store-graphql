@@ -42,16 +42,16 @@ export const mutations = {
   cancelOrder: httpResolver({
     data: ({ reason }) => ({ reason }),
     enableCookies: true,
+    headers: withAuthToken(headers.json),
     merge: () => ({ success: true }),
     method: 'POST',
-    headers: withAuthToken(headers.json),
     url: paths.cancelOrder,
   }),
 
   createPaymentSession: httpResolver({
+    enableCookies: true,
     headers: withAuthToken({...headers.json}),
     method: 'POST',
-    enableCookies: true,
     secure: true,
     url: paths.gatewayPaymentSession,
   }),
@@ -79,8 +79,8 @@ export const mutations = {
       orderItems: items,
     }),
     enableCookies: true,
-    method: 'POST',
     headers: withAuthToken(headers.json),
+    method: 'POST',
     url: paths.updateItems,
   }),
 

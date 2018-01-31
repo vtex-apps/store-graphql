@@ -1,8 +1,8 @@
 import axios from 'axios'
 import {map, prop} from 'ramda'
+import {withAuthToken} from '../headers'
 import paths from '../paths'
 import {resolveLocalProductFields} from './fieldsResolver'
-import {withAuthToken} from '../headers'
 
 export const resolveView = async (ioContext, product) => {
   const url = paths.crossSelling(ioContext.account, product.productId, 'whosawalsosaw')
