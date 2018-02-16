@@ -16,6 +16,62 @@
   },
   "policies": [
     {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "${account}.vtexcommercestable.com.br",
+        "path": "/api/catalog_system/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "${account}.vtexcommercestable.com.br",
+        "path": "/api/catalog_system/pvt/category/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "${account}.vtexcommercestable.com.br",
+        "path": "/api/checkout/pub/orderForm/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "${account}.vtexcommercestable.com.br",
+        "path": "/api/checkout/pub/orders/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "vtexid.vtex.com.br",
+        "path": "/api/vtexid/pub/authenticated/user"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "${account}.vtexpayments.com.br",
+        "path": "/api/pvt/sessions"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "${account}.vtexpayments.com.br",
+        "path": "/pub/sessions/*/tokens"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/buscaautocomplete"
+      }
+    },
+    {
       "name": "full-access"
     }
   ]
