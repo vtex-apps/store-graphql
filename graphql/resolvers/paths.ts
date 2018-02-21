@@ -1,5 +1,5 @@
 const paths = {
-  product: (account, {slug}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search$/${slug}/p`,
+  product: (account, {slug}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${slug}/p`,
   productByEan: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_Ean=${id}`,
   productById: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=productId:${id}`,
   productByReference: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_RefId=${id}`,

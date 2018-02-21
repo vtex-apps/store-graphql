@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios'
 import {ColossusContext} from 'colossus'
 import graphqlFields from 'graphql-fields'
-import {compose, equals, find, map, prop} from 'ramda'
+import {compose, equals, head, find, map, prop} from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import {withAuthToken} from '../headers'
 import paths from '../paths'
@@ -26,7 +26,7 @@ export default {
   product: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
     const url = paths.product(ioContext.account, data)
     const {data: product} = await axios.get(url, { headers: withAuthToken()(ioContext) })
-    const resolvedProduct = await resolveProductFields(ioContext, product, graphqlFields(info))
+    const resolvedProduct = await resolveProductFields(ioContext, head(product), graphqlFields(info))
 
     return resolvedProduct
   },
