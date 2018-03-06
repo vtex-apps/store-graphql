@@ -9,7 +9,8 @@
     "smartcheckout"
   ],
   "builders": {
-    "graphql": "0.x"
+    "graphql": "1.x",
+    "node": "3.x"
   },
   "mustUpdateAt": "2017-09-05",
   "scripts": {

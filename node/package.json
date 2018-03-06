@@ -19,7 +19,7 @@
     "@types/es6-shim": "^0.31.32",
     "@types/koa": "^2.0.39",
     "@types/node": "^7.0.8",
-    "@types/ramda": "types/npm-ramda",
+    "@types/ramda": "types/npm-ramda#dist",
     "tslint": "^5.8.0",
     "tslint-config-vtex": "^2.0.0"
   },
