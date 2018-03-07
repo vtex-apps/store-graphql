@@ -72,9 +72,6 @@
         "host": "portal.vtexcommercestable.com.br",
         "path": "/buscaautocomplete"
       }
-    },
-    {
-      "name": "full-access"
     }
   ]
 }
