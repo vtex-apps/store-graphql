@@ -10,8 +10,7 @@ type Query {
     orderBy: String = "OrderByPriceDESC",
     from: Int = 0,
     to: Int = 9
-  ): [Product]
-
+  ): ProductResult
   facets(facets: String = ""): Facets
 
   category(id: Int): Category

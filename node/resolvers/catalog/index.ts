@@ -33,11 +33,25 @@ export default {
 
   products: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
     const url = paths.products(ioContext.account, data)
-    const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const response = await axios.get(url, { headers: withAuthToken()(ioContext) })
     const fields = graphqlFields(info)
-    const resolvedProducts = await Promise.map(products, product => resolveProductFields(ioContext, product, fields))
+    const resolvedProducts = await Promise.map(response.data, product => resolveProductFields(ioContext, product, fields))
 
-    return resolvedProducts
+    const [ resource, total ] = response.headers.resources.split('/')
+    const [ start, end ] = resource.split('-')
+    const perPage = data.to - data.from + 1
+
+    return {
+      items: resolvedProducts,
+      paging: {
+        total,
+        perPage,
+        pages: Math.ceil(total / perPage),
+        page: Math.ceil(data.from / perPage) + 1,
+        _from: data.from,
+        _to: data.to,
+      }
+    }
   },
 
   brand: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
