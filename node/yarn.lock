@@ -99,9 +99,9 @@
   version "7.0.52"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.52.tgz#8990d3350375542b0c21a83cd0331e6a8fc86716"
 
-"@types/ramda@types/npm-ramda":
+"@types/ramda@types/npm-ramda#dist":
   version "0.25.0"
-  resolved "https://codeload.github.com/types/npm-ramda/tar.gz/bc11e945bc55feb52bc5261284c3a4bd4df270b7"
+  resolved "https://codeload.github.com/types/npm-ramda/tar.gz/a140598b8213bf7fa47d11213db18777a5e59560"
 
 "@types/serve-static@*":
   version "1.13.1"
