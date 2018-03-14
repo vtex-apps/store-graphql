@@ -1,5 +1,10 @@
 type Query {
   product(slug: String): Product
+  skus(
+    ids: [Int]
+    from: Int = 0
+    to: Int = 9
+  ): ProductResult
   products(
     query: String = "",
     category: String = "",

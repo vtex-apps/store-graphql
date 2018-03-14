@@ -4,6 +4,7 @@ const paths = {
   productById: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=productId:${id}`,
   productByReference: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=alternateIds_RefId=${id}`,
   productBySku: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId=${id}`,
+  productsBySku: (account, {ids, from, to}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?${ids ? ids.reduce((acc, id) => `${acc ? '&' : ''}fq=skuId:${id}`, ''): ''}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
   brand: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/brand/list`,
   category: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/category/${id}`,
