@@ -8,9 +8,9 @@ axios.interceptors.response.use(
       throw error
     }
 
-    const {config: {method}, status, url, data} = error.response
-    const responseData = typeof data === 'object' ? JSON.stringify(data) : data
-    const message = `External HTTP request failed. method=${method} status=${status} url=${url} data=${responseData}`
+    const {config: { method, url }, status, data} = error.response
+    const banner = 'External HTTP request failed with error:\n'
+    const message = banner + JSON.stringify({ method, status, url, data }, null, 2)
     throw new ResolverError(message, status)
   },
 )
