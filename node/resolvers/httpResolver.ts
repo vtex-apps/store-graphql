@@ -4,7 +4,6 @@ import {map, prop} from 'ramda'
 import * as parse from 'url-parse'
 
 const defaultMerge = (bodyData, resData) => resData
-const removeDomain = (cookie) => cookie.replace(/domain=.+?(;|$)/, '')
 
 export type URLBuilder = (account: string, data: any, root: any) => string
 
@@ -25,7 +24,7 @@ export interface HttpResolverOptions {
 }
 
 export default (options: HttpResolverOptions) => {
-  return async (root, args, {vtex: ioContext, request: {headers: {cookie}}, response}: ColossusContext) => {
+  return async (root, args, {vtex: ioContext, request: {headers: {cookie, 'x-forwarded-host': host}}, response}: ColossusContext) => {
     const {secure=false, url, enableCookies, data, method='GET', headers={}, merge=defaultMerge} = options
 
     const builtUrl = (typeof url === 'function') ? url(ioContext.account, args, root) : url
@@ -35,6 +34,7 @@ export default (options: HttpResolverOptions) => {
     const config = {method, url: builtUrl, data: builtData, headers: builtHeaders}
     if (enableCookies && cookie) {
       config.headers.cookie = cookie
+      config.headers.host = host
     }
     if (secure) {
       config.headers['X-Vtex-Proxy-To'] = `https://${parse(builtUrl).hostname}`
@@ -45,7 +45,7 @@ export default (options: HttpResolverOptions) => {
     if (enableCookies) {
       const setCookie = prop('set-cookie', vtexResponse.headers)
       if (setCookie) {
-        response.set('Set-Cookie', map(removeDomain, setCookie))
+        response.set('Set-Cookie', setCookie)
       }
     }
     return merge(args, vtexResponse.data)
