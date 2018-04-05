@@ -1,4 +1,4 @@
-type OrderForm {
+type OrderForm @context(scope: "private") {
   orderFormId: String
   value: Float
   items: [OrderFormItem]

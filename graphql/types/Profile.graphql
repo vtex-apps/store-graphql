@@ -1,4 +1,4 @@
-type Profile {
+type Profile @context(scope: "private") {
   id: String,
   userId: String,
   firstName: String,
