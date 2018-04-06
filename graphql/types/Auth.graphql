@@ -1,6 +1,10 @@
-type AuthToken {
+type AuthClientToken {
     Name: String,
     Value: String
+}
+
+type AuthToken {
+    authToken: String
 }
 
 input AuthInput {

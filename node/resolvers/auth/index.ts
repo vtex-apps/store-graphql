@@ -18,7 +18,10 @@ export const mutations = {
     sendEmailVerification: async (_, args, {vtex: ioContext}) => {
         const {data: {authenticationToken}} = await makeRequest(ioContext, paths.getTemporaryToken())
         await makeRequest(ioContext, paths.sendEmailVerification(args.email, authenticationToken))
-        return authenticationToken
+        const authToken = {
+            authToken: authenticationToken
+        }
+        return authToken
     },
 
     signin: async (_, args, {vtex: ioContext, request: {headers: {cookie}}, response}) => {
