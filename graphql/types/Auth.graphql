@@ -1,0 +1,10 @@
+type AuthToken {
+    Name: String,
+    Value: String
+}
+
+input AuthInput {
+    email: String, 
+    code: String, 
+    authToken: String
+}
