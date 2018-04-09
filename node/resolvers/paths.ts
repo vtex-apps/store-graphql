@@ -58,6 +58,12 @@ const paths = {
   gatewayTokenizePayment: (account, {sessionId}) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
   autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+
+  getTemporaryToken: () => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start`,
+
+  sendEmailVerification: (email, token) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
+
+  signIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 }
 
 export default paths
