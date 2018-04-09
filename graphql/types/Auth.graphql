@@ -1,0 +1,14 @@
+type AuthClientToken {
+  name: String,
+  value: String
+}
+
+type AuthToken {
+  authToken: String
+}
+
+input AuthInput {
+  email: String, 
+  code: String, 
+  authToken: String
+}

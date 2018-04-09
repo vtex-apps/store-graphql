@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -50,6 +50,20 @@
       "attrs": {
         "host": "vtexid.vtex.com.br",
         "path": "/api/vtexid/pub/authenticated/user"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "vtexid.vtex.com.br",
+        "path": "/api/vtexid/pub/authentication/start"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "vtexid.vtex.com.br",
+        "path": "/api/vtexid/pub/authentication/accesskey/*"
       }
     },
     {
