@@ -22,7 +22,7 @@ export const mutations = {
 
   signIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { fields: { email, authToken, code } } = args
-    const { data: { authCookie } } = await makeRequest(ioContext, paths.signin(email, authToken, code))
+    const { data: { authCookie } } = await makeRequest(ioContext, paths.signIn(email, authToken, code))
     response.set('Set-Cookie', serialize(authCookie.Name, authCookie.Value))
     return { name: authCookie.Name, value: authCookie.Value }
   }
