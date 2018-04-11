@@ -86,6 +86,13 @@
         "host": "portal.vtexcommercestable.com.br",
         "path": "/buscaautocomplete"
       }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.vtex.com/{{account}}",
+        "path": "/dataentities/*"
+      }
     }
   ]
 }

@@ -1,0 +1,10 @@
+type MasterObject {
+  id: String
+  fields: [Field]
+}
+
+type Field {
+  key: String
+  value: String
+  fields: [Field]
+}
