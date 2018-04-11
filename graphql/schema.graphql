@@ -18,6 +18,7 @@ type Query {
   categories(treeLevel: Int = 3): [Category]
 
   brand(id: Int): Brand
+  brands: [Brand]
 
   shipping(skuId: String, postalCode: String): ShippingData
 
