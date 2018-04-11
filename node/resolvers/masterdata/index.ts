@@ -16,4 +16,17 @@ export const queries = {
       }))
     }))
   },
+
+  masterObject: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
+    const {acronym, fields, id} = args
+    const url = paths.document(ioContext.account, acronym, fields, id)
+    const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie) })
+    return {
+      id: data.id,
+      fields: Object.keys(data).map(key => ({
+        key,
+        value: data[key]
+      }))
+    }
+  },
 }

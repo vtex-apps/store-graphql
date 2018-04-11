@@ -29,6 +29,8 @@ type Query {
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 
   masterObjects(acronym: String, fields: [String]): [MasterObject]
+
+  masterObject(acronym: String, fields: [String], id: String): MasterObject
 }
 
 type Mutation {
