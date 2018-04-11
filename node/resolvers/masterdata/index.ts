@@ -1,10 +1,10 @@
 import http from 'axios'
 import paths from '../paths'
-import {map, keys} from 'ramda'
+import {map, keys, zipObj, mergeAll} from 'ramda'
 import { withAuthToken, headers } from '../headers'
 
 export const queries = {
-  masterObjects: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
+  documents: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
     const {acronym, fields} = args
     const url = paths.searchDocument(ioContext.account, acronym, fields)
     const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie) })
@@ -17,7 +17,7 @@ export const queries = {
     }))
   },
 
-  masterObject: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
+  document: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
     const {acronym, fields, id} = args
     const url = paths.document(ioContext.account, acronym, fields, id)
     const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie) })
@@ -29,4 +29,17 @@ export const queries = {
       }))
     }
   },
+}
+
+export const mutations = {
+  createDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
+    const {acronym, documents: {fields}} = args
+    const url = paths.documents(ioContext.account, acronym)
+    const body = mergeAll(fields.map(field => zipObj([field.key], [field.value])))
+    const {data} = await http.post(url, body, {headers: withAuthToken()(ioContext, cookie) })
+    console.log(data)
+    // return {
+    //   id: data.
+    // }
+  } 
 }
