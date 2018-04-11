@@ -8,16 +8,12 @@ export const queries = {
     const {acronym, fields} = args
     const url = paths.searchDocument(ioContext.account, acronym, fields)
     const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie) })
-    return map(document => {
-      return {
-        "id": document.id,
-        "fields": map(key => {
-          return {
-            "key": key,
-            "value": document[key]
-          }
-        }, keys(document))
-      }
-    }, data)
+    return data.map(document => ({
+      id: document.id,
+      fields: Object.keys(document).map(key => ({
+        key,
+        value: document[key]
+      }))
+    }))
   },
 }
