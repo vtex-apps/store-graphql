@@ -6,5 +6,4 @@ type MasterObject {
 type Field {
   key: String
   value: String
-  fields: [Field]
 }
