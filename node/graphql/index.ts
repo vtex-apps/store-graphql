@@ -3,7 +3,7 @@ import catalogQueries from '../resolvers/catalog'
 import {mutations as checkoutMutations, queries as checkoutQueries} from '../resolvers/checkout'
 import {mutations as profileMutations, queries as profileQueries} from '../resolvers/profile'
 import {mutations as authMutations} from '../resolvers/auth'
-import {queries as masterDataQueries} from '../resolvers/masterdata'
+import {mutations as masterDataMutations, queries as masterDataQueries} from '../resolvers/masterdata'
 
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
@@ -20,5 +20,6 @@ export const resolvers = {
     ...profileMutations,
     ...checkoutMutations,
     ...authMutations,
+    ...masterDataMutations,
   },
 }

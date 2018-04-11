@@ -28,9 +28,9 @@ type Query {
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 
-  masterObjects(acronym: String, fields: [String]): [MasterObject]
+  documents(acronym: String, fields: [String]): [Document]
 
-  masterObject(acronym: String, fields: [String], id: String): MasterObject
+  document(acronym: String, fields: [String], id: String): Document
 }
 
 type Mutation {
@@ -47,9 +47,10 @@ type Mutation {
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
-  createPaymentSession: PaymentSession
+createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
   sendEmailVerification(email: String): AuthToken
   signIn(fields: AuthInput): AuthClientToken
+  createDocument(acronym: String, documents: DocumentInput): DocumentResponse
 }

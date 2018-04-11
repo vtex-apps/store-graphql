@@ -67,7 +67,9 @@ const paths = {
 
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
 
-  document: (account, acronym, fields="_all", id) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents/${id}?_fields=${fields}`
+  document: (account, acronym, fields="_all", id) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents/${id}?_fields=${fields}`,
+
+  documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`
 }
 
 export default paths
