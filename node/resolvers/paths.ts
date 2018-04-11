@@ -64,6 +64,8 @@ const paths = {
   sendEmailVerification: (email, token) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
 
   signIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
+
+  searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`
 }
 
 export default paths

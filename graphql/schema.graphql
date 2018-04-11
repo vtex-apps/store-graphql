@@ -27,6 +27,8 @@ type Query {
   profile: Profile
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
+
+  masterObjects(acronym: String, fields: [String]): [MasterObject]
 }
 
 type Mutation {
