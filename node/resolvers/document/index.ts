@@ -40,7 +40,7 @@ export const queries = {
 
 export const mutations = {
   createDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, documents: {fields}} = args
+    const {acronym, document: {fields}} = args
     const url = paths.documents(ioContext.account, acronym)
     const {data: {Id, Href, DocumentId}} = await http.post(
       url, parseFieldsToJson(fields), 

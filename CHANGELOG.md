@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+* **Resolver** Master data resolver to provide get, get by id and create document.
+
 ## [2.1.0] - 2018-09-04
 
 ### Added
