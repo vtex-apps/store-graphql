@@ -1,0 +1,24 @@
+type Document {
+  id: String
+  fields: [Field]
+}
+
+type Field {
+  key: String
+  value: String
+}
+
+type DocumentResponse {
+  id: String,
+  href: String,
+  documentId: String
+}
+
+input FieldInput {
+  key: String,
+  value: String
+}
+
+input DocumentInput {
+  fields: [FieldInput]
+}

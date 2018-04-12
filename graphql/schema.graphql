@@ -28,7 +28,9 @@ type Query {
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 
-  masterObjects(acronym: String, fields: [String]): [MasterObject]
+  documents(acronym: String, fields: [String]): [Document]
+
+  document(acronym: String, fields: [String], id: String): Document
 }
 
 type Mutation {
@@ -50,4 +52,5 @@ type Mutation {
   setPlaceholder(fields: PlaceholderInput): Boolean
   sendEmailVerification(email: String): AuthToken
   signIn(fields: AuthInput): AuthClientToken
+  createDocument(acronym: String, document: DocumentInput): DocumentResponse
 }
