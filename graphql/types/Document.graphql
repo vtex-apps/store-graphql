@@ -10,7 +10,8 @@ type Field {
 
 type DocumentResponse {
   id: String,
-  href: String
+  href: String,
+  documentId: String
 }
 
 input FieldInput {
