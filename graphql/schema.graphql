@@ -52,5 +52,5 @@ type Mutation {
   setPlaceholder(fields: PlaceholderInput): Boolean
   sendEmailVerification(email: String): AuthToken
   signIn(fields: AuthInput): AuthClientToken
-  createDocument(acronym: String, documents: DocumentInput): DocumentResponse
+  createDocument(acronym: String, document: DocumentInput): DocumentResponse
 }
