@@ -32,20 +32,33 @@ export const queries = {
 
   document: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
     const {acronym, fields, id} = args
-    const url = paths.document(ioContext.account, acronym, fields, id)
+    const url = paths.documentFields(ioContext.account, acronym, fields, id)
     const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie)})
     return {id: data.id, fields: mapKeyValues(data)}
   },
 }
 
+const makeRequest = async (args, ioContext, cookie, method) => {
+  const {acronym, document: {fields}} = args
+  const url = paths.documents(ioContext.account, acronym)
+  const {data: {Id, Href, DocumentId}} = await method(
+    url, parseFieldsToJson(fields), 
+    {headers: withAuthToken()(ioContext, cookie)}
+  )
+  return {id: Id, href: Href, documentId: DocumentId}
+}
+
 export const mutations = {
-  createDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, document: {fields}} = args
-    const url = paths.documents(ioContext.account, acronym)
-    const {data: {Id, Href, DocumentId}} = await http.post(
-      url, parseFieldsToJson(fields), 
-      {headers: withAuthToken()(ioContext, cookie)}
-    )
-    return {id: Id, href: Href, documentId: DocumentId}
-  } 
+  createDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) =>
+    makeRequest(args, ioContext, cookie, http.get),
+
+  updateDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) =>
+    makeRequest(args, ioContext, cookie, http.patch),
+
+  deleteDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
+    const {acronym, id} = args
+    const url = paths.document(ioContext.account, acronym, id)
+    const {data: status} = await http.delete(url, {headers: withAuthToken()(ioContext, cookie)})
+    return status
+  }
 }

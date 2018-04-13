@@ -66,10 +66,12 @@ const paths = {
   signIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
+  
+  documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
 
-  document: (account, acronym, fields="_all", id) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents/${id}?_fields=${fields}`,
+  document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
 
-  documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`
+  documentFields: (account, acronym, fields="_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
 }
 
 export default paths
