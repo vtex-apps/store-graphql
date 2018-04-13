@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-* **Resolver** Master data resolver to provide get, get by id and create document.
+* **Resolver** Create `documentResolver` to provide get, get by id and create document.
+
+### Changed
+
+* **Resolver** Fix `authResolver` to set `HTTPOnly` on cookies.
 
 ## [2.1.0] - 2018-09-04
 
