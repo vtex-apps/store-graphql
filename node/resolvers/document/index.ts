@@ -53,12 +53,5 @@ export const mutations = {
     makeRequest(args, ioContext, cookie, http.get),
 
   updateDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) =>
-    makeRequest(args, ioContext, cookie, http.patch),
-
-  deleteDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, id} = args
-    const url = paths.document(ioContext.account, acronym, id)
-    const {data: status} = await http.delete(url, {headers: withAuthToken()(ioContext, cookie)})
-    return status
-  }
+    makeRequest(args, ioContext, cookie, http.patch)
 }

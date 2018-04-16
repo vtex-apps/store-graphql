@@ -60,17 +60,12 @@ const paths = {
   autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 
   getTemporaryToken: () => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start`,
-
   sendEmailVerification: (email, token) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
-
   signIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
-  
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
-
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
-
   documentFields: (account, acronym, fields="_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
 }
 
