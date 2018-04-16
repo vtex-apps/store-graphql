@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.2.0] - 2018-16-04
+
 ### Added
 
-* **Resolver** Create `documentResolver` to provide get, get by id and create document.
+* **Resolver** Create `documentResolver` to provide `create`, `retrieve` and `update` Documents.
 * **Resolver** Create `brands` resolver to provide all brands from store.
 
 ### Changed
