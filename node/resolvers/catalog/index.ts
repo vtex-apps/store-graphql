@@ -51,6 +51,12 @@ export default {
     return resolveBrandFields(brand)
   },
 
+  brands: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
+    const url = paths.brand(ioContext.account)
+    const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
+    return map(resolveBrandFields, brands)
+  },
+
   category: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
     const url = paths.category(ioContext.account, data)
     const {data: category} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
