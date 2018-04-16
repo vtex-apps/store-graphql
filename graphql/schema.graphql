@@ -54,5 +54,4 @@ type Mutation {
   signIn(fields: AuthInput): AuthClientToken
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
-  deleteDocument(acronym: String, id: String): String
 }
