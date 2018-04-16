@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 * **Resolver** Create `documentResolver` to provide get, get by id and create document.
+* **Resolver** Create `brands` resolver to provide all brands from store.
 
 ### Changed
 
@@ -20,4 +21,3 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 * **Resolver** Login resolver to provide GraphQL queries and mutations.
-* **Resolver** Brands resolver to provide all brands from store.
