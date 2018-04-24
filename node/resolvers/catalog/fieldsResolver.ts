@@ -63,7 +63,7 @@ const resolvers = {
 
   specificationFilters: (facets) => {
     const {SpecificationFilters={}} = facets
-    return objToNameValue('name', 'value', SpecificationFilters)
+    return objToNameValue('name', 'facets', SpecificationFilters)
   },
 }
 
