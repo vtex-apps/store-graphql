@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.0] - 2018-04-27
+
 ### Added
 
 * **Product Query** Add `productClusters` to the `product` query
 
-## [2.2.0] - 2018-16-04
+## [2.2.0] - 2018-04-16
 
 ### Added
 
@@ -22,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * **Resolver** Fix `authResolver` to set `HTTPOnly` on cookies.
 
-## [2.1.0] - 2018-09-04
+## [2.1.0] - 2018-04-09
 
 ### Added
 
