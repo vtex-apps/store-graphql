@@ -12,6 +12,7 @@ const knownNotPG = [
   'categoriesIds',
   'categoryId',
   'clusterHighlights',
+  'productClusters'
   'description',
   'items',
   'productId',
@@ -29,6 +30,11 @@ const resolvers = {
     const {clusterHighlights={}} = product
     return objToNameValue('id', 'name', clusterHighlights)
   },
+
+  productClusters: (product) => {
+    const {productClusters={}} = product
+    return objToNameValue('id', 'name', productClusters)
+  }
 
   propertyGroups: (product) => {
     const {allSpecifications=[]} = product
@@ -68,9 +74,9 @@ const resolvers = {
 }
 
 export const resolveLocalProductFields = (product) => {
-  const resolveFields = juxt([resolvers.clusterHighlights, resolvers.propertyGroups, resolvers.properties, resolvers.items])
-  const [clusterHighlights, propertyGroups, properties, items] = resolveFields(product)
-  return {...product, clusterHighlights, items, properties, propertyGroups}
+  const resolveFields = juxt([resolvers.clusterHighlights, resolvers.propertyGroups, resolvers.properties, resolvers.items, resolvers.productClusters])
+  const [clusterHighlights, propertyGroups, properties, items, productClusters] = resolveFields(product)
+  return {...product, clusterHighlights, items, properties, propertyGroups, productClusters}
 }
 
 export const resolveProductFields = async (ioContext: IOContext, product: any, fields: any) => {

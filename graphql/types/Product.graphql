@@ -4,6 +4,7 @@ type Product {
   categories: [String]
   categoriesIds: [String]
   clusterHighlights: [ClusterHighlight]
+  productClusters: [ProductClusters]
   description: String
   items: [SKU]
   link: String
@@ -14,6 +15,11 @@ type Product {
   propertyGroups: [PropertyGroup]
   productReference: String
   recommendations: Recommendation
+}
+
+type ProductClusters {
+  id: ID
+  name: String
 }
 
 type ClusterHighlight {
