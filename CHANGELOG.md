@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+* **Product Query** Add `productClusters` to the `product` query
+
 ## [2.2.0] - 2018-16-04
 
 ### Added
