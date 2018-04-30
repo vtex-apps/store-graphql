@@ -67,6 +67,8 @@ const paths = {
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
   documentFields: (account, acronym, fields="_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
+
+  calculateSLA: (account) => `http://logistics.vtexcommercestable.com.br/api/logistics/pvt/shipping/calculate?an=${account}`
 }
 
 export default paths
