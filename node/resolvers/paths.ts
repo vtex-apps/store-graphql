@@ -11,19 +11,7 @@ const paths = {
   category: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/category/${id}`,
   categories: (account, {treeLevel}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/category/tree/${treeLevel}/`,
   
-  products: (account, {
-    query = '', 
-    map= '',
-    fulltext = '', 
-    category ='', 
-    specificationFilters = '', 
-    priceRange ='', 
-    collection = '', 
-    salesChannel = '',
-    orderBy = '', 
-    from = 0, 
-    to = 9
-  }) => `${paths.search(account)}/${encodeURIComponent(query)}?${map && `map=${map}`}${category && `&fq=C:/${category}/`}${specificationFilters && '&' + specificationFilters}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
+  products: (account, {query = '', map= '', fulltext = '', category ='', specificationFilters = '', priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9}) => `${paths.search(account)}/${encodeURIComponent(query)}?${map && `map=${map}`}${category && `&fq=C:/${category}/`}${specificationFilters && '&' + specificationFilters}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
   
   facets: (account, {facets=''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
 
