@@ -33,7 +33,7 @@ export default {
 
   products: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
     const queryTerm = data.query
-    if (test(/[\?\=\,]/, queryTerm)) {
+    if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(`The query term: '${queryTerm}' contains invalid characters.`, 500)
     }
     const url = paths.products(ioContext.account, data)
