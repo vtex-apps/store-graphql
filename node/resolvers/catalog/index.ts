@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios'
 import {ColossusContext} from 'colossus'
 import graphqlFields from 'graphql-fields'
-import {compose, equals, head, find, map, prop} from 'ramda'
+import {compose, equals, head, find, map, prop, test} from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import {withAuthToken} from '../headers'
 import paths from '../paths'
@@ -32,6 +32,10 @@ export default {
   },
 
   products: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
+    const queryTerm = data.query
+    if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
+      throw new ResolverError(`The query term: '${queryTerm}' contains invalid characters.`, 500)
+    }
     const url = paths.products(ioContext.account, data)
     const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
     const fields = graphqlFields(info)
