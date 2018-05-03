@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+* Added `map` param to the `products` query
+
+### Fixed
+
+* Fixed the `products` query to reject invalid characters
+
 ## [2.3.0] - 2018-04-27
 
 ### Added
