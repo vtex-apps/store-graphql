@@ -4,9 +4,30 @@ import httpResolver from '../httpResolver'
 import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
 
+/**
+ * It will convert an integer to float moving the
+ * float point two positions left. That is needed
+ * once the OrderForm REST API return an integer
+ * colapsing the floating point into the integer
+ * part.
+ * 
+ * @param int An integer number
+ */
+const convertIntToFloat = int => int * 0.01
+
 export const queries = {
   orderForm: httpResolver({
     data: {expectedOrderFormSections: ['items']},
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      value: convertIntToFloat(responseData.value),
+      items: map((item) => ({
+        ...item,
+        price: convertIntToFloat(item.price),
+        listPrice: convertIntToFloat(item.listPrice),
+        sellingPrice: convertIntToFloat(item.sellingPrice)
+      }), responseData.items)
+    }),
     enableCookies: true,
     headers: withAuthToken(headers.json),
     method: 'POST',
