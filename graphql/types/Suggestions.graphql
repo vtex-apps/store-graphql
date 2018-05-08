@@ -7,4 +7,5 @@ type Items {
   name: String
   href: String
   criteria: String
+  slug: String
 }
