@@ -1,18 +1,38 @@
 import axios, {AxiosResponse} from 'axios'
 import {ColossusContext} from 'colossus'
 import graphqlFields from 'graphql-fields'
-import {compose, equals, head, find, map, prop, test} from 'ramda'
+import {compose, split, equals, head, find, map, prop, test} from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import {withAuthToken} from '../headers'
 import paths from '../paths'
 import {resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields} from './fieldsResolver'
 
-export default {
-  autocomplete: async (_, data, {vtex: ioContext}: ColossusContext) => {
-    const url = paths.autocomplete(ioContext.account, data)
-    const {data: resolvedAutocomplete} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+/**
+ * It will extract the slug from the HREF in the item
+ * passed as parameter.
+ * 
+ * That is needed once the API provide only the old link
+ * (from CMS portal) to access the product page, nothing
+ * more.
+ * 
+ * HREF provided: 
+ * https://portal.vtexcommercestable.com.br/:slug/p
+ * 
+ * @param item The item to extract the information
+ */
+const extractSlug = item => {
+  const href = split('/', item.href)
+  return item.criteria? `${href[3]}/${href[4]}` : href[3]
+}
 
-    return resolvedAutocomplete
+export default {
+  autocomplete: async (_, args, {vtex: ioContext}: ColossusContext) => {
+    const url = paths.autocomplete(ioContext.account, args)
+    const {data} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    return {itemsReturned: map(item => ({
+      ...item,
+      slug: extractSlug(item)
+    }), data.itemsReturned)}
   },
 
   facets: async (_, data, {vtex: ioContext}: ColossusContext) => {
