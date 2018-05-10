@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.3.3] - 2018-04-05
+## [2.3.3] - 2018-04-10
 ### Changed
 - **Resolver** Changed the `OrderForm` query to parse the integer prices to float.
 ### Added
