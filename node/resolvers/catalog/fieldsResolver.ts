@@ -12,7 +12,7 @@ const knownNotPG = [
   'categoriesIds',
   'categoryId',
   'clusterHighlights',
-  'productClusters'
+  'productClusters',
   'description',
   'items',
   'productId',
@@ -34,7 +34,7 @@ const resolvers = {
   productClusters: (product) => {
     const {productClusters={}} = product
     return objToNameValue('id', 'name', productClusters)
-  }
+  },
 
   propertyGroups: (product) => {
     const {allSpecifications=[]} = product
@@ -71,17 +71,25 @@ const resolvers = {
     const {SpecificationFilters={}} = facets
     return objToNameValue('name', 'facets', SpecificationFilters)
   },
+
+  jsonSpecifications: (facets) => {
+    const {Specifications=[]} = facets
+    const specificationsMap = Specifications.reduce((acc, key) => {
+      acc[key] = facets[key]
+      return acc},
+      {})
+    return JSON.stringify(specificationsMap)
+  },
 }
 
 export const resolveLocalProductFields = (product) => {
-  const resolveFields = juxt([resolvers.clusterHighlights, resolvers.propertyGroups, resolvers.properties, resolvers.items, resolvers.productClusters])
-  const [clusterHighlights, propertyGroups, properties, items, productClusters] = resolveFields(product)
-  return {...product, clusterHighlights, items, properties, propertyGroups, productClusters}
+  const resolveFields = juxt([resolvers.clusterHighlights, resolvers.propertyGroups, resolvers.properties, resolvers.items, resolvers.productClusters, resolvers.jsonSpecifications])
+  const [clusterHighlights, propertyGroups, properties, items, productClusters, jsonSpecifications] = resolveFields(product)
+  return {...product, clusterHighlights, items, properties, propertyGroups, productClusters, jsonSpecifications}
 }
 
 export const resolveProductFields = async (ioContext: IOContext, product: any, fields: any) => {
   const resolvedProduct = resolveLocalProductFields(product)
-
   if (!fields.Product || !fields.Product.recommendations) {
     return resolvedProduct
   }
@@ -90,7 +98,6 @@ export const resolveProductFields = async (ioContext: IOContext, product: any, f
     resolveView(ioContext, product),
     resolveBuy(ioContext, product)
   ])
-
   return {...resolvedProduct, recommendations: {buy, view}}
 }
 
