@@ -15,6 +15,7 @@ type Product {
   propertyGroups: [PropertyGroup]
   productReference: String
   recommendations: Recommendation
+  jsonSpecifications: String
 }
 
 type ProductClusters {
