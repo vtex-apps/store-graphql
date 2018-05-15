@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -90,8 +90,8 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "api.vtex.com/{{account}}",
-        "path": "/dataentities/*"
+        "host": "api.vtex.com",
+        "path": "/{{account}}/dataentities/*"
       }
     }
   ]
