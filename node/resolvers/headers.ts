@@ -27,9 +27,11 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
   }
 }
 
-export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (start = 0, pageSize = DEFAULT_PAGE_SIZE) => {
+export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (page = 0, pageSize = DEFAULT_PAGE_SIZE) => {
+  const startIndex = page*pageSize
+  const endIndex = startIndex + pageSize
   return {
     ...(withAuthToken(currentHeaders)(ioContext, cookie)),
-    'REST-Range': `resources=${start}-${start+pageSize}`
+    'REST-Range': `resources=${startIndex}-${endIndex}`
   }
 }
