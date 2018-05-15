@@ -21,10 +21,10 @@ const parseFieldsToJson = (fields) => mergeAll(
 
 export const queries = {
   documents: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, fields, start, pageSize} = args
+    const {acronym, fields, page, pageSize} = args
     const fieldsWithId = union(fields, ['id'])
     const url = paths.searchDocument(ioContext.account, acronym, fieldsWithId)
-    const {data} = await http.get(url, {headers: withMDPagination()(ioContext, cookie)(start, pageSize)})
+    const {data} = await http.get(url, {headers: withMDPagination()(ioContext, cookie)(page, pageSize)})
     return data.map(document => ({
       id: document.id,
       fields: mapKeyValues(document),
