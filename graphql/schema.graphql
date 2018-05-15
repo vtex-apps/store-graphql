@@ -30,7 +30,7 @@ type Query {
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 
-  documents(acronym: String, fields: [String]): [Document]
+  documents(acronym: String, fields: [String], page: Int = 1, pageSize: Int = 15): [Document]
 
   document(acronym: String, fields: [String], id: String): Document
 }
