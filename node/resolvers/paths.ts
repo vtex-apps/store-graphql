@@ -5,7 +5,7 @@ const paths = {
   productByEan: (account, {id}) => `${paths.search(account)}?fq=alternateIds_Ean=${id}`,
   productById: (account, {id}) => `${paths.search(account)}?fq=productId:${id}`,
   productByReference: (account, {id}) => `${paths.search(account)}?fq=alternateIds_RefId=${id}`,
-  productBySku: (account, {id}) => `${paths.search(account)}?fq=skuId=${id}`,
+  productBySku: (account, {id}) => `${paths.search(account)}?fq=skuId:${id}`,
 
   brand: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/brand/list`,
   category: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/category/${id}`,

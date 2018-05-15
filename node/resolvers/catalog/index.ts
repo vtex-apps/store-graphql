@@ -25,7 +25,21 @@ const extractSlug = item => {
   return item.criteria? `${href[3]}/${href[4]}` : href[3]
 }
 
-export default {
+export const rootResolvers = {
+  SKU: {
+    kitItems: (root, _, {vtex: ioContext}: ColossusContext) => {
+      return !root.kitItems ? [] : Promise.all(root.kitItems.map(async kitItem => {
+        const url = paths.productBySku(ioContext.account, {id: kitItem.itemId})
+        const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+        const {items: skus, ...product} = products[0]
+        const sku = skus.find(({itemId}) => itemId === kitItem.itemId)
+        return {...kitItem, product, sku}
+      }))
+    },
+  },
+}
+
+export const queries = {
   autocomplete: async (_, args, {vtex: ioContext}: ColossusContext) => {
     const url = paths.autocomplete(ioContext.account, args)
     const {data} = await axios.get(url, { headers: withAuthToken()(ioContext) })
