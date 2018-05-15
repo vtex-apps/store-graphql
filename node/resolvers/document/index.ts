@@ -1,7 +1,7 @@
 import http from 'axios'
 import paths from '../paths'
 import {zipObj, mergeAll, union} from 'ramda'
-import { withAuthToken, headers } from '../headers'
+import { withAuthToken, withMDPagination, headers } from '../headers'
 
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
@@ -21,10 +21,10 @@ const parseFieldsToJson = (fields) => mergeAll(
 
 export const queries = {
   documents: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, fields} = args
+    const {acronym, fields, page, pageSize} = args
     const fieldsWithId = union(fields, ['id'])
     const url = paths.searchDocument(ioContext.account, acronym, fieldsWithId)
-    const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie)})
+    const {data} = await http.get(url, {headers: withMDPagination()(ioContext, cookie)(page, pageSize)})
     return data.map(document => ({
       id: document.id,
       fields: mapKeyValues(document),
