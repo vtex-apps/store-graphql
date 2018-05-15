@@ -28,7 +28,10 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
 }
 
 export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (page = 0, pageSize = DEFAULT_PAGE_SIZE) => {
-  const startIndex = page*pageSize
+  if (page < 1) {
+    throw new Error('Smallest page value is 1')
+  }
+  const startIndex = (page-1)*pageSize
   const endIndex = startIndex + pageSize
   return {
     ...(withAuthToken(currentHeaders)(ioContext, cookie)),
