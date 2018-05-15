@@ -18,6 +18,25 @@ type Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM){
   jsonSpecifications: String
 }
 
+type OnlyProduct {
+  brand: String
+  categoryId: ID
+  categories: [String]
+  categoriesIds: [String]
+  clusterHighlights: [ClusterHighlight]
+  productClusters: [ProductClusters]
+  description: String
+  link: String
+  linkText: String
+  productId: ID
+  productName: String
+  properties: [Property]
+  propertyGroups: [PropertyGroup]
+  productReference: String
+  recommendations: Recommendation
+  jsonSpecifications: String
+}
+
 type ProductClusters {
   id: ID
   name: String
@@ -50,10 +69,18 @@ type SKU {
   referenceId: [Reference]
   measurementUnit: String
   unitMultiplier: Float
+  kitItems: [KitItem]
   images: [Image]
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
+}
+
+type KitItem {
+  itemId: ID
+  amount: Int
+  product: OnlyProduct
+  sku: SKU
 }
 
 type Attachment {
