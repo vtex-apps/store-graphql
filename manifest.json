@@ -90,8 +90,8 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "api.vtex.com/{{account}}",
-        "path": "/dataentities/*"
+        "host": "api.vtex.com",
+        "path": "/{{account}}/dataentities/*"
       }
     }
   ]
