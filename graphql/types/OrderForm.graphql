@@ -26,10 +26,10 @@ type OrderFormItem {
   refId: String
   ean: String
   priceValidUntil: String
-  price: Int
+  price: Float
   tax: Int
-  listPrice: Int
-  sellingPrice: Int
+  listPrice: Float
+  sellingPrice: Float
   rewardValue: Int
   isGift: Boolean
 }
