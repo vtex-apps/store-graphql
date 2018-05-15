@@ -10,14 +10,14 @@ import {resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolvePr
 /**
  * It will extract the slug from the HREF in the item
  * passed as parameter.
- * 
+ *
  * That is needed once the API provide only the old link
  * (from CMS portal) to access the product page, nothing
  * more.
- * 
- * HREF provided: 
+ *
+ * HREF provided:
  * https://portal.vtexcommercestable.com.br/:slug/p
- * 
+ *
  * @param item The item to extract the information
  */
 const extractSlug = item => {
