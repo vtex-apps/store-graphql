@@ -1,5 +1,7 @@
 import * as cookies from 'cookie'
 
+const DEFAULT_PAGE_SIZE = 15
+
 export const headers = {
   json: {
     accept: 'application/json',
@@ -22,5 +24,12 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
     ...ans,
     Authorization: `${ioContext.authToken}`,
     'Proxy-Authorization': `${ioContext.authToken}`
+  }
+}
+
+export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (start = 0, pageSize = DEFAULT_PAGE_SIZE) => {
+  return {
+    ...(withAuthToken(currentHeaders)(ioContext, cookie)),
+    'REST-Range': `resources=${start}-${start+pageSize}`
   }
 }
