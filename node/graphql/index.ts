@@ -1,5 +1,5 @@
 import '../axiosConfig'
-import catalogQueries from '../resolvers/catalog'
+import {queries as catalogQueries, rootResolvers as catalogRootResolvers} from '../resolvers/catalog'
 import {mutations as checkoutMutations, queries as checkoutQueries} from '../resolvers/checkout'
 import {mutations as profileMutations, queries as profileQueries} from '../resolvers/profile'
 import {mutations as authMutations} from '../resolvers/auth'
@@ -10,6 +10,7 @@ Promise = require('bluebird')
 Promise.config({longStackTraces: true})
 
 export const resolvers = {
+  ...catalogRootResolvers,
   Query: {
     ...catalogQueries,
     ...profileQueries,
