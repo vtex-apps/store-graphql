@@ -1,17 +1,17 @@
 const paths = {
   search: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search`,
-  
+
   product: (account, {slug}) => `${paths.search(account)}/${slug}/p`,
   productByEan: (account, {id}) => `${paths.search(account)}?fq=alternateIds_Ean=${id}`,
   productById: (account, {id}) => `${paths.search(account)}?fq=productId:${id}`,
   productByReference: (account, {id}) => `${paths.search(account)}?fq=alternateIds_RefId=${id}`,
   productBySku: (account, {id}) => `${paths.search(account)}?fq=skuId=${id}`,
-  
+
   brand: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/brand/list`,
   category: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/category/${id}`,
   categories: (account, {treeLevel}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/category/tree/${treeLevel}/`,
 
-  products: (account, {query = '', fulltext = '', category ='', specificationFilters, priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${specificationFilters && '&fq=specificationFilter_25:' + specificationFilters}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
+  products: (account, {query = '', fulltext = '', category ='', specificationFilters, priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${specificationFilters && specificationFilters.map(filter => `&fq=${filter}`)}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
   facets: (account, {facets=''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
 
