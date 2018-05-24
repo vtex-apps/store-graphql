@@ -16,7 +16,7 @@ const paths = {
   crossSelling: (account, id, type) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/crossselling/${type}/${id}`,
 
   shipping: (account, {skuId, postalCode}) =>
-    `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
+    `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
 
   orderForm: (account) => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
 
@@ -68,7 +68,7 @@ const paths = {
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
   documentFields: (account, acronym, fields="_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
 
-  calculateSLA: (account) => `http://logistics.vtexcommercestable.com.br/api/logistics/pvt/shipping/calculate?an=${account}`
+  calculateSLA: (account) => `http://${account}.vtexcommercestable.com.br/api/logistics/pvt/shipping/simulation`
 }
 
 export default paths

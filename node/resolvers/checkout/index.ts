@@ -20,8 +20,12 @@ export const queries = {
   }),
 
   shipping: httpResolver({
+    data: ({skuId, postalCode}) => {
+      return {skuId, postalCode}
+    },
     headers: withAuthToken(headers.json),
     url: paths.shipping,
+    method: 'POST',
   }),
 }
 
