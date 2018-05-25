@@ -1,16 +1,17 @@
 type Query {
   product(slug: String): Product
   products(
-    query: String = "",
-    map: String = "",
-    category: String = "",
-    specificationFilters: [String],
-    priceRange: String = "",
-    collection: String = "",
-    salesChannel: String = "",
-    orderBy: String = "OrderByPriceDESC",
-    from: Int = 0,
+    query: String = ""
+    map: String = ""
+    category: String = ""
+    specificationFilters: [String]
+    priceRange: String = ""
+    collection: String = ""
+    salesChannel: String = ""
+    orderBy: String = "OrderByPriceDESC"
+    from: Int = 0
     to: Int = 9
+    available: Boolean
   ): [Product]
 
   facets(facets: String = ""): Facets
@@ -30,7 +31,12 @@ type Query {
 
   autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
 
-  documents(acronym: String, fields: [String], page: Int = 1, pageSize: Int = 15): [Document]
+  documents(
+    acronym: String
+    fields: [String]
+    page: Int = 1
+    pageSize: Int = 15
+  ): [Document]
 
   document(acronym: String, fields: [String], id: String): Document
 }
@@ -41,16 +47,39 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
   updateProfile(id: String, fields: ProfileInput): OrderForm
   updateAddress(id: String, fields: AddressInput): OrderForm
-  updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
-  updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
-  updateOrderFormPayment(orderFormId: String,  payments: [OrderFormPaymentInput]): OrderForm
-  updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
-  addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
-  setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
+  updateOrderFormProfile(
+    orderFormId: String
+    fields: OrderFormProfileInput
+  ): OrderForm
+  updateOrderFormShipping(
+    orderFormId: String
+    address: OrderFormAddressInput
+  ): OrderForm
+  updateOrderFormPayment(
+    orderFormId: String
+    payments: [OrderFormPaymentInput]
+  ): OrderForm
+  updateOrderFormIgnoreProfile(
+    orderFormId: String
+    ignoreProfileData: Boolean
+  ): OrderForm
+  addOrderFormPaymentToken(
+    orderFormId: String
+    paymentToken: OrderFormPaymentTokenInput
+  ): OrderForm
+  setOrderFormCustomData(
+    orderFormId: String
+    appId: String
+    field: String
+    value: String
+  ): OrderForm
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
   createPaymentSession: PaymentSession
-  createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
+  createPaymentTokens(
+    sessionId: String
+    payments: [PaymentInput]
+  ): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
   sendEmailVerification(email: String): AuthToken
   signIn(fields: AuthInput): AuthClientToken
