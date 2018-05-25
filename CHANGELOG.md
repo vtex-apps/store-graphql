@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
-- **Resolver** Changed the `Products` query to filter by availability of the product.
+- **Resolver** Added to the `Products` query the `available` property to be able of filtering by availability.
 
 ## [2.3.3] - 2018-04-10
 ### Changed
