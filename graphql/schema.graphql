@@ -2,6 +2,7 @@ type Query {
   product(slug: String): Product
   products(
     query: String = "",
+    available: Boolean,
     map: String = "",
     category: String = "",
     specificationFilters: [String],

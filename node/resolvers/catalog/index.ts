@@ -67,13 +67,36 @@ export const queries = {
 
   products: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
     const queryTerm = data.query
+    const isAvailable = data.available
     if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
-      throw new ResolverError(`The query term: '${queryTerm}' contains invalid characters.`, 500)
+      throw new ResolverError(
+        `The query term: '${queryTerm}' contains invalid characters.`,
+        500
+      )
     }
     const url = paths.products(ioContext.account, data)
-    const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const { data: products } = await axios.get(url, {
+      headers: withAuthToken()(ioContext),
+    })
+    let productsFiltered = products
+
+    if (isAvailable) {
+      productsFiltered = productsFiltered.filter(product => {
+        let availableSku = product.items.filter(item => {
+          return (
+            item.sellers.filter(
+              seller => seller.commertialOffer.AvailableQuantity > 0
+            ).length > 0
+          )
+        })
+
+        return availableSku.length > 0
+      })
+    }
     const fields = graphqlFields(info)
-    const resolvedProducts = await Promise.map(products, product => resolveProductFields(ioContext, product, fields))
+    const resolvedProducts = await Promise.map(productsFiltered, product =>
+      resolveProductFields(ioContext, product, fields)
+    )
 
     return resolvedProducts
   },
