@@ -93,6 +93,9 @@
         "host": "api.vtex.com",
         "path": "/{{account}}/dataentities/*"
       }
+    },
+    {
+      "name": "POWER_USER_DS"
     }
   ]
 }
