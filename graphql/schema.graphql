@@ -1,5 +1,6 @@
 type Query {
   product(slug: String): Product
+  search(searchParams: String = "") : SearchResponse
   products(
     query: String = "",
     map: String = "",

@@ -1,0 +1,4 @@
+type SearchResponse {
+  searchInfo: String,
+  products: [Product]
+}
