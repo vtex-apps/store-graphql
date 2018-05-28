@@ -45,8 +45,14 @@ export const queries = {
   }),
 
   shipping: httpResolver({
+    data: ({items, postalCode, country}) => ({
+      items, 
+      postalCode, 
+      country
+    }),
     headers: withAuthToken(headers.json),
     url: paths.shipping,
+    method: 'POST',
   }),
 }
 
