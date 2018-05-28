@@ -20,7 +20,11 @@ type Query {
   brand(id: Int): Brand
   brands: [Brand]
 
-  shipping(skuId: String, postalCode: String): ShippingData
+  shipping(
+    items: [ShippingItem], 
+    postalCode: String, 
+    country: String
+  ): ShippingData
 
   orderForm: OrderForm
   orders: [Order]
