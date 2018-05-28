@@ -1,5 +1,5 @@
 const paths = {
-  search: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search`,
+  search: (account, { searchParams = ''} ) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search${searchParams}`,
 
   product: (account, {slug}) => `${paths.search(account)}/${slug}/p`,
   productByEan: (account, {id}) => `${paths.search(account)}?fq=alternateIds_Ean=${id}`,

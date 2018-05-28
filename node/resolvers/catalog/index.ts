@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios'
 import {ColossusContext} from 'colossus'
 import graphqlFields from 'graphql-fields'
-import {compose, split, equals, head, find, map, prop, test} from 'ramda'
+import {compose, equals, find, head, map, prop, split, test} from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import {withAuthToken} from '../headers'
 import paths from '../paths'
@@ -47,6 +47,18 @@ export const queries = {
       ...item,
       slug: extractSlug(item)
     }), data.itemsReturned)}
+  },
+
+  search: async (_, args, {vtex: ioContext}: ColossusContext, info) => {
+    const url = paths.search(ioContext.account, args)
+    const res = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const {data: products, headers : { resources: searchInfo }} = res
+    const fields = graphqlFields(info)
+    const resolvedProducts = await Promise.map(products, product => resolveProductFields(ioContext, product, fields))
+    return {
+      searchInfo,
+      products: resolvedProducts
+    }
   },
 
   facets: async (_, data, {vtex: ioContext}: ColossusContext) => {
