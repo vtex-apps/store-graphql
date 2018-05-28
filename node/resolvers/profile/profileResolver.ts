@@ -19,10 +19,18 @@ const profile = (ctx) => async (data) => {
   }
 
   const {user} = data
-  const profileRequest = await configRequest(ctx, paths.profile(ctx.account).filterUser(user))
-  const profileData = await http.request(profileRequest).then<any>(pipe(prop('data'), head))
-  const addressRequest = profileData && await configRequest(ctx, paths.profile(ctx.account).filterAddress(profileData.id))
-  const address = addressRequest && await http.request(addressRequest).then(prop('data'))
+  const config = {
+    headers: {
+      'Proxy-Authorization': ctx.authToken,
+      vtexidclientautcookie: ctx.authToken,
+    },
+  }
+
+  const profileURL = paths.profile(ctx.account).filterUser(user)
+  const profileData = await http.get(profileURL, config).then<any>(pipe(prop('data'), head))
+
+  const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
+  const address = profileData && await http.get(addressURL, config).then(prop('data'))
 
   return merge({address}, profileData)
 }
