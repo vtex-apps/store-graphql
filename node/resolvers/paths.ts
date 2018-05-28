@@ -17,8 +17,7 @@ const paths = {
 
   crossSelling: (account, id, type) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/crossselling/${type}/${id}`,
 
-  shipping: (account, {skuId, postalCode}) =>
-    `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation?request.items[0].id=${skuId}&request.items[0].quantity=1&request.items[0].seller=1&request.postalCode=${postalCode}&request.country=BRA`,
+  shipping: (account) => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
 
   orderForm: (account) => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
 
