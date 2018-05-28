@@ -25,6 +25,25 @@ const extractSlug = item => {
   return item.criteria? `${href[3]}/${href[4]}` : href[3]
 }
 
+/**
+ * Filter the list of products by the available quantity in stock
+ *
+ * @param products List of products to be filtered
+ */
+const filterProductsAvailableQuantity = products => {
+  return products.filter(product => {
+    let availableSku = product.items.filter(item => {
+      return (
+        item.sellers.filter(
+          seller => seller.commertialOffer.AvailableQuantity > 0
+        ).length > 0
+      )
+    })
+
+    return availableSku.length > 0
+  })
+}
+
 export const rootResolvers = {
   SKU: {
     kitItems: (root, _, {vtex: ioContext}: ColossusContext) => {
@@ -78,21 +97,12 @@ export const queries = {
     const { data: products } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
+
     let productsFiltered = products
-
     if (isAvailable) {
-      productsFiltered = productsFiltered.filter(product => {
-        let availableSku = product.items.filter(item => {
-          return (
-            item.sellers.filter(
-              seller => seller.commertialOffer.AvailableQuantity > 0
-            ).length > 0
-          )
-        })
-
-        return availableSku.length > 0
-      })
+      productsFiltered = filterProductsAvailableQuantity(productsFiltered)
     }
+
     const fields = graphqlFields(info)
     const resolvedProducts = await Promise.map(productsFiltered, product =>
       resolveProductFields(ioContext, product, fields)
