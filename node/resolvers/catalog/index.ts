@@ -30,7 +30,7 @@ const extractSlug = item => {
  *
  * @param products List of products to be filtered
  */
-const filterProductsAvailableQuantity = products => {
+const filterProductsAvailable = products => {
   return products.filter(product => {
     let availableSku = product.items.filter(item => {
       return (
@@ -101,7 +101,7 @@ export const queries = {
 
     let productsFiltered = products
     if (isAvailable) {
-      productsFiltered = filterProductsAvailableQuantity(productsFiltered)
+      productsFiltered = filterProductsAvailable(productsFiltered)
     }
 
     const fields = graphqlFields(info)
