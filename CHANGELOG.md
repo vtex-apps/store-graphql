@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - **Resolver** Added to the `Products` query the `available` property to be able of filtering by availability.
 
+## [2.4.2]
+### Changed
+ * Changed `shipping` query to perform freight simulation correctly.
+### Fixed
+ - Fixed `profile` query permissions to read masterdata private fields
+
 ## [2.3.3] - 2018-04-10
 ### Changed
 - **Resolver** Changed the `OrderForm` query to parse the integer prices to float.
