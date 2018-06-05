@@ -27,6 +27,14 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
   }
 }
 
+export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext) => {
+  return {
+    ...currentHeaders,
+    VtexIdclientAutCookie: ioContext.authToken,
+    'Proxy-Authorization': ioContext.authToken,
+  }
+}
+
 export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (page = 0, pageSize = DEFAULT_PAGE_SIZE) => {
   if (page < 1) {
     throw new Error('Smallest page value is 1')
