@@ -10,6 +10,10 @@ type Profile {
   document: String,
   email: String,
   address: [Address],
+  tradeName: String,
+  corporateName: String,
+  corporateDocument: String,
+  stateRegistration: String,
 }
 
 input ProfileInput {
@@ -21,6 +25,10 @@ input ProfileInput {
   businessPhone: String,
   document: String,
   email: String,
+  tradeName: String,
+  corporateName: String,
+  corporateDocument: String,
+  stateRegistration: String,
 }
 
 type Address {
