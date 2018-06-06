@@ -1,4 +1,8 @@
-"""Input to sign in by access code based authentication"""
+""" Return session token"""
+type AuthToken {
+  authToken: String
+}
+"""Data needed to authentication """
 input AuthInput {
   email: String, 
   code: String, 
