@@ -1,19 +1,19 @@
 const paths = {
   search: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search`,
 
-  product: (account, {slug}) => `${paths.search(account)}/${slug}/p`,
-  productByEan: (account, {id}) => `${paths.search(account)}?fq=alternateIds_Ean=${id}`,
-  productById: (account, {id}) => `${paths.search(account)}?fq=productId:${id}`,
-  productByReference: (account, {id}) => `${paths.search(account)}?fq=alternateIds_RefId=${id}`,
-  productBySku: (account, {id}) => `${paths.search(account)}?fq=skuId:${id}`,
+  product: (account, { slug }) => `${paths.search(account)}/${slug}/p`,
+  productByEan: (account, { id }) => `${paths.search(account)}?fq=alternateIds_Ean=${id}`,
+  productById: (account, { id }) => `${paths.search(account)}?fq=productId:${id}`,
+  productByReference: (account, { id }) => `${paths.search(account)}?fq=alternateIds_RefId=${id}`,
+  productBySku: (account, { id }) => `${paths.search(account)}?fq=skuId:${id}`,
 
   brand: (account) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/brand/list`,
-  category: (account, {id}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/category/${id}`,
-  categories: (account, {treeLevel}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/category/tree/${treeLevel}/`,
+  category: (account, { id }) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/category/${id}`,
+  categories: (account, { treeLevel }) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/category/tree/${treeLevel}/`,
 
-  products: (account, {query = '', fulltext = '', category ='', specificationFilters, priceRange ='', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9, map = ''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
+  products: (account, { query = '', fulltext = '', category = '', specificationFilters, priceRange = '', collection = '', salesChannel = '', orderBy = '', from = 0, to = 9, map = '' }) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search/${encodeURIComponent(query)}?${category && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
-  facets: (account, {facets=''}) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
+  facets: (account, { facets = '' }) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/facets/search/${encodeURI(facets)}`,
 
   crossSelling: (account, id, type) => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pub/products/crossselling/${type}/${id}`,
 
@@ -21,29 +21,29 @@ const paths = {
 
   orderForm: (account) => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
 
-  orderFormProfile: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/attachments/clientProfileData`,
+  orderFormProfile: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/clientProfileData`,
 
-  orderFormShipping: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/attachments/shippingData`,
+  orderFormShipping: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/shippingData`,
 
-  orderFormPayment: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/attachments/paymentData`,
+  orderFormPayment: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/paymentData`,
 
-  orderFormPaymentToken: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/paymentData/paymentToken`,
+  orderFormPaymentToken: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/paymentData/paymentToken`,
 
-  orderFormPaymentTokenId: (account, {orderFormId, tokenId}) => `${paths.orderForm(account)}/${orderFormId}/paymentData/paymentToken/${tokenId}`,
+  orderFormPaymentTokenId: (account, { orderFormId, tokenId }) => `${paths.orderForm(account)}/${orderFormId}/paymentData/paymentToken/${tokenId}`,
 
-  orderFormIgnoreProfile: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/profile`,
+  orderFormIgnoreProfile: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/profile`,
 
-  orderFormCustomData: (account, {orderFormId, appId, field}) => `${paths.orderForm(account)}/${orderFormId}/customData/${appId}/${field}`,
+  orderFormCustomData: (account, { orderFormId, appId, field }) => `${paths.orderForm(account)}/${orderFormId}/customData/${appId}/${field}`,
 
-  addItem: (account, {orderFormId}) => `${paths.orderForm(account)}/${orderFormId}/items`,
+  addItem: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/items`,
 
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
 
-  cancelOrder: (account, {orderFormId}) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
+  cancelOrder: (account, { orderFormId }) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
 
-  identity: (account, {token}) => `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
+  identity: (account, { token }) => `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${encodeURIComponent(token)}`,
 
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
@@ -56,18 +56,18 @@ const paths = {
 
   gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
 
-  gatewayTokenizePayment: (account, {sessionId}) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
+  gatewayTokenizePayment: (account, { sessionId }) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
-  autocomplete: (account, {maxRows, searchTerm}) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+  autocomplete: (account, { maxRows, searchTerm }) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 
-  getTemporaryToken: () => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start`,
+  getTemporaryToken: (scope, account) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
   sendEmailVerification: (email, token) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
   signIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
-  documentFields: (account, acronym, fields="_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
+  documentFields: (account, acronym, fields = "_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
 }
 
 export default paths

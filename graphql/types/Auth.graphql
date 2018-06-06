@@ -1,12 +1,4 @@
-type AuthClientToken {
-  name: String,
-  value: String
-}
-
-type AuthToken {
-  authToken: String
-}
-
+"""Input to sign in by access code based authentication"""
 input AuthInput {
   email: String, 
   code: String, 
