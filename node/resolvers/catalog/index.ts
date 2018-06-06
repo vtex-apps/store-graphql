@@ -1,11 +1,11 @@
-import axios, {AxiosResponse} from 'axios'
-import {ColossusContext} from 'colossus'
+import axios, { AxiosResponse } from 'axios'
+import { ColossusContext } from 'colossus'
 import graphqlFields from 'graphql-fields'
-import {compose, split, equals, head, find, map, prop, test} from 'ramda'
+import { compose, split, equals, head, find, map, prop, test } from 'ramda'
 import ResolverError from '../../errors/resolverError'
-import {withAuthToken} from '../headers'
+import { withAuthToken } from '../headers'
 import paths from '../paths'
-import {resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields} from './fieldsResolver'
+import { resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields } from './fieldsResolver'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -22,65 +22,67 @@ import {resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolvePr
  */
 const extractSlug = item => {
   const href = split('/', item.href)
-  return item.criteria? `${href[3]}/${href[4]}` : href[3]
+  return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
 export const rootResolvers = {
   SKU: {
-    kitItems: (root, _, {vtex: ioContext}: ColossusContext) => {
+    kitItems: (root, _, { vtex: ioContext }: ColossusContext) => {
       return !root.kitItems ? [] : Promise.all(root.kitItems.map(async kitItem => {
-        const url = paths.productBySku(ioContext.account, {id: kitItem.itemId})
-        const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
-        const {items: skus, ...product} = products[0]
-        const sku = skus.find(({itemId}) => itemId === kitItem.itemId)
-        return {...kitItem, product, sku}
+        const url = paths.productBySku(ioContext.account, { id: kitItem.itemId })
+        const { data: products } = await axios.get(url, { headers: withAuthToken()(ioContext) })
+        const { items: skus, ...product } = products[0]
+        const sku = skus.find(({ itemId }) => itemId === kitItem.itemId)
+        return { ...kitItem, product, sku }
       }))
     },
   },
 }
 
 export const queries = {
-  autocomplete: async (_, args, {vtex: ioContext}: ColossusContext) => {
+  autocomplete: async (_, args, { vtex: ioContext }: ColossusContext) => {
     const url = paths.autocomplete(ioContext.account, args)
-    const {data} = await axios.get(url, { headers: withAuthToken()(ioContext) })
-    return {itemsReturned: map(item => ({
-      ...item,
-      slug: extractSlug(item)
-    }), data.itemsReturned)}
+    const { data } = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    return {
+      itemsReturned: map(item => ({
+        ...item,
+        slug: extractSlug(item)
+      }), data.itemsReturned)
+    }
   },
 
-  facets: async (_, data, {vtex: ioContext}: ColossusContext) => {
+  facets: async (_, data, { vtex: ioContext }: ColossusContext) => {
     const url = paths.facets(ioContext.account, data)
-    const {data: facets} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const { data: facets } = await axios.get(url, { headers: withAuthToken()(ioContext) })
     const resolvedFacets = resolveFacetFields(facets)
 
     return resolvedFacets
   },
 
-  product: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
+  product: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
     const url = paths.product(ioContext.account, data)
-    const {data: product} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const { data: product } = await axios.get(url, { headers: withAuthToken()(ioContext) })
     const resolvedProduct = await resolveProductFields(ioContext, head(product), graphqlFields(info))
 
     return resolvedProduct
   },
 
-  products: async (_, data, {vtex: ioContext}: ColossusContext, info) => {
+  products: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
     const queryTerm = data.query
     if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(`The query term: '${queryTerm}' contains invalid characters.`, 500)
     }
     const url = paths.products(ioContext.account, data)
-    const {data: products} = await axios.get(url, { headers: withAuthToken()(ioContext) })
+    const { data: products } = await axios.get(url, { headers: withAuthToken()(ioContext) })
     const fields = graphqlFields(info)
     const resolvedProducts = await Promise.map(products, product => resolveProductFields(ioContext, product, fields))
 
     return resolvedProducts
   },
 
-  brand: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
+  brand: async (_, data, { vtex: ioContext, request: { headers: { cookie } } }: ColossusContext) => {
     const url = paths.brand(ioContext.account)
-    const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
+    const { data: brands } = await axios.get(url, { headers: withAuthToken()(ioContext, cookie) })
 
     const brand = find(compose(equals(data.id), prop('id')), brands)
     if (!brand) {
@@ -89,21 +91,21 @@ export const queries = {
     return resolveBrandFields(brand)
   },
 
-  brands: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
+  brands: async (_, data, { vtex: ioContext, request: { headers: { cookie } } }: ColossusContext) => {
     const url = paths.brand(ioContext.account)
-    const {data: brands} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
+    const { data: brands } = await axios.get(url, { headers: withAuthToken()(ioContext, cookie) })
     return map(resolveBrandFields, brands)
   },
 
-  category: async (_, data, {vtex: ioContext, request: {headers: {cookie}}}: ColossusContext) => {
+  category: async (_, data, { vtex: ioContext, request: { headers: { cookie } } }: ColossusContext) => {
     const url = paths.category(ioContext.account, data)
-    const {data: category} = await axios.get(url, {headers: withAuthToken()(ioContext, cookie) })
+    const { data: category } = await axios.get(url, { headers: withAuthToken()(ioContext, cookie) })
     return resolveCategoryFields(category)
   },
 
-  categories: async (_, data, {vtex: ioContext}: ColossusContext) => {
+  categories: async (_, data, { vtex: ioContext }: ColossusContext) => {
     const url = paths.categories(ioContext.account, data)
-    const {data: categories} = await axios.get(url, {headers: withAuthToken()(ioContext) })
+    const { data: categories } = await axios.get(url, { headers: withAuthToken()(ioContext) })
     return map(resolveCategoryFields, categories)
   }
 }
