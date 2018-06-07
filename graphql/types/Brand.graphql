@@ -1,4 +1,4 @@
-type Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM){
+type Brand {
   name: String
   slug: String
   id: Int

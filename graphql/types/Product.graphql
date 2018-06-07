@@ -1,4 +1,4 @@
-type Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM){
+type Product {
   brand: String
   categoryId: ID
   categories: [String]

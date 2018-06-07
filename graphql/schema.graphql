@@ -1,5 +1,5 @@
 type Query {
-  product(slug: String): Product
+  product(slug: String): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
   products(
     query: String = "",
     map: String = "",
@@ -11,23 +11,23 @@ type Query {
     orderBy: String = "OrderByPriceDESC",
     from: Int = 0,
     to: Int = 9
-  ): [Product]
+  ): [Product] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   facets(facets: String = ""): Facets
 
-  category(id: Int): Category
-  categories(treeLevel: Int = 3): [Category]
+  category(id: Int): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  categories(treeLevel: Int = 3): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  brand(id: Int): Brand
-  brands: [Brand]
+  brand(id: Int): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   shipping(
-    items: [ShippingItem], 
-    postalCode: String, 
+    items: [ShippingItem],
+    postalCode: String,
     country: String
   ): ShippingData
 
-  orderForm: OrderForm
+  orderForm: OrderForm @cacheControl(scope: PRIVATE)
   orders: [Order]
 
   profile: Profile
