@@ -61,16 +61,26 @@ type OrderItemTotal {
 }
 
 type OrderItemPaymentData {
-  payments: [OrderItemPayment]
+  transactions: [OrderItemTransactions]
+}
+
+type OrderItemTransactions {
+  isActive: Boolean,
+  merchantName: String,
+  payments: [OrderItemPayment],
+  transactionId: String
 }
 
 type OrderItemPayment {
+  paymentSystem: String
   paymentSystemName: String
   value: Float
   installments: Int
   connectorResponses: OrderItemPaymentConnectorResponse
+  firstDigits: String
   lastDigits: String
   group: String
+  url: String
 }
 
 type OrderItemPaymentConnectorResponse {
