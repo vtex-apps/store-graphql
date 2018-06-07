@@ -57,7 +57,7 @@ type Mutation {
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
   sendEmailVerification(email: String): AuthToken
-  signIn(fields: AuthInput): Boolean
+  accessKeySignIn(fields: AuthInput): Boolean
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
 }

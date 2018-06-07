@@ -2,6 +2,8 @@ import http from 'axios'
 import { serialize } from 'cookie'
 import paths from '../paths'
 import { withAuthToken, headers } from '../headers'
+import ResolverError from '../../errors/resolverError'
+
 
 const makeRequest = async (ctx, url) => {
   const configRequest = async (ctx, url) => ({
@@ -20,10 +22,13 @@ export const mutations = {
     return { authToken: authenticationToken }
   },
 
-  signIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+  accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { fields: { email, authToken, code } } = args
-    const { data: { authCookie } } = await makeRequest(ioContext, paths.signIn(email, authToken, code))
-    response.set('Set-Cookie', serialize(authCookie.Name, authCookie.Value, { httpOnly: true }))
-    return authCookie
+    const { data, status } = await makeRequest(ioContext, paths.accessKeySignIn(email, authToken, code))
+    if (!data.authCookie) {
+      throw new ResolverError(`ERROR ${data.authStatus}`, status)
+    }
+    response.set('Set-Cookie', serialize(data.authCookie.Name, data.authCookie.Value, { httpOnly: true }))
+    return data.authCookie ? true : false
   }
 }
