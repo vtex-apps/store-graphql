@@ -1,10 +1,6 @@
-""" Return session token"""
-type AuthToken {
-  authToken: String
-}
 """Data needed to authentication """
 input AuthInput {
   email: String, 
   code: String, 
-  authToken: String
+  temporarySession: String
 }

@@ -1,5 +1,5 @@
 import http from 'axios'
-import { serialize } from 'cookie'
+import { serialize, parse } from 'cookie'
 import paths from '../paths'
 import { withAuthToken, headers } from '../headers'
 import ResolverError from '../../errors/resolverError'
@@ -22,13 +22,13 @@ export const mutations = {
       throw new ResolverError(`ERROR ${data}`, status)
     }
     await makeRequest(ioContext, paths.sendEmailVerification(args.email, data.authenticationToken))
-    response.set('Set-Cookie', serialize('temporarySession', data.authenticationToken, { httpOnly: true }))
+    response.set('Set-Cookie', serialize('temporarySession', data.authenticationToken, { path: '/', }))
     return data.authenticationToken ? true : false
   },
 
-  accessKeySignIn: async (_, args, { vtex: ioContext, response }) => {
-    const { fields: { email, authToken, code } } = args
-    const { data, status } = await makeRequest(ioContext, paths.accessKeySignIn(email, authToken, code))
+  accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    const { fields: { email, temporarySession, code } } = args
+    const { data, status } = await makeRequest(ioContext, paths.accessKeySignIn(email, temporarySession, code))
     if (!data.authCookie) {
       throw new ResolverError(`ERROR ${data.authStatus}`, status)
     }
