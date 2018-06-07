@@ -62,7 +62,7 @@ const paths = {
 
   getTemporaryToken: (scope, account) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
   sendEmailVerification: (email, token) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
-  signIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
+  accessKeySignIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
