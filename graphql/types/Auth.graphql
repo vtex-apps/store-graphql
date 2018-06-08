@@ -2,5 +2,4 @@
 input AuthInput {
   email: String, 
   code: String, 
-  VtexTemporarySession: String
 }
