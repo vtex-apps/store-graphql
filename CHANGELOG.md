@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix profile query to reflect changes that were made in auth resolver.
 - Fix authentication resolver to sign in only account users.
 
 ## [2.4.2]
