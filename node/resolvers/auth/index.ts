@@ -22,18 +22,28 @@ export const mutations = {
       throw new ResolverError(`ERROR ${data}`, status)
     }
     await makeRequest(ioContext, paths.sendEmailVerification(args.email, data.authenticationToken))
-    response.set('Set-Cookie', serialize('temporarySession', data.authenticationToken, { path: '/', }))
-    return data.authenticationToken ? true : false
+    response.set('Set-Cookie', serialize('VtexTemporarySession', data.authenticationToken, { httpOnly: true, secure: true, path: '/' }))
+    return true
   },
 
   accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
-    // FIXME: Get temporarySession in cookies instead of args. @brunojdo - 08/06/2018 
-    const { fields: { email, temporarySession, code } } = args
-    const { data, status } = await makeRequest(ioContext, paths.accessKeySignIn(email, temporarySession, code))
-    if (!data.authCookie) {
-      throw new ResolverError(`ERROR ${data.authStatus}`, status)
+    const { VtexTemporarySession } = (parse(cookie))
+    if (!VtexTemporarySession) {
+      throw new ResolverError(`ERROR VtexTemporarySession is null`, 400)
     }
-    response.set('Set-Cookie', serialize(data.authCookie.Name, data.authCookie.Value, { httpOnly: true }))
-    return data.authCookie ? true : false
+    const { fields: { email, code } } = args
+    const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
+    const { headers } = await makeRequest(ioContext, paths.accessKeySignIn(email, VtexTemporarySession, code))
+    const authCookie = parse(headers['set-cookie'].find(checkAuth => {
+      return checkAuth.includes(authAccount)
+    }))
+    response.set('Set-Cookie',
+      serialize(authAccount, authCookie[authAccount],
+        {
+          httpOnly: true,
+          path: '/',
+          secure: true
+        }))
+    return true
   }
 }
