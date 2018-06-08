@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Sets cache hints to schema root fields 
 
+### Fixed
+- Fix profile query to reflect changes that were made in auth resolver.
+- Fix authentication resolver to sign in only account users.
+
 ## [2.4.2]
 ### Changed
 - Changed `shipping` query to perform freight simulation correctly.
@@ -18,10 +22,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed `profile` query permissions to read masterdata private fields
 
 ## [2.3.3] - 2018-04-10
-### Changed
-- **Resolver** Changed the `OrderForm` query to parse the integer prices to float.
 ### Added
-- **Resolver** Added to the `autocomplete` query the `slug` property
+- **Resolver** Add to the `autocomplete` query the `slug` property
+
+### Changed
+- **Resolver** Change the `OrderForm` query to parse the integer prices to float.
 
 ## [2.3.2] - 2018-04-05
 ### Fixed
@@ -29,15 +34,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.3.1] - 2018-05-03
 ### Added
-- Added `map` param to the `products` query
+- Add `map` param to the `products` query
+
 ### Fixed
-- Fixed the `products` query to reject invalid characters
+- Fix the `products` query to reject invalid characters
 
 ## [2.1.0] - 2018-09-04
 ### Added
-- Added `map` param to the `products` query
+- Add `map` param to the `products` query
+
 ### Fixed
-- Fixed the `products` query to reject invalid characters
+- Fix the `products` query to reject invalid characters
 
 ## [2.3.0] - 2018-04-27
 ### Added
