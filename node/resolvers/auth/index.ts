@@ -27,6 +27,7 @@ export const mutations = {
   },
 
   accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    // FIXME: Get temporarySession in cookies instead of args. @brunojdo - 08/06/2018 
     const { fields: { email, temporarySession, code } } = args
     const { data, status } = await makeRequest(ioContext, paths.accessKeySignIn(email, temporarySession, code))
     if (!data.authCookie) {
