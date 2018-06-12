@@ -45,5 +45,17 @@ export const mutations = {
           secure: true
         }))
     return true
+  },
+
+  logout: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
+    response.set('Set-Cookie',
+      serialize(authAccount, '',
+        {
+          httpOnly: true,
+          path: '/',
+          secure: true
+        }))
+    return true
   }
 }

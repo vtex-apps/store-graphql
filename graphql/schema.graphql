@@ -60,4 +60,5 @@ type Mutation {
   accessKeySignIn(fields: AuthInput): Boolean
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
+  logout: Boolean
 }
