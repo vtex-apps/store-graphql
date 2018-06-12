@@ -125,7 +125,7 @@ export const resolveProductFields = async (
   fields: any
 ) => {
   const resolvedProduct = resolveLocalProductFields(product)
-  if (!fields.Product || !fields.Product.recommendations) {
+  if (!fields.recommendations) {
     return resolvedProduct
   }
 
