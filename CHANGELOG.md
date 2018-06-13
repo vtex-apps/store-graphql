@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.5.1] - 2018-6-8
+### Added 
+- Create the logout mutation.
 
+## [2.5.1] - 2018-6-8
 ### Fixed
 - Remove `VtexTemporarySession` to AuthInput.
 
