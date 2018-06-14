@@ -48,8 +48,6 @@ type Address {
 }
 
 input AddressInput {
-  id: String,
-  userId: String,
   receiverName: String,
   complement: String,
   neighborhood: String,
