@@ -1,4 +1,4 @@
-type Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM){
+type Category {
   href: String
   slug: String
   name: String
