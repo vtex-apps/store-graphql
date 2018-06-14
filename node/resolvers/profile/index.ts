@@ -1,7 +1,7 @@
 import http from 'axios'
-import {parse as parseCookie} from 'cookie'
+import { parse as parseCookie } from 'cookie'
 import {head, values, pickBy, pipe, prop, find } from 'ramda'
-import {headers, withAuthAsVTEXID} from '../headers'
+import { headers, withAuthAsVTEXID } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import profileResolver from './profileResolver'
@@ -67,7 +67,7 @@ export const mutations = {
     const token = getClientToken(cookie, account)
     const { userId, id: clientId } = await getClientData(account, token)
   
-    if (!isUserAddress(account, clientId, addressId, token)) {  
+    if (!(await isUserAddress(account, clientId, addressId, token)) {  
       throw new ResolverError('Address not found.', 400)
     }
 

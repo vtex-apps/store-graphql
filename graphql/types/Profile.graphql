@@ -24,7 +24,6 @@ input ProfileInput {
   homePhone: String,
   businessPhone: String,
   document: String,
-  email: String,
   tradeName: String,
   corporateName: String,
   corporateDocument: String,
