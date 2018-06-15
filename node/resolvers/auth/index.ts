@@ -56,6 +56,7 @@ export const mutations = {
         {
           httpOnly: true,
           path: '/',
+          maxAge: 0,
           secure: true
         }))
     return true
