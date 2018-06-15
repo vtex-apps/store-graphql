@@ -42,9 +42,10 @@ export const mutations = {
         {
           httpOnly: true,
           path: '/',
-          expires: new Date(authCookie['expires']).toISOString,
+          maxAge: new Date(authCookie['expires']).getTime(),
           secure: true
-        }))
+        }),
+    )
     return true
   },
 
@@ -53,13 +54,8 @@ export const mutations = {
   logout: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
     response.set('Set-Cookie',
-      serialize(authAccount, '',
-        {
-          httpOnly: true,
-          path: '/',
-          maxAge: 0,
-          secure: true
-        }))
+      serialize(authAccount, '', { path: '/', maxAge: 0, })
+    )
     return true
   }
 }
