@@ -42,6 +42,7 @@ export const mutations = {
         {
           httpOnly: true,
           path: '/',
+          expires: new Date(authCookie['expires']).toISOString,
           secure: true
         }))
     return true
