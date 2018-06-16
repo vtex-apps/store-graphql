@@ -60,9 +60,10 @@ const paths = {
 
   autocomplete: (account, { maxRows, searchTerm }) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 
-  getTemporaryToken: (scope, account) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
-  sendEmailVerification: (email, token) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
-  accessKeySignIn: (email, token, code) => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
+  vtexId: () => `http://vtexid.vtex.com.br/api/vtexid/pub/authentication`,
+  getTemporaryToken: (scope, account) => `${paths.vtexId}/start?appStart=true&scope=${scope}&accountName=${account}`,
+  sendEmailVerification: (email, token) => `${paths.vtexId}/accesskey/send?authenticationToken=${token}&email=${email}`,
+  accessKeySignIn: (email, token, code) => `${paths.vtexId}/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,

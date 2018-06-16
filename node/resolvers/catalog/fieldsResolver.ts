@@ -145,10 +145,10 @@ export const resolveCategoryFields = category => ({
   href: category.url,
   slug: category.url
     ? compose(
-        last,
-        split('/'),
-        prop('url')
-      )(category)
+      last,
+      split('/'),
+      prop('url')
+    )(category)
     : null,
   children: category.children
     ? map(resolveCategoryFields, category.children)
