@@ -1,5 +1,5 @@
-import { map, merge } from 'ramda'
-import {headers, withAuthToken} from '../headers'
+import { merge } from 'ramda'
+import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import profileResolver from './profileResolver'

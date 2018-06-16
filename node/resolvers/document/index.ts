@@ -1,6 +1,6 @@
 import http from 'axios'
 import paths from '../paths'
-import {zipObj, mergeAll, union} from 'ramda'
+import { zipObj, mergeAll, union } from 'ramda'
 import { withAuthToken, withMDPagination, headers } from '../headers'
 
 /**
@@ -20,30 +20,30 @@ const parseFieldsToJson = (fields) => mergeAll(
 )
 
 export const queries = {
-  documents: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, fields, page, pageSize} = args
+  documents: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+    const { acronym, fields, page, pageSize } = args
     const fieldsWithId = union(fields, ['id'])
     const url = paths.searchDocument(ioContext.account, acronym, fieldsWithId)
-    const {data} = await http.get(url, {headers: withMDPagination()(ioContext, cookie)(page, pageSize)})
+    const { data } = await http.get(url, { headers: withMDPagination()(ioContext, cookie)(page, pageSize) })
     return data.map(document => ({
       id: document.id,
       fields: mapKeyValues(document),
     }))
   },
 
-  document: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, fields, id} = args
+  document: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+    const { acronym, fields, id } = args
     const url = paths.documentFields(ioContext.account, acronym, fields, id)
-    const {data} = await http.get(url, {headers: withAuthToken()(ioContext, cookie)})
-    return {id: data.id, fields: mapKeyValues(data)}
+    const { data } = await http.get(url, { headers: withAuthToken()(ioContext, cookie) })
+    return { id: data.id, fields: mapKeyValues(data) }
   },
 }
 
 export const mutations = {
-  createDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, document: {fields}} = args
+  createDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+    const { acronym, document: { fields } } = args
     const url = paths.documents(ioContext.account, acronym)
-    const {data: {Id, Href, DocumentId}} = await http.post(
+    const { data: { Id, Href, DocumentId } } = await http.post(
       url, parseFieldsToJson(fields),
       {
         headers: {
@@ -53,13 +53,13 @@ export const mutations = {
         },
       },
     )
-    return {id: Id, href: Href, documentId: DocumentId}
+    return { id: Id, href: Href, documentId: DocumentId }
   },
 
-  updateDocument: async (_, args, { vtex: ioContext, request: {headers: {cookie}}}) => {
-    const {acronym, document: {fields}} = args
+  updateDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+    const { acronym, document: { fields } } = args
     const url = paths.documents(ioContext.account, acronym)
-    const {data: {Id, Href, DocumentId}} = await http.patch(
+    const { data: { Id, Href, DocumentId } } = await http.patch(
       url, parseFieldsToJson(fields),
       {
         headers: {
@@ -69,6 +69,6 @@ export const mutations = {
         },
       },
     )
-    return {id: Id, href: Href, documentId: DocumentId}
+    return { id: Id, href: Href, documentId: DocumentId }
   },
 }

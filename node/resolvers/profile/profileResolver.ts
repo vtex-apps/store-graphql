@@ -1,6 +1,6 @@
 import http from 'axios'
 import { parse as parseCookie } from 'cookie'
-import { head, merge, path, pickBy, pipe, prop, values } from 'ramda'
+import { head, merge, pickBy, pipe, prop, values } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import { headers, withAuthToken } from '../headers'
 import paths from '../paths'
