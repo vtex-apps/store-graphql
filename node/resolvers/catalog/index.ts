@@ -32,18 +32,18 @@ export const rootResolvers = {
       return !root.kitItems
         ? []
         : Promise.all(
-            root.kitItems.map(async kitItem => {
-              const url = paths.productBySku(ioContext.account, {
-                id: kitItem.itemId,
-              })
-              const { data: products } = await axios.get(url, {
-                headers: withAuthToken()(ioContext),
-              })
-              const { items: skus, ...product } = products[0]
-              const sku = skus.find(({ itemId }) => itemId === kitItem.itemId)
-              return { ...kitItem, product, sku }
+          root.kitItems.map(async kitItem => {
+            const url = paths.productBySku(ioContext.account, {
+              id: kitItem.itemId,
             })
-          )
+            const { data: products } = await axios.get(url, {
+              headers: withAuthToken()(ioContext),
+            })
+            const { items: skus, ...product } = products[0]
+            const sku = skus.find(({ itemId }) => itemId === kitItem.itemId)
+            return { ...kitItem, product, sku }
+          })
+        )
     },
   },
 }
