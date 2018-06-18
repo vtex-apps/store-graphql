@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add documentation in `graphql` files. 
 
-
 ## [2.6.1] - 2018-6-15
 ### Fixed 
 - Set the `maxAge` received from VTEXID to `VtexIdclientAutCookie_${account}` in `accessKeySigIn` mutation.
