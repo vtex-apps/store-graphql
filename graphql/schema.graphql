@@ -23,9 +23,9 @@ type Query {
     salesChannel: String = "",
     """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
     orderBy: String = "OrderByPriceDESC",
-    """ Pagination which start from item 0. e.g.: &_from=0""
+    """ Pagination item start """
     from: Int = 0,
-    """ Pagination which end to item 9. e.g.: &_to=9"""
+    """ Pagination item end """
     to: Int = 9
   ): [Product] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
