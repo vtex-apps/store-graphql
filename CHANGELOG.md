@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed 
 - Refact paths and organize API docs.
+- Profile Query will return the user email in case of data not found.
+
+### Fixed
+- Fix `profile resolver` to use ioContext authToken.
 
 ## [2.6.1] - 2018-6-15
 ### Fixed 

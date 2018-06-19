@@ -27,10 +27,15 @@ const profile = (ctx) => async (data) => {
   const profileURL = paths.profile(ctx.account).filterUser(user)
   const profileData = await http.get(profileURL, config).then<any>(pipe(prop('data'), head))
 
-  const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
-  const address = profileData && await http.get(addressURL, config).then(prop('data'))
+  if (profileData && profileData.id) {
+    const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
+    const address = profileData && await http.get(addressURL, config).then(prop('data'))
 
-  return merge({ address }, profileData)
+    return merge({ address }, profileData)
+  }
+  return {
+    email: user
+  }
 }
 
 export default async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
