@@ -1,24 +1,59 @@
 type Query {
-  product(slug: String): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+    """ Get a specified product """
+  product(
+    """ Product slug """
+    slug: String
+  ): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  
+  """ Product search filtered and ordered """
   products(
+    """ Terms that is used in search e.g.: eletronics/samsung """
     query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
     map: String = "",
+    """ Filter by category. {a}/{b} - {a} and {b} are categoryIds """
     category: String = "",
+    """ Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value """
     specificationFilters: [String],
+    """ Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" """
     priceRange: String = "",
+    """ Filter by collection. where collection also know as productClusterId"""
     collection: String = "",
+    """ Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4"""
     salesChannel: String = "",
+    """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
     orderBy: String = "OrderByPriceDESC",
+    """ Pagination item start """
     from: Int = 0,
+    """ Pagination item end """
     to: Int = 9
   ): [Product] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  facets(facets: String = ""): Facets
+  """ Get facets category """
+  facets(
+  """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
+    facets: String = ""
+  ): Facets
 
-  category(id: Int): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
-  categories(treeLevel: Int = 3): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  """ Get category details """
+  category(
+    """ Category id """
+    id: Int
+  ): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  brand(id: Int): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  """ Get categories tree """
+  categories(
+    """ Category tree level. Default: 3"""
+    treeLevel: Int = 3
+  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
+  """ Get brand details """
+  brand(
+    """ Brand id """
+    id: Int
+  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
+  """ Get a list of brands """
   brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   shipping(
@@ -71,4 +106,5 @@ type Mutation {
   # Document
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
+  logout: Boolean
 }

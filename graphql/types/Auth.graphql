@@ -1,5 +1,9 @@
-"""Data needed to authentication """
+"""
+Input needed to authentication by access key
+"""
 input AuthInput {
+  """ User email """
   email: String, 
+  """ Access key that user received by email """
   code: String, 
 }

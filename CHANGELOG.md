@@ -6,13 +6,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add documentation in `graphql` files. 
+
+## [2.6.1] - 2018-6-15
+### Fixed 
+- Set the `maxAge` received from VTEXID to `VtexIdclientAutCookie_${account}` in `accessKeySigIn` mutation.
+
+## [2.6.0] - 2018-6-15
+
+### Added 
+- Create the logout mutation.
 
 ## [2.5.2] - 2018-6-14
 ### Fixed
 - Fix `recommendations` field resolver.
 
 ## [2.5.1] - 2018-6-8
-
 ### Fixed
 - Remove `VtexTemporarySession` to AuthInput.
 
