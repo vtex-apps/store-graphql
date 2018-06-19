@@ -75,24 +75,35 @@ type Query {
 }
 
 type Mutation {
+  # Cart
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
   cancelOrder(orderFormId: String, reason: String): Boolean
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-  updateProfile(id: String, fields: ProfileInput): OrderForm
-  updateAddress(id: String, fields: AddressInput): OrderForm
+
+  # Profile
+  updateProfile(fields: ProfileInput): Profile
+  updateAddress(id: String, fields: AddressInput): Profile
+  createAddress(fields: AddressInput): Profile
+  deleteAddress(id: String): Boolean
+
+  # Order Form
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
   updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
   updateOrderFormPayment(orderFormId: String,  payments: [OrderFormPaymentInput]): OrderForm
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
-  createAddress(fields: AddressInput): Profile
-  deleteAddress(id: String): Boolean
+  
+  # Payment
   createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
+
+  # Auth
   sendEmailVerification(email: String): Boolean
   accessKeySignIn(fields: AuthInput): Boolean
+
+  # Document
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
   logout: Boolean
