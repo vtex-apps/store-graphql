@@ -4,7 +4,7 @@ type Query {
     """ Product slug """
     slug: String
   ): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
-  
+
   """ Product search filtered and ordered """
   products(
     """ Terms that is used in search e.g.: eletronics/samsung """
@@ -78,7 +78,7 @@ type Query {
   """ Get auto complete suggestions in search """
   autocomplete(
     """ Number of items that is returned """
-    maxRows: Int = 12, 
+    maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
   ): Suggestions
@@ -86,21 +86,21 @@ type Query {
   """ Search documents """
   documents(
     """ Schema name. e.g.: CL, AD"""
-    acronym: String, 
+    acronym: String,
     """ Fields that will be returned by document. e.g.: _fields=email,firstName,document """
-    fields: [String], 
+    fields: [String],
     """ Pagination. Default: 1 """
-    page: Int = 1, 
+    page: Int = 1,
     """ Items returned in the page. Default: 15"""
-    pageSize: Int = 15  
+    pageSize: Int = 15
   ): [Document]
 
   """ Get document """
   document(
     """ Schema name. e.g.: CL, AD"""
-    acronym: String, 
+    acronym: String,
     """ Fields that will be returned in document. e.g.: _fields=email,firstName,document """
-    fields: [String], 
+    fields: [String],
     """ Document id """
     id: String
   ): Document
@@ -125,15 +125,15 @@ type Mutation {
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
-  
+
   """ Payment """
   createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
 
   """ Auth """
-  sendEmailVerification(email: String): Boolean
-  accessKeySignIn(fields: AuthInput): Boolean
+  sendEmailVerification(email: String): Boolean @cacheControl(scope: PRIVATE)
+  accessKeySignIn(fields: AuthInput): Boolean @cacheControl(scope: PRIVATE)
   logout: Boolean
 
   """ Document """
