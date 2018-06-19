@@ -56,37 +56,69 @@ type Query {
   """ Get a list of brands """
   brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
+  """ OrderForm simulation """
   shipping(
+    """ List of SKU products """
     items: [ShippingItem],
+    """ Postal code to freight calculator """
     postalCode: String,
+    """ Country of postal code """
     country: String
   ): ShippingData
 
+  """ Get checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
+
+  """ Get user orders details """
   orders: [Order]
 
+  """ Get user profile details """
   profile: Profile
 
-  autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
+  """ Get auto complete suggestions in search """
+  autocomplete(
+    """ Number of items that is returned """
+    maxRows: Int = 12, 
+    """ Terms that is used in search e.g.: iphone """
+    searchTerm: String
+  ): Suggestions
 
-  documents(acronym: String, fields: [String], page: Int = 1, pageSize: Int = 15): [Document]
+  """ Search documents """
+  documents(
+    """ Schema name. e.g.: CL, AD"""
+    acronym: String, 
+    """ Fields that will be returned by document. e.g.: _fields=email,firstName,document """
+    fields: [String], 
+    """ Pagination. Default: 1 """
+    page: Int = 1, 
+    """ Items returned in the page. Default: 15"""
+    pageSize: Int = 15  
+  ): [Document]
 
-  document(acronym: String, fields: [String], id: String): Document
+  """ Get document """
+  document(
+    """ Schema name. e.g.: CL, AD"""
+    acronym: String, 
+    """ Fields that will be returned in document. e.g.: _fields=email,firstName,document """
+    fields: [String], 
+    """ Document id """
+    id: String
+  ): Document
 }
 
 type Mutation {
-  # Cart
+  """ Cart """
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
   cancelOrder(orderFormId: String, reason: String): Boolean
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
 
-  # Profile
+  """ Profile """
   updateProfile(fields: ProfileInput): Profile
   updateAddress(id: String, fields: AddressInput): Profile
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
 
-  # Order Form
+  """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
   updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
   updateOrderFormPayment(orderFormId: String,  payments: [OrderFormPaymentInput]): OrderForm
@@ -94,17 +126,17 @@ type Mutation {
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
   
-  # Payment
+  """ Payment """
   createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
 
-  # Auth
+  """ Auth """
   sendEmailVerification(email: String): Boolean
   accessKeySignIn(fields: AuthInput): Boolean
+  logout: Boolean
 
-  # Document
+  """ Document """
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
-  logout: Boolean
 }
