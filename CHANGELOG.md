@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Add documentation in `graphql` files. 
+- Profile Query will return the user email in case of data not found.
+
+###
+- Fix `profile resolver` to use ioContext authToken.
 
 ## [2.6.1] - 2018-6-15
 ### Fixed 
