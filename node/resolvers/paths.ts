@@ -61,10 +61,10 @@ const paths = {
 
   /** VTEX ID API */
   vtexId: () => `http://vtexid.vtex.com.br/api/vtexid/pub`,
-  identity: (account, { token }) => `${paths.vtexId}/authenticated/user?authToken=${encodeURIComponent(token)}`,
-  getTemporaryToken: (scope, account) => `${paths.vtexId}/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
-  sendEmailVerification: (email, token) => `${paths.vtexId}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
-  accessKeySignIn: (email, token, code) => `${paths.vtexId}/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
+  identity: (account, { token }) => `${paths.vtexId()}/authenticated/user?authToken=${encodeURIComponent(token)}`,
+  getTemporaryToken: (scope, account) => `${paths.vtexId()}/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
+  sendEmailVerification: (email, token) => `${paths.vtexId()}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
+  accessKeySignIn: (email, token, code) => `${paths.vtexId()}/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
 
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
