@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.7.2] - 2018-6-20
+
 ### Fixed 
 - Fix products search query only adding a category if there is not a search term.
 
