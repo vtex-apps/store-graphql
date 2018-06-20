@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### [Fixed] 
+- Fix `vtexId` use on `paths.ts`. 
+
 ## [2.7.0] - 2018-6-19
 ### Added
 - Add documentation in `graphql` files. 
