@@ -31,7 +31,7 @@ export const mutations = {
     if (!VtexTemporarySession) {
       throw new ResolverError(`ERROR VtexTemporarySession is null`, 400)
     }
-    const { fields: { email, code } } = args
+    const { email, code } = args
     const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
     const { headers } = await makeRequest(ioContext, paths.accessKeySignIn(email, VtexTemporarySession, code))
     const authCookie = parse(headers['set-cookie'].find(checkAuth => {
@@ -48,7 +48,28 @@ export const mutations = {
     )
     return true
   },
-
+  classicSignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    const { data, status } = await makeRequest(ioContext, paths.getTemporaryToken(ioContext.account, ioContext.account))
+    if (!data.authenticationToken) {
+      throw new ResolverError(`ERROR ${data}`, status)
+    }
+    const { email, password } = args
+    const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
+    const { headers } = await makeRequest(ioContext, paths.classicSignIn(email, data.authenticationToken, password))
+    const authCookie = parse(headers['set-cookie'].find(checkAuth => {
+      return checkAuth.includes(authAccount)
+    }))
+    response.set('Set-Cookie',
+      serialize(authAccount, authCookie[authAccount],
+        {
+          httpOnly: true,
+          path: '/',
+          maxAge: new Date(authCookie['expires']).getTime(),
+          secure: true
+        }),
+    )
+    return true
+  },
   /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation. 
    * 13-06-2018 - @brunojdo */
   logout: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {

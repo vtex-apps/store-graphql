@@ -65,6 +65,7 @@ const paths = {
   getTemporaryToken: (scope, account) => `${paths.vtexId()}/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
   sendEmailVerification: (email, token) => `${paths.vtexId()}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
   accessKeySignIn: (email, token, code) => `${paths.vtexId()}/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
+  classicSignIn: (email, token, password) => `${paths.vtexId()}/authentication/classic/validate?authenticationToken=${token}&login=${email}&password=${password}`,
 
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
