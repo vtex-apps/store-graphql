@@ -133,7 +133,8 @@ type Mutation {
 
   """ Auth """
   sendEmailVerification(email: String): Boolean
-  accessKeySignIn(fields: AuthInput): Boolean
+  accessKeySignIn(email: String, code: String): Boolean
+  classicSignIn(email: String, password: String): Boolean
   logout: Boolean
 
   """ Document """
