@@ -131,10 +131,29 @@ type Mutation {
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
 
-  """ Auth """
-  sendEmailVerification(email: String): Boolean
-  accessKeySignIn(email: String, code: String): Boolean
-  classicSignIn(email: String, password: String): Boolean
+  """ Send access key to user email """
+  sendEmailVerification(
+    """ User email"""
+    email: String
+  ): Boolean
+
+  """  Access key sign in mode """
+  accessKeySignIn(
+    """ User email"""
+    email: String, 
+    """ Access key that was received """
+    code: String
+  ): Boolean
+
+  """  Classic sign in mode """
+  classicSignIn(
+    """ User email"""
+    email: String, 
+    """ User password """
+    password: String
+  ): Boolean
+
+  """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
 
   """ Document """
