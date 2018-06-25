@@ -41,6 +41,10 @@ const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
 }
 
 export const mutations = {
+  /**
+   * Send access key to user email and set VtexSessionToken in response cookies
+   * @return Boolean 
+   */
   sendEmailVerification: async (_, args, { vtex: ioContext, response }) => {
     // VtexSessionToken is valid for 10 minutes
     const SESSION_TOKEN_EXPIRES = 600
@@ -54,7 +58,10 @@ export const mutations = {
     }))
     return true
   },
-
+  /**
+   * Get email and access code in args and set VtexIdAuthCookie in response cookies. 
+   * @return authStatus that show if user is logged or something wrong happens.
+   */
   accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
@@ -63,10 +70,25 @@ export const mutations = {
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.accessKeySignIn(VtexSessionToken, args.email, args.code))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus);
   },
-
+  /**
+   * Get email and password in args and set VtexIdAuthCookie in response cookies. 
+   * @return authStatus that show if user is logged or something wrong happens.
+   */
   classicSignIn: async (_, args, { vtex: ioContext, response }) => {
     const VtexSessionToken = await getSessionToken(ioContext)
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.classicSignIn(VtexSessionToken, args.email, args.password))
+    return setVtexIdAuthCookie(ioContext, response, headers, authStatus);
+  },
+
+  /** Set a new password for an user. 
+   * @return authStatus that show if password was created and user is logged or something wrong happens.
+    */
+  recoveryPassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    const { VtexSessionToken } = parse(cookie)
+    if (!VtexSessionToken) {
+      throw new ResolverError(`ERROR VtexSessionToken is null`, 400)
+    }
+    const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.recoveryPassword(VtexSessionToken, args.email, args.newPassword, args.code))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus);
   },
 
