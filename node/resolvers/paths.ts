@@ -62,7 +62,7 @@ const paths = {
   /** VTEX ID API */
   vtexId: () => `http://vtexid.vtex.com.br/api/vtexid/pub`,
   identity: (account, { token }) => `${paths.vtexId()}/authenticated/user?authToken=${encodeURIComponent(token)}`,
-  getTemporaryToken: (scope, account) => `${paths.vtexId()}/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
+  sessionToken: (scope, account) => `${paths.vtexId()}/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
   sendEmailVerification: (email, token) => `${paths.vtexId()}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
   accessKeySignIn: (token, email, code) => `${paths.vtexId()}/authentication/accesskey/validate?authenticationToken=${token}&login=${email}&accesskey=${code}`,
   classicSignIn: (token, email, password) => `${paths.vtexId()}/authentication/classic/validate?authenticationToken=${token}&login=${email}&password=${password}`,

@@ -134,24 +134,24 @@ type Mutation {
   """ Send access key to user email """
   sendEmailVerification(
     """ User email"""
-    email: String
+    email: String!
   ): Boolean
 
   """  Access key sign in mode """
   accessKeySignIn(
     """ User email"""
-    email: String, 
+    email: String!, 
     """ Access key that was received """
-    code: String
-  ): Boolean
+    code: String!
+  ): String
 
   """  Classic sign in mode """
   classicSignIn(
     """ User email"""
-    email: String, 
+    email: String!, 
     """ User password """
-    password: String
-  ): Boolean
+    password: String!
+  ): String
 
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
