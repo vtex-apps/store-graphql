@@ -1,5 +1,5 @@
 import { map, merge } from 'ramda'
-import {headers, withAuthToken} from '../headers'
+import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
@@ -21,7 +21,7 @@ const convertIntToFloat = int => int * 0.01
 
 export const queries = {
   orderForm: httpResolver({
-    data: {expectedOrderFormSections: ['items']},
+    data: { expectedOrderFormSections: ['items'] },
     merge: (bodyData, responseData) => ({
       ...responseData,
       value: convertIntToFloat(responseData.value),
@@ -45,9 +45,9 @@ export const queries = {
   }),
 
   shipping: httpResolver({
-    data: ({items, postalCode, country}) => ({
-      items, 
-      postalCode, 
+    data: ({ items, postalCode, country }) => ({
+      items,
+      postalCode,
       country
     }),
     headers: withAuthToken(headers.json),
@@ -80,7 +80,7 @@ export const mutations = {
   }),
 
   createPaymentSession: httpResolver({
-    headers: withAuthToken({...headers.json}),
+    headers: withAuthToken({ ...headers.json }),
     method: 'POST',
     enableCookies: true,
     secure: true,
