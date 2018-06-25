@@ -137,7 +137,7 @@ type Mutation {
     email: String!
   ): Boolean
 
-  """  Access key sign in mode """
+  """ Access key sign in mode """
   accessKeySignIn(
     """ User email"""
     email: String!, 
@@ -145,22 +145,22 @@ type Mutation {
     code: String!
   ): String
 
-  """  Classic sign in mode """
+  """ Classic sign in mode """
   classicSignIn(
     """ User email"""
     email: String!, 
     """ User password """
     password: String!
   ): String
-
+  """ To recovery password you need to get your email, password and access code """
   recoveryPassword(
     """ User email"""
     email: String!, 
     """ User password """
-    newPassword: String!
+    newPassword: String!,
     """ Access Code """
     code: String!
-    ) : String
+    ): String
 
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean

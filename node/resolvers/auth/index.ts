@@ -68,7 +68,7 @@ export const mutations = {
       throw new ResolverError(`ERROR VtexSessionToken is null`, 400)
     }
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.accessKeySignIn(VtexSessionToken, args.email, args.code))
-    return setVtexIdAuthCookie(ioContext, response, headers, authStatus);
+    return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
   /**
    * Get email and password in args and set VtexIdAuthCookie in response cookies. 
@@ -77,7 +77,7 @@ export const mutations = {
   classicSignIn: async (_, args, { vtex: ioContext, response }) => {
     const VtexSessionToken = await getSessionToken(ioContext)
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.classicSignIn(VtexSessionToken, args.email, args.password))
-    return setVtexIdAuthCookie(ioContext, response, headers, authStatus);
+    return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
   /** Set a new password for an user. 
@@ -89,7 +89,7 @@ export const mutations = {
       throw new ResolverError(`ERROR VtexSessionToken is null`, 400)
     }
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.recoveryPassword(VtexSessionToken, args.email, args.newPassword, args.code))
-    return setVtexIdAuthCookie(ioContext, response, headers, authStatus);
+    return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
   /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation. 
