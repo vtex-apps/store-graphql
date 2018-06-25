@@ -60,7 +60,7 @@ const paths = {
   autocomplete: (account, { maxRows, searchTerm }) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 
   /** VTEX ID API */
-  vtexId: () => `http://vtexid.vtex.com.br/api/vtexid/pub`,
+  vtexId: `http://vtexid.vtex.com.br/api/vtexid/pub`,
   identity: (account, { token }) => `${paths.vtexId}/authenticated/user?authToken=${encodeURIComponent(token)}`,
   sessionToken: (scope, account) => `${paths.vtexId}/authentication/start?appStart=true&scope=${scope}&accountName=${account}`,
   sendEmailVerification: (email, token) => `${paths.vtexId}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
