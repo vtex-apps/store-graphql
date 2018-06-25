@@ -153,6 +153,15 @@ type Mutation {
     password: String!
   ): String
 
+  recoveryPassword(
+    """ User email"""
+    email: String!, 
+    """ User password """
+    newPassword: String!
+    """ Access Code """
+    code: String!
+    ) : String
+
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
 
