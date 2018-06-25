@@ -39,7 +39,13 @@ const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
   }
   return authStatus
 }
-
+/** Password must have at least eight characters with at least one number, 
+ * one lowercase and one uppercase letter 
+*/
+const checkPasswordFormat = password => {
+  const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
+  return regex.test(password)
+}
 export const mutations = {
   /**
    * Send access key to user email and set VtexSessionToken in response cookies
@@ -65,7 +71,7 @@ export const mutations = {
   accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
-      throw new ResolverError(`ERROR VtexSessionToken is null`, 400)
+      throw new ResolverError('ERROR VtexSessionToken is null', 400)
     }
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.accessKeySignIn(VtexSessionToken, args.email, args.code))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
@@ -75,6 +81,9 @@ export const mutations = {
    * @return authStatus that show if user is logged or something wrong happens.
    */
   classicSignIn: async (_, args, { vtex: ioContext, response }) => {
+    if (!checkPasswordFormat(args.password)) {
+      throw new ResolverError('Password does not follow specific format', 400)
+    }
     const VtexSessionToken = await getSessionToken(ioContext)
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.classicSignIn(VtexSessionToken, args.email, args.password))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
@@ -86,7 +95,10 @@ export const mutations = {
   recoveryPassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
-      throw new ResolverError(`ERROR VtexSessionToken is null`, 400)
+      throw new ResolverError('ERROR VtexSessionToken is null', 400)
+    }
+    if (!checkPasswordFormat(args.password)) {
+      throw new ResolverError('Password does not follow specific format', 400)
     }
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.recoveryPassword(VtexSessionToken, args.email, args.newPassword, args.code))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
