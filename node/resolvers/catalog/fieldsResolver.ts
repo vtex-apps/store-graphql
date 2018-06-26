@@ -50,12 +50,12 @@ const resolvers = {
 
   properties: product => {
     const { allSpecifications = [] } = product
-    return map(name => ({ name, values: product[name] }), allSpecifications)
+    return map((name: string) => ({ name, values: product[name] }), allSpecifications)
   },
 
   variations: sku => {
     const { variations = [] } = sku
-    return map(name => ({ name, values: sku[name] }), variations)
+    return map((name: string) => ({ name, values: sku[name] }), variations)
   },
 
   attachments: sku => {
@@ -125,6 +125,7 @@ export const resolveProductFields = async (
   fields: any
 ) => {
   const resolvedProduct = resolveLocalProductFields(product)
+  resolvedProduct.cacheId = resolvedProduct.linkText
   if (!fields.recommendations) {
     return resolvedProduct
   }
@@ -155,10 +156,12 @@ export const resolveCategoryFields = category => ({
     : [],
   name: category.name,
   id: category.id,
+  cacheId: category.id,
   hasChildren: category.hasChildren,
 })
 
 export const resolveBrandFields = brand => ({
+  cacheId: brand.slug,
   id: brand.id,
   name: brand.name,
   active: brand.isActive,

@@ -84,7 +84,7 @@ export const mutations = {
     
     return await makeRequest(
       paths.profile(account).profile(profileId), authToken, args.fields, 'PATCH'
-    ).then(() => getClientData(account, authToken, cookie))
+    ).then(() => getClientData(account, authToken, cookie)).then((obj)=>({...obj, cacheId: obj.email}))
   },
 }
 

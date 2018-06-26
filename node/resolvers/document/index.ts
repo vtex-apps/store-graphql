@@ -26,8 +26,9 @@ export const queries = {
     const url = paths.searchDocument(ioContext.account, acronym, fieldsWithId)
     const { data } = await http.get(url, { headers: withMDPagination()(ioContext, cookie)(page, pageSize) })
     return data.map(document => ({
-      id: document.id,
+      cacheId: document.id,
       fields: mapKeyValues(document),
+      id: document.id,
     }))
   },
 
@@ -35,7 +36,7 @@ export const queries = {
     const { acronym, fields, id } = args
     const url = paths.documentFields(ioContext.account, acronym, fields, id)
     const { data } = await http.get(url, { headers: withAuthToken()(ioContext, cookie) })
-    return { id: data.id, fields: mapKeyValues(data) }
+    return { cacheId: data.id, id: data.id, fields: mapKeyValues(data) }
   },
 }
 
@@ -53,7 +54,7 @@ export const mutations = {
         },
       },
     )
-    return { id: Id, href: Href, documentId: DocumentId }
+    return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
   updateDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
@@ -69,6 +70,6 @@ export const mutations = {
         },
       },
     )
-    return { id: Id, href: Href, documentId: DocumentId }
+    return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 }

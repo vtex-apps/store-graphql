@@ -1,4 +1,6 @@
 type Category {
+  """ id is used as cacheId """
+  cacheId: ID
   href: String
   slug: String
   name: String

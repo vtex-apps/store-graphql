@@ -1,4 +1,6 @@
 type Brand {
+  """ slug is used as cacheId """
+  cacheId: ID
   name: String
   slug: String
   id: Int

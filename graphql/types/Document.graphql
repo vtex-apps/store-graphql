@@ -1,4 +1,6 @@
 type Document {
+  """ id is used as cacheId """
+  cacheId: ID
   id: String
   fields: [Field]
 }
@@ -9,6 +11,7 @@ type Field {
 }
 
 type DocumentResponse {
+  cacheId: ID
   id: String,
   href: String,
   documentId: String
