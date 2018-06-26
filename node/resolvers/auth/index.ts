@@ -97,7 +97,7 @@ export const mutations = {
     if (!VtexSessionToken) {
       throw new ResolverError('ERROR VtexSessionToken is null', 400)
     }
-    if (!checkPasswordFormat(args.password)) {
+    if (!checkPasswordFormat(args.newPassword)) {
       throw new ResolverError('Password does not follow specific format', 400)
     }
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.recoveryPassword(VtexSessionToken, args.email, args.newPassword, args.code))
