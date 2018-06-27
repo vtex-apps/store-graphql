@@ -106,10 +106,9 @@ export const mutations = {
 
   /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation. 
    * 13-06-2018 - @brunojdo */
-  logout: async (_, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
-    const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
+  logout: async (_, args, { vtex: ioContext, response }) => {
     response.set('Set-Cookie',
-      serialize(authAccount, '', { path: '/', maxAge: 0, })
+      serialize(`VtexIdclientAutCookie_${ioContext.account}`, '', { path: '/', maxAge: 0, })
     )
     return true
   }
