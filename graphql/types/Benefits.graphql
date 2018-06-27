@@ -1,0 +1,30 @@
+type Benefits {
+  ratesAndBenefitsData: Benefit
+}
+
+type Benefit {
+  teaser: [Teaser]
+}
+
+type Teaser {
+  featured: Boolean,
+  id: String,
+  name: String,
+  conditions: Conditions,
+  effects: Effects,
+  teaserType: String
+}
+
+type Conditions {
+  parameters: [BenefitParameter],
+  minimumQuantity: Int
+}
+
+type Effects {
+  parameters: [BenefitParameter]
+}
+
+type BenefitParameter {
+  name: String,
+  value: String
+}
