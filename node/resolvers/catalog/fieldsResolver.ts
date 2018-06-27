@@ -110,6 +110,7 @@ export const resolveLocalProductFields = product => {
   ] = resolveFields(product)
   return {
     ...product,
+    cacheId: product.linkText,
     clusterHighlights,
     items,
     properties,
@@ -125,7 +126,6 @@ export const resolveProductFields = async (
   fields: any
 ) => {
   const resolvedProduct = resolveLocalProductFields(product)
-  resolvedProduct.cacheId = resolvedProduct.linkText
   if (!fields.recommendations) {
     return resolvedProduct
   }
@@ -160,10 +160,13 @@ export const resolveCategoryFields = category => ({
   hasChildren: category.hasChildren,
 })
 
-export const resolveBrandFields = brand => ({
-  cacheId: brand.slug,
-  id: brand.id,
-  name: brand.name,
-  active: brand.isActive,
-  slug: slugify(brand.name, { lower: true }),
-})
+export const resolveBrandFields = brand => {
+  const slu = slugify(brand.name, { lower: true })
+  return ({
+    active: brand.isActive,
+    cacheId: slu,
+    id: brand.id,
+    name: brand.name,
+    slug: slu
+  })
+}
