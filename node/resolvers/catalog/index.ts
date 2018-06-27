@@ -111,7 +111,7 @@ export const queries = {
     const resolvedProducts = await Promise.map(products, product =>
       resolveProductFields(ioContext, product, fields)
     )
-    
+  
     return resolvedProducts
   },
 
