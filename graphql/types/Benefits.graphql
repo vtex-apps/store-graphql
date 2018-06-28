@@ -1,4 +1,4 @@
-type Benefits {
+type Benefit {
   ratesAndBenefitsData: Benefit
 }
 
@@ -16,15 +16,15 @@ type Teaser {
 }
 
 type Conditions {
-  parameters: [BenefitParameter],
+  parameters: [Parameter],
   minimumQuantity: Int
 }
 
 type Effects {
-  parameters: [BenefitParameter]
+  parameters: [Parameter]
 }
 
-type BenefitParameter {
+type Parameter {
   name: String,
   value: String
 }
