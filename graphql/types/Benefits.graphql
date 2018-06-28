@@ -1,14 +1,14 @@
 type Benefit {
-  featured: Boolean,
-  id: String,
-  name: String,
-  conditions: Conditions,
-  effects: Effects,
+  featured: Boolean
+  id: String
+  name: String
+  conditions: Conditions
+  effects: Effects
   teaserType: String
 }
 
 type Conditions {
-  parameters: [Parameter],
+  parameters: [Parameter]
   minimumQuantity: Int
 }
 
@@ -17,6 +17,6 @@ type Effects {
 }
 
 type Parameter {
-  name: String,
+  name: String
   value: String
 }
