@@ -47,8 +47,6 @@ const paths = {
 
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
 
-  benefits: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
-
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
   cancelOrder: (account, { orderFormId }) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
 

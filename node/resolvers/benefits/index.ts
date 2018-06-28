@@ -36,7 +36,7 @@ export const queries = {
     },
     merge: (args, data) => data.ratesAndBenefitsData.teaser,
     headers: withAuthToken(headers.json),
-    url: paths.benefits,
+    url: paths.shipping,
     method: 'POST'
   })
 }
