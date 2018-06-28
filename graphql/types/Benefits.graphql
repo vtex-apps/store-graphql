@@ -1,12 +1,4 @@
 type Benefit {
-  ratesAndBenefitsData: Benefit
-}
-
-type Benefit {
-  teaser: [Teaser]
-}
-
-type Teaser {
   featured: Boolean,
   id: String,
   name: String,

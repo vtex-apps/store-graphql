@@ -7,6 +7,7 @@ export const queries = {
     data: ({ items }) => ({
       items
     }),
+    merge: (args, data) => data.ratesAndBenefitsData.teaser,
     headers: withAuthToken(headers.json),
     url: paths.benefits,
     method: 'POST'

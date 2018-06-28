@@ -108,7 +108,7 @@ type Query {
   benefits(
     """ List of SKU Products """
     items: [ShippingItem]
-  ): Benefits
+  ): [Benefit]
 }
 
 type Mutation {
