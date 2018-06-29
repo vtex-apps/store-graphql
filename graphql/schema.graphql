@@ -105,8 +105,9 @@ type Query {
     id: String
   ): Document
 
+  """ Get the benefits associated with a list of products """
   benefits(
-    """ List of SKU Products """
+    """ List of Products """
     items: [ShippingItem]
   ): [Benefit]
 }

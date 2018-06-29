@@ -10,12 +10,9 @@ const DEFAULT_SELLER = '1'
 
 export const queries = {
   /**
-   * Benefits Resolver
    * There are two ways to make the request data
-   * First of them is passing the graphql args with the items property
-   * which is an array of Shipping Items.
-   * Second of them is passing just the id of the product itself as a 
-   * graphql args.
+   * First of them is passing the graphql args with the items property which is an array of Shipping Items. 
+   * Second is passing just the id of the product itself as a graphql argument.
    */
   benefits: httpResolver({
     data: (args) => {

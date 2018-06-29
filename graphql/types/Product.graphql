@@ -16,6 +16,7 @@ type Product {
   productReference: String
   recommendations: Recommendation
   jsonSpecifications: String
+  """ List of benefits associated with this product """
   benefits: [Benefit]
 }
 
