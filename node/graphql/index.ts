@@ -1,5 +1,6 @@
 import '../axiosConfig'
 import { queries as catalogQueries, rootResolvers as catalogRootResolvers } from '../resolvers/catalog'
+import { queries as benefitsQueries } from '../resolvers/benefits'
 import { mutations as checkoutMutations, queries as checkoutQueries } from '../resolvers/checkout'
 import { mutations as profileMutations, queries as profileQueries } from '../resolvers/profile'
 import { mutations as authMutations } from '../resolvers/auth'
@@ -13,6 +14,7 @@ export const resolvers = {
   ...catalogRootResolvers,
   Query: {
     ...catalogQueries,
+    ...benefitsQueries,
     ...profileQueries,
     ...checkoutQueries,
     ...documentQueries,

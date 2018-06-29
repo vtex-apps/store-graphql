@@ -104,6 +104,12 @@ type Query {
     """ Document id """
     id: String
   ): Document
+
+  """ Get the benefits associated with a list of products """
+  benefits(
+    """ List of Products """
+    items: [ShippingItem]
+  ): [Benefit]
 }
 
 type Mutation {
