@@ -1,4 +1,6 @@
 type Profile {
+  """ email is used as cacheId """
+  cacheId: ID
   id: String,
   userId: String,
   firstName: String,

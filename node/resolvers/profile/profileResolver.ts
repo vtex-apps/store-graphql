@@ -31,9 +31,10 @@ const profile = (ctx) => async (data) => {
     const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
     const address = profileData && await http.get(addressURL, config).then(prop('data'))
 
-    return merge({ address }, profileData)
+    return merge({ address, cacheId: user }, profileData)
   }
   return {
+    cacheId: user,
     email: user
   }
 }

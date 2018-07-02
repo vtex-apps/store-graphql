@@ -50,12 +50,12 @@ const resolvers = {
 
   properties: product => {
     const { allSpecifications = [] } = product
-    return map(name => ({ name, values: product[name] }), allSpecifications)
+    return map((name: string) => ({ name, values: product[name] }), allSpecifications)
   },
 
   variations: sku => {
     const { variations = [] } = sku
-    return map(name => ({ name, values: sku[name] }), variations)
+    return map((name: string) => ({ name, values: sku[name] }), variations)
   },
 
   attachments: sku => {
@@ -110,6 +110,7 @@ export const resolveLocalProductFields = product => {
   ] = resolveFields(product)
   return {
     ...product,
+    cacheId: product.linkText,
     clusterHighlights,
     items,
     properties,
@@ -155,12 +156,17 @@ export const resolveCategoryFields = category => ({
     : [],
   name: category.name,
   id: category.id,
+  cacheId: category.id,
   hasChildren: category.hasChildren,
 })
 
-export const resolveBrandFields = brand => ({
-  id: brand.id,
-  name: brand.name,
-  active: brand.isActive,
-  slug: slugify(brand.name, { lower: true }),
-})
+export const resolveBrandFields = brand => {
+  const slu = slugify(brand.name, { lower: true })
+  return ({
+    active: brand.isActive,
+    cacheId: slu,
+    id: brand.id,
+    name: brand.name,
+    slug: slu
+  })
+}

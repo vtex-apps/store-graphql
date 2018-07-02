@@ -1,4 +1,6 @@
 type Suggestions {
+  """ searchTerm from Query autocomplete is used as cacheId """
+  cacheId: ID
   itemsReturned: [Items]
 }
 

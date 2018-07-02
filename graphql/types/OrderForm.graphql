@@ -1,4 +1,6 @@
 type OrderForm {
+  """ orderFormId is used as cacheId """
+  cacheId: ID
   orderFormId: String
   value: Float
   items: [OrderFormItem]

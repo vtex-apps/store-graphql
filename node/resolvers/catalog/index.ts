@@ -56,6 +56,7 @@ export const queries = {
       headers: withAuthToken()(ioContext),
     })
     return {
+      cacheId: args.searchTerm,
       itemsReturned: map(
         item => ({
           ...item,
@@ -110,7 +111,7 @@ export const queries = {
     const resolvedProducts = await Promise.map(products, product =>
       resolveProductFields(ioContext, product, fields)
     )
-
+  
     return resolvedProducts
   },
 

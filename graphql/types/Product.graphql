@@ -1,5 +1,7 @@
 type Product {
   brand: String
+  """ linkText is used as cacheId """
+  cacheId: ID
   categoryId: ID
   categories: [String]
   categoriesIds: [String]

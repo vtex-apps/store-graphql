@@ -24,6 +24,7 @@ export const queries = {
     data: { expectedOrderFormSections: ['items'] },
     merge: (bodyData, responseData) => ({
       ...responseData,
+      cacheId: responseData.orderFormId,
       value: convertIntToFloat(responseData.value),
       items: map((item) => ({
         ...item,
@@ -64,6 +65,10 @@ export const mutations = {
     }),
     enableCookies: true,
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.addItem,
   }),
@@ -100,6 +105,10 @@ export const mutations = {
       value,
     }),
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'PUT',
     url: paths.orderFormCustomData,
   }),
@@ -110,8 +119,12 @@ export const mutations = {
       orderItems: items,
     }),
     enableCookies: true,
-    method: 'POST',
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
+    method: 'POST',
     url: paths.updateItems,
   }),
 
@@ -121,6 +134,10 @@ export const mutations = {
       ignoreProfileData,
     }),
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
   }),
@@ -128,6 +145,10 @@ export const mutations = {
   updateOrderFormPayment: httpResolver({
     data: ({ payments }) => merge({ expectedOrderFormSections: ['items'] }, { payments }),
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.orderFormPayment,
   }),
@@ -135,6 +156,10 @@ export const mutations = {
   updateOrderFormProfile: httpResolver({
     data: ({ fields }) => merge({ expectedOrderFormSections: ['items'] }, fields),
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.orderFormProfile,
   }),
@@ -142,6 +167,10 @@ export const mutations = {
   updateOrderFormShipping: httpResolver({
     data: data => merge({ expectedOrderFormSections: ['items'] }, data),
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.orderFormShipping,
   }),
