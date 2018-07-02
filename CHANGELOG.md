@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Benefits resolver.
+- Added cacheId field to root types.
 
 ## [2.9.1] - 2018-6-27
 ### Fixed
