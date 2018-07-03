@@ -6,29 +6,14 @@ type Benefit {
   id: String
   """ Name of the benefit """
   name: String
-  """ Conditions to be fullfilled for the benefit be valid """
-  conditions: Conditions
-  """ Effects that will be applied to the products associated with this benefit """
-  effects: Effects
+  """ Items of the benefit """
+  items: [BenefitItems]
   """ Type of benefit """
   teaserType: String
 }
 
-type Conditions {
-  """ Parameters that will be checked to validate the benefit """
-  parameters: [Parameter]
-  """ Minimum quantity of a product in the benefit """
-  minimumQuantity: Int
-}
-
-type Effects {
-  """ Parameters that will be changed into the products associated with this benefit """
-  parameters: [Parameter]
-}
-
-type Parameter {
-  """ Name of the parameter """
-  name: String
-  """ Value of the parameter """
-  value: String
+type BenefitItems {
+  sku: SKU
+  discount: Float
+  minQuantity: Int
 }
