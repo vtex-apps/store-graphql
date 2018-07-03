@@ -1,5 +1,4 @@
-import httpResolver from "../httpResolver"
-import { headers, withAuthToken } from "../headers"
+import http from 'axios'
 import paths from '../paths'
 
 /**
@@ -14,14 +13,13 @@ export const queries = {
    * First of them is passing the graphql args with the items property which is an array of Shipping Items. 
    * Second is passing just the id of the product itself as a graphql argument.
    */
-  benefits: httpResolver({
-    data: (args) => {
-      if (args.items) {
-        return {
-          items: args.items
-        }
-      }
-      return {
+
+  benefits: async (_, args, { vtex: ioContext }) => {
+    let body
+    if (args.items) {
+      body = { items: args.items }
+    } else {
+      body = {
         items: [
           { 
             id: args.id,
@@ -30,10 +28,29 @@ export const queries = {
           }
         ]
       }
-    },
-    merge: (args, data) => data.ratesAndBenefitsData ? data.ratesAndBenefitsData.teaser : [],
-    headers: withAuthToken(headers.json),
-    url: paths.shipping,
-    method: 'POST'
-  })
+    }
+    const headers = {
+      Accept: 'application/vnd.vtex.ds.v10+json',
+      Authorization: ioContext.authToken,
+      ['Content-Type']: 'application/json',
+    }
+    const url = paths.shipping(ioContext.account)
+    const { data } = await http.post(url, body, { headers })
+    if (data.ratesAndBenefitsData.teaser) {
+      const benefits = data.ratesAndBenefitsData.teaser
+      benefits.map(benefit => {
+        const parameters = benefit.conditions.parameters
+        parameters.map(param => {
+          const skuIds = param.value.split(',')
+          skuIds.map(async skuId => {
+            const skuUrl = paths.sku(ioContext.account, skuId)
+            const skuData = await http.get(skuUrl, { headers })
+          })
+        })
+      })
+    }
+    return data.ratesAndBenefitsData ? data.ratesAndBenefitsData.teaser : []
+  },
+
+
 }
