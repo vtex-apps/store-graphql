@@ -158,6 +158,9 @@ type Mutation {
     """ User password """
     password: String!
   ): String
+
+  oAuth(provider: String, redirectUrl: String): String
+  
   """ To recovery password you need to get your email, password and access code """
   recoveryPassword(
     """ User email"""
