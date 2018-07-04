@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- recommendations of product query to retrieve different products.
+- Recommendations of product query to retrieve different products.
+
+### Added
+- Support for product retrievement into benefits resolver.
 
 ## [2.10.0] - 2018-7-4
 ### Added

@@ -91,7 +91,7 @@ export const queries = {
     )
 
     const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
-
+    
     return { ...resolvedProduct, benefits: resolvedBenefits }
   },
 

@@ -46,6 +46,8 @@ const paths = {
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
+  
+  skuById: (account, { skuId }) => `${paths.catalog(account)}/pvt/sku/stockkeepingunitbyid/${skuId}`,
 
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
   cancelOrder: (account, { orderFormId }) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
