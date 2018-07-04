@@ -7,13 +7,13 @@ type Benefit {
   """ Name of the benefit """
   name: String
   """ Items of the benefit """
-  items: [BenefitItems]
+  items: [BenefitItem]
   """ Type of benefit """
   teaserType: String
 }
 
-type BenefitItems {
-  sku: SKU
+type BenefitItem {
+  product: Product
   discount: Float
   minQuantity: Int
 }

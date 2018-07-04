@@ -83,15 +83,12 @@ export const queries = {
     const { data: product } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
-
     const resolvedProduct = await resolveProductFields(
       ioContext,
       head(product),
       graphqlFields(info)
     )
-
     const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
-
     return { ...resolvedProduct, benefits: resolvedBenefits }
   },
 
