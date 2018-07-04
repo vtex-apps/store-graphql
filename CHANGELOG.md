@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - `OAuth` Resolver.
+- Support for product retrievement into benefits resolver.
+
+### Fixed
+- Recommendations of product query to retrieve different products.
+
+## [2.10.0] - 2018-7-4
+### Added
+- PriceRanges to facets graphql type
+
+## [2.9.3] - 2018-7-2
+### Fixed
+- Benefits resolver was breaking with the returned data being null.
 
 ## [2.9.2] - 2018-7-2
 ### Added

@@ -12,7 +12,9 @@ export const resolveView = async (ioContext, product) => {
     'whosawalsosaw'
   )
   const { data } = await axios.get(url, { headers: withAuthToken()(ioContext) })
-  return map(resolveLocalProductFields, data)
+  return map(resolveLocalProductFields, data).filter(
+    recomendation => recomendation.linkText !== product.linkText
+  )
 }
 
 export const resolveBuy = async (ioContext, product) => {
@@ -22,5 +24,7 @@ export const resolveBuy = async (ioContext, product) => {
     'whoboughtalsobought'
   )
   const { data } = await axios.get(url, { headers: withAuthToken()(ioContext) })
-  return map(resolveLocalProductFields, data)
+  return map(resolveLocalProductFields, data).filter(
+    recomendation => recomendation.linkText !== product.linkText
+  )
 }
