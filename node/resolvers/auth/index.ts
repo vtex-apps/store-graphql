@@ -15,8 +15,8 @@ const makeRequest = async (ctx, url) => {
   return await http.request(await configRequest(ctx, url))
 }
 
-const getSessionToken = async ioContext => {
-  const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account))
+const getSessionToken = async (ioContext, redirectUrl?) => {
+  const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl))
   if (!data.authenticationToken) {
     throw new ResolverError(`ERROR ${data}`, status)
   }
@@ -111,5 +111,11 @@ export const mutations = {
       serialize(`VtexIdclientAutCookie_${ioContext.account}`, '', { path: '/', maxAge: 0, })
     )
     return true
+  },
+
+  oAuth: async (_, args, { vtex: ioContext, response }) => {
+    const {provider, redirectUrl} = args
+    const VtexSessionToken = await getSessionToken(ioContext, redirectUrl)
+    return paths.oAuth(VtexSessionToken, provider)
   }
 }
