@@ -3,6 +3,7 @@ type Facets {
 	Brands: [Facet]
 	SpecificationFilters: [Filter]
 	CategoriesTrees: [Facet]
+	PriceRanges: [Facet]
 }
 
 type Facet {
