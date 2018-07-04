@@ -159,7 +159,13 @@ type Mutation {
     password: String!
   ): String
 
-  oAuth(provider: String, redirectUrl: String): String
+  """ OAuth to login with Social Account """
+  oAuth(
+    """ The OAuth Provider, e.g: Google, Facebook """
+    provider: String, 
+    """ The URL to be redirected after authentication """
+    redirectUrl: String
+  ): String
   
   """ To recovery password you need to get your email, password and access code """
   recoveryPassword(
