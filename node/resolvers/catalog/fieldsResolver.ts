@@ -123,8 +123,7 @@ export const resolveLocalProductFields = product => {
 export const resolveProductFields = async (
   ioContext: IOContext,
   product: any,
-  fields: any,
-  distinctRecomendations: boolean
+  fields: any
 ) => {
   const resolvedProduct = resolveLocalProductFields(product)
   if (!fields.recommendations) {
@@ -132,8 +131,8 @@ export const resolveProductFields = async (
   }
 
   const [view, buy] = await Promise.all([
-    resolveView(ioContext, product, distinctRecomendations),
-    resolveBuy(ioContext, product, distinctRecomendations),
+    resolveView(ioContext, product),
+    resolveBuy(ioContext, product),
   ])
   return { ...resolvedProduct, recommendations: { buy, view } }
 }

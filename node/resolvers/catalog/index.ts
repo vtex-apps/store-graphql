@@ -87,8 +87,7 @@ export const queries = {
     const resolvedProduct = await resolveProductFields(
       ioContext,
       head(product),
-      graphqlFields(info),
-      data.distinctRecomendations
+      graphqlFields(info)
     )
 
     const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
