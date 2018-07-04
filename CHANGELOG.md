@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Support for product retrivement into benefits resolver.
+- Support for product retrievement into benefits resolver.
 
 ## [2.10.0] - 2018-7-4
 ### Added
