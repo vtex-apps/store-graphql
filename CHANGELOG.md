@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Support for product retrievement into benefits resolver.
 
+### Fixed
+- Resolve null fields of product data in benefits resolver.
+
 ## [2.10.0] - 2018-7-4
 ### Added
 - PriceRanges to facets graphql type
