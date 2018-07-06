@@ -4,7 +4,7 @@ type Query {
     """ Product slug """
     slug: String
   ): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
-  
+
   """ Product search filtered and ordered """
   products(
     """ Terms that is used in search e.g.: eletronics/samsung """
@@ -73,12 +73,15 @@ type Query {
   orders: [Order]
 
   """ Get user profile details """
-  profile: Profile
+  profile(
+    """ Comma separated fields """
+    customFields: String
+  ): Profile
 
   """ Get auto complete suggestions in search """
   autocomplete(
     """ Number of items that is returned """
-    maxRows: Int = 12, 
+    maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
   ): Suggestions
@@ -86,21 +89,21 @@ type Query {
   """ Search documents """
   documents(
     """ Schema name. e.g.: CL, AD"""
-    acronym: String, 
+    acronym: String,
     """ Fields that will be returned by document. e.g.: _fields=email,firstName,document """
-    fields: [String], 
+    fields: [String],
     """ Pagination. Default: 1 """
-    page: Int = 1, 
+    page: Int = 1,
     """ Items returned in the page. Default: 15"""
-    pageSize: Int = 15  
+    pageSize: Int = 15
   ): [Document]
 
   """ Get document """
   document(
     """ Schema name. e.g.: CL, AD"""
-    acronym: String, 
+    acronym: String,
     """ Fields that will be returned in document. e.g.: _fields=email,firstName,document """
-    fields: [String], 
+    fields: [String],
     """ Document id """
     id: String
   ): Document
@@ -119,7 +122,7 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
 
   """ Profile """
-  updateProfile(fields: ProfileInput): Profile
+  updateProfile(fields: ProfileInput, customFields: [CustomFieldInput!]): Profile
   updateAddress(id: String, fields: AddressInput): Profile
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
@@ -131,7 +134,7 @@ type Mutation {
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
-  
+
   """ Payment """
   createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
@@ -146,7 +149,7 @@ type Mutation {
   """ Access key sign in mode """
   accessKeySignIn(
     """ User email"""
-    email: String!, 
+    email: String!,
     """ Access key that was received """
     code: String!
   ): String
@@ -154,7 +157,7 @@ type Mutation {
   """ Classic sign in mode """
   classicSignIn(
     """ User email"""
-    email: String!, 
+    email: String!,
     """ User password """
     password: String!
   ): String
@@ -162,15 +165,15 @@ type Mutation {
   """ OAuth to login with Social Account """
   oAuth(
     """ The OAuth Provider, e.g: Google, Facebook """
-    provider: String, 
+    provider: String,
     """ The URL to be redirected after authentication """
     redirectUrl: String
   ): String
-  
+
   """ To recovery password you need to get your email, password and access code """
   recoveryPassword(
     """ User email"""
-    email: String!, 
+    email: String!,
     """ User password """
     newPassword: String!,
     """ Access Code """
