@@ -2,6 +2,7 @@ import axios from 'axios'
 import paths from '../paths'
 import { flatten } from 'ramda'
 import { withAuthToken } from '../headers'
+import { resolveLocalProductFields } from '../catalog/fieldsResolver'
 
 /**
  * Default values for Shipping Items
@@ -27,8 +28,8 @@ const getSKUItems = async (skuIds, ioContext) => {
  * @param ioContext VTEX ioContext which contains the informations of the application.
  */
 const getProduct = async (slug, ioContext) => {
-  const { data: [ product, _ ] } = await axios.get(paths.product(ioContext.account, { slug }), { headers: withAuthToken()(ioContext) })
-  return product;
+  const { data: [ product ] } = await axios.get(paths.product(ioContext.account, { slug }), { headers: withAuthToken()(ioContext) })
+  return resolveLocalProductFields(product)
 }
 
 /**
