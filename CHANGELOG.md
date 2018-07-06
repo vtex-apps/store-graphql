@@ -6,11 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Resolve null fields of product data in benefits resolver.
+
+## [2.11.0] - 2018-7-4
 ### Added
+- `OAuth` Resolver.
 - Support for product retrievement into benefits resolver.
 
 ### Fixed
-- Resolve null fields of product data in benefits resolver.
+- Recommendations of product query to retrieve different products.
 
 ## [2.10.0] - 2018-7-4
 ### Added
