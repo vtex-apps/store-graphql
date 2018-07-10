@@ -16,6 +16,12 @@ type Profile {
   corporateName: String,
   corporateDocument: String,
   stateRegistration: String,
+  customFields: [CustomField]
+}
+
+type CustomField {
+  key: String
+  value: String
 }
 
 input ProfileInput {
@@ -30,6 +36,11 @@ input ProfileInput {
   corporateName: String,
   corporateDocument: String,
   stateRegistration: String,
+}
+
+input CustomFieldInput {
+  key: String
+  value: String
 }
 
 type Address {

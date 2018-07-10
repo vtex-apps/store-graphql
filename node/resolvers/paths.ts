@@ -1,6 +1,8 @@
+import {join} from 'ramda'
+
 const paths = {
 
-  /** Catalog API 
+  /** Catalog API
    * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
   */
   catalog: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system`,
@@ -31,7 +33,7 @@ const paths = {
 
   crossSelling: (account, id, type) => `${paths.catalog(account)}/pub/products/crossselling/${type}/${id}`,
 
-  /** Checkout API 
+  /** Checkout API
    * Docs: https://documenter.getpostman.com/view/18468/vtex-checkout-api/6Z2QYJM
   */
   orderForm: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
@@ -46,7 +48,7 @@ const paths = {
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
-  
+
   skuById: (account, { skuId }) => `${paths.catalog(account)}/pvt/sku/stockkeepingunitbyid/${skuId}`,
 
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
@@ -82,7 +84,7 @@ const paths = {
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
     filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,state,number,street,postalCode,city,reference,addressName,addressType`,
-    filterUser: (email) => `http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,tradeName,corporateName,stateRegistration,corporateDocument`,
+    filterUser: (email, customFields?) => join(',', [`http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,tradeName,corporateName,stateRegistration,corporateDocument`, customFields]),
     profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
   }),
 }
