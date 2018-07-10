@@ -1,27 +1,27 @@
 import http from 'axios'
 import {parse as parseCookie} from 'cookie'
-import {head, values, pickBy, pipe, prop, find } from 'ramda'
+import {find, head, merge, pickBy, pipe, prop, reduce, values } from 'ramda'
+import ResolverError from '../../errors/resolverError'
 import { headers, withAuthAsVTEXID } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
-import profileResolver from './profileResolver'
-import ResolverError from '../../errors/resolverError'
+import profileResolver, {customFieldsFromGraphQLInput, pickCustomFieldsFromData} from './profileResolver'
 
 const makeRequest = async (url, token, data?, method='GET') => http.request({
-  url, data, method, headers: { 
+  url, data, method, headers: {
     'Proxy-Authorization': token,
     'VtexIdclientAutCookie': token
   }
 })
 
-const getClientData = async (account, authToken, cookie) => {
+const getClientData = async (account, authToken, cookie, customFields?: string) => {
   const { data: { user } } = await makeRequest(
-    paths.identity(account, { 
-      token: getClientToken(cookie, account) 
+    paths.identity(account, {
+      token: getClientToken(cookie, account)
     }), authToken
   )
   return await makeRequest(
-    paths.profile(account).filterUser(user), authToken
+    paths.profile(account).filterUser(user, customFields), authToken
   ).then(pipe(prop('data'), head))
 }
 
@@ -48,7 +48,7 @@ const addressPatch = async (_, args, config) => {
   const { vtex: { account, authToken }, request: { headers: { cookie } } } = config
   const { userId, id } = await getClientData(account, authToken, cookie)
 
-  if (args.id && !(await isUserAddress(account, id, args.id, authToken))) {  
+  if (args.id && !(await isUserAddress(account, id, args.id, authToken))) {
     throw new ResolverError('Address not found.', 400)
   }
 
@@ -58,8 +58,21 @@ const addressPatch = async (_, args, config) => {
     method: 'PATCH',
     url: account => paths.profile(account).address(args.id || ''),
   })(_, args, config)
-  
+
   return await profileResolver(_, args, config)
+}
+
+const addFieldsToObj = (acc, {key, value}) => {
+  acc[key] = value
+  return acc
+}
+
+const returnOldOnNotChanged = (oldData) => (error) => {
+  if (error.statusCode === 304) {
+    return oldData
+  } else {
+    throw error
+  }
 }
 
 export const mutations = {
@@ -67,8 +80,8 @@ export const mutations = {
 
   deleteAddress: async(_, { id: addressId }, { vtex: { account, authToken }, request: { headers: { cookie } } }) => {
     const { userId, id: clientId } = await getClientData(account, authToken, cookie)
-  
-    if (!(await isUserAddress(account, clientId, addressId, authToken))) {  
+
+    if (!(await isUserAddress(account, clientId, addressId, authToken))) {
       throw new ResolverError('Address not found.', 400)
     }
 
@@ -80,11 +93,17 @@ export const mutations = {
   updateAddress: async (_, args, config) => addressPatch(_, args, config),
 
   updateProfile: async (_, args, { vtex: { account, authToken }, request: { headers: { cookie } } }) => {
-    const { id: profileId } = await getClientData(account, authToken, cookie)
-    
+    const customFieldsStr = customFieldsFromGraphQLInput(args.customFields)
+    const oldData = await getClientData(account, authToken, cookie, customFieldsStr)
+    const newData = reduce(addFieldsToObj, args.fields, args.customFields || [])
+
     return await makeRequest(
-      paths.profile(account).profile(profileId), authToken, args.fields, 'PATCH'
-    ).then(() => getClientData(account, authToken, cookie)).then((obj)=>({...obj, cacheId: obj.email}))
+      paths.profile(account).profile(oldData.id), authToken, newData, 'PATCH'
+    ).then(() => getClientData(account, authToken, cookie, customFieldsStr)).then((obj)=>({...obj, cacheId: obj.email}))
+    .then(obj => {
+      obj.customFields = pickCustomFieldsFromData(customFieldsStr, obj)
+      return obj
+    }).catch(returnOldOnNotChanged(oldData))
   },
 }
 
