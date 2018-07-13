@@ -13,7 +13,7 @@ type Benefit {
 }
 
 type BenefitItem {
-  product: Product
+  benefitProduct: Product
   discount: Float
   minQuantity: Int
 }
