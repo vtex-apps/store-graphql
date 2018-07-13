@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Possibility to extend profile info according to masterdata CL entity
+- Adding file upload to Masterdata CL entity
 
 ## [2.11.1] - 2018-7-6
 ### Fixed
