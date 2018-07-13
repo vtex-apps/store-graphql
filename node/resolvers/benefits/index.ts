@@ -50,10 +50,10 @@ const getBenefitsWithSKUItems = async (benefits, ioContext) => {
 
       const benefitItems = await Promise.all(skuList.map(async sku => {
         const slug = sku.DetailUrl.split('/')[1]
-        const product = await getProduct(slug, ioContext)
+        const benefitProduct = await getProduct(slug, ioContext)
 
         return {
-          product,
+          benefitProduct,
           discount,
           minQuantity
         }
