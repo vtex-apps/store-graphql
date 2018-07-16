@@ -84,7 +84,7 @@ const paths = {
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
     attachments: (id, field) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}/${field}/attachments`,
-    filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,state,number,street,postalCode,city,reference,addressName,addressType`,
+    filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,country,state,number,street,postalCode,city,reference,addressName,addressType`,
     filterUser: (email, customFields?) => join(',', [`http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,tradeName,corporateName,stateRegistration,corporateDocument`, customFields]),
     profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
   }),

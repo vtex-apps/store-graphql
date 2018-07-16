@@ -1,6 +1,6 @@
 type Profile {
   """ email is used as cacheId """
-  cacheId: ID
+  cacheId: ID,
   id: String,
   userId: String,
   firstName: String,
@@ -16,12 +16,12 @@ type Profile {
   corporateName: String,
   corporateDocument: String,
   stateRegistration: String,
-  customFields: [CustomField]
+  customFields: [CustomField],
 }
 
 type CustomField {
-  key: String
-  value: String
+  key: String,
+  value: String,
 }
 
 input ProfileInput {
@@ -39,8 +39,8 @@ input ProfileInput {
 }
 
 input CustomFieldInput {
-  key: String
-  value: String
+  key: String,
+  value: String,
 }
 
 type Address {
@@ -49,6 +49,7 @@ type Address {
   receiverName: String,
   complement: String,
   neighborhood: String,
+  country: String,
   state: String,
   number: String,
   street: String,
@@ -63,6 +64,7 @@ input AddressInput {
   receiverName: String,
   complement: String,
   neighborhood: String,
+  country: String,
   state: String,
   number: String,
   street: String,
