@@ -1,21 +1,21 @@
 type Profile {
   """ email is used as cacheId """
   cacheId: ID
-  id: String,
-  userId: String,
-  firstName: String,
-  lastName: String,
-  birthDate: String,
-  gender: String,
-  homePhone: String,
-  businessPhone: String,
-  document: String,
-  email: String,
-  address: [Address],
-  tradeName: String,
-  corporateName: String,
-  corporateDocument: String,
-  stateRegistration: String,
+  id: String
+  userId: String
+  firstName: String
+  lastName: String
+  birthDate: String
+  gender: String
+  homePhone: String
+  businessPhone: String
+  document: String
+  email: String
+  address: [Address]
+  tradeName: String
+  corporateName: String
+  corporateDocument: String
+  stateRegistration: String
   customFields: [CustomField]
 }
 
@@ -25,17 +25,17 @@ type CustomField {
 }
 
 input ProfileInput {
-  firstName: String,
-  lastName: String,
-  birthDate: String,
-  gender: String,
-  homePhone: String,
-  businessPhone: String,
-  document: String,
-  tradeName: String,
-  corporateName: String,
-  corporateDocument: String,
-  stateRegistration: String,
+  firstName: String
+  lastName: String
+  birthDate: String
+  gender: String
+  homePhone: String
+  businessPhone: String
+  document: String
+  tradeName: String
+  corporateName: String
+  corporateDocument: String
+  stateRegistration: String
 }
 
 input CustomFieldInput {
@@ -44,31 +44,33 @@ input CustomFieldInput {
 }
 
 type Address {
-  id: String,
-  userId: String,
-  receiverName: String,
-  complement: String,
-  neighborhood: String,
-  state: String,
-  number: String,
-  street: String,
-  postalCode: String,
-  city: String,
-  reference: String,
-  addressName: String,
-  addressType: String,
+  id: String
+  userId: String
+  receiverName: String
+  complement: String
+  neighborhood: String
+  country: String
+  state: String
+  number: String
+  street: String
+  postalCode: String
+  city: String
+  reference: String
+  addressName: String
+  addressType: String
 }
 
 input AddressInput {
-  receiverName: String,
-  complement: String,
-  neighborhood: String,
-  state: String,
-  number: String,
-  street: String,
-  postalCode: String,
-  city: String,
-  reference: String,
-  addressName: String,
-  addressType: String,
+  receiverName: String
+  complement: String
+  neighborhood: String
+  country: String
+  state: String
+  number: String
+  street: String
+  postalCode: String
+  city: String
+  reference: String
+  addressName: String
+  addressType: String
 }
