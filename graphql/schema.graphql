@@ -70,13 +70,13 @@ type Query {
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
 
   """ Get user orders details """
-  orders: [Order]
+  orders: [Order] @cacheControl(scope: PRIVATE)
 
   """ Get user profile details """
   profile(
     """ Comma separated fields """
     customFields: String
-  ): Profile
+  ): Profile @cacheControl(scope: PRIVATE)
 
   """ Get auto complete suggestions in search """
   autocomplete(
