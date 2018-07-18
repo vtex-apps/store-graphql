@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.12.5] - 2018-07-18
+### Changed
+- Bringing `benefitsProduct` back, after upgrade `app-store` to use `vtex.store@1.x`.
+
 ## [2.12.3] - 2018-07-17
 ### Fixed
 - change property name banefitProduct to product
