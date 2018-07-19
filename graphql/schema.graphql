@@ -122,8 +122,8 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
 
   """ Profile """
-  updateProfile(fields: ProfileInput, customFields: [CustomFieldInput!]): Profile
-  uploadProfilePicture(file: Upload!, field: String!): Boolean
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile
+  uploadProfilePicture(file: Upload!, field: String!): ProfileCustomField
   updateAddress(id: String, fields: AddressInput): Profile
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
