@@ -16,10 +16,11 @@ type Profile {
   corporateName: String
   corporateDocument: String
   stateRegistration: String
-  customFields: [CustomField]
+  customFields: [ProfileCustomField]
 }
 
-type CustomField {
+type ProfileCustomField {
+  cacheId: ID
   key: String
   value: String
 }
@@ -38,7 +39,7 @@ input ProfileInput {
   stateRegistration: String
 }
 
-input CustomFieldInput {
+input ProfileCustomFieldInput {
   key: String
   value: String
 }

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.12.6] - 2018-07-19
+### Changed
+- Changes custFields names to reflect Profile in CacheID
+
+### Added
+- Adds cacheId to Profile Custom Fields
+
 ## [2.12.5] - 2018-07-18
 ### Changed
 - Bringing `benefitsProduct` back, after upgrade `app-store` to use `vtex.store@1.x`.
