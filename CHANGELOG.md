@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Changes custFields names to reflect Profile in CacheID
+
+### Added
+- Adds cacheId to Profile Custom Fields
 
 ## [2.12.5] - 2018-07-18
 ### Changed
