@@ -191,9 +191,12 @@ export const queries = {
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
     const facetsValue = query + '?map=' + facetsMap
     const facetsValueWithRest = queryWithRest + '?map=' + map
-    const products = await queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
-    const facets = await queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
-    const facetsWithRest = await queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
+    const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
+    const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
+    const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
+    const [products, facets, facetsWithRest] = await Promise.all([
+      productsPromise, facetsPromise, facetsWithRestPromise
+    ])
     const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
     return { facets, products, recordsFiltered }
   }
