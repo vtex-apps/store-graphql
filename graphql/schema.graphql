@@ -43,6 +43,22 @@ type Query {
     map: String = "",
     """ Rest terms that is used in search e.g.: samsung,Android7 """
     rest: String = "",
+    """ Filter by category. {a}/{b} - {a} and {b} are categoryIds """
+    category: String = "",
+    """ Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value """
+    specificationFilters: [String],
+    """ Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" """
+    priceRange: String = "",
+    """ Filter by collection. where collection also know as productClusterId"""
+    collection: String = "",
+    """ Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4"""
+    salesChannel: String = "",
+    """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
+    orderBy: String = "OrderByPriceDESC",
+    """ Pagination item start """
+    from: Int = 0,
+    """ Pagination item end """
+    to: Int = 9
   ): Search
 
   """ Get category details """
