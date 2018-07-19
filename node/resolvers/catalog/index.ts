@@ -195,7 +195,6 @@ export const queries = {
     const facets = await queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
     const facetsWithRest = await queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
     const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
-    console.log(recordsFiltered)
     return { facets, products, recordsFiltered }
   }
 }
