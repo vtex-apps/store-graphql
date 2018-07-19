@@ -31,9 +31,19 @@ type Query {
 
   """ Get facets category """
   facets(
-  """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
+    """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
   ): Facets
+
+  """ Get search """
+  search(
+    """ Terms that is used in search e.g.: eletronics/samsung """
+    query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
+    map: String = "",
+    """ Rest terms that is used in search e.g.: samsung,Android7 """
+    rest: String = "",
+  ): Search
 
   """ Get category details """
   category(
