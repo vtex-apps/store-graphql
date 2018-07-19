@@ -91,7 +91,7 @@ export const queries = {
     )
 
     const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
-    
+
     return { ...resolvedProduct, benefits: resolvedBenefits }
   },
 
@@ -111,7 +111,7 @@ export const queries = {
     const resolvedProducts = await Promise.map(products, product =>
       resolveProductFields(ioContext, product, fields)
     )
-  
+
     return resolvedProducts
   },
 
@@ -183,5 +183,20 @@ export const queries = {
       headers: withAuthToken()(ioContext),
     })
     return map(resolveCategoryFields, categories)
+  },
+
+  searchContextFromParams: async (_, data, { vtex: ioContext }: ColossusContext) => {
+    const url = paths.categories(ioContext.account, {treeLevel: 2})
+    const { data: categories } = await axios.get(url, {
+      headers: withAuthToken()(ioContext),
+    })
+
+    console.log(categories)
+
+    return {
+      brand: null,
+      category: null,
+      contextKey: 'search',
+    }
   },
 }

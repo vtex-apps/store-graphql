@@ -113,6 +113,14 @@ type Query {
     """ List of Products """
     items: [ShippingItem]
   ): [Benefit]
+
+  """ Get the IDs for the provided search context slugs """
+  searchContextFromParams(
+    brand: String,
+    department: String,
+    category: String,
+    subcategory: String
+  ): SearchContext
 }
 
 type Mutation {
