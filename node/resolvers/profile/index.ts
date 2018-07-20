@@ -111,7 +111,7 @@ export const mutations = {
   uploadProfilePicture: async (root, {file, field}, ctx, info) => {
     const {vtex: {account, authToken}, request: {headers: {cookie}}} = ctx
     const {id} = await getClientData(account, authToken, cookie)
-    const {stream, filename, mimetype, encoding} = await file
+    const {stream, filename, mimetype} = await file
 
     const url = paths.profile(account).attachments(id, field)
 
@@ -144,10 +144,19 @@ export const mutations = {
       throw new ResolverError(response, 500)
     }
 
-    return true
+    return {
+      key: field,
+      value: filename
+    }
   }
 }
 
 export const queries = {
   profile: profileResolver,
+}
+
+export const rootResolvers = {
+  ProfileCustomField: {
+    cacheId: (root) => root.key
+  }
 }
