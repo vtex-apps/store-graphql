@@ -211,7 +211,6 @@ export const queries = {
 
       let found: Category
 
-      console.log('DEPARTMENTS', departments)
       found = departments.find(department => department.url.endsWith(`/${args.department.toLowerCase()}`))
       if (args.category && found) {
         found = found.children.find(category => category.url.endsWith(`/${args.category.toLowerCase()}`))
@@ -223,8 +222,6 @@ export const queries = {
 
       response.category = found && found.id
     }
-
-    console.log('RESPONSE', response)
 
     return response
   },
