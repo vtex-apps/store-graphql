@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.14.0] - 2018-07-24
+### Added
+- Search resolver
+
 ## [2.12.6] - 2018-07-19
 ### Changed
 - Changes custFields names to reflect Profile in CacheID
@@ -20,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.12.3] - 2018-07-17
 ### Fixed
-- change property name banefitProduct to product
+- Change property name banefitProduct to product
 
 ## [2.12.2] - 2018-07-17
 
