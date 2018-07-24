@@ -186,6 +186,22 @@ export const queries = {
     return map(resolveCategoryFields, categories)
   },
 
+  search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
+    const { map, query, rest } = data
+    const facetsMap = map.split(',').slice(0, query.split('/').length).join(',')
+    const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
+    const facetsValue = query + '?map=' + facetsMap
+    const facetsValueWithRest = queryWithRest + '?map=' + map
+    const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
+    const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
+    const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
+    const [products, facets, facetsWithRest] = await Promise.all([
+      productsPromise, facetsPromise, facetsWithRestPromise
+    ])
+    const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
+    return { facets, products, recordsFiltered }
+  },
+
   searchContextFromParams: async (_, args, { vtex: ioContext }: ColossusContext) => {
     const response = {
       brand: null,
