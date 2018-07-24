@@ -35,7 +35,7 @@ type Query {
     facets: String = ""
   ): Facets
 
-  """ Get search """
+  """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
     """ Terms that is used in search e.g.: eletronics/samsung """
     query: String = "",
