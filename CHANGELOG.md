@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.15.0] - 2018-07-26
+### Added
+- `Login options` resolver.
+
 ## [2.14.0] - 2018-07-24
 ### Added
 - Search resolver
