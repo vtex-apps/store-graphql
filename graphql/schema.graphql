@@ -110,6 +110,9 @@ type Query {
     """ List of Products """
     items: [ShippingItem]
   ): [Benefit]
+
+  """ Get the options available to authenticate users """
+  loginOptions: LoginOptions
 }
 
 type Mutation {
