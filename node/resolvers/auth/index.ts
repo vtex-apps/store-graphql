@@ -46,6 +46,28 @@ const checkPasswordFormat = password => {
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
   return regex.test(password)
 }
+
+export const queries = {
+  /**
+   * Request to the VTEX ID API the list of available login
+   * options to the user authentication.
+   */
+  loginOptions: async (_, args, { vtex: ioContext, response }) => {
+    const { data: {
+        oauthProviders, 
+        showClassicAuthentication, 
+        showAccessKeyAuthentication 
+      } } = await makeRequest(ioContext, 
+      paths.sessionToken(ioContext.account, ioContext.account)
+    )
+    return {
+      providers: oauthProviders,
+      classicAuthentication: showClassicAuthentication,
+      accessKeyAuthentication: showAccessKeyAuthentication
+    }
+  },
+}
+
 export const mutations = {
   /**
    * Send access key to user email and set VtexSessionToken in response cookies
