@@ -7,14 +7,14 @@ import paymentTokenResolver from './paymentTokenResolver'
 /**
  * It will convert an integer to float moving the
  * float point two positions left.
- * 
+ *
  * The OrderForm REST API return an integer
  * colapsing the floating point into the integer
- * part. We needed to make a convention of the product 
- * price on different API's. Once the Checkout API 
- * returns an integer instead of a float, and the 
+ * part. We needed to make a convention of the product
+ * price on different API's. Once the Checkout API
+ * returns an integer instead of a float, and the
  * Catalog API returns a float.
- * 
+ *
  * @param int An integer number
  */
 const convertIntToFloat = int => int * 0.01
@@ -85,7 +85,7 @@ export const mutations = {
   }),
 
   createPaymentSession: httpResolver({
-    headers: withAuthToken({ ...headers.json }),
+    headers: withAuthToken(headers.json),
     method: 'POST',
     enableCookies: true,
     secure: true,

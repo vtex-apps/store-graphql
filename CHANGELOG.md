@@ -9,6 +9,42 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - `Login options` resolver.
 
+## [2.14.0] - 2018-07-24
+### Added
+- Search resolver
+
+## [2.12.6] - 2018-07-19
+### Changed
+- Changes custFields names to reflect Profile in CacheID
+
+### Added
+- Adds cacheId to Profile Custom Fields
+
+## [2.12.5] - 2018-07-18
+### Changed
+- Bringing `benefitsProduct` back, after upgrade `app-store` to use `vtex.store@1.x`.
+
+## [2.12.3] - 2018-07-17
+### Fixed
+- Change property name banefitProduct to product
+
+## [2.12.2] - 2018-07-17
+
+## [2.12.1] - 2018-07-16
+### Added
+- `country` field to `address` query
+### Fixed
+- Circular benefit query.
+
+## [2.12.0] - 2018-07-13
+### Added
+- Possibility to extend profile info according to masterdata CL entity
+- Adding file upload to Masterdata CL entity
+
+## [2.11.1] - 2018-7-6
+### Fixed
+- Resolve null fields of product data in benefits resolver.
+
 ## [2.11.0] - 2018-7-4
 ### Added
 - `OAuth` Resolver.
@@ -34,30 +70,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed bug in `logout` mutation that didn't log out correctly.
 
 ## [2.9.0] - 2018-6-26
-### Added 
+### Added
 - Add `recoveryPassword` mutation in auth resolver.
 
 ## [2.8.0] - 2018-6-25
 ### Added
-- Add classic login mutation. 
+- Add classic login mutation.
 
 ### Changed
-- Refact auth resolver. 
+- Refact auth resolver.
 
 ## [2.7.2] - 2018-6-20
 
-### Fixed 
+### Fixed
 - Fix products search query only adding a category if there is not a search term.
 
 ## [2.7.1] - 2018-6-20
 ### Fixed
-- Fix `vtexId` use on `paths.ts`. 
+- Fix `vtexId` use on `paths.ts`.
 
 ## [2.7.0] - 2018-6-19
 ### Added
-- Add documentation in `graphql` files. 
+- Add documentation in `graphql` files.
 
-### Changed 
+### Changed
 - Refact paths and organize API docs.
 - Profile Query will return the user email in case of data not found.
 
@@ -65,12 +101,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `profile resolver` to use ioContext authToken.
 
 ## [2.6.1] - 2018-6-15
-### Fixed 
+### Fixed
 - Set the `maxAge` received from VTEXID to `VtexIdclientAutCookie_${account}` in `accessKeySigIn` mutation.
 
 ## [2.6.0] - 2018-6-15
 
-### Added 
+### Added
 - Create the logout mutation.
 
 ## [2.5.2] - 2018-6-14
@@ -81,10 +117,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Remove `VtexTemporarySession` to AuthInput.
 
-## [2.5.0] - 2018-6-8 
+## [2.5.0] - 2018-6-8
 
 ### Added
-- Sets cache hints to schema root fields 
+- Sets cache hints to schema root fields
 
 ### Fixed
 - Fix profile query to reflect changes that were made in auth resolver.

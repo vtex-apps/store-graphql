@@ -4,7 +4,7 @@ type Query {
     """ Product slug """
     slug: String
   ): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
-  
+
   """ Product search filtered and ordered """
   products(
     """ Terms that is used in search e.g.: eletronics/samsung """
@@ -31,9 +31,35 @@ type Query {
 
   """ Get facets category """
   facets(
-  """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
+    """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
   ): Facets
+
+  """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
+  search(
+    """ Terms that is used in search e.g.: eletronics/samsung """
+    query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
+    map: String = "",
+    """ Rest terms that is used in search e.g.: samsung,Android7 """
+    rest: String = "",
+    """ Filter by category. {a}/{b} - {a} and {b} are categoryIds """
+    category: String = "",
+    """ Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value """
+    specificationFilters: [String],
+    """ Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" """
+    priceRange: String = "",
+    """ Filter by collection. where collection also know as productClusterId"""
+    collection: String = "",
+    """ Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4"""
+    salesChannel: String = "",
+    """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
+    orderBy: String = "OrderByPriceDESC",
+    """ Pagination item start """
+    from: Int = 0,
+    """ Pagination item end """
+    to: Int = 9
+  ): Search
 
   """ Get category details """
   category(
@@ -70,15 +96,18 @@ type Query {
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
 
   """ Get user orders details """
-  orders: [Order]
+  orders: [Order] @cacheControl(scope: PRIVATE)
 
   """ Get user profile details """
-  profile: Profile
+  profile(
+    """ Comma separated fields """
+    customFields: String
+  ): Profile @cacheControl(scope: PRIVATE)
 
   """ Get auto complete suggestions in search """
   autocomplete(
     """ Number of items that is returned """
-    maxRows: Int = 12, 
+    maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
   ): Suggestions
@@ -86,21 +115,21 @@ type Query {
   """ Search documents """
   documents(
     """ Schema name. e.g.: CL, AD"""
-    acronym: String, 
+    acronym: String,
     """ Fields that will be returned by document. e.g.: _fields=email,firstName,document """
-    fields: [String], 
+    fields: [String],
     """ Pagination. Default: 1 """
-    page: Int = 1, 
+    page: Int = 1,
     """ Items returned in the page. Default: 15"""
-    pageSize: Int = 15  
+    pageSize: Int = 15
   ): [Document]
 
   """ Get document """
   document(
     """ Schema name. e.g.: CL, AD"""
-    acronym: String, 
+    acronym: String,
     """ Fields that will be returned in document. e.g.: _fields=email,firstName,document """
-    fields: [String], 
+    fields: [String],
     """ Document id """
     id: String
   ): Document
@@ -113,6 +142,14 @@ type Query {
 
   """ Get the options available to authenticate users """
   loginOptions: LoginOptions
+  
+  """ Get the IDs for the provided search context slugs """
+  searchContextFromParams(
+    brand: String,
+    department: String,
+    category: String,
+    subcategory: String
+  ): SearchContext
 }
 
 type Mutation {
@@ -122,7 +159,8 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
 
   """ Profile """
-  updateProfile(fields: ProfileInput): Profile
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile
+  uploadProfilePicture(file: Upload!, field: String!): ProfileCustomField
   updateAddress(id: String, fields: AddressInput): Profile
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
@@ -134,7 +172,7 @@ type Mutation {
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
-  
+
   """ Payment """
   createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
@@ -149,7 +187,7 @@ type Mutation {
   """ Access key sign in mode """
   accessKeySignIn(
     """ User email"""
-    email: String!, 
+    email: String!,
     """ Access key that was received """
     code: String!
   ): String
@@ -157,7 +195,7 @@ type Mutation {
   """ Classic sign in mode """
   classicSignIn(
     """ User email"""
-    email: String!, 
+    email: String!,
     """ User password """
     password: String!
   ): String
@@ -165,15 +203,15 @@ type Mutation {
   """ OAuth to login with Social Account """
   oAuth(
     """ The OAuth Provider, e.g: Google, Facebook """
-    provider: String, 
+    provider: String,
     """ The URL to be redirected after authentication """
     redirectUrl: String
   ): String
-  
+
   """ To recovery password you need to get your email, password and access code """
   recoveryPassword(
     """ User email"""
-    email: String!, 
+    email: String!,
     """ User password """
     newPassword: String!,
     """ Access Code """
