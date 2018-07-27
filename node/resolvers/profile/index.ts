@@ -95,7 +95,7 @@ export const mutations = {
   updateAddress: async (_, args, config) => addressPatch(_, args, config),
 
   updateProfile: async (_, args, { vtex: { account, authToken }, request: { headers: { cookie } } }) => {
-    const customFieldsStr = customFieldsFromGraphQLInput(args.customFields)
+    const customFieldsStr = customFieldsFromGraphQLInput(args.customFields || [])
     const oldData = await getClientData(account, authToken, cookie, customFieldsStr)
     const newData = reduce(addFieldsToObj, args.fields, args.customFields || [])
 
