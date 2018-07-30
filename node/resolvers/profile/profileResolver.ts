@@ -37,9 +37,10 @@ const profile = (ctx, {customFields}) => async (data) => {
 
   const profileURL = paths.profile(ctx.account).filterUser(user, customFields)
   const profileData = await http.get(profileURL, config).then<any>(pipe(prop('data'), head))
-  profileData.customFields = pickCustomFieldsFromData(customFields, profileData)
 
   if (profileData && profileData.id) {
+    profileData.customFields = pickCustomFieldsFromData(customFields, profileData)
+
     const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
     const address = profileData && await http.get(addressURL, config).then(prop('data'))
 
