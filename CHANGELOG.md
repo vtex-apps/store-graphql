@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-
 - `geoCoordinate` field to `address` query
 
 ## [2.15.1] - 2018-07-27
