@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.15.3] - 2018-07-30
+### Fixed
+- `Profile Resolver` error when profile data returned null.
+
 ## [2.15.2] - 2018-07-30
 
 ### Added
