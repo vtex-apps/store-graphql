@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.15.4] - 2018-08-02
+### Fixed
+- `ProfileUpdate` mutation works when customFields only are provided
+
 ## [2.15.3] - 2018-07-30
 ### Fixed
 - `Profile Resolver` error when profile data returned null.
