@@ -41,8 +41,8 @@ export const rootResolvers = {
             const { data: products } = await axios.get(url, {
               headers: withAuthToken()(ioContext),
             })
-            const { items: skus, ...product } = products[0]
-            const sku = skus.find(({ itemId }) => itemId === kitItem.itemId)
+            const { items: skus, ...product } = head(products) || {}
+            const sku = find(({ itemId }) => itemId === kitItem.itemId, skus || [])
             return { ...kitItem, product, sku }
           }),
         )
