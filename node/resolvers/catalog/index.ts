@@ -84,13 +84,11 @@ export const queries = {
     const { data: product } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
-
     const resolvedProduct = await resolveProductFields(
       ioContext,
       head(product),
       graphqlFields(info),
     )
-
     const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
 
     return { ...resolvedProduct, benefits: resolvedBenefits }
@@ -211,7 +209,7 @@ export const queries = {
 
     if (args.brand) {
       const urlBrand = paths.brand(ioContext.account)
-      const { data: brands }: {data: Brand[]} = await axios.get(urlBrand, {
+      const { data: brands }: { data: Brand[] } = await axios.get(urlBrand, {
         headers: withAuthToken()(ioContext),
       })
 
@@ -220,8 +218,8 @@ export const queries = {
     }
 
     if (args.department) {
-      const urlCategories = paths.categories(ioContext.account, {treeLevel: 2})
-      const { data: departments }: {data: Category[]} = await axios.get(urlCategories, {
+      const urlCategories = paths.categories(ioContext.account, { treeLevel: 2 })
+      const { data: departments }: { data: Category[] } = await axios.get(urlCategories, {
         headers: withAuthToken()(ioContext),
       })
 
