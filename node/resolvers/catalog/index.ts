@@ -37,7 +37,7 @@ function findInTree(tree, values, index = 0) {
       return findInTree(node.children, values, index + 1)
     }
   }
-  return tree[0]
+  return {}
 }
 
 export const rootResolvers = {
