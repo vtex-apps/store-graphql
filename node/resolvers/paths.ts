@@ -5,7 +5,7 @@ const paths = {
   /** Catalog API
    * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
   */
-  catalog: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system`,
+  catalog: account => `http://${account}.vtexcommercebeta.com.br/api/catalog_system`,
 
   product: (account, { slug }) => `${paths.catalog(account)}/pub/products/search/${slug}/p`,
   productByEan: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_Ean=${id}`,
@@ -14,7 +14,6 @@ const paths = {
   productBySku: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=skuId:${id}`,
   products: (account, {
     query = '',
-    fulltext = '',
     category = '',
     specificationFilters,
     priceRange = '',
@@ -27,8 +26,8 @@ const paths = {
   }) => `${paths.catalog(account)}/pub/products/search/${encodeURIComponent(query)}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
   brand: account => `${paths.catalog(account)}/pub/brand/list`,
-  category: (account, { id }) => `${paths.catalog(account)}/pub/category/${id}`,
-  categories: (account, { treeLevel }) => `${paths.catalog(account)}/pub/category/tree/${treeLevel}/`,
+  category: (account, id) => `${paths.catalog(account)}/pub/category/${id}`,
+  categories: (account, treeLevel) => `${paths.catalog(account)}/pub/category/tree/${treeLevel}/`,
   facets: (account, { facets = '' }) => `${paths.catalog(account)}/pub/facets/search/${encodeURI(facets)}`,
 
   crossSelling: (account, id, type) => `${paths.catalog(account)}/pub/products/crossselling/${type}/${id}`,
