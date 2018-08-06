@@ -73,6 +73,7 @@ export const queries = {
     const { data: facets } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
+    console.log(facets)
     const resolvedFacets = resolveFacetFields(facets)
 
     return resolvedFacets
@@ -169,7 +170,7 @@ export const queries = {
       },
     }: ColossusContext
   ) => {
-    const url = paths.category(ioContext.account, data)
+    const url = paths.category(ioContext.account, data.id)
     const { data: category } = await axios.get(url, {
       headers: withAuthToken()(ioContext, cookie),
     })
@@ -177,7 +178,7 @@ export const queries = {
   },
 
   categories: async (_, data, { vtex: ioContext }: ColossusContext) => {
-    const url = paths.categories(ioContext.account, data)
+    const url = paths.categories(ioContext.account, data.treeLevel)
     const { data: categories } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
@@ -192,6 +193,7 @@ export const queries = {
     const facetsValueWithRest = queryWithRest + '?map=' + map
     const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
     const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
+    const categoriesPromise = queries.categories(_, query.split('/').length, { vtex: ioContext })
     const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
     const [products, facets, facetsWithRest] = await Promise.all([
       productsPromise, facetsPromise, facetsWithRestPromise
