@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Add title and meta tags in `category`, `brand` and `product` queries.
+- Add title and meta tags in `category`, `search`, `brand` and `product` queries.
 
 ## [2.15.5] - 2018-08-03
 ### Fixed
