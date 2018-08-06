@@ -8,6 +8,7 @@ type Product {
   categories: [String]
   """ Categories ids of the product """
   categoriesIds: [String]
+  """ List of related products """
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
   """ Product description """
@@ -22,9 +23,9 @@ type Product {
   productId: ID
   """ Product name """
   productName: String
-  """ Array of properties product """
+  """ Array of product properties  """
   properties: [Property]
-  """ Array of properties group product """
+  """ Array of product properties group  """
   propertyGroups: [PropertyGroup]
   """ Product reference """
   productReference: String
