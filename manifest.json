@@ -88,6 +88,13 @@
       }
     },
     {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.gocommerce.com",
+        "path": "/{{account}}/search/*"
+      }
+    },
+    {
       "name": "POWER_USER_DS"
     }
   ]

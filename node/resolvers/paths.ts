@@ -5,7 +5,7 @@ const paths = {
   /** Catalog API
    * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
   */
-  catalog: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system`,
+  catalog: account => `${account.indexOf('gc_') === 0 ? `https://api.gocommerce.com/${account}/search` : `http://${account}.vtexcommercestable.com.br/api/catalog_system`}`,
 
   product: (account, { slug }) => `${paths.catalog(account)}/pub/products/search/${slug}/p`,
   productByEan: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_Ean=${id}`,
