@@ -28,6 +28,18 @@ const extractSlug = item => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
+function findInTree(tree, values, index = 0) {
+  for (const node of tree) {
+    if (node.slug.toUpperCase() === values[index].toUpperCase()) {
+      if (index === values.length - 1) {
+        return node
+      }
+      return findInTree(node.children, values, index + 1)
+    }
+  }
+  return {}
+}
+
 export const rootResolvers = {
   SKU: {
     kitItems: (root, _, { vtex: ioContext }: ColossusContext) => {
@@ -84,13 +96,11 @@ export const queries = {
     const { data: product } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
-
     const resolvedProduct = await resolveProductFields(
       ioContext,
       head(product),
       graphqlFields(info),
     )
-
     const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
 
     return { ...resolvedProduct, benefits: resolvedBenefits }
@@ -171,7 +181,7 @@ export const queries = {
       },
     }: ColossusContext
   ) => {
-    const url = paths.category(ioContext.account, data)
+    const url = paths.category(ioContext.account, data.id)
     const { data: category } = await axios.get(url, {
       headers: withAuthToken()(ioContext, cookie),
     })
@@ -179,7 +189,7 @@ export const queries = {
   },
 
   categories: async (_, data, { vtex: ioContext }: ColossusContext) => {
-    const url = paths.categories(ioContext.account, data)
+    const url = paths.categories(ioContext.account, data.treeLevel)
     const { data: categories } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
@@ -194,12 +204,16 @@ export const queries = {
     const facetsValueWithRest = queryWithRest + '?map=' + map
     const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
     const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
+    const categoriesPromise = queries.categories(_, {
+      treeLevel: query.split('/').length
+    }, { vtex: ioContext })
     const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
-    const [products, facets, facetsWithRest] = await Promise.all([
-      productsPromise, facetsPromise, facetsWithRestPromise
+    const [products, facets, facetsWithRest, categories] = await Promise.all([
+      productsPromise, facetsPromise, facetsWithRestPromise, categoriesPromise
     ])
+    const { titleTag, metaTagDescription } = findInTree(categories, query.split('/'))
     const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
-    return { facets, products, recordsFiltered }
+    return { facets, products, recordsFiltered, titleTag, metaTagDescription }
   },
 
   searchContextFromParams: async (_, args, { vtex: ioContext }: ColossusContext) => {
@@ -211,7 +225,7 @@ export const queries = {
 
     if (args.brand) {
       const urlBrand = paths.brand(ioContext.account)
-      const { data: brands }: {data: Brand[]} = await axios.get(urlBrand, {
+      const { data: brands }: { data: Brand[] } = await axios.get(urlBrand, {
         headers: withAuthToken()(ioContext),
       })
 
@@ -220,8 +234,8 @@ export const queries = {
     }
 
     if (args.department) {
-      const urlCategories = paths.categories(ioContext.account, {treeLevel: 2})
-      const { data: departments }: {data: Category[]} = await axios.get(urlCategories, {
+      const urlCategories = paths.categories(ioContext.account, { treeLevel: 2 })
+      const { data: departments }: { data: Category[] } = await axios.get(urlCategories, {
         headers: withAuthToken()(ioContext),
       })
 

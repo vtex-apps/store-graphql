@@ -110,6 +110,7 @@ export const resolveLocalProductFields = product => {
   ] = resolveFields(product)
   return {
     ...product,
+    titleTag: product.productTitle,
     cacheId: product.linkText,
     clusterHighlights,
     items,
@@ -129,7 +130,6 @@ export const resolveProductFields = async (
   if (!fields.recommendations) {
     return resolvedProduct
   }
-
   const [view, buy] = await Promise.all([
     resolveView(ioContext, product),
     resolveBuy(ioContext, product),
@@ -158,6 +158,8 @@ export const resolveCategoryFields = category => ({
   id: category.id,
   cacheId: category.id,
   hasChildren: category.hasChildren,
+  titleTag: category.Title,
+  metaTagDescription: category.MetaTagDescription,
 })
 
 export const resolveBrandFields = brand => {
@@ -167,6 +169,8 @@ export const resolveBrandFields = brand => {
     cacheId: slu,
     id: brand.id,
     name: brand.name,
-    slug: slu
+    slug: slu,
+    titleTag: brand.title,
+    metaTagDescription: brand.metaTagDescription,
   })
 }

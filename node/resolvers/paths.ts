@@ -1,4 +1,4 @@
-import {join} from 'ramda'
+import { join } from 'ramda'
 
 const paths = {
 
@@ -14,7 +14,6 @@ const paths = {
   productBySku: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=skuId:${id}`,
   products: (account, {
     query = '',
-    fulltext = '',
     category = '',
     specificationFilters,
     priceRange = '',
@@ -26,9 +25,9 @@ const paths = {
     map = ''
   }) => `${paths.catalog(account)}/pub/products/search/${encodeURIComponent(query)}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
-  brand: account => `${paths.catalog(account)}/pvt/brand/list`,
-  category: (account, { id }) => `${paths.catalog(account)}/pvt/category/${id}`,
-  categories: (account, { treeLevel }) => `${paths.catalog(account)}/pub/category/tree/${treeLevel}/`,
+  brand: account => `${paths.catalog(account)}/pub/brand/list`,
+  category: (account, id) => `${paths.catalog(account)}/pub/category/${id}`,
+  categories: (account, treeLevel) => `${paths.catalog(account)}/pub/category/tree/${treeLevel}/`,
   facets: (account, { facets = '' }) => `${paths.catalog(account)}/pub/facets/search/${encodeURI(facets)}`,
 
   crossSelling: (account, id, type) => `${paths.catalog(account)}/pub/products/crossselling/${type}/${id}`,

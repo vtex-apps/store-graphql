@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.16.0] - 2018-08-06
+### Added
+- Add title and meta tags in `category`, `search`, `brand` and `product` queries.
+
 ## [2.15.5] - 2018-08-03
 ### Fixed
 - Removes undefined error in `Kititems` when products is undefined
