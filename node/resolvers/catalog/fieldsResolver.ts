@@ -1,5 +1,5 @@
 import { IOContext } from 'colossus'
-import { compose, juxt, last, map, omit, prop, split, toPairs } from 'ramda'
+import { compose, juxt, last, map, omit, prop, split, toPairs, replace } from 'ramda'
 import * as slugify from 'slugify'
 
 import { resolveBuy, resolveView } from './recommendationsResolver'
@@ -67,12 +67,21 @@ const resolvers = {
       sku.attachments || []
     )
   },
+  images: sku => {
+    return map(
+      image => ({
+        ...image,
+        imageUrl: replace('http', 'https', image.imageUrl),
+      }),
+      sku.images || []
+    )
+  },
 
   items: product => {
     return map(sku => {
-      const resolveFields = juxt([resolvers.variations, resolvers.attachments])
-      const [variations, attachments] = resolveFields(sku)
-      return { ...sku, attachments, variations }
+      const resolveFields = juxt([resolvers.variations, resolvers.attachments, resolvers.images])
+      const [variations, attachments, images] = resolveFields(sku)
+      return { ...sku, attachments, variations, images }
     }, product.items || [])
   },
 
