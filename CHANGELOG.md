@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.18.0] - 2018-08-08
+### Changed
+- Replace `http` to `https` in item `imageUrl` property.
+
 ## [2.17.0] - 2018-08-08
 ### Added
 - Search in Gocommerce catalog when account is Gocommerce
