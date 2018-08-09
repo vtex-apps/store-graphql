@@ -71,7 +71,7 @@ const resolvers = {
     return map(
       image => ({
         ...image,
-        imageUrl: replace('http', 'https', image.imageUrl),
+        imageUrl: replace('http://', 'https://', image.imageUrl),
       }),
       sku.images || []
     )
