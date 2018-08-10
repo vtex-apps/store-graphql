@@ -200,7 +200,7 @@ type Mutation {
 
   """ Access key sign in mode """
   accessKeySignIn(
-    """ User email"""
+    """ User email """
     email: String!,
     """ Access key that was received """
     code: String!
@@ -208,7 +208,7 @@ type Mutation {
 
   """ Classic sign in mode """
   classicSignIn(
-    """ User email"""
+    """ User email """
     email: String!,
     """ User password """
     password: String!
@@ -224,7 +224,7 @@ type Mutation {
 
   """ To recovery password you need to get your email, password and access code """
   recoveryPassword(
-    """ User email"""
+    """ User email """
     email: String!,
     """ User password """
     newPassword: String!,
@@ -234,6 +234,18 @@ type Mutation {
 
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
+
+  """ Initialize Session to users with telesales profile access """
+  initializeSession: String
+
+  """ Impersonate a customer """
+  impersonate(
+    """ The email which will be used to impersonate a user. """
+    email: String!
+  ): Session
+  
+  """ Depersonify a customer """
+  depersonify: Session
 
   """ Document """
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
