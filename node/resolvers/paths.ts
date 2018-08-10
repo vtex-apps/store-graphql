@@ -72,6 +72,9 @@ const paths = {
   recoveryPassword: (token, email, password, code) => `${paths.vtexId}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${password}&accessKey=${code}`,
   oAuth: (authenticationToken, providerName) => `${paths.vtexId}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
 
+  /** Sessions API */
+  session: account => `http://${account}.vtexcommercestable.com.br/api/sessions`,
+  getSession: account => `${paths.session(account)}?items=*`,
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
    */

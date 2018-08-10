@@ -1,0 +1,10 @@
+type Session {
+  id: ID,
+  accountId: ID,
+  accountName: String,
+  canImpersonate: Boolean,
+  adminUserId: String,
+  adminUserEmail: String,
+  inpersonateCustomer: String,
+  profile: Profile
+}
