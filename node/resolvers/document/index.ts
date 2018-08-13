@@ -1,9 +1,8 @@
 import http from 'axios'
 import { mergeAll, union, zipObj } from 'ramda'
-import ResolverError from '../../errors/resolverError';
 import { withAuthToken, withMDPagination } from '../headers'
 import paths from '../paths'
-import { uploadAttachment } from './attachment';
+import { uploadAttachment } from './attachment'
 
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
