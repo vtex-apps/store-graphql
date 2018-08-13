@@ -18,6 +18,11 @@ type DocumentResponse {
   documentId: String
 }
 
+type AttachmentResponse {
+  filename: String
+  mimetype: String
+}
+
 input FieldInput {
   key: String,
   value: String
