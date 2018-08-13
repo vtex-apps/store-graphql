@@ -1,9 +1,8 @@
 import http from 'axios'
 import {parse as parseCookie} from 'cookie'
-import FormData from 'form-data'
-import fetch from 'node-fetch'
 import {find, head, pickBy, pipe, prop, reduce, values} from 'ramda'
 import ResolverError from '../../errors/resolverError'
+import { uploadAttachment } from '../document/attachment'
 import { headers, withAuthAsVTEXID } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
@@ -108,41 +107,36 @@ export const mutations = {
     }).catch(returnOldOnNotChanged(oldData))
   },
 
+  updateProfilePicture: async (root, {file, field}, ctx, info) => {
+    const {vtex: {account, authToken}, request: {headers: {cookie}}} = ctx
+    const {id} = await getClientData(account, authToken, cookie)
+
+    // Should delete the field before uploading new profilePicture
+    await makeRequest(paths.profile(account).profile(id), authToken, {[field]: ''}, 'PATCH')
+
+    const {filename} = await uploadAttachment({
+      acronym: 'CL',
+      documentId: id,
+      field,
+      file
+    }, ctx.vtex)
+
+    return {
+      key: field,
+      value: filename
+    }
+  },
+
   uploadProfilePicture: async (root, {file, field}, ctx, info) => {
     const {vtex: {account, authToken}, request: {headers: {cookie}}} = ctx
     const {id} = await getClientData(account, authToken, cookie)
-    const {stream, filename, mimetype} = await file
 
-    const url = paths.profile(account).attachments(id, field)
-
-    const buffer = await new Promise((resolve, reject) => {
-      const bufs = []
-      stream.on('data', d => bufs.push(d))
-      stream.on('end', () => {
-        resolve(Buffer.concat(bufs))
-      })
-      stream.on('error', reject)
-    }) as Buffer
-
-    const formData = new FormData()
-
-    formData.append(field, buffer, {filename, contentType: mimetype, knownLength: buffer.byteLength})
-
-    const options: any = {
-      body: formData,
-      headers: {
-        'Proxy-Authorization': authToken,
-        'VtexIdclientAutCookie': authToken,
-        ...formData.getHeaders(),
-      },
-      method: 'POST',
-    }
-
-    const response = await fetch(url, options).then(res => res.text())
-
-    if (response) {
-      throw new ResolverError(response, 500)
-    }
+    const {filename} = await uploadAttachment({
+      acronym: 'CL',
+      documentId: id,
+      field,
+      file
+    }, ctx.vtex)
 
     return {
       key: field,

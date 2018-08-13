@@ -79,6 +79,7 @@ const paths = {
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
   documentFields: (account, acronym, fields = "_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
+  attachment: (account, acronym, id, field, filename?) => `${paths.document(account, acronym, id)}/${field}/attachments${filename ? `/${filename}` : ''}`,
 
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
