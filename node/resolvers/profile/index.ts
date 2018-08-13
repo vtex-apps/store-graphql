@@ -79,16 +79,20 @@ const returnOldOnNotChanged = (oldData) => (error) => {
 export const mutations = {
   createAddress: async (_, args, config) => addressPatch(_, args, config),
 
-  deleteAddress: async(_, { id: addressId }, { vtex: { account, authToken }, request: { headers: { cookie } } }) => {
+  deleteAddress: async(_, args, config) => {
+    const { id: addressId } = args
+    const { vtex: { account, authToken }, request: { headers: { cookie } } } = config
     const { userId, id: clientId } = await getClientData(account, authToken, cookie)
 
     if (!(await isUserAddress(account, clientId, addressId, authToken))) {
       throw new ResolverError('Address not found.', 400)
     }
 
-    return await makeRequest(
+    await makeRequest(
       paths.profile(account).address(addressId), authToken, null, 'DELETE'
     )
+
+    return await profileResolver(_, args, config)
   },
 
   updateAddress: async (_, args, config) => addressPatch(_, args, config),
