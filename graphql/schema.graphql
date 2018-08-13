@@ -162,7 +162,7 @@ type Mutation {
   updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile
   updateAddress(id: String, fields: AddressInput): Profile
   createAddress(fields: AddressInput): Profile
-  deleteAddress(id: String): Boolean
+  deleteAddress(id: String): Profile
 
   """ Updates the Profile Picture by erasing the old ones """
   updateProfilePicture(
