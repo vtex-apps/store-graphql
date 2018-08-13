@@ -74,5 +74,5 @@ export const mutations = {
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  uploadAttachment: async (root, args, {vtex: IOContext}, info) => uploadAttachment(args, IOContext)
+  uploadAttachment: async (root, args, {vtex: ioContext}, info) => uploadAttachment(args, ioContext)
 }
