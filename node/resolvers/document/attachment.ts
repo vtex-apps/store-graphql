@@ -3,8 +3,8 @@ import fetch from 'node-fetch'
 import ResolverError from '../../errors/resolverError'
 import paths from '../paths'
 
-export const uploadAttachment = async (args, IOContext) => {
-  const {authToken, account} = IOContext
+export const uploadAttachment = async (args, ioContext) => {
+  const {authToken, account} = ioContext
   const {acronym, documentId, field, file} = args
 
   const {stream, filename, mimetype} = await file

@@ -164,10 +164,20 @@ type Mutation {
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
 
-  """ Uploads the Profile Picture by ereasing the old ones """
-  updateProfilePicture(file: Upload!, field: String!): ProfileCustomField
+  """ Updates the Profile Picture by erasing the old ones """
+  updateProfilePicture(
+    """ File being uploaded """
+    file: Upload!,
+    """ Attachment's field name (ex. ProfilePicture) """
+    field: String!
+  ): ProfileCustomField
   """ Uploads the Profile Picture by appending to the existing ones """
-  uploadProfilePicture(file: Upload!, field: String!): ProfileCustomField
+  uploadProfilePicture(
+    """ File being uploaded """
+    file: Upload!,
+    """ Attachment's field name (ex. ProfilePicture) """
+    field: String!
+  ): ProfileCustomField
 
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
@@ -226,7 +236,7 @@ type Mutation {
   logout: Boolean
 
   """ Document """
-  createDocument(acronym: String, document: DocumentInput): DocumentResponse
-  updateDocument(acronym: String, document: DocumentInput): DocumentResponse
-  uploadAttachment(acronym: String, documentId: ID!, field: String, file: Upload!): AttachmentResponse
+  createDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  uploadAttachment(acronym: String!, documentId: ID!, field: String!, file: Upload!): AttachmentResponse
 }
