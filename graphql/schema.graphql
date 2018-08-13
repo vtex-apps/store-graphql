@@ -142,7 +142,7 @@ type Query {
 
   """ Get the options available to authenticate users """
   loginOptions: LoginOptions
-  
+
   """ Get the IDs for the provided search context slugs """
   searchContextFromParams(
     brand: String,
@@ -160,10 +160,14 @@ type Mutation {
 
   """ Profile """
   updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile
-  uploadProfilePicture(file: Upload!, field: String!): ProfileCustomField
   updateAddress(id: String, fields: AddressInput): Profile
   createAddress(fields: AddressInput): Profile
   deleteAddress(id: String): Boolean
+
+  """ Uploads the Profile Picture by ereasing the old ones """
+  updateProfilePicture(file: Upload!, field: String!): ProfileCustomField
+  """ Uploads the Profile Picture by appending to the existing ones """
+  uploadProfilePicture(file: Upload!, field: String!): ProfileCustomField
 
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
@@ -224,4 +228,5 @@ type Mutation {
   """ Document """
   createDocument(acronym: String, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String, document: DocumentInput): DocumentResponse
+  uploadAttachment(acronym: String, documentId: ID!, field: String, file: Upload!): AttachmentResponse
 }
