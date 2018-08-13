@@ -1,7 +1,8 @@
 import http from 'axios'
+import { mergeAll, union, zipObj } from 'ramda'
+import { withAuthToken, withMDPagination } from '../headers'
 import paths from '../paths'
-import { zipObj, mergeAll, union } from 'ramda'
-import { withAuthToken, withMDPagination, headers } from '../headers'
+import { uploadAttachment } from './attachment'
 
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
@@ -72,4 +73,6 @@ export const mutations = {
     )
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
+
+  uploadAttachment: async (root, args, {vtex: ioContext}, info) => uploadAttachment(args, ioContext)
 }

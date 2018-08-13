@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.19.0] - 2018-08-13
+### Added
+- UploadAttachment resolver
+- UpdateProfilePicture to allow replacing existing profile picture
+
+### Changed
+- UploadProfilePicture uses upload attachment resolver
+
 ## [2.18.1] - 2018-08-09
 ### Fixed
 - Fix replace `http` to `https` to match only `http://`. 
