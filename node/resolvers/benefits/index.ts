@@ -1,8 +1,9 @@
 import axios from 'axios'
-import paths from '../paths'
 import { flatten } from 'ramda'
-import { withAuthToken } from '../headers'
+
 import { resolveLocalProductFields } from '../catalog/fieldsResolver'
+import { withAuthToken } from '../headers'
+import paths from '../paths'
 
 /**
  * Default values for Shipping Items
@@ -11,25 +12,15 @@ const DEFAULT_QUANTITY = '1'
 const DEFAULT_SELLER = '1'
 
 /**
- * Retrieve a list of SKU Items.
- * @param skuIds List of the skuIds of the skus that must be retrieved.
- * @param ioContext VTEX ioContext which contains the informations of the application.
- */
-const getSKUItems = async (skuIds, ioContext) => {
-  return await Promise.all(skuIds.map(async skuId => {
-    const { data } = await axios.get(paths.skuById(ioContext.account, { skuId }), { headers: { Authorization: ioContext.authToken }})
-    return data
-  }))
-}
-
-/**
  * Retrieve a product without benefits.
  * @param slug Slug of the product that must be retrieved.
  * @param ioContext VTEX ioContext which contains the informations of the application.
  */
-const getProduct = async (slug, ioContext) => {
-  const { data: [ product ] } = await axios.get(paths.product(ioContext.account, { slug }), { headers: withAuthToken()(ioContext) })
-  return resolveLocalProductFields(product)
+const getProducts = async (skuIds, ioContext) => {
+  const { data = [] } = await axios.get(paths.productBySkus(ioContext.account, { skuIds } ), { headers: withAuthToken()(ioContext) })
+  return data.map(product => 
+    resolveLocalProductFields(product)
+  )
 }
 
 /**
@@ -42,27 +33,23 @@ const getBenefitsWithSKUItems = async (benefits, ioContext) => {
     const { parameters: conParams, minimumQuantity } = benefit.conditions
     const effParams = benefit.effects.parameters
   
-    const skuList = await Promise.all(conParams.map(async (conParam, index) => {
+    const benefitItems = await Promise.all(conParams.map(async (conParam, index) => {
       const skuIds = conParam.value.split(',')
-      const skuList = await getSKUItems(skuIds, ioContext)
       const discount = effParams[index].value
       const minQuantity = index ? 1 : minimumQuantity
+      const benefitProducts = await getProducts(skuIds, ioContext)
 
-      const benefitItems = await Promise.all(skuList.map(async sku => {
-        const slug = sku.DetailUrl.split('/')[1]
-        const benefitProduct = await getProduct(slug, ioContext)
-
+      return await Promise.all(benefitProducts.map(async product => {
         return {
-          benefitProduct,
+          benefitProduct: product,
           discount,
           minQuantity
         }
       }))
-      return benefitItems
     }))
     
     const { featured, id, name, teaserType } = benefit
-    const items = flatten(skuList)
+    const items = flatten(benefitItems)
     return {
       featured,
       id,
