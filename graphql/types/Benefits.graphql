@@ -1,19 +1,20 @@
 """ Benefit of a Product """
 type Benefit {
+  """ ID of the benefit"""
+  id: String
   """ Flag which indicates if the benefit is featured or not """
   featured: Boolean
-  """ Id of the product which the benefit is associated """
-  id: String
   """ Name of the benefit """
   name: String
-  """ Items of the benefit """
-  items: [BenefitItem]
-  """ Type of benefit """
-  teaserType: String
+  """ Products which composes the benefit """
+  products: [BenefitProduct]
 }
 
-type BenefitItem {
-  benefitProduct: Product
+type BenefitProduct {
+  """ Product itself """
+  product: Product
+  """ Discount applied to the product """
   discount: Float
-  minQuantity: Int
+  """ Minimum quantity of the product which is required to validate the benefit """
+  minimumQuantity: Int
 }
