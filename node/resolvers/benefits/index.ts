@@ -2,6 +2,7 @@ import axios from 'axios'
 import { flatten } from 'ramda'
 
 import { resolveLocalProductFields } from '../catalog/fieldsResolver'
+import { queries as checkoutQueries } from '../checkout'
 import { withAuthToken } from '../headers'
 import paths from '../paths'
 
@@ -33,7 +34,7 @@ const resolveProducts = async (skuIds, ioContext) => {
  * @param benefitsData Array of Rates and Benefits data.
  * @param ioContext Helper object which holds the account and the authentication headers.
  */
-const resolveBenefitsData = async (benefitsData, ioContext) => {
+const resolveBenefitsData = async (benefitsData, { vtex: ioContext }) => {
   let resolvedBenefits = []
 
   if (benefitsData.ratesAndBenefitsData) {
@@ -91,9 +92,7 @@ export const queries = {
    * First of them is passing the graphql args with the items property which is an array of Shipping Items.
    * Second is passing just the id of the product itself as a graphql argument.
    */
-  benefits: async (_, args, { vtex: ioContext }) => {
-    const requestUrl = paths.shipping(ioContext.account)
-
+  benefits: async (_, args, config) => {
     const requestBody = {
       items: args.items
         ? args.items
@@ -105,19 +104,7 @@ export const queries = {
             },
           ],
     }
-
-    const requestHeaders = {
-      headers: {
-        Authorization: ioContext.authToken,
-      },
-    }
-
-    const { data: benefitsData = {} } = await axios.post(
-      requestUrl,
-      requestBody,
-      requestHeaders
-    )
-
-    return await resolveBenefitsData(benefitsData, ioContext)
+    const benefitsData = await checkoutQueries.shipping(_, requestBody, config)
+    return await resolveBenefitsData(benefitsData, config)
   },
 }
