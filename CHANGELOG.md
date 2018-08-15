@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Benefits resolver using only public endpoints.
+
 ## [2.19.1] - 2018-08-13
 # Fixed
 - Return profile on address delete

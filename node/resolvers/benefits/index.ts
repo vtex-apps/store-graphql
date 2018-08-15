@@ -5,93 +5,119 @@ import { resolveLocalProductFields } from '../catalog/fieldsResolver'
 import { withAuthToken } from '../headers'
 import paths from '../paths'
 
-/**
- * Default values for Shipping Items
- */
-const DEFAULT_QUANTITY = '1'
+const SKU_SEPARATOR = ','
+const CATALOG = 'Catalog'
 const DEFAULT_SELLER = '1'
+const DEFAULT_QUANTITY = '1'
 
 /**
- * Retrieve a product without benefits.
- * @param slug Slug of the product that must be retrieved.
- * @param ioContext VTEX ioContext which contains the informations of the application.
+ * Receives an Array of SKU Ids and returns an Array of the Products that each SKU Belongs.
+ *
+ * @param skuIds Array of SKU Ids which will be used to retrieve all the products that each SKU belongs.
+ * @param ioContext Helper object which holds the account and the authentication headers.
  */
-const getProducts = async (skuIds, ioContext) => {
-  const { data = [] } = await axios.get(paths.productBySkus(ioContext.account, { skuIds } ), { headers: withAuthToken()(ioContext) })
-  return data.map(product => 
-    resolveLocalProductFields(product)
+const resolveProducts = async (skuIds, ioContext) => {
+  const requestUrl = paths.productBySkus(ioContext.account, { skuIds })
+  const requestHeaders = {
+    headers: withAuthToken()(ioContext),
+  }
+  const { data: products = [] } = await axios.get(requestUrl, requestHeaders)
+  return await Promise.all(
+    products.map(product => resolveLocalProductFields(product))
   )
 }
 
 /**
- * Resolve the SKU Items of a list of benefits associated with a product.
- * @param benefits Benefits which contains the SKU Ids.
- * @param ioContext VTEX ioContext which contains the informations of the application.
+ * Receives an array of Rates and Benefits data and returns an Array of Benefits.
+ *
+ * @param benefitsData Array of Rates and Benefits data.
+ * @param ioContext Helper object which holds the account and the authentication headers.
  */
-const getBenefitsWithSKUItems = async (benefits, ioContext) => {
-  return Promise.all(benefits.map(async benefit => {    
-    const { parameters: conParams, minimumQuantity } = benefit.conditions
-    const effParams = benefit.effects.parameters
-  
-    const benefitItems = await Promise.all(conParams.map(async (conParam, index) => {
-      const skuIds = conParam.value.split(',')
-      const discount = effParams[index].value
-      const minQuantity = index ? 1 : minimumQuantity
-      const benefitProducts = await getProducts(skuIds, ioContext)
+const resolveBenefitsData = async (benefitsData, ioContext) => {
+  let resolvedBenefits = []
 
-      return await Promise.all(benefitProducts.map(async product => {
-        return {
-          benefitProduct: product,
-          discount,
-          minQuantity
+  if (benefitsData.ratesAndBenefitsData) {
+    const {
+      ratesAndBenefitsData: { teaser: benefits = [] },
+    } = benefitsData
+
+    resolvedBenefits = await Promise.all(
+      benefits.map(async benefit => {
+        const { id, featured, name, teaserType, conditions, effects } = benefit
+
+        if (teaserType === CATALOG) {
+          const {
+            parameters: conditionsParameters,
+            minimumQuantity = parseInt(DEFAULT_QUANTITY),
+          } = conditions
+
+          const { parameters: effectsParameters } = effects
+
+          const benefitProducts = await Promise.all(
+            conditionsParameters.map(async (conditionsParameter, index) => {
+              const skuIds = conditionsParameter.value.split(SKU_SEPARATOR)
+              const discount = effectsParameters[index].value
+              const products = await resolveProducts(skuIds, ioContext)
+
+              return await Promise.all(
+                products.map(async product => ({
+                  product,
+                  discount,
+                  minimumQuantity,
+                }))
+              )
+            })
+          )
+
+          const products = flatten(benefitProducts)
+
+          return {
+            id,
+            featured,
+            name,
+            products,
+          }
         }
-      }))
-    }))
-    
-    const { featured, id, name, teaserType } = benefit
-    const items = flatten(benefitItems)
-    return {
-      featured,
-      id,
-      name,
-      items,
-      teaserType
-    }
-  }))
+      })
+    )
+  }
+
+  return resolvedBenefits
 }
 
 export const queries = {
   /**
    * There are two ways to make the request data
-   * First of them is passing the graphql args with the items property which is an array of Shipping Items. 
+   * First of them is passing the graphql args with the items property which is an array of Shipping Items.
    * Second is passing just the id of the product itself as a graphql argument.
    */
   benefits: async (_, args, { vtex: ioContext }) => {
-    let requestBody
-    if (args.items) {
-      requestBody = { items: args.items }
-    } else {
-      requestBody = {
-        items: [
-          { 
-            id: args.id,
-            quantity: DEFAULT_QUANTITY,
-            seller: DEFAULT_SELLER
-          }
-        ]
-      }
+    const requestUrl = paths.shipping(ioContext.account)
+
+    const requestBody = {
+      items: args.items
+        ? args.items
+        : [
+            {
+              id: args.id,
+              quantity: DEFAULT_QUANTITY,
+              seller: DEFAULT_SELLER,
+            },
+          ],
     }
 
-    const url = paths.shipping(ioContext.account)
-    const { data } = await axios.post(url, requestBody, 
-      { headers: { Authorization: ioContext.authToken } 
-    })
-
-    if (data && data.ratesAndBenefitsData && data.ratesAndBenefitsData.teaser) {
-      const benefits = data.ratesAndBenefitsData.teaser
-      return getBenefitsWithSKUItems(benefits, ioContext)
+    const requestHeaders = {
+      headers: {
+        Authorization: ioContext.authToken,
+      },
     }
 
-    return []
+    const { data: benefitsData = {} } = await axios.post(
+      requestUrl,
+      requestBody,
+      requestHeaders
+    )
+
+    return await resolveBenefitsData(benefitsData, ioContext)
   },
 }

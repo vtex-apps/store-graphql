@@ -5,8 +5,8 @@ import { compose, equals, find, head, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
 
 import ResolverError from '../../errors/resolverError'
-import { withAuthToken } from '../headers'
 import { queries as benefitsQueries } from '../benefits'
+import { withAuthToken } from '../headers'
 import paths from '../paths'
 import { resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields } from './fieldsResolver'
 
@@ -92,18 +92,22 @@ export const queries = {
 
   product: async (_, data, config, info) => {
     const { vtex: ioContext }: ColossusContext = config
+    
     const url = paths.product(ioContext.account, data)
+    
     const { data: product } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
+
     const resolvedProduct = await resolveProductFields(
       ioContext,
       head(product),
       graphqlFields(info),
     )
-    const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
 
-    return { ...resolvedProduct, benefits: resolvedBenefits }
+    const benefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
+
+    return { ...resolvedProduct, benefits }
   },
 
   products: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
