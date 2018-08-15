@@ -17,7 +17,7 @@ const DEFAULT_QUANTITY = '1'
  * @param ioContext Helper object which holds the account and the authentication headers.
  */
 const resolveProducts = async (skuIds, ioContext) => {
-  const requestUrl = paths.productBySkus(ioContext.account, { skuIds })
+  const requestUrl = paths.productsBySkus(ioContext.account, { skuIds })
   const requestHeaders = {
     headers: withAuthToken()(ioContext),
   }

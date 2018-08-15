@@ -12,8 +12,7 @@ const paths = {
   productById: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=productId:${id}`,
   productByReference: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_RefId=${id}`,
   productBySku: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=skuId:${id}`,
-  
-  productBySkus: (account, { skuIds }) => `${paths.catalog(account)}/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
+  productsBySkus: (account, { skuIds }) => `${paths.catalog(account)}/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
   
   products: (account, {
     query = '',
