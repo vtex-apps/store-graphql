@@ -14,6 +14,7 @@ type OrderForm {
   userType: String
   ignoreProfileData: Boolean
   totalizers: [Totalizer]
+  clientProfileData: ClientProfile
 }
 
 type OrderFormItem {
@@ -40,6 +41,21 @@ type Totalizer {
   id: ID
   name: String
   value: Float
+}
+
+type ClientProfile {
+  email: String
+  firstName: String
+  lastName: String
+  phone: String
+  isCorporate: Boolean
+  corporateDocument: String
+  corporateName: String
+  corporatePhone: String
+  document: String
+  documentType: String
+  stateInscription: String
+  tradeName: String
 }
 
 input OrderFormItemInput {
