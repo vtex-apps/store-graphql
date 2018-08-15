@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.20.0] - 2018-08-15
+### Added
+- Add `ClientProfile` in `OrderForm` type. 
+
+### Changed 
+- Add `enableCookies: true` on checkout mutations.
+
 ## [2.19.1] - 2018-08-13
-# Fixed
+### Fixed
 - Return profile on address delete
 
 ## [2.19.0] - 2018-08-13

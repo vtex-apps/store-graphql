@@ -63,8 +63,8 @@ export const mutations = {
       expectedOrderFormSections: ['items'],
       orderItems: items,
     }),
-    enableCookies: true,
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     merge: (bodyData, responseData) => ({
       ...responseData,
       cacheId: responseData.orderFormId
@@ -77,17 +77,17 @@ export const mutations = {
 
   cancelOrder: httpResolver({
     data: ({ reason }) => ({ reason }),
+    headers: withAuthToken(headers.json),
     enableCookies: true,
     merge: () => ({ success: true }),
     method: 'POST',
-    headers: withAuthToken(headers.json),
     url: paths.cancelOrder,
   }),
 
   createPaymentSession: httpResolver({
     headers: withAuthToken(headers.json),
-    method: 'POST',
     enableCookies: true,
+    method: 'POST',
     secure: true,
     url: paths.gatewayPaymentSession,
   }),
@@ -95,6 +95,7 @@ export const mutations = {
   createPaymentTokens: httpResolver({
     data: ({ payments }) => payments,
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     method: 'POST',
     url: paths.gatewayTokenizePayment,
   }),
@@ -105,6 +106,7 @@ export const mutations = {
       value,
     }),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     merge: (bodyData, responseData) => ({
       ...responseData,
       cacheId: responseData.orderFormId
@@ -118,8 +120,8 @@ export const mutations = {
       expectedOrderFormSections: ['items'],
       orderItems: items,
     }),
-    enableCookies: true,
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     merge: (bodyData, responseData) => ({
       ...responseData,
       cacheId: responseData.orderFormId
@@ -133,6 +135,7 @@ export const mutations = {
       expectedOrderFormSections: ['items'],
       ignoreProfileData,
     }),
+    enableCookies: true,
     headers: withAuthToken(headers.json),
     merge: (bodyData, responseData) => ({
       ...responseData,
@@ -145,6 +148,7 @@ export const mutations = {
   updateOrderFormPayment: httpResolver({
     data: ({ payments }) => merge({ expectedOrderFormSections: ['items'] }, { payments }),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     merge: (bodyData, responseData) => ({
       ...responseData,
       cacheId: responseData.orderFormId
@@ -156,6 +160,7 @@ export const mutations = {
   updateOrderFormProfile: httpResolver({
     data: ({ fields }) => merge({ expectedOrderFormSections: ['items'] }, fields),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     merge: (bodyData, responseData) => ({
       ...responseData,
       cacheId: responseData.orderFormId
@@ -167,6 +172,7 @@ export const mutations = {
   updateOrderFormShipping: httpResolver({
     data: data => merge({ expectedOrderFormSections: ['items'] }, data),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     merge: (bodyData, responseData) => ({
       ...responseData,
       cacheId: responseData.orderFormId
