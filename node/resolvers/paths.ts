@@ -73,8 +73,13 @@ const paths = {
   oAuth: (authenticationToken, providerName) => `${paths.vtexId}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
 
   /** Sessions API */
+  /** 
+   * The path session can initialize Session, impersonate and depersonify
+   * an user according to the body data that is passed to it.
+   */
   session: account => `http://${account}.vtexcommercestable.com.br/api/sessions`,
   getSession: account => `${paths.session(account)}?items=*`,
+
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
    */
