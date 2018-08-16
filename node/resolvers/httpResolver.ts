@@ -3,7 +3,7 @@ import { ColossusContext, IOContext } from 'colossus'
 import { prop } from 'ramda'
 import * as parse from 'url-parse'
 
-const defaultMerge = (bodyData, resData) => resData
+const defaultMerge = (bodyData, resData, resResponse) => resData
 
 export type URLBuilder = (account: string, data: any, root: any) => string
 
@@ -11,7 +11,7 @@ export type DataBuilder = (data: any) => any
 
 export type HeadersBuider = (ioContext: IOContext) => Record<string, string>
 
-export type ResponseMerger = (bodyData: any, responseData: any) => any
+export type ResponseMerger = (bodyData: any, responseData: any, response?: any) => any
 
 export interface HttpResolverOptions {
   method?: string
@@ -48,6 +48,6 @@ export default (options: HttpResolverOptions) => {
         response.set('Set-Cookie', setCookie)
       }
     }
-    return merge(args, vtexResponse.data)
+    return merge(args, vtexResponse.data, vtexResponse)
   }
 }

@@ -235,8 +235,8 @@ type Mutation {
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
 
-  """ Initialize Session to users with telesales profile access """
-  initializeSession: String
+  """ Initialize Session to users with telemarketing profile access """
+  initializeSession: Session
 
   """ Impersonate a customer """
   impersonate(
@@ -245,7 +245,7 @@ type Mutation {
   ): Session
   
   """ Depersonify a customer """
-  depersonify: Session
+  depersonify: Boolean
 
   """ Document """
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse

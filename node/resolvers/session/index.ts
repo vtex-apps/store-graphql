@@ -1,37 +1,77 @@
+import { serialize } from 'cookie'
 
-import http from 'axios'
-
-import { parse, serialize } from 'cookie'
-// import { withAuthToken } from '../headers'
 import paths from '../paths'
+import { sessionFields } from './sessionResolver'
+import httpResolver from '../httpResolver'
+import { withAuthToken, headers } from '../headers'
+import ResolverError from '../../errors/resolverError';
 
-const makeRequest = async (ctx, url, headers, data?, method = 'GET') => {
-    console.log('>>>>>>>> ', setHeaders(headers, ctx))
-    const configRequest = async (ctx, url, data) => ({
-        enableCookies: true,
-        headers: setHeaders(headers, ctx),
-        method,
+const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
+// maxAge of 1-day defined in vtex-impersonated-customer-email cookie 
+const VTEXID_EXPIRES = 86400
+
+const makeRequest = async (_, args, config, url, data?, method?, enableCookies = true) => {
+    return await httpResolver({
         url,
         data,
-    })
-    return await http.request(await configRequest(ctx, url, data))
+        method,
+        enableCookies,
+        headers: withAuthToken(headers.json),
+        merge: (bodyData, responseData, response) => {
+            return { ...response }
+        },
+    })(_, args, config)
 }
 
-const setHeaders = (currentHeaders, ioContext) => {
-    let parsedCookie
-    if (currentHeaders.cookie) {
-        parsedCookie = parse(currentHeaders.cookie)
-    }
+const impersonateData = email => {
     return {
-        ...currentHeaders,
-        ...parsedCookie.VtexIdclientAutCookie,
-        Authorization: `${ioContext.authToken}`,
-        'Proxy-Authorization': `${ioContext.authToken}`
+        public: {
+            "vtex-impersonated-customer-email": {
+                value: email
+            }
+        }
     }
 }
+
 export const mutations = {
-    initializeSession: async (_, args, { vtex: ioContext, request: { headers }, response }, ) => {
-        const data = await makeRequest(ioContext, paths.session(ioContext.account), headers, '{}', 'PATCH')
-        const session = await makeRequest(ioContext, paths.getSession(ioContext.account), headers)
+    initializeSession: async (_, args, config) => {
+        const initSession = await makeRequest(_, args, config, paths.session, '{}', 'POST')
+        if (initSession.status === '408') {
+            throw new ResolverError('ERROR', initSession.data)
+        }
+        const session = await makeRequest(_, args, config, paths.getSession)
+        if (session.status === '408') {
+            throw new ResolverError('ERROR', session.data)
+        }
+        return sessionFields(session.data)
+    },
+
+    impersonate: async (_, args, config) => {
+        const impersonate = await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
+        if (impersonate.status === '408') {
+            throw new ResolverError('ERROR', impersonate.data)
+        }
+        const session = await makeRequest(_, args, config, paths.getSession)
+        if (session.status === '408') {
+            throw new ResolverError('ERROR', session.data)
+        }
+
+        config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, args.email, {
+            path: '/',
+            maxAge: VTEXID_EXPIRES
+        }))
+        return sessionFields(session.data)
+    },
+
+    depersonify: async (_, args, config) => {
+        const depersonify = await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
+        if (depersonify.status === '408') {
+            throw new ResolverError('ERROR', depersonify.data)
+        }
+        config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, '', {
+            path: '/',
+            maxAge: 0
+        }))
+        return true
     },
 }

@@ -1,10 +1,18 @@
 type Session {
   id: ID,
-  accountId: ID,
-  accountName: String,
-  canImpersonate: Boolean,
+  cartId: String,
+  impersonate: Boolean,
   adminUserId: String,
   adminUserEmail: String,
-  inpersonateCustomer: String,
-  profile: Profile
+  profile: CustomerProfile
+}
+
+type CustomerProfile {
+  isAuthenticatedAsCustomer: Boolean,
+  id: ID,
+  firstName: String,
+  lastName: String,
+  email: String,
+  document: String,
+  phone: Int
 }
