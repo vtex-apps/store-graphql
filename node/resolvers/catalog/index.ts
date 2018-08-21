@@ -196,19 +196,19 @@ export const queries = {
     return map(resolveCategoryFields, categories)
   },
 
-  search: async (_, data, colossusContext: ColossusContext, info) => {
+  search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
     const { map: mapParams, query, rest } = data
     const facetsMap = mapParams.split(',').slice(0, query.split('/').length).join(',')
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
     const facetsValue = query + '?map=' + facetsMap
     const facetsValueWithRest = queryWithRest + '?map=' + mapParams
 
-    const productsPromise = queries.products(_, { ...data, query: queryWithRest }, colossusContext, info)
-    const facetsPromise = queries.facets(_, { facets: facetsValue }, colossusContext)
+    const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
+    const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
     const categoriesPromise = queries.categories(_, {
       treeLevel: query.split('/').length
-    }, colossusContext)
-    const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, colossusContext)
+    }, { vtex: ioContext })
+    const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
 
     const [products, facets, facetsWithRest, categories] = await Promise.all([
       productsPromise, facetsPromise, facetsWithRestPromise, categoriesPromise
