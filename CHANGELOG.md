@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Throw specific error when the product is not found on product resolver in catalog.
 
 ## [2.20.0] - 2018-08-15
 ### Added
