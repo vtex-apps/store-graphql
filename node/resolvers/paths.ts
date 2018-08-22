@@ -77,7 +77,7 @@ const paths = {
    * The path session can initialize Session, impersonate and depersonify
    * an user according to the body data that is passed to it.
    */
-  session: account => `http://${account}.vtexcommercestable.com.br/api/sessions`,
+  session: account => `http://${account}.vtexcommercebeta.com.br/api/sessions`,
   getSession: account => `${paths.session(account)}?items=*`,
 
   /** Master Data API v1
