@@ -97,7 +97,7 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercestable.com.br",
+        "host": "{{account}}.vtexcommercebeta.com.br",
         "path": "/api/sessions/*"
       }
     },

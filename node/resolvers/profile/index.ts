@@ -1,14 +1,14 @@
 import http from 'axios'
-import {parse as parseCookie} from 'cookie'
-import {find, head, pickBy, pipe, prop, reduce, values} from 'ramda'
+import { parse as parseCookie } from 'cookie'
+import { find, head, pickBy, pipe, prop, reduce, values } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import { uploadAttachment } from '../document/attachment'
 import { headers, withAuthAsVTEXID } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
-import profileResolver, {customFieldsFromGraphQLInput, pickCustomFieldsFromData} from './profileResolver'
+import profileResolver, { customFieldsFromGraphQLInput, pickCustomFieldsFromData } from './profileResolver'
 
-const makeRequest = async (url, token, data?, method='GET') => http.request({
+const makeRequest = async (url, token, data?, method = 'GET') => http.request({
   url, data, method, headers: {
     'Proxy-Authorization': token,
     'VtexIdclientAutCookie': token
@@ -63,7 +63,7 @@ const addressPatch = async (_, args, config) => {
   return await profileResolver(_, args, config)
 }
 
-const addFieldsToObj = (acc, {key, value}) => {
+const addFieldsToObj = (acc, { key, value }) => {
   acc[key] = value
   return acc
 }
@@ -79,7 +79,7 @@ const returnOldOnNotChanged = (oldData) => (error) => {
 export const mutations = {
   createAddress: async (_, args, config) => addressPatch(_, args, config),
 
-  deleteAddress: async(_, args, config) => {
+  deleteAddress: async (_, args, config) => {
     const { id: addressId } = args
     const { vtex: { account, authToken }, request: { headers: { cookie } } } = config
     const { userId, id: clientId } = await getClientData(account, authToken, cookie)
@@ -104,21 +104,21 @@ export const mutations = {
 
     return await makeRequest(
       paths.profile(account).profile(oldData.id), authToken, newData, 'PATCH'
-    ).then(() => getClientData(account, authToken, cookie, customFieldsStr)).then((obj)=>({...obj, cacheId: obj.email}))
-    .then(obj => {
-      obj.customFields = pickCustomFieldsFromData(customFieldsStr, obj)
-      return obj
-    }).catch(returnOldOnNotChanged(oldData))
+    ).then(() => getClientData(account, authToken, cookie, customFieldsStr)).then((obj) => ({ ...obj, cacheId: obj.email }))
+      .then(obj => {
+        obj.customFields = pickCustomFieldsFromData(customFieldsStr, obj)
+        return obj
+      }).catch(returnOldOnNotChanged(oldData))
   },
 
-  updateProfilePicture: async (root, {file, field}, ctx, info) => {
-    const {vtex: {account, authToken}, request: {headers: {cookie}}} = ctx
-    const {id} = await getClientData(account, authToken, cookie)
+  updateProfilePicture: async (root, { file, field }, ctx, info) => {
+    const { vtex: { account, authToken }, request: { headers: { cookie } } } = ctx
+    const { id } = await getClientData(account, authToken, cookie)
 
     // Should delete the field before uploading new profilePicture
-    await makeRequest(paths.profile(account).profile(id), authToken, {[field]: ''}, 'PATCH')
+    await makeRequest(paths.profile(account).profile(id), authToken, { [field]: '' }, 'PATCH')
 
-    const {filename} = await uploadAttachment({
+    const { filename } = await uploadAttachment({
       acronym: 'CL',
       documentId: id,
       field,
@@ -131,11 +131,11 @@ export const mutations = {
     }
   },
 
-  uploadProfilePicture: async (root, {file, field}, ctx, info) => {
-    const {vtex: {account, authToken}, request: {headers: {cookie}}} = ctx
-    const {id} = await getClientData(account, authToken, cookie)
+  uploadProfilePicture: async (root, { file, field }, ctx, info) => {
+    const { vtex: { account, authToken }, request: { headers: { cookie } } } = ctx
+    const { id } = await getClientData(account, authToken, cookie)
 
-    const {filename} = await uploadAttachment({
+    const { filename } = await uploadAttachment({
       acronym: 'CL',
       documentId: id,
       field,
