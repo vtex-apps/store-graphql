@@ -45,8 +45,8 @@ const paths = {
   orderFormCustomData: (account, { orderFormId, appId, field }) => `${paths.orderForm(account)}/${orderFormId}/customData/${appId}/${field}`,
   addItem: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/items`,
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
-
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
+  changeToAnonymousUser: (account, { orderFormId }) => `http://${account}.vtexcommercestable.com.br/checkout/changeToAnonymousUser/${orderFormId}`,
 
   skuById: (account, { skuId }) => `${paths.catalog(account)}/pvt/sku/stockkeepingunitbyid/${skuId}`,
 
