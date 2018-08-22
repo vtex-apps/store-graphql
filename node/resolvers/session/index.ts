@@ -1,5 +1,5 @@
 import { serialize, parse } from 'cookie'
-import { prop, map, path, filter, concat } from 'ramda'
+import { prop, map, path, filter, concat, merge } from 'ramda'
 
 import paths from '../paths'
 import { sessionFields } from './sessionResolver'
@@ -12,7 +12,7 @@ const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 const VTEXID_EXPIRES = 86400
 
 const makeRequest = async (_, args, config, url, data?, method?, enableCookies = true) => {
-  return await httpResolver({
+  const response = await httpResolver({
     url,
     data,
     method,
@@ -22,6 +22,10 @@ const makeRequest = async (_, args, config, url, data?, method?, enableCookies =
       return { ...response }
     },
   })(_, args, config)
+  if (response.status > 400) {
+    throw new ResolverError('ERROR', response.data)
+  }
+  return response
 }
 
 const impersonateData = email => {
@@ -34,42 +38,33 @@ const impersonateData = email => {
   }
 }
 
-const formatRequestCookie = (key, cookies) => {
-  return `;${key}=${map(prop(key), filter(path([key]), cookies)).toString()}`
-}
-
-const errorHandler = res => {
-  if (res.status > 400) {
-    throw new ResolverError('ERROR', res.data)
-  }
+// Set session cookies to request GET session
+const formatRequestCookie = (cookies) => {
+  const sessionKey = ['vtex_session', 'vtex_segment']
+  const formatCookie = key => `;${key}=${map(prop(key), filter(path([key]), map(parse, prop('set-cookie', cookies)))).toString()}`
+  return sessionKey.reduce((ac, element) => ac + formatCookie(element), '')
 }
 
 export const mutations = {
   initializeSession: async (_, args, config) => {
-    const initSession = await makeRequest(_, args, config, paths.session, '{}', 'POST')
-    errorHandler(initSession)
-    // Set session cookies to request GET session
-    const parsedCookies = map(parse, prop('set-cookie', initSession.headers))
-    const sessionCookies = `${formatRequestCookie('vtex_session', parsedCookies)}${formatRequestCookie('vtex_segment', parsedCookies)}`
-    config.headers.cookie = concat(config.headers.cookie, sessionCookies)
+    const { headers } = await makeRequest(_, args, config, paths.session, '{}', 'POST')
+    config.headers.cookie = concat(config.headers.cookie, formatRequestCookie(headers))
 
     const session = await makeRequest(_, args, config, paths.getSession)
-    errorHandler(session)
 
-    config.response.set('Set-Cookie', prop('set-cookie', initSession.headers))
+    config.response.set('Set-Cookie', prop('set-cookie', headers))
     return sessionFields(session.data)
   },
 
   impersonate: async (_, args, config) => {
-    const impersonate = await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
-    errorHandler(impersonate)
+    const { headers } = await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
+    config.headers.cookie = concat(config.headers.cookie, formatRequestCookie(headers))
 
     const session = await makeRequest(_, args, config, paths.getSession)
-    errorHandler(session)
 
-    // const { profile } = merge({ expectedOrderFormSections: ['items'] }, sessionData)
-    // console.log(profile)
-    // await makeRequest(_, args, config, paths.orderFormProfile )
+    const { profile } = merge({ expectedOrderFormSections: ['items'] }, sessionFields(session.data))
+    await makeRequest(_, args, config, paths.orderFormProfile, profile, 'POST')
+
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, args.email, {
       path: '/',
       maxAge: VTEXID_EXPIRES
@@ -78,8 +73,10 @@ export const mutations = {
   },
 
   depersonify: async (_, args, config) => {
-    const depersonify = await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
-    errorHandler(depersonify)
+    await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
+
+    await makeRequest(_, args, config, paths.changeToAnonymousUser)
+
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, '', {
       path: '/',
       maxAge: 0

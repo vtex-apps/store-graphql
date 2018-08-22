@@ -17,7 +17,7 @@ const profileFields = profile => ({
 
 export const sessionFields = session => {
     const { namespaces } = session
-    return {
+    return namespaces ? {
         id: session.id,
         active: session.active,
         cartId: namespaces.checkout.cartId.value,
@@ -27,5 +27,5 @@ export const sessionFields = session => {
         profile: {
             ...profileFields(namespaces.profile)
         }
-    }
+    } : {}
 }

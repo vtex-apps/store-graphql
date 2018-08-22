@@ -240,12 +240,17 @@ type Mutation {
 
   """ Impersonate a customer """
   impersonate(
-    """ The email which will be used to impersonate a user. """
-    email: String!
+    """ The email which will be used to impersonate a user """
+    email: String!,
+    """ orderFormId that will be used to update clientProfileData in orderForm """
+    orderFormId: String!
   ): Session
   
   """ Depersonify a customer """
-  depersonify: Boolean
+  depersonify(
+    """ orderFormId that will be used to remove clientProfileData in orderForm """
+    orderFormId: String!
+  ): Boolean
 
   """ Document """
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
