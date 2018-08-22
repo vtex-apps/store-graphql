@@ -1,9 +1,7 @@
 
 import { path, toLower } from 'ramda'
 
-const convertToBool = str => {
-    return (toLower(str) === 'true');
-}
+const convertToBool = str => toLower(str) === 'true'
 
 const profileFields = profile => ({
     isAuthenticatedAsCustomer: convertToBool(path(['isAuthenticated', 'value'], profile)),

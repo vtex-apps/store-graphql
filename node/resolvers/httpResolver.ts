@@ -3,7 +3,7 @@ import { ColossusContext, IOContext } from 'colossus'
 import { prop } from 'ramda'
 import * as parse from 'url-parse'
 
-const defaultMerge = (bodyData, resData, resResponse) => resData
+const defaultMerge = (bodyData, resData, response) => resData
 
 export type URLBuilder = (account: string, data: any, root: any) => string
 
