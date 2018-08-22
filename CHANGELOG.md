@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.20.2] - 2018-08-22
+### Fixed
+- Throw specific error when the product is not found on product resolver in catalog.
+
 ## [2.20.1] - 2018-08-22
 ### Changed
 - Return filtered facets based on the query and rest on the search resolver.

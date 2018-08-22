@@ -8,7 +8,13 @@ import ResolverError from '../../errors/resolverError'
 import { queries as benefitsQueries } from '../benefits'
 import { withAuthToken } from '../headers'
 import paths from '../paths'
-import { resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields } from './fieldsResolver'
+import {
+  resolveBrandFields,
+  resolveCategoryFields,
+  resolveFacetFields,
+  resolveProductFields,
+} from './fieldsResolver'
+import ResolverError from '../../errors/resolverError'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -46,18 +52,21 @@ export const rootResolvers = {
       return !root.kitItems
         ? []
         : Promise.all(
-          root.kitItems.map(async kitItem => {
-            const url = paths.productBySku(ioContext.account, {
-              id: kitItem.itemId,
+            root.kitItems.map(async kitItem => {
+              const url = paths.productBySku(ioContext.account, {
+                id: kitItem.itemId,
+              })
+              const { data: products } = await axios.get(url, {
+                headers: withAuthToken()(ioContext),
+              })
+              const { items: skus, ...product } = head(products) || {}
+              const sku = find(
+                ({ itemId }) => itemId === kitItem.itemId,
+                skus || []
+              )
+              return { ...kitItem, product, sku }
             })
-            const { data: products } = await axios.get(url, {
-              headers: withAuthToken()(ioContext),
-            })
-            const { items: skus, ...product } = head(products) || {}
-            const sku = find(({ itemId }) => itemId === kitItem.itemId, skus || [])
-            return { ...kitItem, product, sku }
-          }),
-        )
+          )
     },
   },
 }
@@ -75,7 +84,7 @@ export const queries = {
           ...item,
           slug: extractSlug(item),
         }),
-        data.itemsReturned,
+        data.itemsReturned
       ),
     }
   },
@@ -96,14 +105,26 @@ export const queries = {
     const { data: product } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
-    const resolvedProduct = await resolveProductFields(
-      ioContext,
-      head(product),
-      graphqlFields(info),
-    )
-    const resolvedBenefits = await benefitsQueries.benefits(_, { id: resolvedProduct.productId }, config)
 
-    return { ...resolvedProduct, benefits: resolvedBenefits }
+    if (product.length > 0) {
+      const resolvedProduct = await resolveProductFields(
+        ioContext,
+        head(product),
+        graphqlFields(info)
+      )
+      const resolvedBenefits = await benefitsQueries.benefits(
+        _,
+        { id: resolvedProduct.productId },
+        config
+      )
+
+      return { ...resolvedProduct, benefits: resolvedBenefits }
+    }
+
+    throw new ResolverError(
+      `No product was found with the correspondant slug '${data.slug}'`,
+      404
+    )
   },
 
   products: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
@@ -111,7 +132,7 @@ export const queries = {
     if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
         `The query term: '${queryTerm}' contains invalid characters.`,
-        500,
+        500
       )
     }
     const url = paths.products(ioContext.account, data)
@@ -120,7 +141,7 @@ export const queries = {
     })
     const fields = graphqlFields(info)
     const resolvedProducts = await Promise.map(products, product =>
-      resolveProductFields(ioContext, product, fields),
+      resolveProductFields(ioContext, product, fields)
     )
 
     return resolvedProducts
@@ -144,9 +165,9 @@ export const queries = {
     const brand = find(
       compose(
         equals(data.id),
-        prop('id'),
+        prop('id')
       ),
-      brands,
+      brands
     )
     if (!brand) {
       throw new ResolverError(`Brand with id ${data.id} not found`, 404)
@@ -211,7 +232,10 @@ export const queries = {
     const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
 
     const [products, facets, facetsWithRest, categories] = await Promise.all([
-      productsPromise, facetsPromise, facetsWithRestPromise, categoriesPromise
+      productsPromise,
+      facetsPromise,
+      facetsWithRestPromise,
+      categoriesPromise,
     ])
     const { titleTag, metaTagDescription } = findInTree(categories, query.split('/'))
     const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
@@ -225,7 +249,11 @@ export const queries = {
     }
   },
 
-  searchContextFromParams: async (_, args, { vtex: ioContext }: ColossusContext) => {
+  searchContextFromParams: async (
+    _,
+    args,
+    { vtex: ioContext }: ColossusContext
+  ) => {
     const response = {
       brand: null,
       category: null,
@@ -238,25 +266,39 @@ export const queries = {
         headers: withAuthToken()(ioContext),
       })
 
-      const found = brands.find(brand => brand.isActive && slugify(brand.name, { lower: true }) === args.brand)
+      const found = brands.find(
+        brand =>
+          brand.isActive && slugify(brand.name, { lower: true }) === args.brand
+      )
       response.brand = found && found.id
     }
 
     if (args.department) {
-      const urlCategories = paths.categories(ioContext.account, { treeLevel: 2 })
-      const { data: departments }: { data: Category[] } = await axios.get(urlCategories, {
-        headers: withAuthToken()(ioContext),
+      const urlCategories = paths.categories(ioContext.account, {
+        treeLevel: 2,
       })
+      const { data: departments }: { data: Category[] } = await axios.get(
+        urlCategories,
+        {
+          headers: withAuthToken()(ioContext),
+        }
+      )
 
       let found: Category
 
-      found = departments.find(department => department.url.endsWith(`/${args.department.toLowerCase()}`))
+      found = departments.find(department =>
+        department.url.endsWith(`/${args.department.toLowerCase()}`)
+      )
       if (args.category && found) {
-        found = found.children.find(category => category.url.endsWith(`/${args.category.toLowerCase()}`))
+        found = found.children.find(category =>
+          category.url.endsWith(`/${args.category.toLowerCase()}`)
+        )
       }
 
       if (args.subcategory && found) {
-        found = found.children.find(subcategory => subcategory.url.endsWith(`/${args.subcategory.toLowerCase()}`))
+        found = found.children.find(subcategory =>
+          subcategory.url.endsWith(`/${args.subcategory.toLowerCase()}`)
+        )
       }
 
       response.category = found && found.id
