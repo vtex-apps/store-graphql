@@ -5,8 +5,8 @@ import { compose, equals, find, head, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
 
 import ResolverError from '../../errors/resolverError'
-import { withAuthToken } from '../headers'
 import { queries as benefitsQueries } from '../benefits'
+import { withAuthToken } from '../headers'
 import paths from '../paths'
 import {
   resolveBrandFields,
@@ -218,52 +218,35 @@ export const queries = {
   },
 
   search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
-    const { map, query, rest } = data
-    const facetsMap = map
-      .split(',')
-      .slice(0, query.split('/').length)
-      .join(',')
+    const { map: mapParams, query, rest } = data
+    const facetsMap = mapParams.split(',').slice(0, query.split('/').length).join(',')
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
     const facetsValue = query + '?map=' + facetsMap
-    const facetsValueWithRest = queryWithRest + '?map=' + map
-    const productsPromise = queries.products(
-      _,
-      { ...data, query: queryWithRest },
-      { vtex: ioContext },
-      info
-    )
-    const facetsPromise = queries.facets(
-      _,
-      { facets: facetsValue },
-      { vtex: ioContext }
-    )
-    const categoriesPromise = queries.categories(
-      _,
-      {
-        treeLevel: query.split('/').length,
-      },
-      { vtex: ioContext }
-    )
-    const facetsWithRestPromise = queries.facets(
-      _,
-      { facets: facetsValueWithRest },
-      { vtex: ioContext }
-    )
+    const facetsValueWithRest = queryWithRest + '?map=' + mapParams
+
+    const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
+    const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
+    const categoriesPromise = queries.categories(_, {
+      treeLevel: query.split('/').length
+    }, { vtex: ioContext })
+    const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
+
     const [products, facets, facetsWithRest, categories] = await Promise.all([
       productsPromise,
       facetsPromise,
       facetsWithRestPromise,
       categoriesPromise,
     ])
-    const { titleTag, metaTagDescription } = findInTree(
-      categories,
-      query.split('/')
-    )
-    const recordsFiltered = facetsWithRest.Departments.reduce(
-      (total, dept) => total + dept.Quantity,
-      0
-    )
-    return { facets, products, recordsFiltered, titleTag, metaTagDescription }
+    const { titleTag, metaTagDescription } = findInTree(categories, query.split('/'))
+    const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
+
+    return {
+      facets: facetsWithRest,
+      metaTagDescription,
+      products,
+      recordsFiltered,
+      titleTag,
+    }
   },
 
   searchContextFromParams: async (
