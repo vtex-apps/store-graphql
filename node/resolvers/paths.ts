@@ -72,7 +72,7 @@ const paths = {
   oAuth: (authenticationToken, providerName) => `${paths.vtexId}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
 
   /** Sessions API */
-  /** 
+  /**
    * The path session can initialize Session, impersonate and depersonify
    * an user according to the body data that is passed to it.
    */
@@ -95,6 +95,10 @@ const paths = {
     filterUser: (email, customFields?) => join(',', [`http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,tradeName,corporateName,stateRegistration,corporateDocument`, customFields]),
     profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
   }),
+
+  logistics: account => ({
+    shipping: `http://${account}.vtexcommercestable.com.br/api/logistics/pub/shipping/configuration`
+  })
 }
 
 export default paths
