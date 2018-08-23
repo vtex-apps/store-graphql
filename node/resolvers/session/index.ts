@@ -67,8 +67,7 @@ export const mutations = {
 
   /**
    * Impersonate a customer and set clientProfileData in OrderForm
-   * @param email
-   * @param orderFormId
+   * @param args this mutation receives email and orderFormId
    * @return Session
    */
   impersonate: async (_, args, config) => {
@@ -90,7 +89,7 @@ export const mutations = {
 
   /**
    * Depersonify a customer and set clientProfileData to anonymous user.
-   * @param orderFormId
+   * @param args this mutation receives orderFormId
    */
   depersonify: async (_, args, config) => {
     await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
