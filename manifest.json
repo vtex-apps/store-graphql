@@ -1,11 +1,13 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.21.3",
+  "version": "2.22.0",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
-  "registries": ["smartcheckout"],
+  "registries": [
+    "smartcheckout"
+  ],
   "builders": {
     "graphql": "1.x",
     "node": "3.x"
