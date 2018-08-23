@@ -48,7 +48,7 @@ export const rootResolvers = {
         : Promise.all(
             root.kitItems.map(async kitItem => {
               const url = paths.productBySku(ioContext.account, {
-                skuIds: [ kitItem.itemId ],
+                skuIds: [kitItem.itemId],
               })
             })
             const { data: products } = await axios.get(url, {
@@ -214,17 +214,37 @@ export const queries = {
 
   search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
     const { map: mapParams, query, rest } = data
-    const facetsMap = mapParams.split(',').slice(0, query.split('/').length).join(',')
+    const facetsMap = mapParams
+      .split(',')
+      .slice(0, query.split('/').length)
+      .join(',')
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
     const facetsValue = query + '?map=' + facetsMap
     const facetsValueWithRest = queryWithRest + '?map=' + mapParams
 
-    const productsPromise = queries.products(_, { ...data, query: queryWithRest }, { vtex: ioContext }, info)
-    const facetsPromise = queries.facets(_, { facets: facetsValue }, { vtex: ioContext })
-    const categoriesPromise = queries.categories(_, {
-      treeLevel: query.split('/').length
-    }, { vtex: ioContext })
-    const facetsWithRestPromise = queries.facets(_, { facets: facetsValueWithRest }, { vtex: ioContext })
+    const productsPromise = queries.products(
+      _,
+      { ...data, query: queryWithRest },
+      { vtex: ioContext },
+      info
+    )
+    const facetsPromise = queries.facets(
+      _,
+      { facets: facetsValue },
+      { vtex: ioContext }
+    )
+    const categoriesPromise = queries.categories(
+      _,
+      {
+        treeLevel: query.split('/').length,
+      },
+      { vtex: ioContext }
+    )
+    const facetsWithRestPromise = queries.facets(
+      _,
+      { facets: facetsValueWithRest },
+      { vtex: ioContext }
+    )
 
     const [products, facets, facetsWithRest, categories] = await Promise.all([
       productsPromise,
@@ -232,8 +252,14 @@ export const queries = {
       facetsWithRestPromise,
       categoriesPromise,
     ])
-    const { titleTag, metaTagDescription } = findInTree(categories, query.split('/'))
-    const recordsFiltered = facetsWithRest.Departments.reduce((total, dept) => total + dept.Quantity, 0)
+    const { titleTag, metaTagDescription } = findInTree(
+      categories,
+      query.split('/')
+    )
+    const recordsFiltered = facetsWithRest.Departments.reduce(
+      (total, dept) => total + dept.Quantity,
+      0
+    )
 
     return {
       facets: facetsWithRest,
