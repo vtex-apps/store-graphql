@@ -11,7 +11,8 @@ const paths = {
   productByEan: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_Ean=${id}`,
   productById: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=productId:${id}`,
   productByReference: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_RefId=${id}`,
-  productBySku: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=skuId:${id}`,
+  productBySku: (account, { skuIds }) => `${paths.catalog(account)}/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
+
   products: (account, {
     query = '',
     category = '',
@@ -47,8 +48,6 @@ const paths = {
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
-
-  skuById: (account, { skuId }) => `${paths.catalog(account)}/pvt/sku/stockkeepingunitbyid/${skuId}`,
 
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
   cancelOrder: (account, { orderFormId }) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
