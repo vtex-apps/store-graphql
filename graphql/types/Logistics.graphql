@@ -1,0 +1,4 @@
+type LogisticsData {
+  """ countries this store ships to """
+  shipsTo: [String]
+}
