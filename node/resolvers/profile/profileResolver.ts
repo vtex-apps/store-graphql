@@ -44,7 +44,22 @@ const profile = (ctx, {customFields}) => async (data) => {
     const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
     const address = profileData && await http.get(addressURL, config).then(prop('data'))
 
-    return merge({ address, cacheId: user }, profileData)
+    const paymentsURL = paths.profile(ctx.account).payments(profileData.userId)
+    const { data: paymentsRawData } = await http.get(paymentsURL, config)
+    let payments = null
+
+    if(paymentsRawData) {
+      const availableAccounts = JSON.parse(paymentsRawData.paymentData).availableAccounts
+      payments = availableAccounts.map((account) => {
+        const {bin, availableAddresses, accountId, ...cleanAccount} = account
+        const accountAddress = address.find(
+          (address) => address.addressName === availableAddresses[0]
+        )
+        return {...cleanAccount, id: accountId, address: accountAddress}
+      })
+    }
+
+    return merge({ payments, address, cacheId: user }, profileData)
   }
   return {
     cacheId: user,
