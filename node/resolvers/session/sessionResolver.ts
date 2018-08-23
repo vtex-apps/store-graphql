@@ -18,7 +18,6 @@ export const sessionFields = session => {
     return namespaces ? {
         id: session.id,
         active: session.active,
-        cartId: namespaces.checkout.cartId.value,
         impersonate: convertToBool(namespaces.impersonate.canImpersonate.value),
         adminUserId: path(['adminUserId', 'value'], namespaces.authentication),
         adminUserEmail: path(['adminUserEmail', 'value'], namespaces.authentication),
