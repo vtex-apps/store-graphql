@@ -50,17 +50,18 @@ export const rootResolvers = {
               const url = paths.productBySku(ioContext.account, {
                 skuIds: [ kitItem.itemId ],
               })
-              const { data: products } = await axios.get(url, {
-                headers: withAuthToken()(ioContext),
-              })
-              const { items: skus, ...product } = head(products) || {}
-              const sku = find(
-                ({ itemId }) => itemId === kitItem.itemId,
-                skus || []
-              )
-              return { ...kitItem, product, sku }
             })
-          )
+            const { data: products } = await axios.get(url, {
+              headers: withAuthToken()(ioContext),
+            })
+            const { items: skus, ...product } = head(products) || {}
+            const sku = find(
+              ({ itemId }) => itemId === kitItem.itemId,
+              skus || []
+            )
+            return { ...kitItem, product, sku }
+          })
+        )
     },
   },
 }
@@ -116,7 +117,7 @@ export const queries = {
     }
 
     throw new ResolverError(
-      `No product was found with the correspondant slug '${data.slug}'`,
+      `No product was found with the correspondent slug '${data.slug}'`,
       404
     )
   },
