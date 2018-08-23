@@ -19,10 +19,9 @@ const DEFAULT_QUANTITY = '1'
  */
 const resolveProducts = async (skuIds, ioContext) => {
   const requestUrl = paths.productBySku(ioContext.account, { skuIds })
-  const requestHeaders = {
+  const { data: products = [] } = await axios.get(requestUrl, {
     headers: withAuthToken()(ioContext),
-  }
-  const { data: products = [] } = await axios.get(requestUrl, requestHeaders)
+  })
   return await Promise.all(
     products.map(product => resolveLocalProductFields(product))
   )
@@ -60,13 +59,11 @@ const resolveBenefitsData = async (benefitsData, { vtex: ioContext }) => {
               const discount = effectsParameters[index].value
               const products = await resolveProducts(skuIds, ioContext)
 
-              return await Promise.all(
-                products.map(async product => ({
-                  discount,
-                  benefitProduct: product,
-                  minQuantity: minimumQuantity,
-                }))
-              )
+              return products.map(product => ({
+                discount,
+                benefitProduct: product,
+                minQuantity: minimumQuantity,
+              }))
             })
           )
 
