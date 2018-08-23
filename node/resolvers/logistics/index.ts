@@ -7,6 +7,6 @@ export const queries = {
     httpResolver({
       headers: withAuthToken()(config.vtex),
       method: 'GET',
-      url: account => paths.logistics(account).shipping,
+      url: account => paths.logisticsConfig(account).shipping,
     })(_, args, config),
 }
