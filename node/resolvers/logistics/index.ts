@@ -1,19 +1,13 @@
-import http from 'axios'
 import paths from '../paths'
+import { withAuthToken } from '../headers'
+import httpResolver from '../httpResolver'
 
 export const queries = {
-  logistics: async (_, __, { vtex: ctx }) => {
-    const config = {
-      headers: {
-        'Proxy-Authorization': ctx.authToken,
-        vtexidclientautcookie: ctx.authToken,
-      },
-    }
-
-    const response = await http.get(
-      paths.logistics(ctx.account).shipping,
-      config,
-    )
-    return response.data
+  logistics: async (_, args, config) => {
+    return await httpResolver({
+      headers: withAuthToken()(config.vtex),
+      method: 'GET',
+      url: account => paths.logistics(account).shipping,
+    })(_, args, config)
   },
 }
