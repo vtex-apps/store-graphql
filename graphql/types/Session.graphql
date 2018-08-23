@@ -1,0 +1,17 @@
+type Session {
+  id: ID,
+  impersonate: Boolean,
+  adminUserId: String,
+  adminUserEmail: String,
+  profile: CustomerProfile
+}
+
+type CustomerProfile {
+  isAuthenticatedAsCustomer: Boolean,
+  id: ID,
+  firstName: String,
+  lastName: String,
+  email: String,
+  document: String,
+  phone: String
+}

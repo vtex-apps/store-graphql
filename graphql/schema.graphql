@@ -1,53 +1,259 @@
 type Query {
-  product(slug: String): Product
+    """ Get a specified product """
+  product(
+    """ Product slug """
+    slug: String
+  ): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
+  """ Product search filtered and ordered """
   products(
+    """ Terms that is used in search e.g.: eletronics/samsung """
     query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
+    map: String = "",
+    """ Filter by category. {a}/{b} - {a} and {b} are categoryIds """
     category: String = "",
+    """ Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value """
     specificationFilters: [String],
+    """ Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" """
     priceRange: String = "",
+    """ Filter by collection. where collection also know as productClusterId"""
     collection: String = "",
+    """ Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4"""
     salesChannel: String = "",
+    """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
     orderBy: String = "OrderByPriceDESC",
+    """ Pagination item start """
     from: Int = 0,
+    """ Pagination item end """
     to: Int = 9
-  ): [Product]
+  ): [Product] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  facets(facets: String = ""): Facets
+  """ Get facets category """
+  facets(
+    """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
+    facets: String = ""
+  ): Facets
 
-  category(id: Int): Category
-  categories(treeLevel: Int = 3): [Category]
+  """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
+  search(
+    """ Terms that is used in search e.g.: eletronics/samsung """
+    query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
+    map: String = "",
+    """ Rest terms that is used in search e.g.: samsung,Android7 """
+    rest: String = "",
+    """ Filter by category. {a}/{b} - {a} and {b} are categoryIds """
+    category: String = "",
+    """ Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value """
+    specificationFilters: [String],
+    """ Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" """
+    priceRange: String = "",
+    """ Filter by collection. where collection also know as productClusterId"""
+    collection: String = "",
+    """ Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4"""
+    salesChannel: String = "",
+    """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
+    orderBy: String = "OrderByPriceDESC",
+    """ Pagination item start """
+    from: Int = 0,
+    """ Pagination item end """
+    to: Int = 9
+  ): Search
 
-  brand(id: Int): Brand
+  """ Get category details """
+  category(
+    """ Category id """
+    id: Int
+  ): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  shipping(skuId: String, postalCode: String): ShippingData
+  """ Get categories tree """
+  categories(
+    """ Category tree level. Default: 3"""
+    treeLevel: Int = 3
+  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  orderForm: OrderForm
-  orders: [Order]
+  """ Get brand details """
+  brand(
+    """ Brand id """
+    id: Int
+  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  profile: Profile
+  """ Get a list of brands """
+  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  autocomplete(maxRows: Int = 12, searchTerm: String): Suggestions
+  """ OrderForm simulation """
+  shipping(
+    """ List of SKU products """
+    items: [ShippingItem],
+    """ Postal code to freight calculator """
+    postalCode: String,
+    """ Country of postal code """
+    country: String
+  ): ShippingData
 
-  masterObjects(acronym: String, fields: [String]): [MasterObject]
+  """ Get checkout cart details """
+  orderForm: OrderForm @cacheControl(scope: PRIVATE)
+
+  """ Get user orders details """
+  orders: [Order] @cacheControl(scope: PRIVATE)
+
+  """ Get user profile details """
+  profile(
+    """ Comma separated fields """
+    customFields: String
+  ): Profile @cacheControl(scope: PRIVATE)
+
+  """ Get auto complete suggestions in search """
+  autocomplete(
+    """ Number of items that is returned """
+    maxRows: Int = 12,
+    """ Terms that is used in search e.g.: iphone """
+    searchTerm: String
+  ): Suggestions
+
+  """ Search documents """
+  documents(
+    """ Schema name. e.g.: CL, AD"""
+    acronym: String,
+    """ Fields that will be returned by document. e.g.: _fields=email,firstName,document """
+    fields: [String],
+    """ Pagination. Default: 1 """
+    page: Int = 1,
+    """ Items returned in the page. Default: 15"""
+    pageSize: Int = 15
+  ): [Document]
+
+  """ Get document """
+  document(
+    """ Schema name. e.g.: CL, AD"""
+    acronym: String,
+    """ Fields that will be returned in document. e.g.: _fields=email,firstName,document """
+    fields: [String],
+    """ Document id """
+    id: String
+  ): Document
+
+  """ Get the benefits associated with a list of products """
+  benefits(
+    """ List of Products """
+    items: [ShippingItem]
+  ): [Benefit]
+
+  """ Get the options available to authenticate users """
+  loginOptions: LoginOptions
+
+  """ Get the IDs for the provided search context slugs """
+  searchContextFromParams(
+    brand: String,
+    department: String,
+    category: String,
+    subcategory: String
+  ): SearchContext
 }
 
 type Mutation {
+  """ Cart """
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
   cancelOrder(orderFormId: String, reason: String): Boolean
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-  updateProfile(id: String, fields: ProfileInput): OrderForm
-  updateAddress(id: String, fields: AddressInput): OrderForm
+
+  """ Profile """
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile
+  updateAddress(id: String, fields: AddressInput): Profile
+  createAddress(fields: AddressInput): Profile
+  deleteAddress(id: String): Profile
+
+  """ Updates the Profile Picture by erasing the old ones """
+  updateProfilePicture(
+    """ File being uploaded """
+    file: Upload!,
+    """ Attachment's field name (ex. ProfilePicture) """
+    field: String!
+  ): ProfileCustomField
+  """ Uploads the Profile Picture by appending to the existing ones """
+  uploadProfilePicture(
+    """ File being uploaded """
+    file: Upload!,
+    """ Attachment's field name (ex. ProfilePicture) """
+    field: String!
+  ): ProfileCustomField
+
+  """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
   updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
   updateOrderFormPayment(orderFormId: String,  payments: [OrderFormPaymentInput]): OrderForm
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
-  createAddress(fields: AddressInput): Profile
-  deleteAddress(id: String): Boolean
+
+  """ Payment """
   createPaymentSession: PaymentSession
   createPaymentTokens(sessionId: String, payments: [PaymentInput]): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
-  sendEmailVerification(email: String): AuthToken
-  signIn(fields: AuthInput): AuthClientToken
+
+  """ Send access key to user email """
+  sendEmailVerification(
+    """ User email"""
+    email: String!
+  ): Boolean
+
+  """ Access key sign in mode """
+  accessKeySignIn(
+    """ User email """
+    email: String!,
+    """ Access key that was received """
+    code: String!
+  ): String
+
+  """ Classic sign in mode """
+  classicSignIn(
+    """ User email """
+    email: String!,
+    """ User password """
+    password: String!
+  ): String
+
+  """ OAuth to login with Social Account """
+  oAuth(
+    """ The OAuth Provider, e.g: Google, Facebook """
+    provider: String,
+    """ The URL to be redirected after authentication """
+    redirectUrl: String
+  ): String
+
+  """ To recovery password you need to get your email, password and access code """
+  recoveryPassword(
+    """ User email """
+    email: String!,
+    """ User password """
+    newPassword: String!,
+    """ Access Code """
+    code: String!
+    ): String
+
+  """ Invalidate VtexIdclientAutCookie """
+  logout: Boolean
+
+  """ Initialize Session to users with telemarketing profile access """
+  initializeSession: Session
+
+  """ Impersonate a customer """
+  impersonate(
+    """ The email which will be used to impersonate a user """
+    email: String!,
+    """ orderFormId that will be used to update clientProfileData in orderForm """
+    orderFormId: String!
+  ): Session
+  
+  """ Depersonify a customer """
+  depersonify(
+    """ orderFormId that will be used to remove clientProfileData in orderForm """
+    orderFormId: String!
+  ): Boolean
+
+  """ Document """
+  createDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  uploadAttachment(acronym: String!, documentId: ID!, field: String!, file: Upload!): AttachmentResponse
 }

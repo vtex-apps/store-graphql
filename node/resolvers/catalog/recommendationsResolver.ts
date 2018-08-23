@@ -1,8 +1,9 @@
-import axios from 'axios'
-import {map, prop} from 'ramda'
-import paths from '../paths'
-import {resolveLocalProductFields} from './fieldsResolver'
-import {withAuthToken} from '../headers'
+import axios from 'axios';
+import { map } from 'ramda';
+
+import { withAuthToken } from '../headers';
+import paths from '../paths';
+import { resolveLocalProductFields } from './fieldsResolver';
 
 export const resolveRecommendation = async (ioContext, product, type) => {
   const url = paths.crossSelling(ioContext.account, product.productId, type)

@@ -1,4 +1,6 @@
 type OrderForm {
+  """ orderFormId is used as cacheId """
+  cacheId: ID
   orderFormId: String
   value: Float
   items: [OrderFormItem]
@@ -12,6 +14,7 @@ type OrderForm {
   userType: String
   ignoreProfileData: Boolean
   totalizers: [Totalizer]
+  clientProfileData: ClientProfile
 }
 
 type OrderFormItem {
@@ -26,10 +29,10 @@ type OrderFormItem {
   refId: String
   ean: String
   priceValidUntil: String
-  price: Int
+  price: Float
   tax: Int
-  listPrice: Int
-  sellingPrice: Int
+  listPrice: Float
+  sellingPrice: Float
   rewardValue: Int
   isGift: Boolean
 }
@@ -38,6 +41,21 @@ type Totalizer {
   id: ID
   name: String
   value: Float
+}
+
+type ClientProfile {
+  email: String
+  firstName: String
+  lastName: String
+  phone: String
+  isCorporate: Boolean
+  corporateDocument: String
+  corporateName: String
+  corporatePhone: String
+  document: String
+  documentType: String
+  stateInscription: String
+  tradeName: String
 }
 
 input OrderFormItemInput {

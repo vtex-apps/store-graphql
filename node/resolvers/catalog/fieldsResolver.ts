@@ -1,7 +1,5 @@
-import axios from 'axios'
-import {IOContext} from 'colossus'
-import {compose, evolve, juxt, map, omit, path, pick, prop, propOr, toPairs, assoc, last, split} from 'ramda'
-import paths from './../paths'
+import { IOContext } from 'colossus'
+import { compose, juxt, last, map, omit, prop, split, toPairs, replace } from 'ramda'
 import * as slugify from 'slugify'
 import {resolveRecommendation} from './recommendationsResolver'
 
@@ -12,6 +10,7 @@ const knownNotPG = [
   'categoriesIds',
   'categoryId',
   'clusterHighlights',
+  'productClusters',
   'description',
   'items',
   'productId',
@@ -21,62 +20,122 @@ const knownNotPG = [
   'productReference',
 ]
 
-const objToNameValue = (keyName: string, valueName: string, record: Record<string, any>) =>
-  map(([key, value]) => ({[keyName]: key, [valueName]: value}), toPairs(record))
+const objToNameValue = (
+  keyName: string,
+  valueName: string,
+  record: Record<string, any>
+) =>
+  map(
+    ([key, value]) => ({ [keyName]: key, [valueName]: value }),
+    toPairs(record)
+  )
 
 const resolvers = {
-  clusterHighlights: (product) => {
-    const {clusterHighlights={}} = product
+  clusterHighlights: product => {
+    const { clusterHighlights = {} } = product
     return objToNameValue('id', 'name', clusterHighlights)
   },
 
-  propertyGroups: (product) => {
-    const {allSpecifications=[]} = product
+  productClusters: product => {
+    const { productClusters = {} } = product
+    return objToNameValue('id', 'name', productClusters)
+  },
+
+  propertyGroups: product => {
+    const { allSpecifications = [] } = product
     const notPG = knownNotPG.concat(allSpecifications)
     return objToNameValue('name', 'values', omit(notPG, product))
   },
 
-  properties: (product) => {
-    const {allSpecifications=[]} = product
-    return map(name => ({name, values: product[name]}), allSpecifications)
+  properties: product => {
+    const { allSpecifications = [] } = product
+    return map((name: string) => ({ name, values: product[name] }), allSpecifications)
   },
 
-  variations: (sku) => {
-    const {variations=[]} = sku
-    return map(name => ({name, values: sku[name]}), variations)
+  variations: sku => {
+    const { variations = [] } = sku
+    return map((name: string) => ({ name, values: sku[name] }), variations)
   },
 
-  attachments: (sku) => {
-    return map(attachment => ({
-      ...attachment,
-      domainValues: JSON.parse(attachment.domainValues)
-    }), sku.attachments || [])
+  attachments: sku => {
+    return map(
+      attachment => ({
+        ...attachment,
+        domainValues: JSON.parse(attachment.domainValues),
+      }),
+      sku.attachments || []
+    )
+  },
+  images: sku => {
+    return map(
+      image => ({
+        ...image,
+        imageUrl: replace('http://', 'https://', image.imageUrl),
+      }),
+      sku.images || []
+    )
   },
 
-  items: (product) => {
+  items: product => {
     return map(sku => {
-      const resolveFields = juxt([resolvers.variations, resolvers.attachments])
-      const [variations, attachments] = resolveFields(sku)
-      return {...sku, attachments, variations}
+      const resolveFields = juxt([resolvers.variations, resolvers.attachments, resolvers.images])
+      const [variations, attachments, images] = resolveFields(sku)
+      return { ...sku, attachments, variations, images }
     }, product.items || [])
   },
 
-  specificationFilters: (facets) => {
-    const {SpecificationFilters={}} = facets
+  specificationFilters: facets => {
+    const { SpecificationFilters = {} } = facets
     return objToNameValue('name', 'facets', SpecificationFilters)
+  },
+
+  jsonSpecifications: facets => {
+    const { Specifications = [] } = facets
+    const specificationsMap = Specifications.reduce((acc, key) => {
+      acc[key] = facets[key]
+      return acc
+    }, {})
+    return JSON.stringify(specificationsMap)
   },
 }
 
-export const resolveLocalProductFields = (product) => {
-  const resolveFields = juxt([resolvers.clusterHighlights, resolvers.propertyGroups, resolvers.properties, resolvers.items])
-  const [clusterHighlights, propertyGroups, properties, items] = resolveFields(product)
-  return {...product, clusterHighlights, items, properties, propertyGroups}
+export const resolveLocalProductFields = product => {
+  const resolveFields = juxt([
+    resolvers.clusterHighlights,
+    resolvers.propertyGroups,
+    resolvers.properties,
+    resolvers.items,
+    resolvers.productClusters,
+    resolvers.jsonSpecifications,
+  ])
+  const [
+    clusterHighlights,
+    propertyGroups,
+    properties,
+    items,
+    productClusters,
+    jsonSpecifications,
+  ] = resolveFields(product)
+  return {
+    ...product,
+    titleTag: product.productTitle,
+    cacheId: product.linkText,
+    clusterHighlights,
+    items,
+    properties,
+    propertyGroups,
+    productClusters,
+    jsonSpecifications,
+  }
 }
 
-export const resolveProductFields = async (ioContext: IOContext, product: any, fields: any) => {
+export const resolveProductFields = async (
+  ioContext: IOContext,
+  product: any,
+  fields: any
+) => {
   const resolvedProduct = resolveLocalProductFields(product)
-
-  if (!fields.Product || !fields.Product.recommendations) {
+  if (!fields.recommendations) {
     return resolvedProduct
   }
 
@@ -87,25 +146,43 @@ export const resolveProductFields = async (ioContext: IOContext, product: any, f
   ])
 
   return {...resolvedProduct, recommendations: {buy, view, similars}}
+
 }
 
-export const resolveFacetFields = (facets) => {
+export const resolveFacetFields = facets => {
   const SpecificationFilters = resolvers.specificationFilters(facets)
-  return {...facets, SpecificationFilters}
+  return { ...facets, SpecificationFilters }
 }
 
-export const resolveCategoryFields = (category) => ({
+export const resolveCategoryFields = category => ({
   href: category.url,
-  slug: category.url ? compose(last, split('/'), prop('url'))(category) : null,
-  children: category.children ? map(resolveCategoryFields, category.children): [],
+  slug: category.url
+    ? compose(
+      last,
+      split('/'),
+      prop('url')
+    )(category)
+    : null,
+  children: category.children
+    ? map(resolveCategoryFields, category.children)
+    : [],
   name: category.name,
   id: category.id,
-  hasChildren: category.hasChildren
+  cacheId: category.id,
+  hasChildren: category.hasChildren,
+  titleTag: category.Title,
+  metaTagDescription: category.MetaTagDescription,
 })
 
-export const resolveBrandFields = (brand) => ({
-  id: brand.id,
-  name: brand.name,
-  active: brand.isActive,
-  slug: slugify(brand.name, {lower: true})
-})
+export const resolveBrandFields = brand => {
+  const slu = slugify(brand.name, { lower: true })
+  return ({
+    active: brand.isActive,
+    cacheId: slu,
+    id: brand.id,
+    name: brand.name,
+    slug: slu,
+    titleTag: brand.title,
+    metaTagDescription: brand.metaTagDescription,
+  })
+}

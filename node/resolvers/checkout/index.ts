@@ -1,12 +1,38 @@
 import { map, merge } from 'ramda'
-import {headers, withAuthToken} from '../headers'
+import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
 
+/**
+ * It will convert an integer to float moving the
+ * float point two positions left.
+ *
+ * The OrderForm REST API return an integer
+ * colapsing the floating point into the integer
+ * part. We needed to make a convention of the product
+ * price on different API's. Once the Checkout API
+ * returns an integer instead of a float, and the
+ * Catalog API returns a float.
+ *
+ * @param int An integer number
+ */
+const convertIntToFloat = int => int * 0.01
+
 export const queries = {
   orderForm: httpResolver({
-    data: {expectedOrderFormSections: ['items']},
+    data: { expectedOrderFormSections: ['items'] },
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId,
+      value: convertIntToFloat(responseData.value),
+      items: map((item) => ({
+        ...item,
+        price: convertIntToFloat(item.price),
+        listPrice: convertIntToFloat(item.listPrice),
+        sellingPrice: convertIntToFloat(item.sellingPrice)
+      }), responseData.items)
+    }),
     enableCookies: true,
     headers: withAuthToken(headers.json),
     method: 'POST',
@@ -20,8 +46,14 @@ export const queries = {
   }),
 
   shipping: httpResolver({
+    data: ({ items, postalCode, country }) => ({
+      items,
+      postalCode,
+      country
+    }),
     headers: withAuthToken(headers.json),
     url: paths.shipping,
+    method: 'POST',
   }),
 }
 
@@ -31,8 +63,12 @@ export const mutations = {
       expectedOrderFormSections: ['items'],
       orderItems: items,
     }),
-    enableCookies: true,
     headers: withAuthToken(headers.json),
+    enableCookies: true,
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.addItem,
   }),
@@ -41,17 +77,17 @@ export const mutations = {
 
   cancelOrder: httpResolver({
     data: ({ reason }) => ({ reason }),
+    headers: withAuthToken(headers.json),
     enableCookies: true,
     merge: () => ({ success: true }),
     method: 'POST',
-    headers: withAuthToken(headers.json),
     url: paths.cancelOrder,
   }),
 
   createPaymentSession: httpResolver({
-    headers: withAuthToken({...headers.json}),
-    method: 'POST',
+    headers: withAuthToken(headers.json),
     enableCookies: true,
+    method: 'POST',
     secure: true,
     url: paths.gatewayPaymentSession,
   }),
@@ -59,6 +95,7 @@ export const mutations = {
   createPaymentTokens: httpResolver({
     data: ({ payments }) => payments,
     headers: withAuthToken(headers.json),
+    enableCookies: true,
     method: 'POST',
     url: paths.gatewayTokenizePayment,
   }),
@@ -69,6 +106,11 @@ export const mutations = {
       value,
     }),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'PUT',
     url: paths.orderFormCustomData,
   }),
@@ -78,9 +120,13 @@ export const mutations = {
       expectedOrderFormSections: ['items'],
       orderItems: items,
     }),
-    enableCookies: true,
-    method: 'POST',
     headers: withAuthToken(headers.json),
+    enableCookies: true,
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
+    method: 'POST',
     url: paths.updateItems,
   }),
 
@@ -89,7 +135,12 @@ export const mutations = {
       expectedOrderFormSections: ['items'],
       ignoreProfileData,
     }),
+    enableCookies: true,
     headers: withAuthToken(headers.json),
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'PATCH',
     url: paths.orderFormIgnoreProfile,
   }),
@@ -97,6 +148,11 @@ export const mutations = {
   updateOrderFormPayment: httpResolver({
     data: ({ payments }) => merge({ expectedOrderFormSections: ['items'] }, { payments }),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.orderFormPayment,
   }),
@@ -104,6 +160,11 @@ export const mutations = {
   updateOrderFormProfile: httpResolver({
     data: ({ fields }) => merge({ expectedOrderFormSections: ['items'] }, fields),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.orderFormProfile,
   }),
@@ -111,6 +172,11 @@ export const mutations = {
   updateOrderFormShipping: httpResolver({
     data: data => merge({ expectedOrderFormSections: ['items'] }, data),
     headers: withAuthToken(headers.json),
+    enableCookies: true,
+    merge: (bodyData, responseData) => ({
+      ...responseData,
+      cacheId: responseData.orderFormId
+    }),
     method: 'POST',
     url: paths.orderFormShipping,
   }),
