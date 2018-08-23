@@ -9,7 +9,7 @@
 #### Screenshots or example usage
 
 #### Types of changes
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Bug fix (a non-breaking change which fixes an issue)
+- [ ] New feature (a non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
 - [ ] Requires change to documentation, which has been updated accordingly.

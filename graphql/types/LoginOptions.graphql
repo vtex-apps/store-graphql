@@ -1,0 +1,16 @@
+type LoginOptions {
+  """ List of Social providers """
+  providers: [Provider],
+  """ Email and Password authentication """
+  classicAuthentication: Boolean,
+  """ Access key through email Code verification """
+  accessKeyAuthentication: Boolean
+}
+
+""" Describes an OAuth provider type. e.g.: Google, Facebook"""
+type Provider {
+  """ Provider Name. e.g.: Google, Facebook """
+  providerName: String,
+  """ The provider class. e.g.: google-plus, facebook """
+  className: String
+}

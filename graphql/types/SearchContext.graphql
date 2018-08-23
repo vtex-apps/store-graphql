@@ -1,0 +1,5 @@
+type SearchContext {
+  contextKey: String
+  brand: String
+  category: String
+}

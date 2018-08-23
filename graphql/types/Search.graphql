@@ -1,0 +1,7 @@
+type Search {
+  facets: Facets
+  products: [Product]
+  recordsFiltered: Int
+  titleTag: String
+  metaTagDescription: String
+}

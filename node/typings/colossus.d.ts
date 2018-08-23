@@ -1,5 +1,5 @@
 declare module 'colossus' {
-  import {Context as KoaContext} from 'koa'
+  import { Context as KoaContext } from 'koa'
 
   export interface IOContext {
     account: string
