@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Add similars data in `Recommendations` resolver.
 
+## [2.22.0] - 2018-08-23
+### Added
+- New `Logistics` type and resolvers.
+
+## [2.21.3] - 2018-08-23
+### Changed
+- Minor refact in session resolvers and add docs.
+
 ## [2.21.2] - 2018-08-23
 ### Fixed
 - Syntax error in `Catalog` resolver.
@@ -19,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Benefits resolver is now using only public endpoints.
 
 ## [2.21.0] - 2018-08-23
-### Added 
+### Added
 - Add `initializeSession`, `impersonate`, `depersonify` mutations to telemarketing app.
 
 ## [2.20.2] - 2018-08-22
@@ -32,9 +40,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.20.0] - 2018-08-15
 ### Added
-- Add `ClientProfile` in `OrderForm` type. 
+- Add `ClientProfile` in `OrderForm` type.
 
-### Changed 
+### Changed
 - Add `enableCookies: true` on checkout mutations.
 
 ## [2.19.1] - 2018-08-13
