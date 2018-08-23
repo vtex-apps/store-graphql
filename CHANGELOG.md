@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.21.3] - 2018-08-23
+### Fixed
+- Add similars data in `Recommendations` resolver.
+
 ## [2.21.2] - 2018-08-23
 ### Fixed
 - Syntax error in `Catalog` resolver.
