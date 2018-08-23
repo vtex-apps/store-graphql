@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.20.2",
+  "version": "2.21.1",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -92,6 +92,13 @@
       "attrs": {
         "host": "api.gocommerce.com",
         "path": "/{{account}}/search/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "{{account}}.vtexcommercestable.com.br",
+        "path": "/api/sessions/*"
       }
     },
     {
