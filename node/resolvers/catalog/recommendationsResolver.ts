@@ -4,14 +4,8 @@ import paths from '../paths'
 import {resolveLocalProductFields} from './fieldsResolver'
 import {withAuthToken} from '../headers'
 
-export const resolveView = async (ioContext, product) => {
-  const url = paths.crossSelling(ioContext.account, product.productId, 'whosawalsosaw')
-  const {data} = await axios.get(url, { headers: withAuthToken()(ioContext) })
-  return map(resolveLocalProductFields, data)
-}
-
-export const resolveBuy = async (ioContext, product) => {
-  const url = paths.crossSelling(ioContext.account, product.productId, 'whoboughtalsobought')
+export const resolveRecommendation = async (ioContext, product, type) => {
+  const url = paths.crossSelling(ioContext.account, product.productId, type)
   const {data} = await axios.get(url, { headers: withAuthToken()(ioContext) })
   return map(resolveLocalProductFields, data)
 }
