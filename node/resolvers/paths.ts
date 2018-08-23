@@ -96,7 +96,7 @@ const paths = {
     profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
   }),
 
-  logistics: account => ({
+  logisticsConfig: account => ({
     shipping: `http://${account}.vtexcommercestable.com.br/api/logistics/pub/shipping/configuration`
   })
 }
