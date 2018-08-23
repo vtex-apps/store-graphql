@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Benefits resolver is now using only public endpoints.
 
+## [2.21.0] - 2018-08-23
+### Added 
+- Add `initializeSession`, `impersonate`, `depersonify` mutations to telemarketing app.
+
 ## [2.20.2] - 2018-08-22
 ### Fixed
 - Throw specific error when the product is not found on product resolver in catalog.

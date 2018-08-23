@@ -46,8 +46,8 @@ const paths = {
   orderFormCustomData: (account, { orderFormId, appId, field }) => `${paths.orderForm(account)}/${orderFormId}/customData/${appId}/${field}`,
   addItem: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/items`,
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
-
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
+  changeToAnonymousUser: (account, { orderFormId }) => `http://${account}.vtexcommercestable.com.br/checkout/changeToAnonymousUser/${orderFormId}`,
 
   orders: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orders`,
   cancelOrder: (account, { orderFormId }) => `${paths.orders(account)}/${orderFormId}/user-cancel-request`,
@@ -70,6 +70,14 @@ const paths = {
   classicSignIn: (token, email, password) => `${paths.vtexId}/authentication/classic/validate?authenticationToken=${token}&login=${email}&password=${password}`,
   recoveryPassword: (token, email, password, code) => `${paths.vtexId}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${password}&accessKey=${code}`,
   oAuth: (authenticationToken, providerName) => `${paths.vtexId}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
+
+  /** Sessions API */
+  /** 
+   * The path session can initialize Session, impersonate and depersonify
+   * an user according to the body data that is passed to it.
+   */
+  session: account => `http://${account}.vtexcommercestable.com.br/api/sessions`,
+  getSession: account => `${paths.session(account)}?items=*`,
 
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
