@@ -1,6 +1,5 @@
 type Session {
   id: ID,
-  cartId: String,
   impersonate: Boolean,
   adminUserId: String,
   adminUserEmail: String,
