@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Add similars data in `Recommendations` resolver.
+
 ## [2.22.0] - 2018-08-23
 ### Added
 - New `Logistics` type and resolvers.
