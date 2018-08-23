@@ -13,5 +13,5 @@ type CustomerProfile {
   lastName: String,
   email: String,
   document: String,
-  phone: Int
+  phone: String
 }
