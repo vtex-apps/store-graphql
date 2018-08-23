@@ -6,6 +6,8 @@ import { mutations as profileMutations, queries as profileQueries, rootResolvers
 import { mutations as authMutations, queries as authQueries } from '../resolvers/auth'
 import { mutations as documentMutations, queries as documentQueries } from '../resolvers/document'
 import { mutations as sessionMutations } from '../resolvers/session'
+import { queries as logisticsQueries } from '../resolvers/logistics'
+
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
 Promise.config({ longStackTraces: true })
@@ -20,6 +22,7 @@ export const resolvers = {
     ...checkoutQueries,
     ...documentQueries,
     ...authQueries,
+    ...logisticsQueries
   },
   Mutation: {
     ...profileMutations,
