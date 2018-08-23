@@ -8,13 +8,7 @@ import ResolverError from '../../errors/resolverError'
 import { queries as benefitsQueries } from '../benefits'
 import { withAuthToken } from '../headers'
 import paths from '../paths'
-import {
-  resolveBrandFields,
-  resolveCategoryFields,
-  resolveFacetFields,
-  resolveProductFields,
-} from './fieldsResolver'
-import ResolverError from '../../errors/resolverError'
+import { resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields } from './fieldsResolver'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -54,7 +48,7 @@ export const rootResolvers = {
         : Promise.all(
             root.kitItems.map(async kitItem => {
               const url = paths.productBySku(ioContext.account, {
-                id: kitItem.itemId,
+                skuIds: [ kitItem.itemId ],
               })
               const { data: products } = await axios.get(url, {
                 headers: withAuthToken()(ioContext),
