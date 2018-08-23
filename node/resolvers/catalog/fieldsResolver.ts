@@ -1,8 +1,7 @@
 import { IOContext } from 'colossus'
 import { compose, juxt, last, map, omit, prop, split, toPairs, replace } from 'ramda'
 import * as slugify from 'slugify'
-
-import { resolveBuy, resolveView } from './recommendationsResolver'
+import {resolveRecommendation} from './recommendationsResolver'
 
 const knownNotPG = [
   'allSpecifications',
@@ -139,11 +138,15 @@ export const resolveProductFields = async (
   if (!fields.recommendations) {
     return resolvedProduct
   }
-  const [view, buy] = await Promise.all([
-    resolveView(ioContext, product),
-    resolveBuy(ioContext, product),
+
+  const [view, buy, similars] = await Promise.all([
+    resolveRecommendation(ioContext, product, 'whosawalsosaw'),
+    resolveRecommendation(ioContext, product, 'whoboughtalsobought'),
+    resolveRecommendation(ioContext, product, 'similars'),
   ])
-  return { ...resolvedProduct, recommendations: { buy, view } }
+
+  return {...resolvedProduct, recommendations: {buy, view, similars}}
+
 }
 
 export const resolveFacetFields = facets => {

@@ -81,6 +81,7 @@ type Seller {
 type Recommendation {
   buy: [Product]
   view: [Product]
+  similars: [Product]
 }
 
 type SKU {
