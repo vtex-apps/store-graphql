@@ -150,6 +150,9 @@ type Query {
     category: String,
     subcategory: String
   ): SearchContext
+
+  """ Get logistics information about the store """
+  logistics: LogisticsData
 }
 
 type Mutation {
