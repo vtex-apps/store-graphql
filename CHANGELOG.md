@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.22.2] - 2018-08-23
+### Changed
+- Added optional fields `Id` and `Slug` to the `Facets` type.
+
 ## [2.22.1] - 2018-08-23
 
 ### Fixed
