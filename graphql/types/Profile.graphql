@@ -1,16 +1,24 @@
 type Profile {
   """ email is used as cacheId """
   cacheId: ID
-  id: String
+  """ profile ID """
+  id: ID,
+  """ User first name """
+  firstName: String,
+  """ User last name """
+  lastName: String,
+  """ User email """
+  email: String,
+  """ Document identification. E.g. CPF, SSN, Driver License """
+  document: String,
+  """ User phone number """
+  phone: String
+  """ user ID """
   userId: String
-  firstName: String
-  lastName: String
   birthDate: String
   gender: String
   homePhone: String
   businessPhone: String
-  document: String
-  email: String
   address: [Address]
   tradeName: String
   corporateName: String
@@ -25,24 +33,20 @@ type ProfileCustomField {
   key: String
   value: String
 }
-
-input ProfileInput {
-  firstName: String
-  lastName: String
-  birthDate: String
-  gender: String
-  homePhone: String
-  businessPhone: String
-  document: String
-  tradeName: String
-  corporateName: String
-  corporateDocument: String
-  stateRegistration: String
-}
-
-input ProfileCustomFieldInput {
-  key: String
-  value: String
+""" Profile information that is receive in session """
+type SessionProfile {
+  """ profile ID """
+  id: ID,
+  """ User first name """
+  firstName: String,
+  """ User last name """
+  lastName: String,
+  """ User email """
+  email: String,
+  """ Document identification. E.g. CPF, SSN, Driver License """
+  document: String,
+  """ User phone number """
+  phone: String
 }
 
 type Address {
@@ -61,6 +65,32 @@ type Address {
   reference: String
   addressName: String
   addressType: String
+}
+
+input ProfileCustomFieldInput {
+  key: String
+  value: String
+}
+
+input ProfileInput {
+  """ User first name """
+  firstName: String,
+  """ User last name """
+  lastName: String,
+  """ User email """
+  email: String,
+  """ Document identification. E.g. CPF, SSN, Driver License """
+  document: String,
+  """ User phone number """
+  phone: String
+  birthDate: String
+  gender: String
+  homePhone: String
+  businessPhone: String
+  tradeName: String
+  corporateName: String
+  corporateDocument: String
+  stateRegistration: String
 }
 
 input AddressInput {

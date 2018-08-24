@@ -60,7 +60,6 @@ export const mutations = {
     config.headers.cookie = concat(config.headers.cookie, parseResponseCookies(headers))
 
     const session = await makeRequest(_, args, config, paths.getSession)
-
     config.response.set('Set-Cookie', prop('set-cookie', headers))
     return sessionFields(session.data)
   },
