@@ -1,17 +1,23 @@
+"""Informations about user Session"""
 type Session {
+  """ Session ID """
   id: ID,
-  impersonate: Boolean,
+  """ Id of admin logged in session"""
   adminUserId: String,
+  """ Email of Admin logged in session"""
   adminUserEmail: String,
-  profile: CustomerProfile
+  """ Check if this admin can impersonate a user"""
+  isImpersonated: Boolean,
+  """ Object with information about impersonate user"""
+  impersonate: ImpersonatedUser,
+  """ Profile information of session user """
+  profile: SessionProfile
 }
 
-type CustomerProfile {
-  isAuthenticatedAsCustomer: Boolean,
-  id: ID,
-  firstName: String,
-  lastName: String,
-  email: String,
-  document: String,
-  phone: String
+""" Basic information that is displayed when is a impersonated session """
+type ImpersonatedUser {
+  """ Id of impersonated customer """
+  storeUserId: String,
+  """ Email of impersonated customer """
+  storeUserEmail: String
 }

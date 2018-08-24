@@ -13,14 +13,21 @@ const profileFields = profile => ({
     phone: path(['phone', 'value'], profile)
 })
 
+const authenticationFields = impersonate => ({
+    storeUserId: path(['storeUserId', 'value'], impersonate),
+    storeUserEmail: path(['storeUserEmail', 'value'], impersonate),
+})
+
 export const sessionFields = session => {
     const { namespaces } = session
     return namespaces ? {
         id: session.id,
-        active: session.active,
-        impersonate: convertToBool(namespaces.impersonate.canImpersonate.value),
+        isImpersonated: convertToBool(namespaces.impersonate.canImpersonate.value),
         adminUserId: path(['adminUserId', 'value'], namespaces.authentication),
         adminUserEmail: path(['adminUserEmail', 'value'], namespaces.authentication),
+        impersonate: {
+            ...authenticationFields(namespaces.impersonate)
+        },
         profile: {
             ...profileFields(namespaces.profile)
         }
