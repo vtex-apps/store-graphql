@@ -16,7 +16,7 @@ type Profile {
   corporateName: String
   corporateDocument: String
   stateRegistration: String
-  payments: [PaymentData]
+  payments: [PaymentProfile]
   customFields: [ProfileCustomField]
 }
 
@@ -61,14 +61,6 @@ type Address {
   reference: String
   addressName: String
   addressType: String
-}
-
-type PaymentData {
-    id: String
-    paymentSystem: String,
-    paymentSystemName: String,
-    cardNumber: String,
-    address: Address
 }
 
 input AddressInput {
