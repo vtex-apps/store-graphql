@@ -13,6 +13,20 @@ type PaymentToken {
     paymentSystemName: String,
 }
 
+""" Payment data used by profile resolvers """
+type PaymentProfile {
+    """ Id representing this payment form"""
+    id: String
+    """ Id for the payment system related to this payment form"""
+    paymentSystem: String,
+    """ The name of the payment system """
+    paymentSystemName: String,
+    """ Last digits of the card this type represents (in the form ************9999)"""
+    cardNumber: String,
+    """ Billing address for this payment form (type definition in the Profile file)"""
+    address: Address
+}
+
 input PaymentInput {
     paymentSystem: String,
     cardHolder: String,

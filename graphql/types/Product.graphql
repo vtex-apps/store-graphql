@@ -1,11 +1,54 @@
 type Product {
+  """ Brand of the product """
+  brand: String
+  """ linkText is used as cacheId """
+  cacheId: ID
+  categoryId: ID
+  """ Categories of the product """
+  categories: [String]
+  """ Categories ids of the product """
+  categoriesIds: [String]
+  """ List of related products """
+  clusterHighlights: [ClusterHighlight]
+  productClusters: [ProductClusters]
+  """ Product description """
+  description: String
+  """ SKU objects of the product """
+  items: [SKU]
+  """ Product URL """
+  link: String
+  """ Product slug """
+  linkText: String
+  """ Product ID """
+  productId: ID
+  """ Product name """
+  productName: String
+  """ Array of product properties  """
+  properties: [Property]
+  """ Array of product properties group  """
+  propertyGroups: [PropertyGroup]
+  """ Product reference """
+  productReference: String
+  """ Title used by html tag"""
+  titleTag: String
+  """ Description used by html tag"""
+  metaTagDescription: String
+  """ Related Products """
+  recommendations: Recommendation
+  """ JSON specification of the product"""
+  jsonSpecifications: String
+  """ List of benefits associated with this product """
+  benefits: [Benefit]
+}
+
+type OnlyProduct {
   brand: String
   categoryId: ID
   categories: [String]
   categoriesIds: [String]
   clusterHighlights: [ClusterHighlight]
+  productClusters: [ProductClusters]
   description: String
-  items: [SKU]
   link: String
   linkText: String
   productId: ID
@@ -14,6 +57,12 @@ type Product {
   propertyGroups: [PropertyGroup]
   productReference: String
   recommendations: Recommendation
+  jsonSpecifications: String
+}
+
+type ProductClusters {
+  id: ID
+  name: String
 }
 
 type ClusterHighlight {
@@ -32,6 +81,7 @@ type Seller {
 type Recommendation {
   buy: [Product]
   view: [Product]
+  similars: [Product]
 }
 
 type SKU {
@@ -43,10 +93,18 @@ type SKU {
   referenceId: [Reference]
   measurementUnit: String
   unitMultiplier: Float
+  kitItems: [KitItem]
   images: [Image]
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
+}
+
+type KitItem {
+  itemId: ID
+  amount: Int
+  product: OnlyProduct
+  sku: SKU
 }
 
 type Attachment {

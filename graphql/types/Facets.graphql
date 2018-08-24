@@ -1,18 +1,21 @@
 type Facets {
-	Departments: [Facet]
-	Brands: [Facet]
-	SpecificationFilters: [Filter]
-	CategoriesTrees: [Facet]
+  Departments: [Facet]
+  Brands: [Facet]
+  SpecificationFilters: [Filter]
+  CategoriesTrees: [Facet]
+  PriceRanges: [Facet]
 }
 
 type Facet {
-	Quantity: Int
-	Name: String
-	Link: String
-	Children: [Facet]
+  Id: Int
+  Name: String!
+  Quantity: Int!
+  Link: String!
+  Slug: String
+  Children: [Facet]
 }
 
 type Filter {
-	name: String
-	facets: [Facet]
+  name: String
+  facets: [Facet]
 }
