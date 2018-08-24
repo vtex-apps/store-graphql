@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.23.2] - 2018-08-24
+### Fixed
+- *Hotfix* Fix impersonable property name.
+
 ## [2.23.1] - 2018-08-24
 ### Changed
 - Add `ImpersonatedUser` type in Session object. 
