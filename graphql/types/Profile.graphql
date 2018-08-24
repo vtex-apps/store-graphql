@@ -7,6 +7,8 @@ type Profile {
   firstName: String,
   """ User last name """
   lastName: String,
+  """ User's profile picture (only fetched if saved as 'profilePicture')"""
+  profilePicture: String,
   """ User email """
   email: String,
   """ Document identification. E.g. CPF, SSN, Driver License """
