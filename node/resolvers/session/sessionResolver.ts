@@ -22,7 +22,7 @@ export const sessionFields = session => {
     const { namespaces } = session
     return namespaces ? {
         id: session.id,
-        isImpersonated: convertToBool(namespaces.impersonate.canImpersonate.value),
+        impersonable: convertToBool(namespaces.impersonate.canImpersonate.value),
         adminUserId: path(['adminUserId', 'value'], namespaces.authentication),
         adminUserEmail: path(['adminUserEmail', 'value'], namespaces.authentication),
         impersonate: {
