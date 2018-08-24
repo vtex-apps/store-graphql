@@ -7,7 +7,7 @@ type Session {
   """ Email of Admin logged in session"""
   adminUserEmail: String,
   """ Check if this admin can impersonate a user"""
-  isImpersonated: Boolean,
+  impersonable: Boolean,
   """ Object with information about impersonate user"""
   impersonate: ImpersonatedUser,
   """ Profile information of session user """
