@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Fix `payments` to `transactions` in Order graphql.
+
 ## [2.23.0] - 2018-08-24
 ### Added
 - New `payments` field to profile.
