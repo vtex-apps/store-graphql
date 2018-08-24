@@ -212,25 +212,22 @@ export const queries = {
   },
 
   search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
-    const { map: mapParams, query, rest } = data
-    const facetsMap = mapParams
-      .split(',')
-      .slice(0, query.split('/').length)
-      .join(',')
-    const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
-    const facetsValue = query + '?map=' + facetsMap
-    const facetsValueWithRest = queryWithRest + '?map=' + mapParams
+    const { map: baseMapParams, query, rest, priceRange } = data
+    const baseQueryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
+
+    const mapParams = priceRange ? `${baseMapParams},priceFrom` : baseMapParams
+    const queryParams = priceRange
+      ? `${baseQueryWithRest}/${priceRange}`
+      : baseQueryWithRest
+    const facetsValueWithRest = queryParams + '?map=' + mapParams
+
+    console.log(facetsValueWithRest)
 
     const productsPromise = queries.products(
       _,
-      { ...data, query: queryWithRest },
+      { ...data, query: queryParams },
       { vtex: ioContext },
       info
-    )
-    const facetsPromise = queries.facets(
-      _,
-      { facets: facetsValue },
-      { vtex: ioContext }
     )
     const categoriesPromise = queries.categories(
       _,
@@ -239,29 +236,28 @@ export const queries = {
       },
       { vtex: ioContext }
     )
-    const facetsWithRestPromise = queries.facets(
+    const facetsPromise = queries.facets(
       _,
       { facets: facetsValueWithRest },
       { vtex: ioContext }
     )
 
-    const [products, facets, facetsWithRest, categories] = await Promise.all([
+    const [products, facets, categories] = await Promise.all([
       productsPromise,
       facetsPromise,
-      facetsWithRestPromise,
       categoriesPromise,
     ])
     const { titleTag, metaTagDescription } = findInTree(
       categories,
       query.split('/')
     )
-    const recordsFiltered = facetsWithRest.Departments.reduce(
+    const recordsFiltered = facets.Departments.reduce(
       (total, dept) => total + dept.Quantity,
       0
     )
 
     return {
-      facets: facetsWithRest,
+      facets,
       metaTagDescription,
       products,
       recordsFiltered,
