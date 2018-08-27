@@ -213,32 +213,25 @@ export const queries = {
 
   search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
     const { map: baseMapParams, query, rest, priceRange } = data
-    const baseQueryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
 
-    const mapParams = priceRange ? `${baseMapParams},priceFrom` : baseMapParams
-    const queryParams = priceRange
-      ? `${baseQueryWithRest}/${priceRange}`
-      : baseQueryWithRest
-    const facetsValueWithRest = queryParams + '?map=' + mapParams
+    const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
 
-    console.log(facetsValueWithRest)
+    const facetValues = queryWithRest + '?map=' + baseMapParams
 
     const productsPromise = queries.products(
       _,
-      { ...data, query: queryParams },
+      { ...data, query: queryWithRest },
       { vtex: ioContext },
       info
     )
     const categoriesPromise = queries.categories(
       _,
-      {
-        treeLevel: query.split('/').length,
-      },
+      { treeLevel: query.split('/').length },
       { vtex: ioContext }
     )
     const facetsPromise = queries.facets(
       _,
-      { facets: facetsValueWithRest },
+      { facets: facetValues },
       { vtex: ioContext }
     )
 
