@@ -111,41 +111,28 @@ export const mutations = {
       }).catch(returnOldOnNotChanged(oldData))
   },
 
-  updateProfilePicture: async (root, { file, field }, ctx, info) => {
+  updateProfilePicture: async (root, args, ctx, info) => {
+    const file = args.file
+    const field = args.field || 'profilePicture'
     const { vtex: { account, authToken }, request: { headers: { cookie } } } = ctx
     const { id } = await getClientData(account, authToken, cookie)
 
     // Should delete the field before uploading new profilePicture
     await makeRequest(paths.profile(account).profile(id), authToken, { [field]: '' }, 'PATCH')
+    await uploadAttachment({ acronym: 'CL', documentId: id, field, file }, ctx.vtex)
 
-    const { filename } = await uploadAttachment({
-      acronym: 'CL',
-      documentId: id,
-      field,
-      file
-    }, ctx.vtex)
-
-    return {
-      key: field,
-      value: filename
-    }
+    return await profileResolver(root, args, ctx)
   },
 
-  uploadProfilePicture: async (root, { file, field }, ctx, info) => {
+  uploadProfilePicture: async (root, args, ctx, info) => {
+    const file = args.file
+    const field = args.field || 'profilePicture'
     const { vtex: { account, authToken }, request: { headers: { cookie } } } = ctx
     const { id } = await getClientData(account, authToken, cookie)
 
-    const { filename } = await uploadAttachment({
-      acronym: 'CL',
-      documentId: id,
-      field,
-      file
-    }, ctx.vtex)
+    await uploadAttachment({ acronym: 'CL', documentId: id, field, file }, ctx.vtex)
 
-    return {
-      key: field,
-      value: filename
-    }
+    return await profileResolver(root, args, ctx)
   }
 }
 
