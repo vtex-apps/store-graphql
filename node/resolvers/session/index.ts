@@ -39,7 +39,7 @@ const impersonateData = email => {
   }
 }
 
-// Disclaimer: These queries and mutations assume that vtex_session is passing in cookies.
+// Disclaimer: These queries and mutations assume that vtex_session was passed in cookies.
 export const queries = {
   /**
    * Get user session
