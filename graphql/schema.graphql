@@ -153,6 +153,9 @@ type Query {
 
   """ Get logistics information about the store """
   logistics: LogisticsData
+  
+  """ Get profile information to session users """
+  getSession: Session @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
@@ -249,9 +252,6 @@ type Mutation {
 
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
-
-  """ Initialize Session to users with telemarketing profile access """
-  initializeSession: Session
 
   """ Impersonate a customer """
   impersonate(
