@@ -3,36 +3,51 @@ type Profile {
   cacheId: ID
   """ profile ID """
   id: ID,
-  """ User first name """
+  """ User's first name """
   firstName: String,
-  """ User last name """
+  """ User's last name """
   lastName: String,
   """ User's profile picture (only fetched if saved as 'profilePicture')"""
   profilePicture: String,
-  """ User email """
+  """ User's email """
   email: String,
   """ Document identification. E.g. CPF, SSN, Driver License """
   document: String,
-  """ User phone number """
+  """ User's phone number """
   phone: String
-  """ user ID """
+  """ User's ID """
   userId: String
+  """ User's birth date """
   birthDate: String
+  """ User's gender (plain unvalidated string) """
   gender: String
+  """ User' personal phone """
   homePhone: String
+  """ User's business phone """
   businessPhone: String
+  """ Collection of user's address """
   address: [Address]
+  """ User's company trade name """
   tradeName: String
+  """ User's company corporate name """
   corporateName: String
+  """ User's company corporate document (e.g. CNPJ)"""
   corporateDocument: String
+  """ User's company state registration """
   stateRegistration: String
+  """ Collection of user's payment data """
   payments: [PaymentProfile]
+  """ Other fields to query """
   customFields: [ProfileCustomField]
 }
 
+""" Custom fields to add to query """
 type ProfileCustomField {
+  """ Id used for caching """
   cacheId: ID
+  """ Name of the custom field """
   key: String
+  """ Value of the custom field """
   value: String
 }
 """ Profile information that is receive in session """
@@ -75,23 +90,31 @@ input ProfileCustomFieldInput {
 }
 
 input ProfileInput {
-  """ User first name """
+  """ User's first name """
   firstName: String,
-  """ User last name """
+  """ User's last name """
   lastName: String,
-  """ User email """
+  """ User's email """
   email: String,
   """ Document identification. E.g. CPF, SSN, Driver License """
   document: String,
-  """ User phone number """
+  """ User's phone number """
   phone: String
+  """ User's birth date """
   birthDate: String
+  """ User's gender (plain unvalidated string) """
   gender: String
+  """ User' personal phone """
   homePhone: String
+  """ User's business phone """
   businessPhone: String
+  """ User's company trade name """
   tradeName: String
+  """ User's company corporate name """
   corporateName: String
+  """ User's company corporate document (e.g. CNPJ)"""
   corporateDocument: String
+  """ User's company state registration """
   stateRegistration: String
 }
 
