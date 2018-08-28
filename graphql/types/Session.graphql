@@ -16,8 +16,6 @@ type Session {
 
 """ Basic information that is displayed when is a impersonated session """
 type ImpersonatedUser {
-  """ Id of impersonated customer """
-  storeUserId: String,
-  """ Email of impersonated customer """
-  storeUserEmail: String
+  """ Profile information of impersonated user """
+  profile: SessionProfile
 }
