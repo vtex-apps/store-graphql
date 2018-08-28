@@ -235,6 +235,18 @@ type Mutation {
     code: String!
     ): String
 
+  """ Change password using email and old password """
+  setPassword(
+    """ User's email """
+    email: String!,
+    """ User's current password """
+    currentPassword: String!,
+    """ User's new password """
+    newPassword: String!,
+    """ Your app's identification to help VTEX ID track requests """
+    vtexIdVersion: String
+  ): String
+
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
 
