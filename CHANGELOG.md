@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `setPassword` mutation.
 
 ## [2.23.3] - 2018-08-28
 ### Removed
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.23.1] - 2018-08-24
 ### Changed
-- Add `ImpersonatedUser` type in Session object. 
+- Add `ImpersonatedUser` type in Session object.
 
 ## [2.23.0] - 2018-08-24
 ### Added
