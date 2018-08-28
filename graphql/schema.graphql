@@ -236,7 +236,7 @@ type Mutation {
     ): String
 
   """ Change password using email and old password """
-  setPassword(
+  redefinePassword(
     """ User's email """
     email: String!,
     """ User's current password """
@@ -260,7 +260,7 @@ type Mutation {
     """ orderFormId that will be used to update clientProfileData in orderForm """
     orderFormId: String!
   ): Session
-  
+
   """ Depersonify a customer """
   depersonify(
     """ orderFormId that will be used to remove clientProfileData in orderForm """

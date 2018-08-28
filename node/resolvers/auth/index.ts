@@ -129,8 +129,8 @@ export const mutations = {
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
     */
-   setPassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
-    if (!checkPasswordFormat(args.newPassword)) {
+  redefinePassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    if (!checkPasswordFormat(args.newPassword) || !checkPasswordFormat(args.currentPassword)) {
       throw new ResolverError('Password does not follow specific format', 400)
     }
 
@@ -138,7 +138,7 @@ export const mutations = {
     const escapedEmail = encodeURIComponent(args.email)
     const escapedPass = encodeURIComponent(args.currentPassword)
     const escapedNewPass = encodeURIComponent(args.newPassword)
-    const passPath = paths.setPassword(VtexSessionToken, escapedEmail, escapedPass, escapedNewPass)
+    const passPath = paths.redefinePassword(VtexSessionToken, escapedEmail, escapedPass, escapedNewPass)
 
     const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, args.vtexIdVersion)
 
