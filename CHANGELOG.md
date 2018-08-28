@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.23.3] - 2018-08-28
+### Removed
+- Unused additional query to facets api inside the search resolver.
+
 ## [2.23.2] - 2018-08-24
 ### Fixed
 - *Hotfix* Fix impersonable property name.
