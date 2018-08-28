@@ -212,7 +212,7 @@ export const queries = {
   },
 
   search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
-    const { map: mapParams, query, rest, priceRange } = data
+    const { map: mapParams, query, rest } = data
 
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
 
