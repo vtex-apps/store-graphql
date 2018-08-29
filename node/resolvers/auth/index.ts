@@ -5,14 +5,14 @@ import { withAuthToken, headers } from '../headers'
 import ResolverError from '../../errors/resolverError'
 
 
-const makeRequest = async (ctx, url) => {
-  const configRequest = async (ctx, url) => ({
-    headers: withAuthToken(headers.profile)(ctx),
+const makeRequest = async (ctx, url, vtexIdVersion='store-graphql') => {
+  const configRequest = async (ctx, url, vtexIdVersion) => ({
+    headers: withAuthToken({...headers.profile, 'vtex-ui-id-version': vtexIdVersion})(ctx),
     enableCookies: true,
     method: 'GET',
     url,
   })
-  return await http.request(await configRequest(ctx, url))
+  return await http.request(await configRequest(ctx, url, vtexIdVersion))
 }
 
 const getSessionToken = async (ioContext, redirectUrl?) => {
@@ -39,8 +39,8 @@ const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
   }
   return authStatus
 }
-/** Password must have at least eight characters with at least one number, 
- * one lowercase and one uppercase letter 
+/** Password must have at least eight characters with at least one number,
+ * one lowercase and one uppercase letter
 */
 const checkPasswordFormat = password => {
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
@@ -54,10 +54,10 @@ export const queries = {
    */
   loginOptions: async (_, args, { vtex: ioContext, response }) => {
     const { data: {
-        oauthProviders, 
-        showClassicAuthentication, 
-        showAccessKeyAuthentication 
-      } } = await makeRequest(ioContext, 
+        oauthProviders,
+        showClassicAuthentication,
+        showAccessKeyAuthentication
+      } } = await makeRequest(ioContext,
       paths.sessionToken(ioContext.account, ioContext.account)
     )
     return {
@@ -71,7 +71,7 @@ export const queries = {
 export const mutations = {
   /**
    * Send access key to user email and set VtexSessionToken in response cookies
-   * @return Boolean 
+   * @return Boolean
    */
   sendEmailVerification: async (_, args, { vtex: ioContext, response }) => {
     // VtexSessionToken is valid for 10 minutes
@@ -87,7 +87,7 @@ export const mutations = {
     return true
   },
   /**
-   * Get email and access code in args and set VtexIdAuthCookie in response cookies. 
+   * Get email and access code in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
    */
   accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
@@ -99,7 +99,7 @@ export const mutations = {
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
   /**
-   * Get email and password in args and set VtexIdAuthCookie in response cookies. 
+   * Get email and password in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
    */
   classicSignIn: async (_, args, { vtex: ioContext, response }) => {
@@ -111,7 +111,7 @@ export const mutations = {
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
-  /** Set a new password for an user. 
+  /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
     */
   recoveryPassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
@@ -126,7 +126,32 @@ export const mutations = {
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
-  /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation. 
+  /** Set a new password for an user.
+   * @return authStatus that show if password was created and user is logged or something wrong happens.
+    */
+  redefinePassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+    if (!checkPasswordFormat(args.newPassword) || !checkPasswordFormat(args.currentPassword)) {
+      throw new ResolverError('Password does not follow specific format', 400)
+    }
+
+    const VtexSessionToken = await getSessionToken(ioContext)
+    const escapedEmail = encodeURIComponent(args.email)
+    const escapedPass = encodeURIComponent(args.currentPassword)
+    const escapedNewPass = encodeURIComponent(args.newPassword)
+    const passPath = paths.redefinePassword(VtexSessionToken, escapedEmail, escapedPass, escapedNewPass)
+
+    const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, args.vtexIdVersion)
+
+    if(authStatus === 'WrongCredentials') {
+      throw new ResolverError('Wrong credentials.', 400)
+    }
+    else if(authStatus === 'BlockedUser') {
+      throw new ResolverError('You were blocked by VTEX ID.', 400)
+    }
+    return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
+  },
+
+  /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation.
    * 13-06-2018 - @brunojdo */
   logout: async (_, args, { vtex: ioContext, response }) => {
     response.set('Set-Cookie',
