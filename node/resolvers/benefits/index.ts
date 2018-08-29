@@ -59,11 +59,20 @@ const resolveBenefitsData = async (benefitsData, { vtex: ioContext }) => {
               const discount = effectsParameters[index].value
               const products = await resolveProducts(skuIds, ioContext)
 
-              return products.map(product => ({
-                discount,
-                benefitProduct: product,
-                minQuantity: minimumQuantity,
-              }))
+              return skuIds.map(skuId => {
+                for (let product of products) {
+                  for (let item of product.items) {
+                    if (item.itemId === skuId) {
+                      const benefitProduct = { ...product, items: [item] }
+                      return {
+                        discount,
+                        benefitProduct,
+                        minQuantity: minimumQuantity,
+                      }
+                    }
+                  }
+                }
+              })
             })
           )
 
