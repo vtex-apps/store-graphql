@@ -41,6 +41,9 @@ const profile = (ctx, {customFields}) => async (data) => {
   if (profileData && profileData.id) {
     profileData.customFields = pickCustomFieldsFromData(customFields, profileData)
 
+    profileData.profilePicture = profileData.profilePicture
+      && `//api.vtex.com/${ctx.account}/dataentities/CL/documents/${profileData.id}/profilePicture/attachments/${profileData.profilePicture}`
+
     const addressURL = paths.profile(ctx.account).filterAddress(profileData.id)
     const address = profileData && await http.get(addressURL, config).then(prop('data'))
 

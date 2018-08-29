@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.25.0] - 2018-08-29
+### Added
+- `profilePicture` query
+
+### Changed
+- Arguments and return type of `uploadProfilePicture` mutation and its `update` sibling
+
 ## [2.24.0] - 2018-08-29
 ### Added
 - `setPassword` mutation.

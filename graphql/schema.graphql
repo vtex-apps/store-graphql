@@ -171,16 +171,16 @@ type Mutation {
   updateProfilePicture(
     """ File being uploaded """
     file: Upload!,
-    """ Attachment's field name (ex. ProfilePicture) """
-    field: String!
-  ): ProfileCustomField
+    """ Attachment's field name (default: profilePicture) """
+    field: String
+  ): Profile
   """ Uploads the Profile Picture by appending to the existing ones """
   uploadProfilePicture(
     """ File being uploaded """
     file: Upload!,
-    """ Attachment's field name (ex. ProfilePicture) """
-    field: String!
-  ): ProfileCustomField
+    """ Attachment's field name (default: profilePicture) """
+    field: String
+  ): Profile
 
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
