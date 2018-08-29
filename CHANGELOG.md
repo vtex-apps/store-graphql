@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `profilePicture` query
+
+### Changed
+- Arguments and return type of `uploadProfilePicture` mutation and its `update` sibling
 
 ## [2.24.0] - 2018-08-29
 ### Added
