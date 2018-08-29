@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.24.0] - 2018-08-29
+### Added
+- `setPassword` mutation.
+
 ## [2.23.3] - 2018-08-28
 ### Removed
 - Unused additional query to facets api inside the search resolver.
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.23.1] - 2018-08-24
 ### Changed
-- Add `ImpersonatedUser` type in Session object. 
+- Add `ImpersonatedUser` type in Session object.
 
 ## [2.23.0] - 2018-08-24
 ### Added
