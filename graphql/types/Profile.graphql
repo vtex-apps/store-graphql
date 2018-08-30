@@ -27,6 +27,8 @@ type Profile {
   businessPhone: String
   """ Collection of user's address """
   address: [Address]
+  """ Whether the user is a corporation or not """
+  isCorporate: Boolean
   """ User's company trade name """
   tradeName: String
   """ User's company corporate name """

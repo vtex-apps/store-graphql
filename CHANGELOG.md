@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.25.2] - 2018-08-30
+### Added
+- `isCorporate` field to Profile
+
 ## [2.25.1] - 2018-08-30
 ### Added
 - List of SKU Item IDs in the Benefit Resolver to indicate what SKU Items are taking part in the benefit.
