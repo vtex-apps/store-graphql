@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { flatten } from 'ramda'
+import { flatten, indexOf } from 'ramda'
 
 import { resolveLocalProductFields } from '../catalog/fieldsResolver'
 import { queries as checkoutQueries } from '../checkout'
@@ -59,11 +59,22 @@ const resolveBenefitsData = async (benefitsData, { vtex: ioContext }) => {
               const discount = effectsParameters[index].value
               const products = await resolveProducts(skuIds, ioContext)
 
-              return products.map(product => ({
-                discount,
-                benefitProduct: product,
-                minQuantity: minimumQuantity,
-              }))
+              return products.map(product => {
+                let benefitSKUIds = []
+                
+                product.items.map(item => {
+                  if (indexOf(item.itemId, skuIds) > -1) {
+                    benefitSKUIds.push(item.itemId)
+                  }
+                })
+
+                return {
+                  discount,
+                  benefitSKUIds,
+                  benefitProduct: product,
+                  minQuantity: minimumQuantity,
+                }
+              })
             })
           )
 
