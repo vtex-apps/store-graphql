@@ -118,6 +118,8 @@ input ProfileInput {
   corporateDocument: String
   """ User's company state registration """
   stateRegistration: String
+  """ Whether the user is a corporation or not """
+  isCorporate: Boolean
 }
 
 input AddressInput {

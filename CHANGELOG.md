@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.25.3] - 2018-08-31
+### Added
+- `isCorporate` field to ProfileInput
+
 ## [2.25.2] - 2018-08-30
 ### Added
 - `isCorporate` field to Profile
