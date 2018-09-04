@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.25.4] - 2018-09-04
+### Fixed
+- Fix `/start` path of VTEX ID API. 
+### Changed
+- Refact the auth mutations to make `POST` instead `GET` requests in API.
+
 ## [2.25.3] - 2018-08-31
 ### Added
 - `isCorporate` field to ProfileInput
