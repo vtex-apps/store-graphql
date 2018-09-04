@@ -5,18 +5,18 @@ import { withAuthToken, headers } from '../headers'
 import ResolverError from '../../errors/resolverError'
 
 
-const makeRequest = async (ctx, url, vtexIdVersion='store-graphql') => {
+const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql') => {
   const configRequest = async (ctx, url, vtexIdVersion) => ({
     headers: withAuthToken({...headers.profile, 'vtex-ui-id-version': vtexIdVersion})(ctx),
     enableCookies: true,
-    method: 'GET',
+    method,
     url,
   })
   return await http.request(await configRequest(ctx, url, vtexIdVersion))
 }
 
 const getSessionToken = async (ioContext, redirectUrl?) => {
-  const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl))
+  const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl), 'GET')
   if (!data.authenticationToken) {
     throw new ResolverError(`ERROR ${data}`, status)
   }
@@ -58,7 +58,7 @@ export const queries = {
         showClassicAuthentication,
         showAccessKeyAuthentication
       } } = await makeRequest(ioContext,
-      paths.sessionToken(ioContext.account, ioContext.account)
+      paths.sessionToken(ioContext.account, ioContext.account), 'GET'
     )
     return {
       providers: oauthProviders,
