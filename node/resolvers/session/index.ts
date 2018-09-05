@@ -60,16 +60,12 @@ export const mutations = {
   impersonate: async (_, args, config) => {
     await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
 
-    const { data } = await makeRequest(_, args, config, paths.getSession)
-
-    const { profile } = merge({ expectedOrderFormSections: ['items'] }, sessionFields(data))
-    await makeRequest(_, args, config, paths.orderFormProfile, profile, 'POST')
-
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, args.email, {
       path: '/',
       maxAge: VTEXID_EXPIRES,
       encode: identity
     }))
+    const { data } = await makeRequest(_, args, config, paths.getSession)
     return sessionFields(data)
   },
 
@@ -79,7 +75,6 @@ export const mutations = {
    */
   depersonify: async (_, args, config) => {
     await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
-    await makeRequest(_, args, config, paths.changeToAnonymousUser)
 
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, '', {
       path: '/',
