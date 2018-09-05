@@ -153,6 +153,9 @@ type Query {
 
   """ Get logistics information about the store """
   logistics: LogisticsData
+  
+  """ Get profile information to session users """
+  getSession: Session @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
@@ -250,22 +253,14 @@ type Mutation {
   """ Invalidate VtexIdclientAutCookie """
   logout: Boolean
 
-  """ Initialize Session to users with telemarketing profile access """
-  initializeSession: Session
-
   """ Impersonate a customer """
   impersonate(
     """ The email which will be used to impersonate a user """
     email: String!,
-    """ orderFormId that will be used to update clientProfileData in orderForm """
-    orderFormId: String!
   ): Session
 
   """ Depersonify a customer """
-  depersonify(
-    """ orderFormId that will be used to remove clientProfileData in orderForm """
-    orderFormId: String!
-  ): Boolean
+  depersonify: Boolean
 
   """ Document """
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse

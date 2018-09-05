@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.26.0] - 2018-09-05
+### Added
+- Add session query and remove initializeSession mutation.
+
 ## [2.25.4] - 2018-09-04
 ### Fixed
 - Fix `/start` path of VTEX ID API. 
