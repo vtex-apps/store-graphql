@@ -5,7 +5,7 @@ import { mutations as checkoutMutations, queries as checkoutQueries } from '../r
 import { mutations as profileMutations, queries as profileQueries, rootResolvers as profileRootResolvers } from '../resolvers/profile'
 import { mutations as authMutations, queries as authQueries } from '../resolvers/auth'
 import { mutations as documentMutations, queries as documentQueries } from '../resolvers/document'
-import { mutations as sessionMutations } from '../resolvers/session'
+import { mutations as sessionMutations, queries as sessionQueries } from '../resolvers/session'
 import { queries as logisticsQueries } from '../resolvers/logistics'
 
 // tslint:disable-next-line:no-var-requires
@@ -22,7 +22,8 @@ export const resolvers = {
     ...checkoutQueries,
     ...documentQueries,
     ...authQueries,
-    ...logisticsQueries
+    ...logisticsQueries,
+    ...sessionQueries
   },
   Mutation: {
     ...profileMutations,
