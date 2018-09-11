@@ -6,7 +6,6 @@
     "co-body": "^5.1.1",
     "cookie": "^0.3.1",
     "form-data": "^2.3.2",
-    "graphql-fields": "^1.0.2",
     "node-fetch": "^2.1.2",
     "ramda": "^0.24.1",
     "slugify": "^1.2.6",

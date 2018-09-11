@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { flatten, indexOf } from 'ramda'
+import { flatten, indexOf, path, prop } from 'ramda'
 
-import { resolveLocalProductFields } from '../catalog/fieldsResolver'
+// import { resolveLocalProductFields } from '../catalog/fieldsResolver'
 import { queries as checkoutQueries } from '../checkout'
 import { withAuthToken } from '../headers'
 import paths from '../paths'
@@ -17,82 +17,52 @@ const DEFAULT_QUANTITY = '1'
  * @param skuIds Array of SKU Ids which will be used to retrieve all the products that each SKU belongs.
  * @param ioContext Helper object which holds the account and the authentication headers.
  */
-const resolveProducts = async (skuIds, ioContext) => {
-  const requestUrl = paths.productBySku(ioContext.account, { skuIds })
-  const { data: products = [] } = await axios.get(requestUrl, {
-    headers: withAuthToken()(ioContext),
-  })
-  return await Promise.all(
-    products.map(product => resolveLocalProductFields(product))
-  )
-}
+const resolveProducts = async (skuIds, ioContext) => axios.get(
+  paths.productBySku(ioContext.account, { skuIds }),
+  {headers: withAuthToken()(ioContext),}
+).then(prop('data'))
 
-/**
- * Receives an array of Rates and Benefits data and returns an Array of Benefits.
- *
- * @param benefitsData Array of Rates and Benefits data.
- * @param ioContext Helper object which holds the account and the authentication headers.
- */
-const resolveBenefitsData = async (benefitsData, { vtex: ioContext }) => {
-  let resolvedBenefits = []
+export const fieldResolvers = {
+  Benefit: {
+    items: async (benefit, _, ctx) => {
+      const { teaserType, conditions, effects } = benefit
 
-  if (benefitsData.ratesAndBenefitsData) {
-    const {
-      ratesAndBenefitsData: { teaser: benefits = [] },
-    } = benefitsData
+      if (teaserType === CATALOG) {
+        const {
+          parameters: conditionsParameters,
+          minimumQuantity = parseInt(DEFAULT_QUANTITY),
+        } = conditions
 
-    resolvedBenefits = await Promise.all(
-      benefits.map(async benefit => {
-        const { id, featured, name, teaserType, conditions, effects } = benefit
+        const { parameters: effectsParameters } = effects
 
-        if (teaserType === CATALOG) {
-          const {
-            parameters: conditionsParameters,
-            minimumQuantity = parseInt(DEFAULT_QUANTITY),
-          } = conditions
+        const items = await Promise.all(
+          conditionsParameters.map(async (conditionsParameter, index) => {
+            const skuIds = conditionsParameter.value.split(SKU_SEPARATOR)
+            const discount = effectsParameters[index].value
+            const products = await resolveProducts(skuIds, ctx.vtex)
 
-          const { parameters: effectsParameters } = effects
+            return products.map(product => {
+              const benefitSKUIds = []
 
-          const benefitProducts = await Promise.all(
-            conditionsParameters.map(async (conditionsParameter, index) => {
-              const skuIds = conditionsParameter.value.split(SKU_SEPARATOR)
-              const discount = effectsParameters[index].value
-              const products = await resolveProducts(skuIds, ioContext)
-
-              return products.map(product => {
-                let benefitSKUIds = []
-                
-                product.items.map(item => {
-                  if (indexOf(item.itemId, skuIds) > -1) {
-                    benefitSKUIds.push(item.itemId)
-                  }
-                })
-
-                return {
-                  discount,
-                  benefitSKUIds,
-                  benefitProduct: product,
-                  minQuantity: minimumQuantity,
+              product.items.map(item => {
+                if (indexOf(item.itemId, skuIds) > -1) {
+                  benefitSKUIds.push(item.itemId)
                 }
               })
+
+              return {
+                benefitProduct: product,
+                benefitSKUIds,
+                discount,
+                minQuantity: minimumQuantity,
+              }
             })
-          )
-
-          const products = flatten(benefitProducts)
-
-          return {
-            id,
-            featured,
-            name,
-            teaserType,
-            items: products,
-          }
-        }
-      })
-    )
+          })
+        )
+        return flatten(items)
+      }
+    }
   }
-
-  return resolvedBenefits
 }
 
 export const queries = {
@@ -114,6 +84,6 @@ export const queries = {
           ],
     }
     const benefitsData = await checkoutQueries.shipping(_, requestBody, config)
-    return await resolveBenefitsData(benefitsData, config)
+    return path(['ratesAndBenefitsData', 'teaser'], benefitsData) || []
   },
 }
