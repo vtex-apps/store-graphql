@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Autocomplete working for GoCommerce
 
 ## [2.27.0] - 2018-09-12
 ### Fixed
@@ -20,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.25.4] - 2018-09-04
 ### Fixed
-- Fix `/start` path of VTEX ID API. 
+- Fix `/start` path of VTEX ID API.
 ### Changed
 - Refact the auth mutations to make `POST` instead `GET` requests in API.
 
