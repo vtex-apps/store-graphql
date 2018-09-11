@@ -1,11 +1,15 @@
 import { join } from 'ramda'
 
+const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
+
 const paths = {
+
+  platformHost: account => `${isPlatformGC(account) ? `http://api.gocommerce.com/${account}` : `http://${account}.vtexcommercestable.com.br`}`,
 
   /** Catalog API
    * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
   */
-  catalog: account => `${account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0 ? `http://api.gocommerce.com/${account}/search` : `http://${account}.vtexcommercestable.com.br/api/catalog_system`}`,
+  catalog: account => `${paths.platformHost(account)}${isPlatformGC(account) ? `/search` : `/api/catalog_system`}`,
 
   product: (account, { slug }) => `${paths.catalog(account)}/pub/products/search/${slug}/p`,
   productByEan: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_Ean=${id}`,
@@ -59,7 +63,7 @@ const paths = {
   gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
   gatewayTokenizePayment: (account, { sessionId }) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
-  autocomplete: (account, { maxRows, searchTerm }) => `http://portal.vtexcommercestable.com.br/buscaautocomplete/?an=${account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+  autocomplete: (account, { maxRows, searchTerm }) => `${paths.platformHost(account)}${isPlatformGC(account) ? `/search/buscaautocomplete` : `/buscaautocomplete`}/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 
   /** VTEX ID API */
   vtexId: `http://vtexid.vtex.com.br/api/vtexid/pub`,
