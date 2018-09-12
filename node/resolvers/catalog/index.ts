@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { ColossusContext } from 'colossus'
-import { compose, equals, find, head, map, prop, split, test } from 'ramda'
+import { compose, equals, find, head, last, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
-
 import ResolverError from '../../errors/resolverError'
 
 import { withAuthToken } from '../headers'
@@ -33,9 +32,12 @@ const extractSlug = item => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
+const lastSegment = compose<string, string[], string>(last, split('/'))
+
 function findInTree(tree, values, index = 0) {
   for (const node of tree) {
-    if (node.slug.toUpperCase() === values[index].toUpperCase()) {
+    const slug = lastSegment(node.url)
+    if (slug.toUpperCase() === values[index].toUpperCase()) {
       if (index === values.length - 1) {
         return node
       }
@@ -152,7 +154,7 @@ export const queries = {
       facetsPromise,
       categoriesPromise,
     ])
-    const { titleTag, metaTagDescription } = findInTree(
+    const { Title: titleTag, MetaTagDescription: metaTagDescription } = findInTree(
       categories,
       query.split('/')
     )
