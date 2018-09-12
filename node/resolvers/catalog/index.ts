@@ -1,14 +1,18 @@
 import axios from 'axios'
 import { ColossusContext } from 'colossus'
-import graphqlFields from 'graphql-fields'
-import { compose, equals, find, head, map, prop, split, test } from 'ramda'
+import { compose, equals, find, head, last, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
-
 import ResolverError from '../../errors/resolverError'
-import { queries as benefitsQueries } from '../benefits'
+
 import { withAuthToken } from '../headers'
 import paths from '../paths'
-import { resolveBrandFields, resolveCategoryFields, resolveFacetFields, resolveProductFields } from './fieldsResolver'
+
+import {resolvers as brandResolvers} from './brand'
+import {resolvers as categoryResolvers} from './category'
+import {resolvers as facetsResolvers} from './facets'
+import {resolvers as productResolvers} from './product'
+import {resolvers as recommendationResolvers} from './recommendation'
+import {resolvers as skuResolvers} from './sku'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -28,9 +32,12 @@ const extractSlug = item => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
+const lastSegment = compose<string, string[], string>(last, split('/'))
+
 function findInTree(tree, values, index = 0) {
   for (const node of tree) {
-    if (node.slug.toUpperCase() === values[index].toUpperCase()) {
+    const slug = lastSegment(node.url)
+    if (slug.toUpperCase() === values[index].toUpperCase()) {
       if (index === values.length - 1) {
         return node
       }
@@ -40,35 +47,19 @@ function findInTree(tree, values, index = 0) {
   return {}
 }
 
-export const rootResolvers = {
-  SKU: {
-    kitItems: (root, _, { vtex: ioContext }: ColossusContext) => {
-      return !root.kitItems
-        ? []
-        : Promise.all(
-            root.kitItems.map(async kitItem => {
-              const url = paths.productBySku(ioContext.account, {
-                skuIds: [kitItem.itemId],
-              })
-              const { data: products } = await axios.get(url, {
-                headers: withAuthToken()(ioContext),
-              })
-              const { items: skus, ...product } = head(products) || {}
-              const sku = find(
-                ({ itemId }) => itemId === kitItem.itemId,
-                skus || []
-              )
-              return { ...kitItem, product, sku }
-            })
-          )
-    },
-  },
+export const fieldResolvers = {
+  ...brandResolvers,
+  ...categoryResolvers,
+  ...facetsResolvers,
+  ...productResolvers,
+  ...recommendationResolvers,
+  ...skuResolvers,
 }
 
 export const queries = {
   autocomplete: async (_, args, { vtex: ioContext }: ColossusContext) => {
     const url = paths.autocomplete(ioContext.account, args)
-    const { data } = await axios.get(url, {
+    const { data: {itemsReturned} } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
     return {
@@ -78,169 +69,92 @@ export const queries = {
           ...item,
           slug: extractSlug(item),
         }),
-        data.itemsReturned
+        itemsReturned
       ),
     }
   },
 
-  facets: async (_, data, { vtex: ioContext }: ColossusContext) => {
-    const url = paths.facets(ioContext.account, data)
-    const { data: facets } = await axios.get(url, {
-      headers: withAuthToken()(ioContext),
-    })
-    const resolvedFacets = resolveFacetFields(facets)
+  facets: async (_, args, { vtex: ioContext }: ColossusContext) => axios.get(
+    paths.facets(ioContext.account, args),
+    {headers: withAuthToken()(ioContext),}
+  ).then(prop('data')),
 
-    return resolvedFacets
-  },
-
-  product: async (_, data, config, info) => {
-    const { vtex: ioContext }: ColossusContext = config
-    const url = paths.product(ioContext.account, data)
+  product: async (_, args, ctx, info) => {
+    const { vtex: ioContext, vtex: {account} }: ColossusContext = ctx
+    const url = paths.product(account, args)
     const { data: product } = await axios.get(url, {
       headers: withAuthToken()(ioContext),
     })
 
     if (product.length > 0) {
-      const resolvedProduct = await resolveProductFields(
-        ioContext,
-        head(product),
-        graphqlFields(info)
-      )
-      const resolvedBenefits = await benefitsQueries.benefits(
-        _,
-        { id: resolvedProduct.productId },
-        config
-      )
-
-      return { ...resolvedProduct, benefits: resolvedBenefits }
+      return head(product)
     }
 
     throw new ResolverError(
-      `No product was found with the correspondent slug '${data.slug}'`,
+      `No product was found with the correspondent slug '${args.slug}'`,
       404
     )
   },
 
-  products: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
-    const queryTerm = data.query
+  products: async (_, args, { vtex: ioContext }: ColossusContext) => {
+    const queryTerm = args.query
     if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
         `The query term: '${queryTerm}' contains invalid characters.`,
         500
       )
     }
-    const url = paths.products(ioContext.account, data)
-    const { data: products } = await axios.get(url, {
-      headers: withAuthToken()(ioContext),
-    })
-    const fields = graphqlFields(info)
-    const resolvedProducts = await Promise.map(products, product =>
-      resolveProductFields(ioContext, product, fields)
-    )
-
-    return resolvedProducts
+    return axios.get(
+      paths.products(ioContext.account, args),
+      {headers: withAuthToken()(ioContext),}
+    ).then(prop('data'))
   },
 
-  brand: async (
-    _,
-    data,
-    {
-      vtex: ioContext,
-      request: {
-        headers: { cookie },
-      },
-    }: ColossusContext
-  ) => {
+  brand: async (_, args, ctx: ColossusContext) => {
+    const {vtex: ioContext, request: {headers: {cookie}}} = ctx
     const url = paths.brand(ioContext.account)
     const { data: brands } = await axios.get(url, {
       headers: withAuthToken()(ioContext, cookie),
     })
-
-    const brand = find(
-      compose(
-        equals(data.id),
-        prop('id')
-      ),
-      brands
-    )
+    const brand = find(compose(equals(args.id), prop('id')), brands)
     if (!brand) {
-      throw new ResolverError(`Brand with id ${data.id} not found`, 404)
+      throw new ResolverError(`Brand with id ${args.id} not found`, 404)
     }
-    return resolveBrandFields(brand)
+    return brand
   },
 
-  brands: async (
-    _,
-    data,
-    {
-      vtex: ioContext,
-      request: {
-        headers: { cookie },
-      },
-    }: ColossusContext
-  ) => {
-    const url = paths.brand(ioContext.account)
-    const { data: brands } = await axios.get(url, {
-      headers: withAuthToken()(ioContext, cookie),
-    })
-    return map(resolveBrandFields, brands)
-  },
+  brands: async (_, __, ctx: ColossusContext) => axios.get(
+    paths.brand(ctx.vtex.account),
+    {headers: withAuthToken()(ctx.vtex, ctx.get('cookie')),}
+  ).then(prop('data')),
 
-  category: async (
-    _,
-    data,
-    {
-      vtex: ioContext,
-      request: {
-        headers: { cookie },
-      },
-    }: ColossusContext
-  ) => {
-    const url = paths.category(ioContext.account, data.id)
-    const { data: category } = await axios.get(url, {
-      headers: withAuthToken()(ioContext, cookie),
-    })
-    return resolveCategoryFields(category)
-  },
+  category: async (_, args, ctx: ColossusContext) => axios.get(
+    paths.category(ctx.vtex.account, args.id),
+    {headers: withAuthToken()(ctx.vtex, ctx.get('cookie')),}
+  ).then(prop('data')),
 
-  categories: async (_, data, { vtex: ioContext }: ColossusContext) => {
-    const url = paths.categories(ioContext.account, data.treeLevel)
-    const { data: categories } = await axios.get(url, {
-      headers: withAuthToken()(ioContext),
-    })
-    return map(resolveCategoryFields, categories)
-  },
+  categories: async (_, args, ctx: ColossusContext) => axios.get(
+    paths.categories(ctx.vtex.account, args.treeLevel),
+    {headers: withAuthToken()(ctx.vtex),}
+  ).then(prop('data')),
 
-  search: async (_, data, { vtex: ioContext }: ColossusContext, info) => {
-    const { map: mapParams, query, rest } = data
+  search: async (_, args, ctx: ColossusContext, info) => {
+    const { map: mapParams, query, rest } = args
 
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
 
     const facetValues = queryWithRest + '?map=' + mapParams
 
-    const productsPromise = queries.products(
-      _,
-      { ...data, query: queryWithRest },
-      { vtex: ioContext },
-      info
-    )
-    const categoriesPromise = queries.categories(
-      _,
-      { treeLevel: query.split('/').length },
-      { vtex: ioContext }
-    )
-    const facetsPromise = queries.facets(
-      _,
-      { facets: facetValues },
-      { vtex: ioContext }
-    )
+    const productsPromise = queries.products(_, { ...args, query: queryWithRest }, ctx)
+    const categoriesPromise = queries.categories(_, { treeLevel: query.split('/').length }, ctx)
+    const facetsPromise = queries.facets(_, { facets: facetValues }, ctx)
 
     const [products, facets, categories] = await Promise.all([
       productsPromise,
       facetsPromise,
       categoriesPromise,
     ])
-    const { titleTag, metaTagDescription } = findInTree(
+    const { Title: titleTag, MetaTagDescription: metaTagDescription } = findInTree(
       categories,
       query.split('/')
     )

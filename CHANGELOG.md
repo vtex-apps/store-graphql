@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.27.0] - 2018-09-12
 ### Fixed
 - Argument type mismatch in url generation
+
+### Changed
+- Refactoring to use fields resolvers instead of manually parsing the fields
 
 ## [2.26.0] - 2018-09-05
 ### Added
