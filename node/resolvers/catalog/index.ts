@@ -9,7 +9,7 @@ import { withAuthToken } from '../headers'
 import paths from '../paths'
 
 import {resolvers as brandResolvers} from './brand'
-import {resolvers as categoryResolvers} from './catogory'
+import {resolvers as categoryResolvers} from './category'
 import {resolvers as facetsResolvers} from './facets'
 import {resolvers as productResolvers} from './product'
 import {resolvers as recommendationResolvers} from './recommendation'
