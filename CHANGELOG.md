@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Argument type mismatch in url generation
 
+### Changed
+- Refactoring to use fields resolvers instead of manually parsing the fields
+
 ## [2.26.0] - 2018-09-05
 ### Added
 - Add session query and remove initializeSession mutation.
