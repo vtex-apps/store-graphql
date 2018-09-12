@@ -9,6 +9,7 @@ import paths from '../paths'
 
 import {resolvers as brandResolvers} from './brand'
 import {resolvers as categoryResolvers} from './category'
+import { CatalogueDataSource } from './dataSource'
 import {resolvers as facetsResolvers} from './facets'
 import {resolvers as productResolvers} from './product'
 import {resolvers as recommendationResolvers} from './recommendation'
@@ -79,24 +80,20 @@ export const queries = {
     {headers: withAuthToken()(ioContext),}
   ).then(prop('data')),
 
-  product: async (_, args, ctx, info) => {
-    const { vtex: ioContext, vtex: {account} }: ColossusContext = ctx
-    const url = paths.product(account, args)
-    const { data: product } = await axios.get(url, {
-      headers: withAuthToken()(ioContext),
-    })
+  product: async (_, {slug}, {dataSources: {catalogue}}) => {
+    const products = await catalogue.product(slug)
 
-    if (product.length > 0) {
-      return head(product)
+    if (products.length > 0) {
+      return head(products)
     }
 
     throw new ResolverError(
-      `No product was found with the correspondent slug '${args.slug}'`,
+      `No product was found with the correspondent slug '${slug}'`,
       404
     )
   },
 
-  products: async (_, args, { vtex: ioContext }: ColossusContext) => {
+  products: async (_, args, {dataSources: {catalogue}}) => {
     const queryTerm = args.query
     if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
@@ -104,10 +101,7 @@ export const queries = {
         500
       )
     }
-    return axios.get(
-      paths.products(ioContext.account, args),
-      {headers: withAuthToken()(ioContext),}
-    ).then(prop('data'))
+    return catalogue.products(args)
   },
 
   brand: async (_, args, ctx: ColossusContext) => {
