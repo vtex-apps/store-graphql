@@ -2,7 +2,6 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 import { IOContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
-import paths from '../resolvers/paths'
 
 interface AutocompleteArgs {
   maxRows: string
@@ -12,10 +11,12 @@ interface AutocompleteArgs {
 export class PortalDataSource extends RESTDataSource<IOContext> {
   constructor(private ctx: IOContext) {
     super()
-    this.baseURL = paths.portal
+    this.baseURL = 'http://portal.vtexcommercestable.com.br/buscaautocomplete'
   }
 
-  public autocomplete = (args: AutocompleteArgs) => this.get(paths.autocomplete(this.ctx.account, args))
+  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
+    `/?an=${this.ctx.account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
+  )
 
   protected willSendRequest (request) {
     forEachObjIndexed(
