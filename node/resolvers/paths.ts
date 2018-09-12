@@ -1,4 +1,10 @@
-import { join } from 'ramda'
+import { join, map } from 'ramda'
+
+const prepare = (handler) => (...args) => {
+  const ret = handler(...args)
+  console.log(ret)
+  return ret
+}
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
@@ -11,13 +17,13 @@ const paths = {
   */
   catalog: account => `${paths.platformHost(account)}${isPlatformGC(account) ? `/search` : `/api/catalog_system`}`,
 
-  product: (account, { slug }) => `${paths.catalog(account)}/pub/products/search/${slug}/p`,
+  product: (slug) => `/pub/products/search/${slug}/p`,
   productByEan: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_Ean=${id}`,
   productById: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=productId:${id}`,
   productByReference: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_RefId=${id}`,
   productBySku: (account, { skuIds }) => `${paths.catalog(account)}/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
 
-  products: (account, {
+  products: ({
     query = '',
     category = '',
     specificationFilters,
@@ -28,7 +34,7 @@ const paths = {
     from = 0,
     to = 9,
     map = ''
-  }) => `${paths.catalog(account)}/pub/products/search/${encodeURIComponent(query)}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
+  }) => `/pub/products/search/${encodeURIComponent(query)}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
 
   brand: account => `${paths.catalog(account)}/pub/brand/list`,
   category: (account, id) => `${paths.catalog(account)}/pub/category/${id}`,
@@ -91,7 +97,7 @@ const paths = {
   searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
-  documentFields: (account, acronym, fields = "_all", id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
+  documentFields: (account, acronym, fields = '_all', id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
   attachment: (account, acronym, id, field, filename?) => `${paths.document(account, acronym, id)}/${field}/attachments${filename ? `/${filename}` : ''}`,
 
   profile: account => ({
@@ -108,4 +114,4 @@ const paths = {
   })
 }
 
-export default paths
+export default map(prepare, paths)
