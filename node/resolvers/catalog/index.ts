@@ -283,9 +283,7 @@ export const queries = {
     }
 
     if (args.department) {
-      const urlCategories = paths.categories(ioContext.account, {
-        treeLevel: 2,
-      })
+      const urlCategories = paths.categories(ioContext.account, 2)
       const { data: departments }: { data: Category[] } = await axios.get(
         urlCategories,
         {
