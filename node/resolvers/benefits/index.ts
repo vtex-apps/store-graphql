@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { flatten, indexOf, path, prop } from 'ramda'
 
-// import { resolveLocalProductFields } from '../catalog/fieldsResolver'
 import { queries as checkoutQueries } from '../checkout'
 import { withAuthToken } from '../headers'
 import paths from '../paths'

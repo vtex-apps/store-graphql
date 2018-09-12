@@ -26,16 +26,16 @@ const knownNotPG = [
 
 export const resolvers = {
   Product: {
-    benefits: async ({productId}, _, ctx, __) => benefitsQueries.benefits(_, {id: productId}, ctx),
+    benefits: ({productId}, _, ctx) => benefitsQueries.benefits(_, {id: productId}, ctx),
 
     cacheId: ({linkText}) => linkText,
 
-    clusterHighlights: (clusterHighlights = {}) => objToNameValue('id', 'name', clusterHighlights),
+    clusterHighlights: ({clusterHighlights = {}}) => objToNameValue('id', 'name', clusterHighlights),
 
-    jsonSpecifications: facets => {
-      const { Specifications = [] } = facets
+    jsonSpecifications: product => {
+      const { Specifications = [] } = product
       const specificationsMap = Specifications.reduce((acc, key) => {
-        acc[key] = facets[key]
+        acc[key] = product[key]
         return acc
       }, {})
       return JSON.stringify(specificationsMap)
