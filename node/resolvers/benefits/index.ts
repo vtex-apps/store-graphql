@@ -1,29 +1,15 @@
-import axios from 'axios'
-import { flatten, indexOf, path, prop } from 'ramda'
+import { flatten, indexOf, path } from 'ramda'
 
 import { queries as checkoutQueries } from '../checkout'
-import { withAuthToken } from '../headers'
-import paths from '../paths'
 
 const SKU_SEPARATOR = ','
 const CATALOG = 'Catalog'
 const DEFAULT_SELLER = '1'
 const DEFAULT_QUANTITY = '1'
 
-/**
- * Receives an Array of SKU Ids and returns an Array of the Products that each SKU Belongs.
- *
- * @param skuIds Array of SKU Ids which will be used to retrieve all the products that each SKU belongs.
- * @param ioContext Helper object which holds the account and the authentication headers.
- */
-const resolveProducts = async (skuIds, ioContext) => axios.get(
-  paths.productBySku(ioContext.account, { skuIds }),
-  {headers: withAuthToken()(ioContext),}
-).then(prop('data'))
-
 export const fieldResolvers = {
   Benefit: {
-    items: async (benefit, _, ctx) => {
+    items: async (benefit, _, {dataSources: {catalog}}) => {
       const { teaserType, conditions, effects } = benefit
 
       if (teaserType === CATALOG) {
@@ -38,7 +24,7 @@ export const fieldResolvers = {
           conditionsParameters.map(async (conditionsParameter, index) => {
             const skuIds = conditionsParameter.value.split(SKU_SEPARATOR)
             const discount = effectsParameters[index].value
-            const products = await resolveProducts(skuIds, ctx.vtex)
+            const products = await catalog.productBySku(skuIds)
 
             return products.map(product => {
               const benefitSKUIds = []

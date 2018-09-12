@@ -1,10 +1,4 @@
-import { join, map } from 'ramda'
-
-const prepare = (handler) => (...args) => {
-  const ret = handler(...args)
-  console.log(ret)
-  return ret
-}
+import { join } from 'ramda'
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
@@ -114,4 +108,4 @@ const paths = {
   })
 }
 
-export default map(prepare, paths)
+export default paths

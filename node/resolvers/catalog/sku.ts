@@ -1,8 +1,4 @@
-import axios from 'axios'
-import { ColossusContext } from 'colossus'
 import { find, head, map, replace } from 'ramda'
-import { withAuthToken } from '../headers'
-import paths from '../paths'
 
 export const resolvers = {
   SKU: {
@@ -20,16 +16,11 @@ export const resolvers = {
       }),
       images
     ),
-    kitItems: ({kitItems}, _, { vtex: ioContext }: ColossusContext) => !kitItems
+    kitItems: ({kitItems}, _, {dataSources: {catalog}}) => !kitItems
       ? []
       : Promise.all(
           kitItems.map(async kitItem => {
-            const url = paths.productBySku(ioContext.account, {
-              skuIds: [kitItem.itemId],
-            })
-            const { data: products } = await axios.get(url, {
-              headers: withAuthToken()(ioContext),
-            })
+            const products = catalog.productBySku([kitItem.itemId])
             const { items: skus, ...product } = head(products) || {}
             const sku = find(
               ({ itemId }) => itemId === kitItem.itemId,
