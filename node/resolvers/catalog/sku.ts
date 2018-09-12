@@ -20,7 +20,7 @@ export const resolvers = {
       ? []
       : Promise.all(
           kitItems.map(async kitItem => {
-            const products = catalog.productBySku([kitItem.itemId])
+            const products = await catalog.productBySku([kitItem.itemId])
             const { items: skus, ...product } = head(products) || {}
             const sku = find(
               ({ itemId }) => itemId === kitItem.itemId,

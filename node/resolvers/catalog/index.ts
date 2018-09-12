@@ -158,7 +158,7 @@ export const queries = {
     }
 
     if (args.brand) {
-      const brands = catalog.brands()
+      const brands = await catalog.brands()
       const found = brands.find(
         brand =>
           brand.isActive && slugify(brand.name, { lower: true }) === args.brand
@@ -167,7 +167,7 @@ export const queries = {
     }
 
     if (args.department) {
-      const departments = catalog.categories(2)
+      const departments = await catalog.categories(2)
       let found: Category
 
       found = departments.find(department =>
