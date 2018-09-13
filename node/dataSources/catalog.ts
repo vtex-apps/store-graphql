@@ -16,6 +16,8 @@ interface ProductsArgs {
   map: string
 }
 
+const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
+
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
@@ -81,9 +83,9 @@ export class CatalogDataSource extends RESTDataSource<IOContext> {
 
   get baseURL() {
     const {account} = this.context
-    return `${(account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0 )
+    return isPlatformGC(account)
       ? `http://api.gocommerce.com/${account}/search`
-      : `http://${account}.vtexcommercestable.com.br/api/catalog_system`}`
+      : `http://${account}.vtexcommercestable.com.br/api/catalog_system`
   }
 
   protected willSendRequest (request) {
