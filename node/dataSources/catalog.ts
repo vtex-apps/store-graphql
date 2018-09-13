@@ -2,12 +2,11 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 import { IOContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
-import paths from '../resolvers/paths'
 
 interface ProductsArgs {
   query: string
   category: string
-  specificationFilters: string
+  specificationFilters: string[]
   priceRange: string
   collection: string
   salesChannel: string
@@ -21,12 +20,8 @@ interface ProductsArgs {
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
 export class CatalogDataSource extends RESTDataSource<IOContext> {
-  constructor(private ctx: IOContext) {
+  constructor() {
     super()
-    const {account} = ctx
-    this.baseURL = `${(account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0 )
-      ? `http://api.gocommerce.com/${account}/search`
-      : `http://${account}.vtexcommercestable.com.br/api/catalog_system`}`
   }
 
   public product = (slug: string) => this.get(
@@ -84,10 +79,17 @@ export class CatalogDataSource extends RESTDataSource<IOContext> {
     `/pub/products/crossselling/${type}/${id}`
   )
 
+  get baseURL() {
+    const {account} = this.context
+    return `${(account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0 )
+      ? `http://api.gocommerce.com/${account}/search`
+      : `http://${account}.vtexcommercestable.com.br/api/catalog_system`}`
+  }
+
   protected willSendRequest (request) {
     forEachObjIndexed(
       (value, header) => request.headers.set(header, value),
-      withAuthToken(request.header)(this.ctx)
+      withAuthToken(request.header)(this.context)
     )
   }
 }

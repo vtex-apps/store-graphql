@@ -1,6 +1,7 @@
 import '../axiosConfig'
 
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { IOContext } from 'colossus'
 import { map } from 'ramda'
 import { CatalogDataSource, PortalDataSource } from '../dataSources'
 import { mutations as authMutations, queries as authQueries } from '../resolvers/auth'
@@ -16,18 +17,18 @@ import { mutations as sessionMutations, queries as sessionQueries } from '../res
 Promise = require('bluebird')
 Promise.config({ longStackTraces: true })
 
-const initializeDataSource = (ds: RESTDataSource) => {
-  ds.initialize({} as any)
+const initializeDataSource = (context: IOContext) => (ds: RESTDataSource) => {
+  ds.initialize({context} as any)
   return ds
 }
 
 const withDataSources = (fieldResolvers: any) => map((resolver: any) => (root, args, ctx, info) => {
   const {vtex: ioContext} = ctx
   const dataSources = {
-    catalog: new CatalogDataSource(ioContext),
-    portal: new PortalDataSource(ioContext)
+    catalog: new CatalogDataSource(),
+    portal: new PortalDataSource()
   }
-  ctx.dataSources = map(initializeDataSource, dataSources)
+  ctx.dataSources = map(initializeDataSource(ioContext), dataSources)
   return resolver(root, args, ctx, info)
 }, fieldResolvers)
 

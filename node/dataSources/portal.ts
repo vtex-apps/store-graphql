@@ -9,19 +9,19 @@ interface AutocompleteArgs {
 }
 
 export class PortalDataSource extends RESTDataSource<IOContext> {
-  constructor(private ctx: IOContext) {
+  constructor() {
     super()
     this.baseURL = 'http://portal.vtexcommercestable.com.br/buscaautocomplete'
   }
 
   public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
-    `/?an=${this.ctx.account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
+    `/?an=${this.context.account}&maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
   )
 
   protected willSendRequest (request) {
     forEachObjIndexed(
       (value, header) => request.headers.set(header, value),
-      withAuthToken(request.header)(this.ctx)
+      withAuthToken(request.header)(this.context)
     )
   }
 }
