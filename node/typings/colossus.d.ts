@@ -14,5 +14,9 @@ declare module 'colossus' {
 
   export interface ColossusContext extends KoaContext {
     vtex: IOContext
+    dataSources: {
+      catalog: any
+      portal: any
+    }
   }
 }

@@ -1,11 +1,7 @@
-import axios from 'axios'
 import { ColossusContext } from 'colossus'
 import { compose, equals, find, head, last, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
 import ResolverError from '../../errors/resolverError'
-
-import { withAuthToken } from '../headers'
-import paths from '../paths'
 
 import {resolvers as brandResolvers} from './brand'
 import {resolvers as categoryResolvers} from './category'
@@ -57,11 +53,8 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_, args, { vtex: ioContext }: ColossusContext) => {
-    const url = paths.autocomplete(ioContext.account, args)
-    const { data: {itemsReturned} } = await axios.get(url, {
-      headers: withAuthToken()(ioContext),
-    })
+  autocomplete: async (_, args, {dataSources: {portal}}) => {
+    const {itemsReturned} = await portal.autocomplete(args)
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
@@ -74,29 +67,22 @@ export const queries = {
     }
   },
 
-  facets: async (_, args, { vtex: ioContext }: ColossusContext) => axios.get(
-    paths.facets(ioContext.account, args),
-    {headers: withAuthToken()(ioContext),}
-  ).then(prop('data')),
+  facets: (_, {facets}, {dataSources: {catalog}}) => catalog.facets(facets),
 
-  product: async (_, args, ctx, info) => {
-    const { vtex: ioContext, vtex: {account} }: ColossusContext = ctx
-    const url = paths.product(account, args)
-    const { data: product } = await axios.get(url, {
-      headers: withAuthToken()(ioContext),
-    })
+  product: async (_, {slug}, {dataSources: {catalog}}) => {
+    const products = await catalog.product(slug)
 
-    if (product.length > 0) {
-      return head(product)
+    if (products.length > 0) {
+      return head(products)
     }
 
     throw new ResolverError(
-      `No product was found with the correspondent slug '${args.slug}'`,
+      `No product was found with the correspondent slug '${slug}'`,
       404
     )
   },
 
-  products: async (_, args, { vtex: ioContext }: ColossusContext) => {
+  products: async (_, args, {dataSources: {catalog}}) => {
     const queryTerm = args.query
     if (test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
@@ -104,18 +90,11 @@ export const queries = {
         500
       )
     }
-    return axios.get(
-      paths.products(ioContext.account, args),
-      {headers: withAuthToken()(ioContext),}
-    ).then(prop('data'))
+    return catalog.products(args)
   },
 
-  brand: async (_, args, ctx: ColossusContext) => {
-    const {vtex: ioContext, request: {headers: {cookie}}} = ctx
-    const url = paths.brand(ioContext.account)
-    const { data: brands } = await axios.get(url, {
-      headers: withAuthToken()(ioContext, cookie),
-    })
+  brand: async (_, args, {dataSources: {catalog}}) => {
+    const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id')), brands)
     if (!brand) {
       throw new ResolverError(`Brand with id ${args.id} not found`, 404)
@@ -123,20 +102,11 @@ export const queries = {
     return brand
   },
 
-  brands: async (_, __, ctx: ColossusContext) => axios.get(
-    paths.brand(ctx.vtex.account),
-    {headers: withAuthToken()(ctx.vtex, ctx.get('cookie')),}
-  ).then(prop('data')),
+  brands: async (_, __, {dataSources: {catalog}}) => catalog.brands(),
 
-  category: async (_, args, ctx: ColossusContext) => axios.get(
-    paths.category(ctx.vtex.account, args.id),
-    {headers: withAuthToken()(ctx.vtex, ctx.get('cookie')),}
-  ).then(prop('data')),
+  category: async (_, {id}, {dataSources: {catalog}}) => catalog.category(id),
 
-  categories: async (_, args, ctx: ColossusContext) => axios.get(
-    paths.categories(ctx.vtex.account, args.treeLevel),
-    {headers: withAuthToken()(ctx.vtex),}
-  ).then(prop('data')),
+  categories: async (_, {treeLevel}, {dataSources: {catalog}}) => catalog.categories(treeLevel),
 
   search: async (_, args, ctx: ColossusContext, info) => {
     const { map: mapParams, query, rest } = args
@@ -175,7 +145,7 @@ export const queries = {
   searchContextFromParams: async (
     _,
     args,
-    { vtex: ioContext }: ColossusContext
+    {dataSources: {catalog}}
   ) => {
     const response = {
       brand: null,
@@ -184,11 +154,7 @@ export const queries = {
     }
 
     if (args.brand) {
-      const urlBrand = paths.brand(ioContext.account)
-      const { data: brands }: { data: Brand[] } = await axios.get(urlBrand, {
-        headers: withAuthToken()(ioContext),
-      })
-
+      const brands = await catalog.brands()
       const found = brands.find(
         brand =>
           brand.isActive && slugify(brand.name, { lower: true }) === args.brand
@@ -197,14 +163,7 @@ export const queries = {
     }
 
     if (args.department) {
-      const urlCategories = paths.categories(ioContext.account, 2)
-      const { data: departments }: { data: Category[] } = await axios.get(
-        urlCategories,
-        {
-          headers: withAuthToken()(ioContext),
-        }
-      )
-
+      const departments = await catalog.categories(2)
       let found: Category
 
       found = departments.find(department =>
