@@ -1,42 +1,6 @@
 import { join } from 'ramda'
 
-const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
-
 const paths = {
-
-  platformHost: account => `${isPlatformGC(account) ? `http://api.gocommerce.com/${account}` : `http://${account}.vtexcommercestable.com.br`}`,
-
-  /** Catalog API
-   * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
-  */
-  catalog: account => `${paths.platformHost(account)}${isPlatformGC(account) ? `/search` : `/api/catalog_system`}`,
-
-  product: (slug) => `/pub/products/search/${slug}/p`,
-  productByEan: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_Ean=${id}`,
-  productById: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=productId:${id}`,
-  productByReference: (account, { id }) => `${paths.catalog(account)}/pub/products/search?fq=alternateIds_RefId=${id}`,
-  productBySku: (account, { skuIds }) => `${paths.catalog(account)}/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
-
-  products: ({
-    query = '',
-    category = '',
-    specificationFilters,
-    priceRange = '',
-    collection = '',
-    salesChannel = '',
-    orderBy = '',
-    from = 0,
-    to = 9,
-    map = ''
-  }) => `/pub/products/search/${encodeURIComponent(query)}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`,
-
-  brand: account => `${paths.catalog(account)}/pub/brand/list`,
-  category: (account, id) => `${paths.catalog(account)}/pub/category/${id}`,
-  categories: (account, treeLevel) => `${paths.catalog(account)}/pub/category/tree/${treeLevel}/`,
-  facets: (account, { facets = '' }) => `${paths.catalog(account)}/pub/facets/search/${encodeURI(facets)}`,
-
-  crossSelling: (account, id, type) => `${paths.catalog(account)}/pub/products/crossselling/${type}/${id}`,
-
   /** Checkout API
    * Docs: https://documenter.getpostman.com/view/18468/vtex-checkout-api/6Z2QYJM
   */
@@ -62,8 +26,6 @@ const paths = {
   gateway: account => `http://${account}.vtexpayments.com.br/api`,
   gatewayPaymentSession: account => `${paths.gateway(account)}/pvt/sessions`,
   gatewayTokenizePayment: (account, { sessionId }) => `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
-
-  autocomplete: (account, { maxRows, searchTerm }) => `${paths.platformHost(account)}${isPlatformGC(account) ? `/search/buscaautocomplete` : `/buscaautocomplete`}/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
 
   /** VTEX ID API */
   vtexId: `http://vtexid.vtex.com.br/api/vtexid/pub`,
