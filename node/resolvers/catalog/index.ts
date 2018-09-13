@@ -1,11 +1,7 @@
-import axios from 'axios'
 import { ColossusContext } from 'colossus'
 import { compose, equals, find, head, last, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
 import ResolverError from '../../errors/resolverError'
-
-import { withAuthToken } from '../headers'
-import paths from '../paths'
 
 import {resolvers as brandResolvers} from './brand'
 import {resolvers as categoryResolvers} from './category'
