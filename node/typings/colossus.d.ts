@@ -12,11 +12,8 @@ declare module 'colossus' {
     route: string
   }
 
-  export interface ColossusContext extends KoaContext {
+  export interface ColossusContext<T = {}> extends KoaContext {
     vtex: IOContext
-    dataSources: {
-      catalog: any
-      portal: any
-    }
+    dataSources: T
   }
 }
