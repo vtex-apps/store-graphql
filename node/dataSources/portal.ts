@@ -1,5 +1,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { IOContext } from 'colossus'
+import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
 
@@ -10,7 +10,7 @@ interface AutocompleteArgs {
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
-export class PortalDataSource extends RESTDataSource<IOContext> {
+export class PortalDataSource extends RESTDataSource<ColossusContext> {
   constructor() {
     super()
   }
@@ -20,7 +20,7 @@ export class PortalDataSource extends RESTDataSource<IOContext> {
   )
 
   get baseURL() {
-    const {account} = this.context
+    const {vtex: {account}} = this.context
     return isPlatformGC(account)
       ? `http://api.gocommerce.com/${account}/search/buscaautocomplete`
       : `http://${account}.vtexcommercestable.com.br/buscaautocomplete`
@@ -29,7 +29,7 @@ export class PortalDataSource extends RESTDataSource<IOContext> {
   protected willSendRequest (request) {
     forEachObjIndexed(
       (value, header) => request.headers.set(header, value),
-      withAuthToken(request.header)(this.context)
+      withAuthToken(request.header)(this.context.vtex)
     )
   }
 }
