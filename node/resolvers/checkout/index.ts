@@ -1,6 +1,6 @@
 import { ColossusContext } from 'colossus'
 import { map } from 'ramda'
-import { SimulationData, StoreGraphQLDataSources } from '../../dataSources'
+import { SegmentData, SimulationData, StoreGraphQLDataSources } from '../../dataSources'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
@@ -20,6 +20,15 @@ import paymentTokenResolver from './paymentTokenResolver'
  * @param int An integer number
  */
 const convertIntToFloat = int => int * 0.01
+
+const divergingUTMs = (orderFormMarketingTags, segmentData: SegmentData) => {
+  const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
+  const {utm_source, utm_campaign, utmi_campaign} = segmentData
+
+  return utmSource !== utm_source
+    || utmCampaign !== utm_campaign
+    || utmiCampaign !== utmi_campaign
+}
 
 type Resolver<TArgs=any, TRoot=any> =
   (root: TRoot, args: TArgs, context: ColossusContext<StoreGraphQLDataSources>) => Promise<any>
@@ -58,8 +67,23 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: (root, {orderFormId, items}, {dataSources: {checkout}}) => {
-    return checkout.addItem(orderFormId, items)
+  addItem: async (root, {orderFormId, items}, {dataSources: {checkout, session}}) => {
+    const [{marketingData}, segmentData] = await Promise.all([
+      checkout.orderForm(),
+      session.getSegmentData()
+    ])
+
+    if (divergingUTMs(marketingData, segmentData)) {
+      const newMarketingData = {
+        ...marketingData || {},
+        utmCampaign: segmentData.utm_campaign,
+        utmSource: segmentData.utm_source,
+        utmiCampaign: segmentData.utmi_campaign,
+      }
+      await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+    }
+
+    return await checkout.addItem(orderFormId, items)
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
