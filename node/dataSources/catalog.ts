@@ -1,7 +1,6 @@
-import { RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
-import { withAuthToken } from '../resolvers/headers'
 
 interface ProductsArgs {
   query: string
@@ -88,10 +87,18 @@ export class CatalogDataSource extends RESTDataSource<ColossusContext> {
       : `http://${account}.vtexcommercestable.com.br/api/catalog_system`
   }
 
-  protected willSendRequest (request) {
+  protected willSendRequest (request: RequestOptions) {
+    const {vtex: {authToken}, cookies} = this.context
+    const segment = cookies.get('vtex_segment')
+    request.params.set('vtex_segment', segment)
+
     forEachObjIndexed(
-      (value, header) => request.headers.set(header, value),
-      withAuthToken(request.header)(this.context.vtex)
+      (value: string, header) => request.headers.set(header, value),
+      {
+        Authorization: authToken,
+        Cookie: `vtex_segment=${segment}`,
+        'Proxy-Authorization': authToken,
+      }
     )
   }
 }

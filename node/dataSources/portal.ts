@@ -1,4 +1,4 @@
-import { RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
@@ -26,10 +26,10 @@ export class PortalDataSource extends RESTDataSource<ColossusContext> {
       : `http://${account}.vtexcommercestable.com.br/buscaautocomplete`
   }
 
-  protected willSendRequest (request) {
+  protected willSendRequest (request: RequestOptions) {
     forEachObjIndexed(
-      (value, header) => request.headers.set(header, value),
-      withAuthToken(request.header)(this.context.vtex)
+      (value: string, header) => request.headers.set(header, value),
+      withAuthToken(request.headers)(this.context.vtex)
     )
   }
 }
