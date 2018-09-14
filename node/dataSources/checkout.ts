@@ -84,6 +84,14 @@ export class CheckoutDataSource extends RESTDataSource<ColossusContext> {
     }
   )
 
+  public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.post(
+    `/pub/orderForm/${orderFormId}/attachments/marketingData`,
+    {
+      expectedOrderFormSections: ['items'],
+      ...marketingData,
+    }
+  )
+
   public orderForm = () => this.post(
     `/pub/orderForm`,
     {expectedOrderFormSections: ['items']},
