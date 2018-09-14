@@ -1,5 +1,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { IOContext } from 'colossus'
+import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
 
@@ -21,7 +21,7 @@ const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf(
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<IOContext> {
+export class CatalogDataSource extends RESTDataSource<ColossusContext> {
   constructor() {
     super()
   }
@@ -82,7 +82,7 @@ export class CatalogDataSource extends RESTDataSource<IOContext> {
   )
 
   get baseURL() {
-    const {account} = this.context
+    const {vtex: {account}} = this.context
     return isPlatformGC(account)
       ? `http://api.gocommerce.com/${account}/search`
       : `http://${account}.vtexcommercestable.com.br/api/catalog_system`
@@ -91,7 +91,7 @@ export class CatalogDataSource extends RESTDataSource<IOContext> {
   protected willSendRequest (request) {
     forEachObjIndexed(
       (value, header) => request.headers.set(header, value),
-      withAuthToken(request.header)(this.context)
+      withAuthToken(request.header)(this.context.vtex)
     )
   }
 }
