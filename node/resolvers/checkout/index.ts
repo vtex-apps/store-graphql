@@ -1,4 +1,8 @@
-import { map, merge } from 'ramda'
+import { ColossusContext } from 'colossus'
+import { map } from 'ramda'
+import { StoreGraphQLDataSources } from '../../dataSources'
+import { SimulationData } from '../../dataSources/checkout'
+import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
@@ -19,74 +23,82 @@ import paymentTokenResolver from './paymentTokenResolver'
  */
 const convertIntToFloat = int => int * 0.01
 
-export const queries = {
-  orderForm: httpResolver({
-    data: { expectedOrderFormSections: ['items'] },
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId,
-      value: convertIntToFloat(responseData.value),
-      items: map((item) => ({
+const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentData) => {
+  const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
+  const {utm_source, utm_campaign, utmi_campaign} = segmentData
+
+  return (utm_source || utm_campaign || utmi_campaign)
+    && (utmSource !== utm_source
+    || utmCampaign !== utm_campaign
+    || utmiCampaign !== utmi_campaign)
+}
+
+type Resolver<TArgs=any, TRoot=any> =
+  (root: TRoot, args: TArgs, context: ColossusContext<StoreGraphQLDataSources>) => Promise<any>
+
+export const fieldResolvers = {
+  OrderForm: {
+    cacheId: (orderForm) => {
+      return orderForm.orderFormId
+    },
+    items: (orderForm) => {
+      return map((item) => ({
         ...item,
         price: convertIntToFloat(item.price),
         listPrice: convertIntToFloat(item.listPrice),
         sellingPrice: convertIntToFloat(item.sellingPrice)
-      }), responseData.items)
-    }),
-    enableCookies: true,
-    headers: withAuthToken(headers.json),
-    method: 'POST',
-    url: paths.orderForm,
-  }),
-
-  orders: httpResolver({
-    enableCookies: true,
-    headers: withAuthToken(headers.json),
-    url: paths.orders,
-  }),
-
-  shipping: httpResolver({
-    data: ({ items, postalCode, country }) => ({
-      items,
-      postalCode,
-      country
-    }),
-    headers: withAuthToken(headers.json),
-    url: paths.shipping,
-    method: 'POST',
-  }),
+      }), orderForm.items)
+    },
+    value: (orderForm) => {
+      return convertIntToFloat(orderForm.value)
+    },
+  }
 }
 
-export const mutations = {
-  addItem: httpResolver({
-    data: ({ items }) => ({
-      expectedOrderFormSections: ['items'],
-      orderItems: items,
-    }),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'POST',
-    url: paths.addItem,
-  }),
+export const queries: Record<string, Resolver> = {
+  orderForm: (root, args, {dataSources: {checkout}}) => {
+    return checkout.orderForm()
+  },
+
+  orders: (root, args, {dataSources: {checkout}}) => {
+    return checkout.orders()
+  },
+
+  shipping: (root, args: SimulationData, {dataSources: {checkout}}) => {
+    return checkout.shipping(args)
+  },
+}
+
+export const mutations: Record<string, Resolver> = {
+  addItem: async (root, {orderFormId, items}, {dataSources: {checkout, session}}) => {
+    const [{marketingData}, segmentData] = await Promise.all([
+      checkout.orderForm(),
+      session.getSegmentData()
+    ])
+
+    if (shouldUpdateMarketingData(marketingData, segmentData)) {
+      const newMarketingData = {
+        ...marketingData || {},
+        utmCampaign: segmentData.utm_campaign,
+        utmSource: segmentData.utm_source,
+        utmiCampaign: segmentData.utmi_campaign,
+      }
+      await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+    }
+
+    return await checkout.addItem(orderFormId, items)
+  },
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: httpResolver({
-    data: ({ reason }) => ({ reason }),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: () => ({ success: true }),
-    method: 'POST',
-    url: paths.cancelOrder,
-  }),
+  cancelOrder: async (root, {orderFormId, reason}, {dataSources: {checkout}}) => {
+    await checkout.cancelOrder(orderFormId, reason)
+    return true
+  },
 
   createPaymentSession: httpResolver({
-    headers: withAuthToken(headers.json),
     enableCookies: true,
+    headers: withAuthToken(headers.json),
     method: 'POST',
     secure: true,
     url: paths.gatewayPaymentSession,
@@ -94,90 +106,33 @@ export const mutations = {
 
   createPaymentTokens: httpResolver({
     data: ({ payments }) => payments,
-    headers: withAuthToken(headers.json),
     enableCookies: true,
+    headers: withAuthToken(headers.json),
     method: 'POST',
     url: paths.gatewayTokenizePayment,
   }),
 
-  setOrderFormCustomData: httpResolver({
-    data: ({ value }) => ({
-      expectedOrderFormSections: ['customData'],
-      value,
-    }),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'PUT',
-    url: paths.orderFormCustomData,
-  }),
+  setOrderFormCustomData: (root, {orderFormId, appId, field, value}, {dataSources: {checkout}}) => {
+    return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
+  },
 
-  updateItems: httpResolver({
-    data: ({ items }) => ({
-      expectedOrderFormSections: ['items'],
-      orderItems: items,
-    }),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'POST',
-    url: paths.updateItems,
-  }),
+  updateItems: (root, {orderFormId, items}, {dataSources: {checkout}}) => {
+    return checkout.updateItems(orderFormId, items)
+  },
 
-  updateOrderFormIgnoreProfile: httpResolver({
-    data: ({ ignoreProfileData }) => ({
-      expectedOrderFormSections: ['items'],
-      ignoreProfileData,
-    }),
-    enableCookies: true,
-    headers: withAuthToken(headers.json),
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'PATCH',
-    url: paths.orderFormIgnoreProfile,
-  }),
+  updateOrderFormIgnoreProfile: (root, {orderFormId, ignoreProfileData}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
+  },
 
-  updateOrderFormPayment: httpResolver({
-    data: ({ payments }) => merge({ expectedOrderFormSections: ['items'] }, { payments }),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'POST',
-    url: paths.orderFormPayment,
-  }),
+  updateOrderFormPayment: (root, {orderFormId, payments}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormPayment(orderFormId, payments)
+  },
 
-  updateOrderFormProfile: httpResolver({
-    data: ({ fields }) => merge({ expectedOrderFormSections: ['items'] }, fields),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'POST',
-    url: paths.orderFormProfile,
-  }),
+  updateOrderFormProfile: (root, {orderFormId, fields}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormProfile(orderFormId, fields)
+  },
 
-  updateOrderFormShipping: httpResolver({
-    data: data => merge({ expectedOrderFormSections: ['items'] }, data),
-    headers: withAuthToken(headers.json),
-    enableCookies: true,
-    merge: (bodyData, responseData) => ({
-      ...responseData,
-      cacheId: responseData.orderFormId
-    }),
-    method: 'POST',
-    url: paths.orderFormShipping,
-  }),
+  updateOrderFormShipping: (root, {orderFormId, address}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormProfile(orderFormId, address)
+  }
 }
