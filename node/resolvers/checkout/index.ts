@@ -21,13 +21,14 @@ import paymentTokenResolver from './paymentTokenResolver'
  */
 const convertIntToFloat = int => int * 0.01
 
-const divergingUTMs = (orderFormMarketingTags, segmentData: SegmentData) => {
+const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentData) => {
   const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
   const {utm_source, utm_campaign, utmi_campaign} = segmentData
 
-  return utmSource !== utm_source
+  return (utm_source || utm_campaign || utmi_campaign)
+    && (utmSource !== utm_source
     || utmCampaign !== utm_campaign
-    || utmiCampaign !== utmi_campaign
+    || utmiCampaign !== utmi_campaign)
 }
 
 type Resolver<TArgs=any, TRoot=any> =
@@ -73,7 +74,7 @@ export const mutations: Record<string, Resolver> = {
       session.getSegmentData()
     ])
 
-    if (divergingUTMs(marketingData, segmentData)) {
+    if (shouldUpdateMarketingData(marketingData, segmentData)) {
       const newMarketingData = {
         ...marketingData || {},
         utmCampaign: segmentData.utm_campaign,
