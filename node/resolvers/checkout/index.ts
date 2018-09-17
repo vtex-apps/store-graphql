@@ -88,8 +88,9 @@ export const mutations: Record<string, Resolver> = {
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: (root, {orderFormId, reason}, {dataSources: {checkout}}) => {
-    return checkout.cancelOrder(orderFormId, reason)
+  cancelOrder: async (root, {orderFormId, reason}, {dataSources: {checkout}}) => {
+    await checkout.cancelOrder(orderFormId, reason)
+    return true
   },
 
   createPaymentSession: httpResolver({
