@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.29.0] - 2018-9-17
+### Changed
+- Refact checkout resolvers to use dataSources
+- Change catalog and checkout resolvers to account vtex_segment
+
 ## [2.28.1] - 2018-09-14
 ### Changed
 - Using native support for dataSources
 
 ## [2.28.0] - 2018-09-13
 ### Changed
-- Add dataSources to the catalogue API 
+- Add dataSources to the catalogue API
 
 ## [2.27.1] - 2018-09-13
 - Autocomplete working for GoCommerce

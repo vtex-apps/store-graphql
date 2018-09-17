@@ -3,7 +3,7 @@ import '../axiosConfig'
 import { mutations as authMutations, queries as authQueries } from './auth'
 import { fieldResolvers as benefitsFieldResolvers, queries as benefitsQueries } from './benefits'
 import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } from './catalog'
-import { mutations as checkoutMutations, queries as checkoutQueries } from './checkout'
+import { fieldResolvers as checkoutFieldResolvers, mutations as checkoutMutations, queries as checkoutQueries } from './checkout'
 import { mutations as documentMutations, queries as documentQueries } from './document'
 import { queries as logisticsQueries } from './logistics'
 import { mutations as profileMutations, queries as profileQueries, rootResolvers as profileRootResolvers } from './profile'
@@ -17,6 +17,7 @@ export const resolvers = {
   ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
   ...profileRootResolvers,
+  ...checkoutFieldResolvers,
   Mutation: {
     ...profileMutations,
     ...checkoutMutations,

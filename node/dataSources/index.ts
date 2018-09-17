@@ -1,10 +1,14 @@
 import { LRUCache } from '@vtex/api'
 import { CatalogDataSource } from './catalog'
+import { CheckoutDataSource } from './checkout'
 import { PortalDataSource } from './portal'
+import { SessionDataSource } from './session'
 
 export const dataSources = () => ({
   catalog: new CatalogDataSource(),
-  portal: new PortalDataSource()
+  checkout: new CheckoutDataSource(),
+  portal: new PortalDataSource(),
+  session: new SessionDataSource(),
 })
 
 const cacheStorage = new LRUCache<string, any>({
@@ -12,3 +16,10 @@ const cacheStorage = new LRUCache<string, any>({
 })
 
 export const cache = () => cacheStorage
+
+export interface StoreGraphQLDataSources {
+  catalog: CatalogDataSource
+  checkout: CheckoutDataSource
+  portal: PortalDataSource
+  session: SessionDataSource
+}
