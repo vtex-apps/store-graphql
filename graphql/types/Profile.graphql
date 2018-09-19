@@ -92,12 +92,12 @@ input ProfileCustomFieldInput {
 }
 
 input ProfileInput {
+  """ User's email """
+  email: String!,
   """ User's first name """
   firstName: String,
   """ User's last name """
   lastName: String,
-  """ User's email """
-  email: String,
   """ Document identification. E.g. CPF, SSN, Driver License """
   document: String,
   """ User's phone number """
