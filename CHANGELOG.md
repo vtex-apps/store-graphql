@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.29.2] - 2018-09-19
+### Changed
+- Change `email` to be a required field in `ProfileInput`. 
+
 ## [2.29.1] - 2018-09-19
 ### Fixed
 - Fix `updateProfile` mutation to update information of new users.
