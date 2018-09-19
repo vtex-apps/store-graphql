@@ -21,9 +21,11 @@ const getClientData = async (account, authToken, cookie, customFields?: string) 
       token: getClientToken(cookie, account)
     }), authToken
   )
-  return await makeRequest(
+  const profileData = await makeRequest(
     paths.profile(account).filterUser(user, customFields), authToken
   ).then(pipe(prop('data'), head))
+
+  return profileData ? profileData : { id: '', email: user }
 }
 
 const getClientToken = (cookie, account) => {
