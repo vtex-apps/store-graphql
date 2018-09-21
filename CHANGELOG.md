@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Return email when a new user is logged.
+- Return email in `getSession` when a new user is logged.
 
 ## [2.29.2] - 2018-09-19
 ### Changed
