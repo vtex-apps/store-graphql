@@ -101,6 +101,7 @@ export class CatalogDataSource extends RESTDataSource<ColossusContext> {
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
+        'Accept-Encoding': 'gzip',
         Authorization: authToken,
         Cookie: `vtex_segment=${segment}`,
       }
