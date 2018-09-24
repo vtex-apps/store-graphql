@@ -5,5 +5,10 @@
   "timeout": 60,
   "minReplicas": 4,
   "maxReplicas": 10,
-  "runtimeArgs": ["--max_old_space_size=400"]
+  "routes": {
+    "catalogProxy": {
+      "path": "/proxy/catalog/*path",
+      "public": false
+    }
+  }
 }
