@@ -1,7 +1,7 @@
 {
   "name": "vtex.store-graphql",
   "dependencies": {
-    "@vtex/api": "^0.46.0",
+    "@vtex/api": "^0.48.0",
     "apollo-datasource-rest": "^0.1.5",
     "axios": "0.16.2",
     "bluebird": "^3.5.0",
