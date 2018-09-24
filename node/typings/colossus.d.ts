@@ -5,11 +5,19 @@ declare module 'colossus' {
     account: string
     workspace: string
     authToken: string
+    production: boolean
     params: {
       [param: string]: string
     }
     region: string
-    route: string
+    route: {
+      id: string
+      declarer: string
+      params: {
+        [param: string]: string
+      }
+    },
+    userAgent: string
   }
 
   export interface ColossusContext<T = {}> extends KoaContext {

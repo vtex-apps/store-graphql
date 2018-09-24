@@ -15,8 +15,6 @@ interface ProductsArgs {
   map: string
 }
 
-const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
-
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
@@ -81,23 +79,30 @@ export class CatalogDataSource extends RESTDataSource<ColossusContext> {
   )
 
   get baseURL() {
-    const {vtex: {account}} = this.context
-    return isPlatformGC(account)
-      ? `http://api.gocommerce.com/${account}/search`
-      : `http://${account}.vtexcommercestable.com.br/api/catalog_system`
+    const {vtex: {account, workspace, region}} = this.context
+    return `http://store-graphql.vtex.${region}.vtex.io/${account}/${workspace}/proxy/catalog`
   }
 
   protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken}, cookies} = this.context
+    const {vtex: {authToken, production}, cookies} = this.context
     const segment = cookies.get('vtex_segment')
-    request.params.set('vtex_segment', segment)
+    const [appMajorNumber] = process.env.VTEX_APP_VERSION.split('.')
+    const appMajor = `${appMajorNumber}.x`
+
+    forEachObjIndexed(
+      (value: string, param: string) => request.params.set(param, value),
+      {
+        '__v': appMajor,
+        'production': production ? 'true' : 'false',
+        'vtex_segment': segment,
+      }
+    )
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
         Authorization: authToken,
         Cookie: `vtex_segment=${segment}`,
-        'Proxy-Authorization': authToken,
       }
     )
   }
