@@ -94,7 +94,7 @@ export class CatalogDataSource extends RESTDataSource<ColossusContext> {
       {
         '__v': appMajor,
         'production': production ? 'true' : 'false',
-        'vtex_segment': segment,
+        ...segment && {'vtex_segment': segment},
       }
     )
 
@@ -103,7 +103,7 @@ export class CatalogDataSource extends RESTDataSource<ColossusContext> {
       {
         'Accept-Encoding': 'gzip',
         Authorization: authToken,
-        Cookie: `vtex_segment=${segment}`,
+        ...segment && {Cookie: `vtex_segment=${segment}`},
       }
     )
   }
