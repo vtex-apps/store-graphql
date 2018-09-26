@@ -1,3 +1,4 @@
+import { ApolloError } from 'apollo-server-errors'
 import { ColossusContext } from 'colossus'
 import { compose, equals, find, head, last, map, prop, split, test } from 'ramda'
 import * as slugify from 'slugify'
@@ -108,8 +109,12 @@ export const queries = {
 
   categories: async (_, {treeLevel}, {dataSources: {catalog}}) => catalog.categories(treeLevel),
 
-  search: async (_, args, ctx: ColossusContext, info) => {
+  search: async (_, args, ctx: ColossusContext) => {
     const { map: mapParams, query, rest } = args
+
+    if (!query || !mapParams) {
+      throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
+    }
 
     const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
 
