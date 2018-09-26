@@ -85,7 +85,7 @@ export const queries = {
 
   products: async (_, args, {dataSources: {catalog}}) => {
     const queryTerm = args.query
-    if (!queryTerm || test(/[\?\&\[\]\=\,]/, queryTerm)) {
+    if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
         `The query term: '${queryTerm}' contains invalid characters.`,
         500
@@ -112,7 +112,7 @@ export const queries = {
   search: async (_, args, ctx: ColossusContext) => {
     const { map: mapParams, query, rest } = args
 
-    if (!query || !mapParams) {
+    if (query == null || mapParams == null) {
       throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
     }
 
