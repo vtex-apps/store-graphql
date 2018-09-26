@@ -120,8 +120,14 @@ type DomainValues {
   DomainValues: String
 }
 
+enum InstallmentsCriteria {
+  MAX
+  MIN
+  ALL
+}
+
 type Offer {
-  Installments: [Installment]
+  Installments (criteria: InstallmentsCriteria = ALL, rates: Boolean = true): [Installment]
   Price: Float
   ListPrice: Float
   PriceWithoutDiscount: Float
