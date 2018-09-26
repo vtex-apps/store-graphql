@@ -20,7 +20,7 @@ export const catalogProxy = async (ctx: ColossusContext) => {
       ...cookie && {cookie},
     },
     params: query,
-    url: path,
+    url: encodeURI(path),
   })
 
   ctx.set('cache-control', production ? `public, max-age=${TEN_MINUTES_S}` : 'no-store, no-cache')
