@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.30.1] - 2018-09-26
+## Fixed
+- Search term cannot be nullable in search query
+
 ## [2.30.0] - 2018-9-24
 ## Changed
 - Create an internal catalog proxy to cache responses on kube-router
