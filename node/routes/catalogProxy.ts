@@ -17,7 +17,7 @@ export const catalogProxy = async (ctx: ColossusContext) => {
     headers: {
       'Authorization': authToken,
       'Proxy-Authorization': authToken,
-      cookie
+      ...cookie && {cookie},
     },
     params: query,
     url: path,
