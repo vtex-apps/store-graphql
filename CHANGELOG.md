@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.30.2] - 2018-9-26
+## Fixed
+- Search term encoding
+
 ## [2.30.1] - 2018-09-26
 ## Fixed
 - Search term cannot be nullable in search query
