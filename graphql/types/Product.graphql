@@ -94,7 +94,7 @@ type SKU {
   measurementUnit: String
   unitMultiplier: Float
   kitItems: [KitItem]
-  images: [Image]
+  images (quantity: Int = 10) : [Image]
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
