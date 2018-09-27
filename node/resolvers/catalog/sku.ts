@@ -1,4 +1,4 @@
-import { find, head, map, replace } from 'ramda'
+import { find, head, map, replace, slice } from 'ramda'
 
 export const resolvers = {
   SKU: {
@@ -9,12 +9,12 @@ export const resolvers = {
       }),
       attachments
     ),
-    images: ({images = []}) => map(
+    images: ({images = []}, {quantity}) => map(
       image => ({
         ...image,
         imageUrl: replace('http://', 'https://', image.imageUrl),
       }),
-      images
+      quantity > 0 ? slice(0, quantity, images) : images
     ),
     kitItems: ({kitItems}, _, {dataSources: {catalog}}) => !kitItems
       ? []
