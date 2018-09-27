@@ -15,6 +15,7 @@ type OrderForm {
   ignoreProfileData: Boolean
   totalizers: [Totalizer]
   clientProfileData: ClientProfile
+  shippingData: OrderFormShippingData
 }
 
 type OrderFormItem {
@@ -56,6 +57,12 @@ type ClientProfile {
   documentType: String
   stateInscription: String
   tradeName: String
+}
+
+type OrderFormShippingData {
+  address: Address
+  availableAddresses: [Address]!
+  selectedAddresses: [Address]!
 }
 
 input OrderFormItemInput {
