@@ -10,6 +10,7 @@
     "cookie": "^0.3.1",
     "form-data": "^2.3.2",
     "node-fetch": "^2.1.2",
+    "qs": "^6.5.2",
     "ramda": "^0.24.1",
     "slugify": "^1.2.6",
     "ts-node": "3.3.0",
@@ -22,6 +23,7 @@
     "@types/es6-shim": "^0.31.32",
     "@types/koa": "^2.0.39",
     "@types/node": "^7.0.8",
+    "@types/qs": "^6.5.1",
     "@types/ramda": "types/npm-ramda#dist",
     "tslint": "^5.8.0",
     "tslint-config-vtex": "^2.0.0"
