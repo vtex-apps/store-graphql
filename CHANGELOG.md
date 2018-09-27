@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.31.1] - 2018-09-26
+### Fixed
+- Fix proxy catalog's querystring format
+
 ## [2.31.0] - 2018-09-26
 
 ### Changed
