@@ -76,7 +76,6 @@ input OrderFormAddressInput {
   addressType: String
   postalCode: String
   country: String
-  addressType: String
   receiverName: String
   city: String
   state: String
