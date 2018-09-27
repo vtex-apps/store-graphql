@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {ColossusContext} from 'colossus'
+import * as qs from 'qs'
 
 const TEN_MINUTES_S = 10 * 60
 
@@ -20,6 +21,7 @@ export const catalogProxy = async (ctx: ColossusContext) => {
       ...cookie && {cookie},
     },
     params: query,
+    paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
     url: encodeURI(path),
   })
 
