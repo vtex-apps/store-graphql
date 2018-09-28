@@ -80,7 +80,7 @@ export class CheckoutDataSource extends RESTDataSource<ColossusContext> {
     `/pub/orderForm/${orderFormId}/attachments/shippingData`,
     {
       expectedOrderFormSections: ['items'],
-      ...address,
+      address,
     }
   )
 
