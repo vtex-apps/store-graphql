@@ -7,7 +7,7 @@
         "actions": ["post", "get"],
         "effect": "allow",
         "resource":
-          "vrn:store-graphql.vtex:{{region}}:{{account}}:{{workspace}}:/_v/graphql"
+          "vrn:vtex.store-graphql:{{region}}:{{account}}:{{workspace}}:/_v/graphql"
       }
     ]
   }
