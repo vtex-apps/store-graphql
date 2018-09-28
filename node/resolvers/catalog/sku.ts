@@ -11,6 +11,7 @@ export const resolvers = {
     ),
     images: ({images = []}, {quantity}) => map(
       image => ({
+        cacheId: image.imageId,
         ...image,
         imageUrl: replace('http://', 'https://', image.imageUrl),
       }),
