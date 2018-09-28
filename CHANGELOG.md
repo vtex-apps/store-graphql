@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.31.2] - 2018-09-28
+### Added
+- Add OrderFormShippingData schema type
+
+### Fixed
+- Bug in updateOrderFormShipping resolver
+
 ## [2.31.1] - 2018-09-26
 ### Fixed
 - Fix proxy catalog's querystring format
