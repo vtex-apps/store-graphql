@@ -94,7 +94,7 @@ type SKU {
   measurementUnit: String
   unitMultiplier: Float
   kitItems: [KitItem]
-  images (quantity: Int = 10) : [Image]
+  images (quantity: Int = 1) : [Image]
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
@@ -161,6 +161,7 @@ type Region {
 }
 
 type Image {
+  cacheId: ID
   imageId: ID
   imageLabel: String
   imageTag: String
