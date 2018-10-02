@@ -76,11 +76,11 @@ export class CheckoutDataSource extends RESTDataSource<ColossusContext> {
     }
   )
 
-  public updateOrderFormShipping = (orderFormId: string, address: any) => this.post(
+  public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/shippingData`,
     {
       expectedOrderFormSections: ['items'],
-      ...address,
+      ...shipping,
     }
   )
 
