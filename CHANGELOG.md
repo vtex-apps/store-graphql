@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.31.7] - 2018-10-02
+### Fixed
+- `updateOrderformShipping` passing of props in resolver and dataSource 
+
 ## [2.31.6] - 2018-10-02
 ### Added
 - `googleMapsKey` field on `LogisticsData` type
