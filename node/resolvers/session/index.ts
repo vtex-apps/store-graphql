@@ -1,5 +1,5 @@
 import { serialize } from 'cookie'
-import { merge, identity } from 'ramda'
+import { identity } from 'ramda'
 
 import paths from '../paths'
 import { sessionFields } from './sessionResolver'

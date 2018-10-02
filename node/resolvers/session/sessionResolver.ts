@@ -23,15 +23,15 @@ const setProfileData = (profile, user) => (
 )
 
 export const sessionFields = session => {
-  const { namespaces } = session
-  return namespaces ? {
+  const { namespaces: {impersonate, profile, authentication} } = session
+  return impersonate && profile && authentication ? {
+    adminUserEmail: path(['adminUserEmail', 'value'], authentication),
+    adminUserId: path(['adminUserId', 'value'], authentication),
+    ...setProfileData(profile, authentication),
     id: session.id,
-    impersonable: convertToBool(namespaces.impersonate.canImpersonate.value),
-    adminUserId: path(['adminUserId', 'value'], namespaces.authentication),
-    adminUserEmail: path(['adminUserEmail', 'value'], namespaces.authentication),
+    impersonable: convertToBool(impersonate.canImpersonate.value),
     impersonate: {
-      ...setProfileData(namespaces.profile, namespaces.impersonate)
-    },
-    ...setProfileData(namespaces.profile, namespaces.authentication)
+      ...setProfileData(profile, impersonate)
+    }
   } : {}
 }
