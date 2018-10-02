@@ -1,4 +1,6 @@
 type LogisticsData {
   """ countries this store ships to """
   shipsTo: [String]
+  """ Google Maps Geolocation API key """
+  googleMapsKey: String
 }

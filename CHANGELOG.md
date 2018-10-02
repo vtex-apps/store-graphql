@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.31.6] - 2018-10-02
+### Added
+- `googleMapsKey` field on `LogisticsData` type
+
+## [2.31.5] - 2018-10-01
+### Changed
+- Increased max replicas
+
+## [2.31.4] - 2018-9-30
+
 ## [2.31.3] - 2018-09-28
 
 ## [2.31.2] - 2018-09-28
