@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Filtering of documents search with `where` param 
 
+### Fixed
+- Creation of `VtexIdclientAutCookie` header
+
 ## [2.31.7] - 2018-10-02
 ### Fixed
 - `updateOrderformShipping` passing of props in resolver and dataSource 
