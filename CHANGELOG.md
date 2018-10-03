@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.31.8] - 2018-10-03
+### Fixed
+- Add a regex in brand slug to remove special characters. 
+
 ## [2.31.7] - 2018-10-02
 ### Fixed
 - `updateOrderformShipping` passing of props in resolver and dataSource 
