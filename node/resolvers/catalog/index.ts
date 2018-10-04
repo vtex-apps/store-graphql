@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'
 import { ColossusContext } from 'colossus'
-import { compose, equals, find, head, last, map, prop, split, test, path } from 'ramda'
+import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 
 import { resolvers as brandResolvers } from './brand'
@@ -10,7 +10,7 @@ import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as skuResolvers } from './sku'
-import { Slugify } from './slug';
+import { Slugify } from './slug'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -70,9 +70,15 @@ export const queries = {
     }
   },
 
-  facets: (_, { facets }, { dataSources: { catalog } }) => catalog.facets(facets),
+  facets: (_, { facets }, ctx) => {
+    ctx.vary('cookie')
+    const { dataSources: { catalog } } = ctx
+    return catalog.facets(facets)
+  },
 
-  product: async (_, { slug }, { dataSources: { catalog } }) => {
+  product: async (_, { slug }, ctx) => {
+    ctx.vary('cookie')
+    const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
 
     if (products.length > 0) {
@@ -85,7 +91,9 @@ export const queries = {
     )
   },
 
-  products: async (_, args, { dataSources: { catalog } }) => {
+  products: async (_, args, ctx) => {
+    ctx.vary('cookie')
+    const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
@@ -112,6 +120,7 @@ export const queries = {
   categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
   search: async (_, args, ctx: ColossusContext) => {
+    ctx.vary('cookie')
     const { map: mapParams, query, rest } = args
 
     if (query == null || mapParams == null) {
