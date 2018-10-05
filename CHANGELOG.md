@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Add vary x-vtex-segment to prevent wrong cached responses.
 
 ## [2.32.0] - 2018-10-05
 ### Added
@@ -13,11 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.31.8] - 2018-10-03
 ### Fixed
-- Add a regex in brand slug to remove special characters. 
+- Add a regex in brand slug to remove special characters.
 
 ## [2.31.7] - 2018-10-02
 ### Fixed
-- `updateOrderformShipping` passing of props in resolver and dataSource 
+- `updateOrderformShipping` passing of props in resolver and dataSource
 
 ## [2.31.6] - 2018-10-02
 ### Added
