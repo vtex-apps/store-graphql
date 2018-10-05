@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.32.0] - 2018-10-05
+### Added
+- Add `titleTag` and `metaTagDescription` in searchs for brand.
+
 ## [2.31.8] - 2018-10-03
 ### Fixed
 - Add a regex in brand slug to remove special characters. 
