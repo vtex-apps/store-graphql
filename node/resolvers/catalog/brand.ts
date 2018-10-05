@@ -1,7 +1,5 @@
 import { prop } from 'ramda'
-import * as slugify from 'slugify'
-
-const Slugify = name => slugify(name, { lower: true, remove: /[*+~.()'"!:@]/g }),
+import { Slugify } from './slug'
 
 export const resolvers = {
   Brand: {
