@@ -33,6 +33,18 @@ export const queries = {
     }))
   },
 
+  searchDocuments: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+    const { acronym, fields, filters, page, pageSize } = args
+    const fieldsWithId = union(fields, ['id'])
+    const url = paths.searchDocument(ioContext.account, acronym, { fields: fieldsWithId, where: filters })
+    const { data } = await http.get(url, { headers: withMDPagination()(ioContext, cookie)(page, pageSize) })
+    return data.map(document => ({
+      cacheId: document.id,
+      fields: mapKeyValues(document),
+      id: document.id,
+    }))
+  }, 
+
   document: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
     const { acronym, fields, id } = args
     const url = paths.documentFields(ioContext.account, acronym, fields, id)
