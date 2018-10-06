@@ -1,12 +1,11 @@
 import axios from 'axios'
-import {ColossusContext} from 'colossus'
 import * as qs from 'qs'
 
 const TEN_MINUTES_S = 10 * 60
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
-export const catalogProxy = async (ctx: ColossusContext) => {
+export const catalogProxy = async (ctx: ServiceContext) => {
   const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query} = ctx
 
   const baseURL = isPlatformGC(account)
