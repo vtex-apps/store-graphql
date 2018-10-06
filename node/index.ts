@@ -1,11 +1,10 @@
 import { Colossus } from '@vtex/api'
-import { ColossusContext } from 'colossus'
 import {map} from 'ramda'
 import {cache, dataSources} from './dataSources'
 import {resolvers} from './resolvers'
 import {catalogProxy} from './routes/catalogProxy'
 
-const prepare = (handler) => async (ctx: ColossusContext) => {
+const prepare = (handler) => async (ctx: ServiceContext) => {
   try {
     await handler(ctx)
   } catch (err) {

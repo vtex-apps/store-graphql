@@ -56,7 +56,7 @@ const profile = (ctx, {customFields}) => async (data) => {
       payments = availableAccounts.map((account) => {
         const {bin, availableAddresses, accountId, ...cleanAccount} = account
         const accountAddress = address.find(
-          (address) => address.addressName === availableAddresses[0]
+          (addr) => addr.addressName === availableAddresses[0]
         )
         return {...cleanAccount, id: accountId, address: accountAddress}
       })

@@ -1,5 +1,4 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
 
@@ -10,7 +9,7 @@ interface AutocompleteArgs {
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
-export class PortalDataSource extends RESTDataSource<ColossusContext> {
+export class PortalDataSource extends RESTDataSource<ServiceContext> {
   constructor() {
     super()
   }
