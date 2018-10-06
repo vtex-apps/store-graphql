@@ -198,6 +198,11 @@ type Query {
     """ Subscription Order status, it also can be: ALL, ERROR, SUCCESSFUL."""
     status: String!
   ): [SubscriptionsOrder]
+
+  """ Get the Wish List informations by the received id """
+  getWishList(
+    id: String
+  ): WishList
 }
 
 type Mutation {

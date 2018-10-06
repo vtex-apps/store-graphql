@@ -1,0 +1,16 @@
+type WishList {
+    id: String
+    name: String
+    public: Boolean
+    createdBy: String
+    createdIn: String
+    updatedBy: String
+    updatedIn: String
+    products: [ListItem]
+}
+
+type ListItem {
+    productId: String
+    skuId: String
+    quantity: Int
+}
