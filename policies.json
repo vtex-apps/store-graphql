@@ -1,0 +1,14 @@
+[
+  {
+    "name": "query-vtex-store-graphql",
+    "description": "Allows access to resolve VTEX store's queries",
+    "statements": [
+      {
+        "actions": ["post", "get"],
+        "effect": "allow",
+        "resource":
+          "vrn:vtex.store-graphql:{{region}}:{{account}}:{{workspace}}:/_v/graphql"
+      }
+    ]
+  }
+]
