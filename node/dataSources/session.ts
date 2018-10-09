@@ -1,5 +1,4 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 
 export interface SegmentData {
@@ -16,7 +15,7 @@ export interface SegmentData {
   cultureInfo: string
 }
 
-export class SessionDataSource extends RESTDataSource<ColossusContext> {
+export class SessionDataSource extends RESTDataSource<ServiceContext> {
   constructor() {
     super()
   }

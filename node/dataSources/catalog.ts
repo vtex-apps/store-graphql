@@ -1,5 +1,4 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 
 interface ProductsArgs {
@@ -18,7 +17,7 @@ interface ProductsArgs {
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<ColossusContext> {
+export class CatalogDataSource extends RESTDataSource<ServiceContext> {
   constructor() {
     super()
   }

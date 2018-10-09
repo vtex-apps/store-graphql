@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { ColossusContext, IOContext } from 'colossus'
 import { prop } from 'ramda'
 import * as parse from 'url-parse'
 
@@ -24,7 +23,7 @@ export interface HttpResolverOptions {
 }
 
 export default (options: HttpResolverOptions) => {
-  return async (root, args, { vtex: ioContext, request: { headers: { cookie, 'x-forwarded-host': host } }, response }: ColossusContext) => {
+  return async (root, args, { vtex: ioContext, request: { headers: { cookie, 'x-forwarded-host': host } }, response }: ServiceContext) => {
     const { secure = false, url, enableCookies, data, method = 'GET', headers = {}, merge = defaultMerge } = options
 
     const builtUrl = (typeof url === 'function') ? url(ioContext.account, args, root) : url

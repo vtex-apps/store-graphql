@@ -1,6 +1,4 @@
-import { ColossusContext } from 'colossus'
 import { map } from 'ramda'
-import { StoreGraphQLDataSources } from '../../dataSources'
 import { SimulationData } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
@@ -34,7 +32,7 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
 }
 
 type Resolver<TArgs=any, TRoot=any> =
-  (root: TRoot, args: TArgs, context: ColossusContext<StoreGraphQLDataSources>) => Promise<any>
+  (root: TRoot, args: TArgs, context: ServiceContext) => Promise<any>
 
 export const fieldResolvers = {
   OrderForm: {
@@ -42,10 +40,10 @@ export const fieldResolvers = {
       return orderForm.orderFormId
     },
     items: (orderForm) => {
-      return map((item) => ({
+      return map((item: OrderFormItem) => ({
         ...item,
-        price: convertIntToFloat(item.price),
         listPrice: convertIntToFloat(item.listPrice),
+        price: convertIntToFloat(item.price),
         sellingPrice: convertIntToFloat(item.sellingPrice)
       }), orderForm.items)
     },

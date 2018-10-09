@@ -1,19 +1,16 @@
 import http from 'axios'
-import { serialize, parse } from 'cookie'
-import paths from '../paths'
-import { withAuthToken, headers } from '../headers'
+import { parse, serialize } from 'cookie'
+
 import ResolverError from '../../errors/resolverError'
+import { headers as authHeaders, withAuthToken } from '../headers'
+import paths from '../paths'
 
 
-const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql') => {
-  const configRequest = async (ctx, url, vtexIdVersion) => ({
-    headers: withAuthToken({...headers.profile, 'vtex-ui-id-version': vtexIdVersion})(ctx),
-    enableCookies: true,
-    method,
-    url,
-  })
-  return await http.request(await configRequest(ctx, url, vtexIdVersion))
-}
+const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql') => http.request({
+  headers: withAuthToken({...authHeaders.profile, 'vtex-ui-id-version': vtexIdVersion})(ctx),
+  method,
+  url,
+})
 
 const getSessionToken = async (ioContext, redirectUrl?) => {
   const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl), 'GET')
@@ -29,11 +26,11 @@ const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
     const authCookie = parse(headers['set-cookie'].find(checkAuth => {
       return checkAuth.includes(authAccount)
     }))
-    const VTEXID_EXPIRES = Math.round((new Date(authCookie['expires']).getTime() - Date.now()) / 1000)
+    const VTEXID_EXPIRES = Math.round((new Date(authCookie.expires).getTime() - Date.now()) / 1000)
     response.set('Set-Cookie', serialize(authAccount, authCookie[authAccount], {
       httpOnly: true,
-      path: '/',
       maxAge: VTEXID_EXPIRES,
+      path: '/',
       secure: true
     }))
   }
@@ -41,7 +38,7 @@ const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
 }
 /** Password must have at least eight characters with at least one number,
  * one lowercase and one uppercase letter
-*/
+ */
 const checkPasswordFormat = password => {
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
   return regex.test(password)
@@ -61,31 +58,14 @@ export const queries = {
       paths.sessionToken(ioContext.account, ioContext.account), 'GET'
     )
     return {
-      providers: oauthProviders,
+      accessKeyAuthentication: showAccessKeyAuthentication,
       classicAuthentication: showClassicAuthentication,
-      accessKeyAuthentication: showAccessKeyAuthentication
+      providers: oauthProviders,
     }
   },
 }
 
 export const mutations = {
-  /**
-   * Send access key to user email and set VtexSessionToken in response cookies
-   * @return Boolean
-   */
-  sendEmailVerification: async (_, args, { vtex: ioContext, response }) => {
-    // VtexSessionToken is valid for 10 minutes
-    const SESSION_TOKEN_EXPIRES = 600
-    const VtexSessionToken = await getSessionToken(ioContext)
-    await makeRequest(ioContext, paths.sendEmailVerification(args.email, VtexSessionToken))
-    response.set('Set-Cookie', serialize('VtexSessionToken', VtexSessionToken, {
-      httpOnly: true,
-      path: '/',
-      secure: true,
-      maxAge: SESSION_TOKEN_EXPIRES
-    }))
-    return true
-  },
   /**
    * Get email and access code in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
@@ -98,6 +78,7 @@ export const mutations = {
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.accessKeySignIn(VtexSessionToken, args.email, args.code))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
+
   /**
    * Get email and password in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
@@ -111,9 +92,25 @@ export const mutations = {
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
+  /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation.
+   * 13-06-2018 - @brunojdo
+   */
+  logout: async (_, args, { vtex: ioContext, response }) => {
+    response.set('Set-Cookie',
+    serialize(`VtexIdclientAutCookie_${ioContext.account}`, '', { path: '/', maxAge: 0, })
+    )
+    return true
+  },
+
+  oAuth: async (_, args, { vtex: ioContext, response }) => {
+    const {provider, redirectUrl} = args
+    const VtexSessionToken = await getSessionToken(ioContext, redirectUrl)
+    return paths.oAuth(VtexSessionToken, provider)
+  },
+
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
-    */
+   */
   recoveryPassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
@@ -128,7 +125,7 @@ export const mutations = {
 
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
-    */
+   */
   redefinePassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     if (!checkPasswordFormat(args.newPassword) || !checkPasswordFormat(args.currentPassword)) {
       throw new ResolverError('Password does not follow specific format', 400)
@@ -151,18 +148,22 @@ export const mutations = {
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
-  /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation.
-   * 13-06-2018 - @brunojdo */
-  logout: async (_, args, { vtex: ioContext, response }) => {
-    response.set('Set-Cookie',
-      serialize(`VtexIdclientAutCookie_${ioContext.account}`, '', { path: '/', maxAge: 0, })
-    )
+  /**
+   * Send access key to user email and set VtexSessionToken in response cookies
+   * @return Boolean
+   */
+  sendEmailVerification: async (_, args, { vtex: ioContext, response }) => {
+    // VtexSessionToken is valid for 10 minutes
+    const SESSION_TOKEN_EXPIRES = 600
+    const VtexSessionToken = await getSessionToken(ioContext)
+    await makeRequest(ioContext, paths.sendEmailVerification(args.email, VtexSessionToken))
+    response.set('Set-Cookie', serialize('VtexSessionToken', VtexSessionToken, {
+      httpOnly: true,
+      maxAge: SESSION_TOKEN_EXPIRES,
+      path: '/',
+      secure: true,
+    }))
     return true
   },
 
-  oAuth: async (_, args, { vtex: ioContext, response }) => {
-    const {provider, redirectUrl} = args
-    const VtexSessionToken = await getSessionToken(ioContext, redirectUrl)
-    return paths.oAuth(VtexSessionToken, provider)
-  }
 }
