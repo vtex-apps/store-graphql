@@ -1,16 +1,15 @@
 import { ApolloError } from 'apollo-server-errors'
-import { ColossusContext } from 'colossus'
-import { compose, equals, find, head, last, map, prop, split, test } from 'ramda'
-import * as slugify from 'slugify'
+import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 
-import {resolvers as brandResolvers} from './brand'
-import {resolvers as categoryResolvers} from './category'
-import {resolvers as facetsResolvers} from './facets'
-import {resolvers as offerResolvers} from './offer'
-import {resolvers as productResolvers} from './product'
-import {resolvers as recommendationResolvers} from './recommendation'
-import {resolvers as skuResolvers} from './sku'
+import { resolvers as brandResolvers } from './brand'
+import { resolvers as categoryResolvers } from './category'
+import { resolvers as facetsResolvers } from './facets'
+import { resolvers as offerResolvers } from './offer'
+import { resolvers as productResolvers } from './product'
+import { resolvers as recommendationResolvers } from './recommendation'
+import { resolvers as skuResolvers } from './sku'
+import { Slugify } from './slug'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -56,8 +55,8 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_, args, {dataSources: {portal}}) => {
-    const {itemsReturned} = await portal.autocomplete(args)
+  autocomplete: async (_, args, { dataSources: { portal } }) => {
+    const { itemsReturned } = await portal.autocomplete(args)
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
@@ -70,9 +69,15 @@ export const queries = {
     }
   },
 
-  facets: (_, {facets}, {dataSources: {catalog}}) => catalog.facets(facets),
+  facets: (_, { facets }, ctx) => {
+    ctx.vary('x-vtex-segment')
+    const { dataSources: { catalog } } = ctx
+    return catalog.facets(facets)
+  },
 
-  product: async (_, {slug}, {dataSources: {catalog}}) => {
+  product: async (_, { slug }, ctx) => {
+    ctx.vary('x-vtex-segment')
+    const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
 
     if (products.length > 0) {
@@ -85,7 +90,9 @@ export const queries = {
     )
   },
 
-  products: async (_, args, {dataSources: {catalog}}) => {
+  products: async (_, args, ctx) => {
+    ctx.vary('x-vtex-segment')
+    const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
@@ -96,7 +103,7 @@ export const queries = {
     return catalog.products(args)
   },
 
-  brand: async (_, args, {dataSources: {catalog}}) => {
+  brand: async (_, args, { dataSources: { catalog } }) => {
     const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id')), brands)
     if (!brand) {
@@ -105,13 +112,14 @@ export const queries = {
     return brand
   },
 
-  brands: async (_, __, {dataSources: {catalog}}) => catalog.brands(),
+  brands: async (_, __, { dataSources: { catalog } }) => catalog.brands(),
 
-  category: async (_, {id}, {dataSources: {catalog}}) => catalog.category(id),
+  category: async (_, { id }, { dataSources: { catalog } }) => catalog.category(id),
 
-  categories: async (_, {treeLevel}, {dataSources: {catalog}}) => catalog.categories(treeLevel),
+  categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
-  search: async (_, args, ctx: ColossusContext) => {
+  search: async (_, args, ctx: ServiceContext) => {
+    ctx.vary('x-vtex-segment')
     const { map: mapParams, query, rest } = args
 
     if (query == null || mapParams == null) {
@@ -123,18 +131,44 @@ export const queries = {
     const facetValues = queryWithRest + '?map=' + mapParams
 
     const productsPromise = queries.products(_, { ...args, query: queryWithRest }, ctx)
-    const categoriesPromise = queries.categories(_, { treeLevel: query.split('/').length }, ctx)
     const facetsPromise = queries.facets(_, { facets: facetValues }, ctx)
 
-    const [products, facets, categories] = await Promise.all([
+    const [products, facets] = await Promise.all([
       productsPromise,
       facetsPromise,
-      categoriesPromise,
     ])
-    const { Title: titleTag, MetaTagDescription: metaTagDescription } = findInTree(
-      categories,
-      query.split('/')
-    )
+
+    const categoryMetaData = async () => {
+      const category = findInTree(
+        await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
+        query.split('/')
+      )
+      return {
+        metaTagDescription: path(['MetaTagDescription'], category),
+        titleTag: path(['Title'], category),
+      }
+    }
+
+    const brandMetaData = async () => {
+      const brands = await queries.brands(_, { ...args }, ctx)
+      const brand = find(
+        compose(equals(query.split('/').pop(-1)), Slugify, prop('name')), brands
+      )
+      return {
+        metaTagDescription: path(['metaTagDescription'], brand),
+        titleTag: path(['title'], brand),
+      }
+    }
+
+    const searchMetaData = async () => {
+      const lastMap = mapParams.split(',').pop(-1)
+      const meta = lastMap === 'c' ? await categoryMetaData()
+        : lastMap === 'b' && await brandMetaData()
+      return meta
+    }
+
+    const { titleTag, metaTagDescription } = await searchMetaData()
+
     const recordsFiltered = facets.Departments.reduce(
       (total, dept) => total + dept.Quantity,
       0
@@ -152,7 +186,7 @@ export const queries = {
   searchContextFromParams: async (
     _,
     args,
-    {dataSources: {catalog}}
+    { dataSources: { catalog } }
   ) => {
     const response = {
       brand: null,
@@ -164,7 +198,7 @@ export const queries = {
       const brands = await catalog.brands()
       const found = brands.find(
         brand =>
-          brand.isActive && slugify(brand.name, { lower: true }) === args.brand
+          brand.isActive && Slugify(brand.name) === args.brand
       )
       response.brand = found && found.id
     }

@@ -1,14 +1,11 @@
 import { prop } from 'ramda'
-import * as slugify from 'slugify'
+import { Slugify } from './slug'
 
 export const resolvers = {
   Brand: {
     active: prop('isActive'),
-
-    cacheId: brand => slugify(brand.name, { lower: true }),
-
-    slug: brand => slugify(brand.name, { lower: true }),
-
+    cacheId: brand => Slugify(brand.name),
+    slug: brand => Slugify(brand.name),
     titleTag: prop('title'),
   }
 }

@@ -14,7 +14,7 @@ export const headers = {
 }
 
 export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null) => {
-  let ans = { ...currentHeaders }
+  const ans: any = { ...currentHeaders }
   if (cookie) {
     const parsedCookie = cookies.parse(cookie)
     if (parsedCookie.VtexIdclientAutCookie) {
@@ -31,8 +31,8 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
 export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext) => {
   return {
     ...currentHeaders,
-    VtexIdclientAutCookie: ioContext.authToken,
     'Proxy-Authorization': ioContext.authToken,
+    VtexIdclientAutCookie: ioContext.authToken,
   }
 }
 

@@ -15,14 +15,14 @@ export const fieldResolvers = {
       if (teaserType === CATALOG) {
         const {
           parameters: conditionsParameters,
-          minimumQuantity = parseInt(DEFAULT_QUANTITY),
+          minimumQuantity = parseInt(DEFAULT_QUANTITY), // tslint:disable-line:radix
         } = conditions
 
         const { parameters: effectsParameters } = effects
 
         const items = await Promise.all(
           conditionsParameters.map(async (conditionsParameter, index) => {
-            const skuIds = conditionsParameter.value.split(SKU_SEPARATOR)
+            const skuIds: string[] = conditionsParameter.value.split(SKU_SEPARATOR)
             const discount = effectsParameters[index].value
             const products = await catalog.productBySku(skuIds)
 

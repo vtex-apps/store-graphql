@@ -1,5 +1,4 @@
 import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
-import { ColossusContext } from 'colossus'
 import { forEachObjIndexed } from 'ramda'
 
 export interface SimulationData {
@@ -18,7 +17,7 @@ const isWhitelistedSetCookie = (cookie: string) => {
   return SetCookieWhitelist.includes(key)
 }
 
-export class CheckoutDataSource extends RESTDataSource<ColossusContext> {
+export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   constructor() {
     super()
   }
