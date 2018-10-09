@@ -16,10 +16,3 @@ const cacheStorage = new LRUCache<string, any>({
 })
 
 export const cache = () => cacheStorage
-
-export interface StoreGraphQLDataSources {
-  catalog: CatalogDataSource
-  checkout: CheckoutDataSource
-  portal: PortalDataSource
-  session: SessionDataSource
-}

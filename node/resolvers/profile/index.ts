@@ -9,10 +9,13 @@ import paths from '../paths'
 import profileResolver, { customFieldsFromGraphQLInput, pickCustomFieldsFromData } from './profileResolver'
 
 const makeRequest = async (url, token, data?, method = 'GET') => http.request({
-  url, data, method, headers: {
+  data,
+  headers: {
     'Proxy-Authorization': token,
     'VtexIdclientAutCookie': token
-  }
+  },
+  method,
+  url,
 })
 
 const getClientData = async (account, authToken, cookie, customFields?: string) => {
@@ -38,7 +41,7 @@ const getClientToken = (cookie, account) => {
   return token
 }
 
-const getUserAdress = async (account, userId, token) => await makeRequest(
+const getUserAdress = async (account, userId, token): Promise<UserAddress[]> => await makeRequest(
   paths.profile(account).filterAddress(userId), token
 ).then(prop('data'))
 
@@ -59,7 +62,7 @@ const addressPatch = async (_, args, config) => {
     data: { ...args.fields, userId },
     headers: withAuthAsVTEXID(headers.profile),
     method: 'PATCH',
-    url: account => paths.profile(account).address(args.id || ''),
+    url: acc => paths.profile(acc).address(args.id || ''),
   })(_, args, config)
 
   return await profileResolver(_, args, config)

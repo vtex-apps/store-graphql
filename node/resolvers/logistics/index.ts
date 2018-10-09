@@ -1,6 +1,6 @@
-import paths from '../paths'
-import { withAuthToken, headers } from '../headers'
+import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
+import paths from '../paths'
 
 export const queries = {
   logistics: httpResolver({

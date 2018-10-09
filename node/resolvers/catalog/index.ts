@@ -1,5 +1,4 @@
 import { ApolloError } from 'apollo-server-errors'
-import { ColossusContext } from 'colossus'
 import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 
@@ -119,7 +118,7 @@ export const queries = {
 
   categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
-  search: async (_, args, ctx: ColossusContext) => {
+  search: async (_, args, ctx: ServiceContext) => {
     ctx.vary('x-vtex-segment')
     const { map: mapParams, query, rest } = args
 
@@ -145,8 +144,8 @@ export const queries = {
         query.split('/')
       )
       return {
+        metaTagDescription: path(['MetaTagDescription'], category),
         titleTag: path(['Title'], category),
-        metaTagDescription: path(['MetaTagDescription'], category)
       }
     }
 
@@ -156,8 +155,8 @@ export const queries = {
         compose(equals(query.split('/').pop(-1)), Slugify, prop('name')), brands
       )
       return {
+        metaTagDescription: path(['metaTagDescription'], brand),
         titleTag: path(['title'], brand),
-        metaTagDescription: path(['metaTagDescription'], brand)
       }
     }
 

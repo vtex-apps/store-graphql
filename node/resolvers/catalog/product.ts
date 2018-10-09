@@ -1,8 +1,9 @@
-import { compose, equals, map, omit, reject, toPairs } from 'ramda'
+import { compose, map, omit, reject, toPairs } from 'ramda'
+
 import { queries as benefitsQueries } from '../benefits'
 
 const objToNameValue = (keyName: string, valueName: string, record: Record<string, any>) => compose(
-  reject(equals(false)),
+  reject(value => typeof value === 'boolean' && value === false),
   map(([key, value]) => typeof value === 'string' && ({ [keyName]: key, [valueName]: value })),
   toPairs
 )(record)
