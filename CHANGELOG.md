@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Needs to have lint passing to publish store-graphql. If you are having problems publishing it, please remove the node_modules folder and run `yarn`
 
 ## [2.32.1] - 2018-10-5
 ### Fixed
