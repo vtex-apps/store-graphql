@@ -1,26 +1,26 @@
 import { serialize } from 'cookie'
-import { merge, identity } from 'ramda'
+import { identity, merge } from 'ramda'
 
+import ResolverError from '../../errors/resolverError'
+import { headers, withAuthToken } from '../headers'
+import httpResolver from '../httpResolver'
 import paths from '../paths'
 import { sessionFields } from './sessionResolver'
-import httpResolver from '../httpResolver'
-import { withAuthToken, headers } from '../headers'
-import ResolverError from '../../errors/resolverError';
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
-// maxAge of 1-day defined in vtex-impersonated-customer-email cookie 
+// maxAge of 1-day defined in vtex-impersonated-customer-email cookie
 const VTEXID_EXPIRES = 86400
 
 const makeRequest = async (_, args, config, url, data?, method?, enableCookies = true) => {
   const response = await httpResolver({
-    url,
     data,
-    method,
     enableCookies,
     headers: withAuthToken(headers.json),
-    merge: (bodyData, responseData, response) => {
-      return { ...response }
+    merge: (bodyData, responseData, res) => {
+      return { ...res }
     },
+    method,
+    url,
   })(_, args, config)
   if (response.status > 400) {
     throw new ResolverError('ERROR', response.data)
@@ -32,7 +32,7 @@ const makeRequest = async (_, args, config, url, data?, method?, enableCookies =
 const impersonateData = email => {
   return {
     public: {
-      "vtex-impersonated-customer-email": {
+      'vtex-impersonated-customer-email': {
         value: email
       }
     }
@@ -61,9 +61,9 @@ export const mutations = {
     await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
 
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, args.email, {
-      path: '/',
+      encode: identity,
       maxAge: VTEXID_EXPIRES,
-      encode: identity
+      path: '/',
     }))
     const { data } = await makeRequest(_, args, config, paths.getSession)
     return sessionFields(data)
@@ -77,8 +77,8 @@ export const mutations = {
     await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
 
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, '', {
+      maxAge: 0,
       path: '/',
-      maxAge: 0
     }))
     return true
   }

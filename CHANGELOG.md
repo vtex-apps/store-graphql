@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.32.2] - 2018-10-09
+### Changed
+- Needs to have lint passing to publish store-graphql. If you are having problems publishing it, please remove the node_modules folder and run `yarn`
+
 ## [2.32.1] - 2018-10-5
 ### Fixed
 - Add vary x-vtex-segment to prevent wrong cached responses.
