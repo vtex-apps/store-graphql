@@ -2,58 +2,17 @@ import http from 'axios'
 import { last, merge, propEq, prop, reject, head, find } from 'ramda'
 import paths from '../paths'
 
-// const createClient = (account, orderFormId, authToken) => {
-
-//   const headers = {
-//     Accept: 'application/json',
-//     Authorization: `bearer ${authToken}`,
-//     'Content-Type': 'application/json',
-// }
-
-// return {
-//     addToken: (paymentToken) => {
-//         const payload = { paymentToken, expectedOrderFormSections: ['items', 'paymentData'] }
-//       const url = paths.orderFormPaymentToken(account, { orderFormId })
-
-//       return http.put(url, payload, { headers })
-//     },
-
-//     removeToken: (tokenId) => {
-//         const url = paths.orderFormPaymentTokenId(account, { orderFormId, tokenId })
-//         return http.delete(url, { headers, data: { expectedOrderFormSections: ['items'] } })
-//     },
-// }
-// }
-
-// export const a = async (body, ioContext) => {
-//   const { data: { orderFormId, paymentToken } } = body
-//   const checkout = createClient(ioContext.account, orderFormId, ioContext.authToken)
-
-//   const response = await checkout.addToken(paymentToken)
-
-//   const { data: { paymentData: { availableTokens } } } = response
-//   const tokensToRemove = reject(propEq('tokenId', paymentToken.tokenId), availableTokens)
-
-//   if (tokensToRemove.length === 0) {
-//       return { data: merge(body.data, response.data) }
-//     }
-
-//     const lastDeleteResponse = await Promise.mapSeries(tokensToRemove, ({ tokenId }) => checkout.removeToken(tokenId)).then<any>(last)
-//     return { data: merge(body.data, lastDeleteResponse.data) }
-// }
-
-// const simulationUrl = paths.orderFormSimulation(account, {querystring})
-// http.get(url, {}, {headers})
-
+/**
+ * Create a calculated schema from the attachments, to control
+ * the product-customizer component
+ * 
+ * @returns string
+ */
 export default async (
   { name, attachments },
   _,
   { vtex: { account, authToken }, dataSources: { catalog }, cookies }
 ) => {
-  /**
-   * Create a calculated schema from the attachments, to control
-   * the product-customizer component
-   */
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'http://json-schema.org/draft-07/schema#',
@@ -61,22 +20,7 @@ export default async (
     type: 'object',
     required: [],
     properties: {},
-    items: [
-      // {
-      //   Id: '13',
-      //   Name: 'massa fina',
-      //   price: 1.0,
-      //   image: 'www.foto.com.br/foto.jpg',
-      //   pricetable: 'tabelacombo',
-      // },
-      // {
-      //   Id: '123213',
-      //   Name: 'massa normal',
-      //   price: 2.0,
-      //   image: 'www.foto.com.br/foto.jpg',
-      //   pricetable: 'tabelacombo',
-      // },
-    ],
+    items: []
   }
 
   const headers = {
