@@ -1,11 +1,28 @@
 import http from 'axios'
-import { last, merge, propEq, prop, reject, head, find } from 'ramda'
+import { propEq, prop, head, find, map, pick, findIndex } from 'ramda'
 import paths from '../paths'
+
+type SchemaItem = {
+  defaultQuantity: String
+  id: String
+  image: String
+  maxQuantity: String
+  minQuantity: String
+  name: String
+  price: Number
+  priceTable: String
+}
+
+type Sku = {
+  name: String
+  images: Array<{ imageUrl: String }>,
+  itemId: String
+}
 
 /**
  * Create a calculated schema from the attachments, to control
  * the product-customizer component
- * 
+ *
  * @returns string
  */
 export default async (
@@ -45,17 +62,17 @@ export default async (
           const [_, minTotalItems, maxTotalItems] = DomainValues.match(/^\[(\d+)-?(\d*)\]/)
 
           const domainSkusRegexp = /#\w+\[\d+-\d+\]\[\d+\]\w*/g
-          const domainSkus = DomainValues.match(domainSkusRegexp).map(item => {
+          const domainSkus = map((item: String) => {
             const [_, id, minQuantity, maxQuantity, defaultQuantity, priceTable] = item.match(
               /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
             )
             return { id, minQuantity, maxQuantity, defaultQuantity, priceTable }
-          })
+          }, DomainValues.match(domainSkusRegexp))
 
           const multiple = maxTotalItems > minTotalItems
           const enumProperty = {
             type: 'string',
-            enum: domainSkus.map(({ id }) => id),
+            enum: pick('id', domainSkus),
           }
 
           const property = multiple
@@ -91,12 +108,12 @@ export default async (
   const items = await Promise.all(
     reduced.schemaItems
       // remove duplicate skus
-      .filter((item, index, self) => index === self.findIndex(i => i.id === item.id))
+      .filter((item, index, self) => index === findIndex((i: SchemaItem) => i.id === item.id)(self))
       // get name, image from sku and price from priceTable
       .map(async item => {
         const products = await catalog.productBySku([item.id])
         const { items: skus = [] } = head(products) || {}
-        const sku = find(({ itemId }) => itemId === item.id, skus)
+        const sku: Sku = find(({ itemId }) => itemId === item.id, skus)
 
         /**
          *
