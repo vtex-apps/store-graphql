@@ -31,15 +31,13 @@ const domainValueRegex = /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
 const parseDomainSkus = skusString =>
   map((item: String) => {
     const [_, id, minQuantity, maxQuantity, defaultQuantity, priceTable] = item.match(
-      domainValueRegex
+      /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
     )
     return { id, minQuantity, maxQuantity, defaultQuantity, priceTable }
   }, skusString.split(';').filter(str => str.length != 0))
 
 const parseDomain = ({ FieldName, DomainValues }) => {
-  const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(
-    /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
-  )
+  const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(domainValueRegex)
   const required = minTotalItems > 0
   const multiple = maxTotalItems > minTotalItems
 
