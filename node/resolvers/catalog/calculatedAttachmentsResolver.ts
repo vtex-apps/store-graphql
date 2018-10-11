@@ -1,5 +1,7 @@
 import http from 'axios'
-import { propEq, prop, head, find, map, pick, findIndex } from 'ramda'
+import { propEq, prop, head, find, map, pluck, findIndex, isEmpty, pickBy, both } from 'ramda'
+import { renameKeysWith } from 'ramda-adjunct'
+import camelCase from 'lodash.camelcase'
 import paths from '../paths'
 
 type SchemaItem = {
@@ -15,9 +17,13 @@ type SchemaItem = {
 
 type Sku = {
   name: String
-  images: Array<{ imageUrl: String }>,
+  images: Array<{ imageUrl: String }>
   itemId: String
 }
+
+const isTruthy = val => !!val
+const isUtm = (_, key) => key.startsWith('utm')
+const isValidUtm = both(isUtm, isTruthy)
 
 /**
  * Create a calculated schema from the attachments, to control
@@ -28,7 +34,7 @@ type Sku = {
 export default async (
   { name, attachments },
   _,
-  { vtex: { account, authToken }, dataSources: { catalog }, cookies }
+  { vtex: { account, authToken }, dataSources: { catalog, session }, cookies }
 ) => {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
@@ -46,7 +52,8 @@ export default async (
     'Content-Type': 'application/json',
   }
 
-  const segment = cookies.get('vtex_segment') || ''
+  const utms = await session.getSegmentData()
+  const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, utms))
 
   const reduced = attachments.reduce(
     (accumulated, { domainValues }) => {
@@ -121,7 +128,6 @@ export default async (
          * =====
          *
          * - get store salesChannel
-         * - get store utms/marketingData
          * - get store country
          * - get user login status
          *
@@ -133,15 +139,7 @@ export default async (
           country: 'BRA',
           isCheckedIn: false,
           priceTables: [item.priceTable],
-          ...(segment
-            ? {
-                marketingData: {
-                  utmSource: segment,
-                  utmCampaign: segment,
-                  utmiCampaign: segment,
-                },
-              }
-            : {}),
+          ...(isEmpty(marketingData) ? {} : { marketingData }),
         }
 
         const orderForm = prop('data', await http.post(simulationUrl, payload, { headers }))
