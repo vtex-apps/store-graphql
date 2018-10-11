@@ -23,7 +23,7 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
   }
 
   public product = (slug: string) => this.get(
-    `/pub/products/search/${slug}/p`
+    `/pub/products/search/${slug && slug.toLowerCase()}/p`
   )
 
   public productByEan = (id: string) => this.get(

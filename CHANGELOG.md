@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Creation of `VtexIdclientAutCookie` header
 
+## [2.32.3] - 2018-10-9
+### Fixed
+- Fix product search by slug returning no products because Catalog API is case-sensitive.
+
 ## [2.32.2] - 2018-10-09
 ### Changed
 - Needs to have lint passing to publish store-graphql. If you are having problems publishing it, please remove the node_modules folder and run `yarn`
