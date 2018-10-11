@@ -81,7 +81,7 @@ const getSkuInfo = ({ items, simulationUrl, catalogDataSource, marketingData, he
           ...item,
           name: sku.name,
           description: sku.complementName,
-          image: sku.images[0].imageUrl,
+          image: head(sku.images).imageUrl,
           price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
         }
       })
