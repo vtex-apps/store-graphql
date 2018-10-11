@@ -32,7 +32,7 @@ const parseDomainSkus = skusString =>
       /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
     )
     return { id, minQuantity, maxQuantity, defaultQuantity, priceTable }
-  }, skusString.split(';'))
+  }, skusString.split(';').filter(str => str.length != 0))
 
 const parseDomain = ({ FieldName, DomainValues }) => {
   const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(
