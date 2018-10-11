@@ -34,14 +34,14 @@ const parseDomainSkus = skusString =>
     return { id, minQuantity, maxQuantity, defaultQuantity, priceTable }
   }, skusString.split(';'))
 
-const parseDomain = DomainValues => {
+const parseDomain = ({ FieldName, DomainValues }) => {
   const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(
     /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
   )
   const required = minTotalItems > 0
   const multiple = maxTotalItems > minTotalItems
 
-  const domainSkus = parseDomainSkus(skusString)
+  const domainSkus = { [FieldName]: parseDomainSkus(skusString) }
 
   return { minTotalItems, maxTotalItems, domainSkus, required, multiple }
 }
@@ -49,8 +49,6 @@ const parseDomain = DomainValues => {
 const getSkuInfo = ({ items, simulationUrl, catalogDataSource, marketingData, headers }) =>
   Promise.all(
     items
-      // remove duplicate skus
-      .filter((item, index, self) => index === findIndex((i: SchemaItem) => i.id === item.id)(self))
       // get name, image from sku and price from priceTable
       .map(async item => {
         const products = await catalogDataSource.productBySku([item.id])
@@ -100,13 +98,14 @@ const reduceAttachments = attachments =>
         (accumulated, { FieldName, DomainValues }) => {
           if (!DomainValues) return { ...accumulated }
           const { domainProperties, domainItems, domainRequired } = accumulated
-          const { minTotalItems, maxTotalItems, domainSkus, required, multiple } = parseDomain(
-            DomainValues
-          )
+          const { minTotalItems, maxTotalItems, domainSkus, required, multiple } = parseDomain({
+            FieldName,
+            DomainValues,
+          })
 
           const enumProperty = {
             type: 'string',
-            enum: pluck('id')(domainSkus),
+            enum: pluck('id')(domainSkus[FieldName]),
           }
 
           const property = multiple
@@ -121,8 +120,8 @@ const reduceAttachments = attachments =>
 
           return {
             domainProperties: { ...domainProperties, [FieldName]: property },
-            domainItems: [...domainItems, ...domainSkus],
-            domainRequired: [...domainRequired, required ? FieldName : null],
+            domainItems: { ...domainItems, ...domainSkus },
+            domainRequired: [...domainRequired, ...(required ? [FieldName] : [])],
           }
         },
         { domainProperties: {}, domainItems: [], domainRequired: [] }
@@ -130,11 +129,11 @@ const reduceAttachments = attachments =>
 
       return {
         schemaProperties: { ...schemaProperties, ...schemaFromDomains.domainProperties },
-        schemaItems: [...schemaItems, ...schemaFromDomains.domainItems],
+        schemaItems: { ...schemaItems, ...schemaFromDomains.domainItems },
         schemaRequired: [...schemaRequired, ...schemaFromDomains.domainRequired],
       }
     },
-    { schemaProperties: {}, schemaItems: [], schemaRequired: [] }
+    { schemaProperties: {}, schemaItems: {}, schemaRequired: [] }
   )
 
 /**
@@ -155,7 +154,7 @@ export default async (
     type: 'object',
     required: [],
     properties: {},
-    items: [],
+    items: {},
   }
 
   const headers = {
@@ -164,7 +163,9 @@ export default async (
     'Content-Type': 'application/json',
   }
 
-  const simulationUrl = paths.orderFormSimulation(account, {querystring: 'sc=1&localPipeline=true'})
+  const simulationUrl = paths.orderFormSimulation(account, {
+    querystring: 'sc=1&localPipeline=true',
+  })
 
   const utms = await session.getSegmentData()
   const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, utms))
@@ -172,7 +173,11 @@ export default async (
   const reducedAttachment = reduceAttachments(attachments)
 
   const items = await getSkuInfo({
-    items: reducedAttachment.schemaItems,
+    //this is a hack to transform the object of arrays into a single array keeping the reference to the original key
+    items: Object.entries(reducedAttachment.schemaItems).reduce(
+      (accum, [key, values]) => [...accum, ...values.map(i => ({ ...i, domain: key }))],
+      []
+    ),
     simulationUrl,
     catalogDataSource: catalog,
     marketingData,
@@ -184,7 +189,14 @@ export default async (
     ...{
       properties: reducedAttachment.schemaProperties,
       required: reducedAttachment.schemaRequired,
-      items: items,
+      // this does the opposite of the above hack
+      items: items.reduce((accum, item) => {
+        const { domain } = item
+        const value = accum[domain] || []
+        delete item.domain
+        value.push(item)
+        return { ...accum, [domain]: value }
+      }, {}),
     },
   }
 
