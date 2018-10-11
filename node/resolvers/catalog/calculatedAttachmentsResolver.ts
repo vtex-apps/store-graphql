@@ -79,7 +79,7 @@ export default async (
           const multiple = maxTotalItems > minTotalItems
           const enumProperty = {
             type: 'string',
-            enum: pick('id', domainSkus),
+            enum: pluck('id')(domainSkus),
           }
 
           const property = multiple
