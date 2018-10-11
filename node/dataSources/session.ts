@@ -1,7 +1,7 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed } from 'ramda'
+import { AuthenticationError } from 'apollo-server-errors'
 
-export interface SegmentData {
+export interface Segment {
   campaigns?: any
   channel: string
   priceTables?: any
@@ -15,12 +15,47 @@ export interface SegmentData {
   cultureInfo: string
 }
 
+export interface Session {
+  id: string
+  namespaces?: {
+    account?: any
+    store?: any
+    cookie?: any
+    authentication?: any
+    impersonate?: {
+      canImpersonate?: {
+        value: string
+      }
+    }
+    profile?: {
+      isAuthenticated: {
+        value: string
+      }
+      id: {
+        value: string
+      }
+      email: {
+        value: string
+      }
+    }
+    public?: any
+  }
+}
+
 export class SessionDataSource extends RESTDataSource<ServiceContext> {
   constructor() {
     super()
   }
 
-  public getSegmentData = () => this.get<SegmentData>(
+  public sessions = async () => {
+    const session = this.context.cookies.get('vtex_session')
+    if (!session) {
+      throw new AuthenticationError('Session is not available in context')
+    }
+    return this.get<Session>(`/sessions/${session}?items=*`)
+  }
+
+  public segments = () => this.get<Segment>(
     '/segments'
   )
 
@@ -30,16 +65,9 @@ export class SessionDataSource extends RESTDataSource<ServiceContext> {
   }
 
   protected willSendRequest (request: RequestOptions) {
-    const {cookies, vtex: {authToken}} = this.context
-    const segment = cookies.get('vtex_segment')
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        Authorization: authToken,
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-        'Proxy-Authorization': authToken,
-      }
-    )
+    const {vtex: {authToken}} = this.context
+    request.headers.set('Authorization', authToken)
+    request.headers.set('Content-Type', 'application/json')
+    request.headers.set('Accept', 'application/json')
   }
 }

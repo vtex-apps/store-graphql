@@ -24,8 +24,7 @@ export const uploadAttachment = async (args, ioContext) => {
   const response = await fetch(paths.attachment(account, acronym, documentId, field), {
     body: formData,
     headers: {
-      'Proxy-Authorization': authToken,
-      'VtexIdclientAutCookie': authToken,
+      'Authorization': authToken,
       ...formData.getHeaders(),
     },
     method: 'POST',

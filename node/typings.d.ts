@@ -6,6 +6,9 @@ import { CatalogDataSource } from './dataSources/catalog'
 import { CheckoutDataSource } from './dataSources/checkout'
 import { PortalDataSource } from './dataSources/portal'
 import { SessionDataSource } from './dataSources/session'
+import { UserDataSource } from './dataSources/user'
+import { ProfileSystemDataSource } from './dataSources/profileSystem'
+import { AddressDataSource } from './dataSources/address'
 
 declare global {
   interface IOContext extends ioContext {
@@ -32,6 +35,9 @@ declare global {
     checkout: CheckoutDataSource
     portal: PortalDataSource
     session: SessionDataSource
+    user: UserDataSource
+    profileSystem: ProfileSystemDataSource
+    address: AddressDataSource
   }
 
   interface OrderFormItem {

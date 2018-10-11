@@ -6,7 +6,7 @@ import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } fr
 import { fieldResolvers as checkoutFieldResolvers, mutations as checkoutMutations, queries as checkoutQueries } from './checkout'
 import { mutations as documentMutations, queries as documentQueries } from './document'
 import { queries as logisticsQueries } from './logistics'
-import { mutations as profileMutations, queries as profileQueries, rootResolvers as profileRootResolvers } from './profile'
+import { fieldResolvers as profileFieldResolvers, mutations as profileMutations, queries as profileQueries } from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
 
 // tslint:disable-next-line:no-var-requires
@@ -16,7 +16,7 @@ Promise.config({ longStackTraces: true })
 export const resolvers = {
   ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
-  ...profileRootResolvers,
+  ...profileFieldResolvers,
   ...checkoutFieldResolvers,
   Mutation: {
     ...profileMutations,

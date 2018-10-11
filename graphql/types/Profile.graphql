@@ -93,7 +93,7 @@ input ProfileCustomFieldInput {
 
 input ProfileInput {
   """ User's email """
-  email: String!,
+  email: String,
   """ User's first name """
   firstName: String,
   """ User's last name """
