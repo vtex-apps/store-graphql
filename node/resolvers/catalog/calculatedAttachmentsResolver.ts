@@ -16,9 +16,10 @@ type SchemaItem = {
 }
 
 type Sku = {
-  name: String
+  complementName: String
   images: Array<{ imageUrl: String }>
   itemId: String
+  name: String
 }
 
 const isTruthy = val => !!val
@@ -79,6 +80,7 @@ const getSkuInfo = ({ items, simulationUrl, catalogDataSource, marketingData, he
         return {
           ...item,
           name: sku.name,
+          description: sku.complementName,
           image: sku.images[0].imageUrl,
           price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
         }
