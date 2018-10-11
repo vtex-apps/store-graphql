@@ -26,10 +26,12 @@ const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
 
+const domainValueRegex = /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
+
 const parseDomainSkus = skusString =>
   map((item: String) => {
     const [_, id, minQuantity, maxQuantity, defaultQuantity, priceTable] = item.match(
-      /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
+      domainValueRegex
     )
     return { id, minQuantity, maxQuantity, defaultQuantity, priceTable }
   }, skusString.split(';').filter(str => str.length != 0))
@@ -96,7 +98,7 @@ const reduceAttachments = attachments =>
 
       const schemaFromDomains = attachmentDomainValues.reduce(
         (accumulated, { FieldName, DomainValues }) => {
-          if (!DomainValues) return { ...accumulated }
+          if (!DomainValues || !domainValueRegex.test(DomainValues)) return { ...accumulated }
           const { domainProperties, domainItems, domainRequired } = accumulated
           const { minTotalItems, maxTotalItems, domainSkus, required, multiple } = parseDomain({
             FieldName,
