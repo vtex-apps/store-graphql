@@ -153,9 +153,12 @@ type Query {
 
   """ Get logistics information about the store """
   logistics: LogisticsData
-  
+
   """ Get profile information to session users """
-  getSession: Session @cacheControl(scope: PRIVATE)
+  getSession: GetSession @cacheControl(scope: PRIVATE)
+
+  """ Session infso """
+  session: Session @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
@@ -254,10 +257,19 @@ type Mutation {
   logout: Boolean
 
   """ Impersonate a customer """
-  impersonate(
+  impersonateUser(
     """ The email which will be used to impersonate a user """
     email: String!,
   ): Session
+
+  """ Depersonify a customer """
+  depersonifyUser: Session
+
+  """ Impersonate a customer """
+  impersonate(
+    """ The email which will be used to impersonate a user """
+    email: String!,
+  ): GetSession
 
   """ Depersonify a customer """
   depersonify: Boolean

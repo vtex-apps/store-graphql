@@ -1,5 +1,5 @@
 """Informations about user Session"""
-type Session {
+type GetSession {
   """ Session ID """
   id: ID,
   """ Id of admin logged in session"""
@@ -18,4 +18,19 @@ type Session {
 type ImpersonatedUser {
   """ Profile information of impersonated user """
   profile: SessionProfile
+}
+
+"""Informations about user Session"""
+type Session {
+  """ Session ID """
+  id: ID
+  cacheId: ID
+  """ Id of admin logged in session"""
+  adminUserId: String
+  """ Email of Admin logged in session"""
+  adminUserEmail: String
+  """ Check if this admin can impersonate a user"""
+  impersonable: Boolean
+  """ Profile information of session user """
+  profile: Profile
 }

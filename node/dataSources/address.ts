@@ -1,5 +1,9 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { uniq } from 'ramda'
+import { uniqWith } from 'ramda'
+
+// Be carefull while using uniq. For string comparing, it's more perfomatic using this way
+// AHTM
+const uniq = uniqWith<string>((a: string, b: string) => a === b)
 
 const isNonEmptyArray = <T>(array?: T[]) => Array.isArray(array) && array.length > 0
 
@@ -50,5 +54,6 @@ export class AddressDataSource extends RESTDataSource<ServiceContext> {
     request.headers.set('Authorization', authToken)
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('Accept', 'application/json')
+    request.headers.set('Vtex-Use-Https', 'true')
   }
 }

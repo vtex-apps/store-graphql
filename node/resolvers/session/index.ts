@@ -1,10 +1,11 @@
 import { serialize } from 'cookie'
-import { identity, merge } from 'ramda'
+import { identity, merge, pathEq } from 'ramda'
 
 import ResolverError from '../../errors/resolverError'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
+import { resolvers as SessionResolvers } from './session'
 import { sessionFields } from './sessionResolver'
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
@@ -39,7 +40,12 @@ const impersonateData = email => {
   }
 }
 
-// Disclaimer: These queries and mutations assume that vtex_session was passed in cookies.
+interface ImpersonateArgs {
+  email: string
+}
+
+const canImpersonate = pathEq(['namespaces', 'impersonate', 'canImpersonate', 'value'], 'true')
+
 export const queries = {
   /**
    * Get user session
@@ -48,10 +54,28 @@ export const queries = {
   getSession: async (_, args, config) => {
     const { data } = await makeRequest(_, args, config, paths.getSession)
     return sessionFields(data)
-  }
+  },
+
+  session: (root, args, {dataSources: {session}}: ServiceContext) => session.sessions()
 }
 
 export const mutations = {
+  depersonifyUser: async (root, args, {dataSources: {session}}: ServiceContext) => {
+    await session.depersonify()
+    return session.sessions()
+  },
+
+  impersonateUser: async (root, args: ImpersonateArgs, ctx: ServiceContext) => {
+    const { email } = args
+    const { dataSources: {session} } = ctx
+    const sessionInfo = await session.sessions()
+    if (canImpersonate(sessionInfo)) {
+      await session.personify(email)
+      return session.sessions()
+    }
+    return sessionInfo
+  },
+
   /**
    * Impersonate a customer and set clientProfileData in OrderForm
    * @param args this mutation receives email and orderFormId
@@ -82,4 +106,8 @@ export const mutations = {
     }))
     return true
   }
+}
+
+export const fieldResolvers = {
+  ...SessionResolvers
 }

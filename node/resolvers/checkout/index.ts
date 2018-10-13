@@ -1,6 +1,6 @@
 import { map } from 'ramda'
 import { SimulationData } from '../../dataSources/checkout'
-import { SegmentData } from '../../dataSources/session'
+import { Segment } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
@@ -21,7 +21,7 @@ import paymentTokenResolver from './paymentTokenResolver'
  */
 const convertIntToFloat = int => int * 0.01
 
-const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentData) => {
+const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: Segment) => {
   const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
   const {utm_source, utm_campaign, utmi_campaign} = segmentData
 
@@ -71,7 +71,7 @@ export const mutations: Record<string, Resolver> = {
   addItem: async (root, {orderFormId, items}, {dataSources: {checkout, session}}) => {
     const [{marketingData}, segmentData] = await Promise.all([
       checkout.orderForm(),
-      session.getSegmentData()
+      session.segments()
     ])
 
     if (shouldUpdateMarketingData(marketingData, segmentData)) {
