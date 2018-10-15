@@ -18,7 +18,7 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
   if (cookie) {
     const parsedCookie = cookies.parse(cookie)
     if (parsedCookie.VtexIdclientAutCookie) {
-      ans['VtexIdclientAutCookie'] = parsedCookie.VtexIdclientAutCookie
+      ans.VtexIdclientAutCookie = parsedCookie.VtexIdclientAutCookie
     }
   }
   return {
