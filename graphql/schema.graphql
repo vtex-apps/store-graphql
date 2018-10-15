@@ -312,6 +312,7 @@ type Mutation {
   """ Document """
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  deleteDocument(acronym: String!, documentId: ID!): DocumentResponse
   uploadAttachment(acronym: String!, documentId: ID!, field: String!, file: Upload!): AttachmentResponse
 
   """ Subscriptions"""
