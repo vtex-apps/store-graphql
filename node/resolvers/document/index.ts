@@ -89,7 +89,7 @@ export const mutations = {
   deleteDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
     const { acronym, documentId } = args
     const url = paths.document(ioContext.account, acronym, documentId)
-    const response = await http.delete(
+    await http.delete(
       url,
       {
         headers: {
@@ -99,7 +99,6 @@ export const mutations = {
         },
       },
     )
-    console.log({response})
     return {id: documentId}
   },
 
