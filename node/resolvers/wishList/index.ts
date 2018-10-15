@@ -1,4 +1,4 @@
-import { queries as documentQueries } from '../document/index'
+import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 
 const fields = ['name', 'public', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
 
@@ -17,5 +17,27 @@ export const queries = {
 
     const products = wishListItems.map(item => ({ ...generateObjJSON(item.fields) }))
     return { id, ...generateObjJSON(wishListInfo.fields), products }
+  }
+}
+
+export const mutation = {
+  createWishList: async (_, args, context) => {
+    const request = {
+      acronym: 'WL',
+      document : {
+        fields: [
+          {
+          key: 'name',
+          value: args.wishList.name
+        },
+        {
+          key: 'isPublic',
+          value: args.wishList.isPublic
+        }
+      ],
+    }
+  }
+    const response = await documentMutations.createDocument(_, request, context)
+    return await queries.getWishList(_, { id: response.documentId }, context)
   }
 }

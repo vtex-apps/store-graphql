@@ -1,7 +1,7 @@
 type WishList {
     id: String
     name: String
-    public: Boolean
+    isPublic: Boolean
     createdBy: String
     createdIn: String
     updatedBy: String
