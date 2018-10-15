@@ -14,3 +14,8 @@ type ListItem {
     skuId: String
     quantity: Int
 }
+
+input WishListInput {
+    name: String!
+    isPublic: Boolean
+}
