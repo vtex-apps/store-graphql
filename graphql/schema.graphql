@@ -319,5 +319,7 @@ type Mutation {
   subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean
 
   """ WishList """
-  createWishList(wishList: WishListInput!): WishList
+  createWishList(wishList: WishListInput): WishList
+  updateWishList(id: ID!, wishList: WishListInput): WishList 
+  deleteWishList(id: ID!): WishList
 }

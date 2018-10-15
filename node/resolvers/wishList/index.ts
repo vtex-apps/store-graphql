@@ -27,17 +27,55 @@ export const mutation = {
       document : {
         fields: [
           {
-          key: 'name',
-          value: args.wishList.name
-        },
-        {
-          key: 'isPublic',
-          value: args.wishList.isPublic
-        }
-      ],
+            key: 'name',
+            value: args.wishList.name
+          },
+          {
+            key: 'isPublic',
+            value: args.wishList.isPublic
+          }
+        ],
+      }
     }
-  }
     const response = await documentMutations.createDocument(_, request, context)
+    return await queries.getWishList(_, { id: response.documentId }, context)
+  },
+
+  deleteWishList: async (_, args, context) => {
+    const { id } = args
+    const request = {
+      acronym: 'WL',
+      documentId: id
+    }
+    return await documentMutations.deleteDocument(_, request, context)
+  },
+
+  updateWishList: async (_, args, context) => {
+    const request = {
+      acronym: 'WL',
+      id: args.id,
+      document : {
+        fields: [
+          {
+            key: 'Id',
+            value: args.id
+          },
+          {
+            key: 'DocumentId',
+            value: args.id
+          },
+          {
+            key: 'name',
+            value: args.wishList.name
+          },
+          {
+            key: 'isPublic',
+            value: args.wishList.isPublic
+          }
+        ],
+      }
+    }
+    const response = await documentMutations.updateDocument(_, request, context)
     return await queries.getWishList(_, { id: response.documentId }, context)
   }
 }
