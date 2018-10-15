@@ -316,4 +316,7 @@ type Mutation {
 
   """ Subscriptions"""
   subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean
+
+  """ WishList """
+  createWishList(wishList: WishListInput!): WishList
 }
