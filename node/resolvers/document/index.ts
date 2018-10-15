@@ -86,5 +86,22 @@ export const mutations = {
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
+  deleteDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+    const { acronym, documentId } = args
+    const url = paths.document(ioContext.account, acronym, documentId)
+    const response = await http.delete(
+      url,
+      {
+        headers: {
+          Accept: 'application/vnd.vtex.ds.v10+json',
+          Authorization: ioContext.authToken,
+          ['Content-Type']: 'application/json',
+        },
+      },
+    )
+    console.log({response})
+    return {id: documentId}
+  },
+
   uploadAttachment: async (root, args, {vtex: ioContext}, info) => uploadAttachment(args, ioContext)
 }
