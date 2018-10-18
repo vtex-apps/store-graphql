@@ -7,58 +7,58 @@ const acronymList = 'WL'
 const acronymListProduct = 'LP'
 
 export const queries = {
-  getWishList: async (_, args, context) => {
+  getList: async (_, args, context) => {
     const { id } = args
     const request = { acronym: acronymList, fields, id }
     const requestProducts = {
       acronym: acronymListProduct,
       fields: fieldsListProduct,
-      filters: [`wishListId=${id}`],
+      filters: [`ListId=${id}`],
       page: 1,
     }
-    const wishListInfo = await documentQueries.document(_, request, context)
-    const wishListItems = await documentQueries.searchDocuments(_, requestProducts, context)
-    const products = wishListItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
-    return { id, ...parseFieldsToJson(wishListInfo.fields), products }
+    const ListInfo = await documentQueries.document(_, request, context)
+    const ListItems = await documentQueries.searchDocuments(_, requestProducts, context)
+    const products = ListItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
+    return { id, ...parseFieldsToJson(ListInfo.fields), products }
   }
 }
 
 export const mutation = {
-  createWishList: async (_, args, context) => {
-    const { wishList } = args
+  createList: async (_, args, context) => {
+    const { List } = args
     const request = {
       acronym: acronymList,
       document : {
-        fields: mapKeyValues(wishList)
+        fields: mapKeyValues(List)
       }
     }
     const { documentId } = await documentMutations.createDocument(_, request, context)
-    return await queries.getWishList(_, { id: documentId }, context)
+    return await queries.getList(_, { id: documentId }, context)
   },
 
-  deleteWishList: async (_, args, context) => {
+  deleteList: async (_, args, context) => {
     const { id } = args
     const request = { acronym: acronymList, documentId: id }
-    const { products } = await queries.getWishList(_, { id }, context)
+    const { products } = await queries.getList(_, { id }, context)
     products.map(item => mutation.deleteListItem(_, { id: item.id }, context))
     return await documentMutations.deleteDocument(_, request, context)
   },
 
-  updateWishList: async (_, args, context) => {
-    const { wishList, id } = args
+  updateList: async (_, args, context) => {
+    const { List, id } = args
     const request = {
       acronym: acronymList,
       id,
       document : {
-        fields: mapKeyValues({...wishList, id}),
+        fields: mapKeyValues({...List, id}),
       }
     }
     const response = await documentMutations.updateDocument(_, request, context)
-    return await queries.getWishList(_, { id: response.documentId }, context)
+    return await queries.getList(_, { id: response.documentId }, context)
   },
 
-  addWishListItem: async (_, args, context) => {
-    const { listItem, listItem: { wishListId } } = args
+  addListItem: async (_, args, context) => {
+    const { listItem, listItem: { ListId } } = args
     const request = {
       acronym: acronymListProduct,
       document : {
@@ -66,7 +66,7 @@ export const mutation = {
       }
     }
     await documentMutations.createDocument(_, request, context)
-    return await queries.getWishList(_, { id: wishListId }, context)
+    return await queries.getList(_, { id: ListId }, context)
   },
 
   deleteListItem: async (_, args, context) => {
@@ -83,6 +83,6 @@ export const mutation = {
       }
     }
     await documentMutations.updateDocument(_, request, context)
-    return await queries.getWishList(_, { id: listId }, context)
+    return await queries.getList(_, { id: listId }, context)
   }
 }

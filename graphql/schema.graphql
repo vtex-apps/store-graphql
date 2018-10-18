@@ -200,9 +200,9 @@ type Query {
   ): [SubscriptionsOrder]
 
   """ Get the Wish List informations by the received id """
-  getWishList(
+  list(
     id: String
-  ): WishList
+  ): List
 }
 
 type Mutation {
@@ -318,11 +318,11 @@ type Mutation {
   """ Subscriptions"""
   subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean
 
-  """ WishList """
-  createWishList(wishList: WishListInput): WishList
-  updateWishList(id: String!, wishList: WishListInput): WishList 
-  deleteWishList(id: String!): WishList
-  addWishListItem(listItem: ListItemInput): WishList
+  """ List """
+  createList(list: ListInput): List
+  updateList(id: String!, list: ListInput): List 
+  deleteList(id: String!): List
+  addListItem(listItem: ListItemInput): List
   deleteListItem(id: String!): ListItem
-  updateListItem(listId: String!, itemId: String!, quantity: Int!): WishList
+  updateListItem(listId: String!, itemId: String!, quantity: Int!): List
 }
