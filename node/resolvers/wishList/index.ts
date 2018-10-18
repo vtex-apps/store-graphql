@@ -71,5 +71,18 @@ export const mutation = {
 
   deleteListItem: async (_, args, context) => {
     return await documentMutations.deleteDocument(_, {acronym: acronymListProduct, documentId: args.id}, context)
+  },
+
+  updateListItem: async (_, args, context) => {
+    const { listId, itemId, quantity } = args
+    const request = {
+      acronym: acronymListProduct,
+      id: itemId,
+      document : {
+        fields: mapKeyValues({quantity, id: itemId}),
+      }
+    }
+    await documentMutations.updateDocument(_, request, context)
+    return await queries.getWishList(_, { id: listId }, context)
   }
 }
