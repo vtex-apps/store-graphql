@@ -1,6 +1,6 @@
 import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 
-const fields = ['name', 'public', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
+const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
 
 const generateObjJSON = data => Object.assign({}, ...data.map(item => ({ [item.key]: item.value })))
 
@@ -14,7 +14,6 @@ export const queries = {
     }
     const wishListInfo = await documentQueries.document(_, request, context)
     const wishListItems = await documentQueries.searchDocuments(_, { acronym: 'LP', fields: ['quantity', 'productId', 'skuId'], filters: [`wishListId=${id}`], page: 1 }, context)
-
     const products = wishListItems.map(item => ({ ...generateObjJSON(item.fields) }))
     return { id, ...generateObjJSON(wishListInfo.fields), products }
   }
@@ -77,5 +76,34 @@ export const mutation = {
     }
     const response = await documentMutations.updateDocument(_, request, context)
     return await queries.getWishList(_, { id: response.documentId }, context)
+  },
+
+  addWishListItem: async (_, args, context) => {
+    const { wishListId, productId, skuId, quantity } = args
+    const request = {
+      acronym: 'LP',
+      document : {
+        fields: [
+          {
+            key: 'wishListId',
+            value: wishListId
+          },
+          {
+            key: 'skuId',
+            value: skuId
+          },
+          {
+            key: 'productId',
+            value: productId
+          },
+          {
+            key: 'quantity',
+            value: quantity
+          }
+        ],
+      }
+    }
+    await documentMutations.createDocument(_, request, context)
+    return await queries.getWishList(_, { id: wishListId }, context)
   }
 }
