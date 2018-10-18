@@ -1,14 +1,10 @@
-import { queries as documentQueries, mutations as documentMutations } from '../document/index'
+import { queries as documentQueries, mutations as documentMutations, mutations } from '../document/index'
 import { mapKeyValues, parseFieldsToJson } from '../document/index'
 
 const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
 const fieldsListProduct = ['quantity', 'productId', 'skuId', 'id']
 const acronymList = 'WL'
 const acronymListProduct = 'LP'
-
-const deleteItem = async (_, item, context) => {
-  await documentMutations.deleteDocument(_, {acronym: acronymListProduct, documentId: item.id}, context)
-}
 
 export const queries = {
   getWishList: async (_, args, context) => {
@@ -44,7 +40,7 @@ export const mutation = {
     const { id } = args
     const request = { acronym: acronymList, documentId: id }
     const { products } = await queries.getWishList(_, { id }, context)
-    products.map(async item => deleteItem(_, item, context))
+    products.map(item => mutation.deleteListItem(_, { id: item.id }, context))
     return await documentMutations.deleteDocument(_, request, context)
   },
 
@@ -71,5 +67,9 @@ export const mutation = {
     }
     await documentMutations.createDocument(_, request, context)
     return await queries.getWishList(_, { id: wishListId }, context)
+  },
+
+  deleteListItem: async (_, args, context) => {
+    return await documentMutations.deleteDocument(_, {acronym: acronymListProduct, documentId: args.id}, context)
   }
 }
