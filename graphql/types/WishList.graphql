@@ -10,6 +10,7 @@ type WishList {
 }
 
 type ListItem {
+    id: ID
     productId: String
     skuId: String
     quantity: Int
