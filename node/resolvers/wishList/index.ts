@@ -1,4 +1,4 @@
-import { queries as documentQueries, mutations as documentMutations, mutations } from '../document/index'
+import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 import { mapKeyValues, parseFieldsToJson } from '../document/index'
 
 const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
@@ -45,12 +45,12 @@ export const mutation = {
   },
 
   updateWishList: async (_, args, context) => {
-    const { wishList } = args
+    const { wishList, id } = args
     const request = {
       acronym: acronymList,
-      id: args.id,
+      id,
       document : {
-        fields: mapKeyValues(wishList),
+        fields: mapKeyValues({...wishList, id}),
       }
     }
     const response = await documentMutations.updateDocument(_, request, context)
