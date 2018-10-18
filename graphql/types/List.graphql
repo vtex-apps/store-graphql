@@ -1,4 +1,4 @@
-type WishList {
+type List {
     id: String
     name: String
     isPublic: Boolean
@@ -16,13 +16,13 @@ type ListItem {
     quantity: Int
 }
 
-input WishListInput {
+input ListInput {
     name: String!
     isPublic: Boolean
 }
 
 input ListItemInput {
-    wishListId: String!
+    listId: String!
     productId: String!
     skuId: String
     quantity: Int
