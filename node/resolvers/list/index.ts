@@ -7,7 +7,7 @@ const acronymList = 'WL'
 const acronymListProduct = 'LP'
 
 export const queries = {
-  getList: async (_, args, context) => {
+  list: async (_, args, context) => {
     const { id } = args
     const request = { acronym: acronymList, fields, id }
     const requestProducts = {
@@ -33,13 +33,13 @@ export const mutation = {
       }
     }
     const { documentId } = await documentMutations.createDocument(_, request, context)
-    return await queries.getList(_, { id: documentId }, context)
+    return await queries.list(_, { id: documentId }, context)
   },
 
   deleteList: async (_, args, context) => {
     const { id } = args
     const request = { acronym: acronymList, documentId: id }
-    const { products } = await queries.getList(_, { id }, context)
+    const { products } = await queries.list(_, { id }, context)
     products.map(item => mutation.deleteListItem(_, { id: item.id }, context))
     return await documentMutations.deleteDocument(_, request, context)
   },
@@ -54,7 +54,7 @@ export const mutation = {
       }
     }
     const response = await documentMutations.updateDocument(_, request, context)
-    return await queries.getList(_, { id: response.documentId }, context)
+    return await queries.list(_, { id: response.documentId }, context)
   },
 
   addListItem: async (_, args, context) => {
@@ -66,7 +66,7 @@ export const mutation = {
       }
     }
     await documentMutations.createDocument(_, request, context)
-    return await queries.getList(_, { id: ListId }, context)
+    return await queries.list(_, { id: ListId }, context)
   },
 
   deleteListItem: async (_, args, context) => {
@@ -83,6 +83,6 @@ export const mutation = {
       }
     }
     await documentMutations.updateDocument(_, request, context)
-    return await queries.getList(_, { id: listId }, context)
+    return await queries.list(_, { id: listId }, context)
   }
 }
