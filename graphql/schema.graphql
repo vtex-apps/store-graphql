@@ -322,5 +322,5 @@ type Mutation {
   createWishList(wishList: WishListInput): WishList
   updateWishList(id: ID!, wishList: WishListInput): WishList 
   deleteWishList(id: ID!): WishList
-  addWishListItem(wishListId: ID!, productId: ID!, skuId: ID, quantity: Int): WishList
+  addWishListItem(listItem: ListItemInput): WishList
 }
