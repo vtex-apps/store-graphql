@@ -19,3 +19,10 @@ input WishListInput {
     name: String!
     isPublic: Boolean
 }
+
+input ListItemInput {
+    wishListId: ID!
+    productId: ID!
+    skuId: ID
+    quantity: Int
+}

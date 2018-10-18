@@ -1,77 +1,54 @@
 import { queries as documentQueries, mutations as documentMutations } from '../document/index'
+import { mapKeyValues, parseFieldsToJson } from '../document/index'
 
 const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
-
-const generateObjJSON = data => Object.assign({}, ...data.map(item => ({ [item.key]: item.value })))
+const fieldsListProduct = ['quantity', 'productId', 'skuId']
+const acronymList = 'WL'
+const acronymListProduct = 'LP'
 
 export const queries = {
   getWishList: async (_, args, context) => {
     const { id } = args
-    const request = {
-      acronym: 'WL',
-      fields,
-      id,
+    const request = { acronym: acronymList, fields, id }
+    const requestProducts = {
+      acronym: acronymListProduct,
+      fields: fieldsListProduct,
+      filters: [`wishListId=${id}`],
+      page: 1,
     }
     const wishListInfo = await documentQueries.document(_, request, context)
-    const wishListItems = await documentQueries.searchDocuments(_, { acronym: 'LP', fields: ['quantity', 'productId', 'skuId'], filters: [`wishListId=${id}`], page: 1 }, context)
-    const products = wishListItems.map(item => ({ ...generateObjJSON(item.fields) }))
-    return { id, ...generateObjJSON(wishListInfo.fields), products }
+    const wishListItems = await documentQueries.searchDocuments(_, requestProducts, context)
+    const products = wishListItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
+    return { id, ...parseFieldsToJson(wishListInfo.fields), products }
   }
 }
 
 export const mutation = {
   createWishList: async (_, args, context) => {
+    const { wishList } = args
     const request = {
-      acronym: 'WL',
+      acronym: acronymList,
       document : {
-        fields: [
-          {
-            key: 'name',
-            value: args.wishList.name
-          },
-          {
-            key: 'isPublic',
-            value: args.wishList.isPublic
-          }
-        ],
+        fields: mapKeyValues(wishList)
       }
     }
-    const response = await documentMutations.createDocument(_, request, context)
-    return await queries.getWishList(_, { id: response.documentId }, context)
+    const { documentId } = await documentMutations.createDocument(_, request, context)
+    return await queries.getWishList(_, { id: documentId }, context)
   },
 
   deleteWishList: async (_, args, context) => {
     const { id } = args
-    const request = {
-      acronym: 'WL',
-      documentId: id
-    }
+    const request = { acronym: acronymList, documentId: id }
     return await documentMutations.deleteDocument(_, request, context)
   },
 
   updateWishList: async (_, args, context) => {
+    const { wishList } = args
     const request = {
-      acronym: 'WL',
+      acronym: acronymList,
       id: args.id,
       document : {
-        fields: [
-          {
-            key: 'Id',
-            value: args.id
-          },
-          {
-            key: 'DocumentId',
-            value: args.id
-          },
-          {
-            key: 'name',
-            value: args.wishList.name
-          },
-          {
-            key: 'isPublic',
-            value: args.wishList.isPublic
-          }
-        ],
+        fields: mapKeyValues(wishList),
       }
     }
     const response = await documentMutations.updateDocument(_, request, context)
@@ -79,28 +56,11 @@ export const mutation = {
   },
 
   addWishListItem: async (_, args, context) => {
-    const { wishListId, productId, skuId, quantity } = args
+    const { listItem, listItem: { wishListId } } = args
     const request = {
-      acronym: 'LP',
+      acronym: acronymListProduct,
       document : {
-        fields: [
-          {
-            key: 'wishListId',
-            value: wishListId
-          },
-          {
-            key: 'skuId',
-            value: skuId
-          },
-          {
-            key: 'productId',
-            value: productId
-          },
-          {
-            key: 'quantity',
-            value: quantity
-          }
-        ],
+        fields: mapKeyValues(listItem)
       }
     }
     await documentMutations.createDocument(_, request, context)

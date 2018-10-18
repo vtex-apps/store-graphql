@@ -7,7 +7,7 @@ import { uploadAttachment } from './attachment'
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
  */
-const mapKeyValues = (document) => Object.keys(document).map(key => ({
+export const mapKeyValues = document => Object.keys(document).map(key => ({
   key,
   value: document[key],
 }))
@@ -16,7 +16,7 @@ const mapKeyValues = (document) => Object.keys(document).map(key => ({
  * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
  * to a JSON format.
  */
-const parseFieldsToJson = (fields) => mergeAll(
+export const parseFieldsToJson = fields => mergeAll(
   fields.map(field => zipObj([field.key], [field.value])),
 )
 
