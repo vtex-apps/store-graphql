@@ -10,7 +10,7 @@ type WishList {
 }
 
 type ListItem {
-    id: ID
+    id: String
     productId: String
     skuId: String
     quantity: Int
@@ -22,8 +22,8 @@ input WishListInput {
 }
 
 input ListItemInput {
-    wishListId: ID!
-    productId: ID!
-    skuId: ID
+    wishListId: String!
+    productId: String!
+    skuId: String
     quantity: Int
 }
