@@ -112,6 +112,33 @@ type OrderFormShippingData {
   address: Address
   availableAddresses: [Address]!
   selectedAddresses: [Address]!
+  logisticsInfo: [OrderFormLogisticsInfo]
+}
+
+type OrderFormDeliveryChannel {
+  id: String
+}
+
+type OrderFormLogisticsInfo {
+  itemIndex: String
+  selectedSla: String
+  selectedDeliveryChannel: String
+  addressId: String
+  slas: [OrderFormShippingSLA]
+  shipsTo: [String]
+  itemId: String
+  deliveryChannels: [OrderFormDeliveryChannel]
+}
+
+type OrderFormShippingSLA {
+  id: String
+  deliveryChannel: String
+  name: String
+  shippingEstimate: String
+  shippingEstimateDate: String
+  price: Int
+  listPrice: Int
+  tax: Int
 }
 
 input OrderFormItemInput {

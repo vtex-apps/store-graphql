@@ -23,7 +23,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public addItem = (items: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/items`,
     {
-      expectedOrderFormSections: ['items'],
       orderItems: items,
     }
   )
@@ -36,7 +35,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public setOrderFormCustomData = (appId: string, field: string, value: any) => this.put(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/customData/${appId}/${field}`,
     {
-      expectedOrderFormSections: ['customData'],
       value,
     }
   )
@@ -44,7 +42,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public updateItems = (orderItems: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/items/update`,
     {
-      expectedOrderFormSections: ['items'],
       orderItems,
     }
   )
@@ -52,49 +49,35 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public updateOrderFormIgnoreProfile = (ignoreProfileData: boolean) => this.patch(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/profile`,
     {
-      expectedOrderFormSections: ['items'],
       ignoreProfileData,
     }
   )
 
   public updateOrderFormPayment = (payments: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/paymentData`,
-    {
-      expectedOrderFormSections: ['items'],
-      payments,
-    }
+    payments
   )
 
   public updateOrderFormProfile = (fields: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/clientProfileData`,
-    {
-      expectedOrderFormSections: ['items'],
-      ...fields,
-    }
+    fields
   )
 
   public updateOrderFormShipping = (shipping: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/shippingData`,
-    {
-      expectedOrderFormSections: ['items'],
-      ...shipping,
-    }
+    shipping
   )
 
   public updateOrderFormShippingAddress = (address: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/shippingData`,
     {
-      address,
-      expectedOrderFormSections: ['items'],
+      address
     }
   )
 
   public updateOrderFormMarketingData = (marketingData: any) => this.post(
     `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/marketingData`,
-    {
-      expectedOrderFormSections: ['items'],
-      ...marketingData,
-    }
+    marketingData
   )
 
   public orderForm = (): Promise<OrderForm> => this.post(
