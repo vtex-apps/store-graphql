@@ -34,6 +34,16 @@ declare global {
     session: SessionDataSource
   }
 
+  interface OrderForm {
+    items: OrderFormItem[]
+    marketingData: any
+    shippingData: ShippingData
+  }
+
+  interface ShippingData {
+    address: any
+  }
+
   interface OrderFormItem {
     id: string
     name: string
@@ -52,6 +62,7 @@ declare global {
     sellingPrice: number
     rewardValue: number
     isGift: boolean
+    seller: string
   }
 
   interface UserAddress {

@@ -27,10 +27,43 @@ type ShippingSLA {
   price: Float
   shippingEstimate: String
   shippingEstimateDate: String
+  pickupStoreInfo: PickupStoreInfo
+  tax: Float
+}
+
+type PickupStoreInfo {
+  additionalInfo: String
+  address: PickupAddress
+  dockId: String
+  friendlyName: String
+  isPickupStore: Boolean
+}
+
+type PickupAddress {
+  addressId: String
+  addressType: String
+  city: String
+  complement: String
+  country: String
+  geoCoordinates: [Float]
+  neighborhood: String
+  number: String
+  postalCode: String
+  receiverName: String
+  reference: String
+  state: String
+  street: String
 }
 
 input ShippingItem {
   id: String,
   quantity: String,
   seller: String
+}
+
+input LogisticsInfoInput {
+  addressId: String
+  itemIndex: Int
+  selectedDeliveryChannel: String
+  selectedSla: String
 }

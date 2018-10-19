@@ -7,8 +7,10 @@ export interface SimulationData {
   postalCode: string
 }
 
+const orderFormIdCookie = 'checkout.vtex.com'
+
 const SetCookieWhitelist = [
-  'checkout.vtex.com',
+  orderFormIdCookie,
   '.ASPXAUTH',
 ]
 
@@ -18,80 +20,84 @@ const isWhitelistedSetCookie = (cookie: string) => {
 }
 
 export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
-  constructor() {
-    super()
-  }
-
-  public addItem = (orderFormId: string, items: any) => this.post(
-    `/pub/orderForm/${orderFormId}/items`,
+  public addItem = (items: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/items`,
     {
       expectedOrderFormSections: ['items'],
       orderItems: items,
     }
   )
 
-  public cancelOrder = (orderFormId: string, reason: string) => this.post(
-    `/pub/orders/${orderFormId}/user-cancel-request`,
+  public cancelOrder = (reason: string) => this.post(
+    `/pub/orders/${this.getOrderFormIdFromCookie()}/user-cancel-request`,
     {reason},
   )
 
-  public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.put(
-    `/pub/orderForm/${orderFormId}/customData/${appId}/${field}`,
+  public setOrderFormCustomData = (appId: string, field: string, value: any) => this.put(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/customData/${appId}/${field}`,
     {
       expectedOrderFormSections: ['customData'],
       value,
     }
   )
 
-  public updateItems = (orderFormId: string, orderItems: any) => this.post(
-    `/pub/orderForm/${orderFormId}/items/update`,
+  public updateItems = (orderItems: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/items/update`,
     {
       expectedOrderFormSections: ['items'],
       orderItems,
     }
   )
 
-  public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
-    `/pub/orderForm/${orderFormId}/profile`,
+  public updateOrderFormIgnoreProfile = (ignoreProfileData: boolean) => this.patch(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/profile`,
     {
       expectedOrderFormSections: ['items'],
       ignoreProfileData,
     }
   )
 
-  public updateOrderFormPayment = (orderFormId: string, payments: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/paymentData`,
+  public updateOrderFormPayment = (payments: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/paymentData`,
     {
       expectedOrderFormSections: ['items'],
       payments,
     }
   )
 
-  public updateOrderFormProfile = (orderFormId: string, fields: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/clientProfileData`,
+  public updateOrderFormProfile = (fields: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/clientProfileData`,
     {
       expectedOrderFormSections: ['items'],
       ...fields,
     }
   )
 
-  public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/shippingData`,
+  public updateOrderFormShipping = (shipping: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/shippingData`,
     {
       expectedOrderFormSections: ['items'],
       ...shipping,
     }
   )
 
-  public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/marketingData`,
+  public updateOrderFormShippingAddress = (address: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/shippingData`,
+    {
+      address,
+      expectedOrderFormSections: ['items'],
+    }
+  )
+
+  public updateOrderFormMarketingData = (marketingData: any) => this.post(
+    `/pub/orderForm/${this.getOrderFormIdFromCookie()}/attachments/marketingData`,
     {
       expectedOrderFormSections: ['items'],
       ...marketingData,
     }
   )
 
-  public orderForm = () => this.post(
+  public orderForm = (): Promise<OrderForm> => this.post(
     `/pub/orderForm`,
     {expectedOrderFormSections: ['items']},
   )
@@ -136,5 +142,10 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
         'Proxy-Authorization': authToken,
       }
     )
+  }
+
+  private getOrderFormIdFromCookie = () => {
+    const ofidCookieValue = this.context.cookies.get(orderFormIdCookie)
+    return ofidCookieValue.split('=')[1]
   }
 }

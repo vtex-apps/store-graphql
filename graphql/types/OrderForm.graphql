@@ -16,6 +16,54 @@ type OrderForm {
   totalizers: [Totalizer]
   clientProfileData: ClientProfile
   shippingData: OrderFormShippingData
+  receiverUri: String
+  gatewayCallbackTemplatePath: String
+  orderId: String
+  merchantTransactions: [MerchantTransaction]
+  paymentData: PaymentData
+}
+
+type PaymentData {
+  payments: [PaymentDataPayment]
+}
+
+type PaymentDataPayment {
+  paymentSystem: String
+  bin: String
+  accountId: String
+  tokenId: String
+  installments: Int
+  referenceValue: Float
+  value: Float
+  merchantSellerPayments: [MerchantSellerPayment]
+}
+
+type MerchantSellerPayment {
+  id: String
+  installments: Int
+  referenceValue: Float
+  value: Float
+  interestRate: Float
+  installmentValue: Float
+}
+
+type MerchantTransaction {
+  id: String
+  transactionId: String
+  merchantName: String
+  payments: [MerchantTransactionPayment]
+}
+
+type MerchantTransactionPayment {
+  paymentSystem: String
+  bin: String
+  accountId: String
+  tokenId: String
+  value: Float
+  referenceValue: Float
+  giftCardRedemptionCode: String
+  giftCardProvider: String
+  giftCardId: String
 }
 
 type OrderFormItem {
@@ -36,6 +84,7 @@ type OrderFormItem {
   sellingPrice: Float
   rewardValue: Int
   isGift: Boolean
+  seller: String
 }
 
 type Totalizer {
@@ -73,11 +122,14 @@ input OrderFormItemInput {
 }
 
 input OrderFormAddressInput {
+  addressId: String
   addressType: String
   postalCode: String
+  """ example: BRA """
   country: String
   receiverName: String
   city: String
+  """ example: RJ """
   state: String
   street: String
   number: String
@@ -86,25 +138,55 @@ input OrderFormAddressInput {
 }
 
 input OrderFormPaymentInput {
-  paymentSystem: Int
+  accountId: String
+  bin: String
+  group: String
+  hasDefaultBillingAddress: Boolean
+  installments: Int
+  installmentsValue: Int
+  installmentsInterestRate: Float
+  merchantSellerPayments: [MerchantSellerPaymentInput]
+  paymentSystem: String
+  paymentSystemName: String
   referenceValue: Float
-  bin: Int
   tokenId: String
+  value: Float
+}
+
+input MerchantSellerPaymentInput {
+  id: String
+  installmentValue: Float
+  installments: Int
+  interestRate: Float
+  referenceValue: Float
+  value: Float
 }
 
 input OrderFormProfileInput {
   email: String
   isCorporate: Boolean
+  """ example: CNPJ """
   corporateDocument: String
   corporateName: String
   corporatePhone: String
   document: String
+  """ example: CPF """
   documentType: String
   firstName: String
   lastName: String
   phone: String
   stateInscription: String
+  """ nome fantasia """
   tradeName: String
+}
+
+input TransactionInput {
+  interestValue: Int
+  optinNewsLetter: Boolean
+  referenceId: String
+  referenceValue: Float
+  savePersonalData: Boolean
+  value: Float
 }
 
 input OrderFormPaymentTokenInput {

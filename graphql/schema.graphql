@@ -153,7 +153,7 @@ type Query {
 
   """ Get logistics information about the store """
   logistics: LogisticsData
-  
+
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
 }
@@ -188,10 +188,13 @@ type Mutation {
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
   updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
-  updateOrderFormPayment(orderFormId: String,  payments: [OrderFormPaymentInput]): OrderForm
+  updateOrderFormShippingAddress(address: OrderFormAddressInput): OrderForm
+  selectOrderFormShipping(logisticsInfo: [LogisticsInfoInput]): OrderForm
+  updateOrderFormPayment(orderFormId: String, payments: [OrderFormPaymentInput]): OrderForm
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
+  createOrderTransaction(transaction: TransactionInput): OrderForm
 
   """ Payment """
   createPaymentSession: PaymentSession

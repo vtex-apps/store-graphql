@@ -62,13 +62,19 @@ export const queries: Record<string, Resolver> = {
     return checkout.orders()
   },
 
-  shipping: (root, args: SimulationData, {dataSources: {checkout}}) => {
-    return checkout.shipping(args)
+  shipping: async (root, args: SimulationData, {dataSources: {checkout}}) => {
+    const simulationItems = args.items && args.items.length > 0
+      ? args.items
+      : await checkout.orderForm().then(({items}) => items)
+
+    const simulationData = {...args, items: simulationItems}
+
+    return checkout.shipping(simulationData)
   },
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (root, {orderFormId, items}, {dataSources: {checkout, session}}) => {
+  addItem: async (root, {items}, {dataSources: {checkout, session}}) => {
     const [{marketingData}, segmentData] = await Promise.all([
       checkout.orderForm(),
       session.getSegmentData()
@@ -81,16 +87,16 @@ export const mutations: Record<string, Resolver> = {
         utmSource: segmentData.utm_source,
         utmiCampaign: segmentData.utmi_campaign,
       }
-      await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+      await checkout.updateOrderFormMarketingData(newMarketingData)
     }
 
-    return await checkout.addItem(orderFormId, items)
+    return await checkout.addItem(items)
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: async (root, {orderFormId, reason}, {dataSources: {checkout}}) => {
-    await checkout.cancelOrder(orderFormId, reason)
+  cancelOrder: async (root, {reason}, {dataSources: {checkout}}) => {
+    await checkout.cancelOrder(reason)
     return true
   },
 
@@ -110,27 +116,36 @@ export const mutations: Record<string, Resolver> = {
     url: paths.gatewayTokenizePayment,
   }),
 
-  setOrderFormCustomData: (root, {orderFormId, appId, field, value}, {dataSources: {checkout}}) => {
-    return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
+  setOrderFormCustomData: (root, {appId, field, value}, {dataSources: {checkout}}) => {
+    return checkout.setOrderFormCustomData(appId, field, value)
   },
 
-  updateItems: (root, {orderFormId, items}, {dataSources: {checkout}}) => {
-    return checkout.updateItems(orderFormId, items)
+  updateItems: (root, {items}, {dataSources: {checkout}}) => {
+    return checkout.updateItems(items)
   },
 
-  updateOrderFormIgnoreProfile: (root, {orderFormId, ignoreProfileData}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
+  updateOrderFormIgnoreProfile: (root, {ignoreProfileData}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormIgnoreProfile(ignoreProfileData)
   },
 
-  updateOrderFormPayment: (root, {orderFormId, payments}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormPayment(orderFormId, payments)
+  updateOrderFormPayment: (root, {payments}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormPayment(payments)
   },
 
-  updateOrderFormProfile: (root, {orderFormId, fields}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormProfile(orderFormId, fields)
+  updateOrderFormProfile: (root, {fields}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormProfile(fields)
   },
 
-  updateOrderFormShipping: (root, {orderFormId, address}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormShipping(orderFormId, {address})
+  updateOrderFormShipping: (root, {address}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormShipping({address})
+  },
+
+  updateOrderFormShippingAddress: (root, {address}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormShippingAddress(address)
+  },
+
+  selectOrderFormShipping: async (root, {logisticsInfo}, {dataSources: {checkout}}) => {
+    const {shippingData: {address}} = await checkout.orderForm()
+    return checkout.updateOrderFormShipping({address, logisticsInfo})
   }
 }
