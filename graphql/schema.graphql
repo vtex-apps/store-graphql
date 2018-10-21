@@ -3,7 +3,7 @@ type Query {
   product(
     """ Product slug """
     slug: String
-  ): Product @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Product @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Product search filtered and ordered """
   products(
@@ -27,13 +27,13 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): [Product] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): [Product] @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets
+  ): Facets @response(vary: "x-vtex-segment")
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -59,7 +59,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search
+  ): Search @response(vary: "x-vtex-segment")
 
   """ Get category details """
   category(
@@ -155,7 +155,7 @@ type Query {
 
   """ Get logistics information about the store """
   logistics: LogisticsData
-  
+
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
 }
