@@ -13,23 +13,24 @@ export const queries = {
     const requestProducts = {
       acronym: acronymListProduct,
       fields: fieldsListProduct,
-      filters: [`ListId=${id}`],
+      filters: [`listId=${id}`],
       page: 1,
     }
-    const ListInfo = await documentQueries.document(_, request, context)
-    const ListItems = await documentQueries.searchDocuments(_, requestProducts, context)
-    const products = ListItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
-    return { id, ...parseFieldsToJson(ListInfo.fields), products }
+    const listInfo = await documentQueries.document(_, request, context)
+    const listItems = await documentQueries.searchDocuments(_, requestProducts, context)
+    const products = listItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
+    // Get products information from Catalog
+    return { id, ...parseFieldsToJson(listInfo.fields), products }
   }
 }
 
 export const mutation = {
   createList: async (_, args, context) => {
-    const { List } = args
+    const { list } = args
     const request = {
       acronym: acronymList,
       document : {
-        fields: mapKeyValues(List)
+        fields: mapKeyValues(list)
       }
     }
     const { documentId } = await documentMutations.createDocument(_, request, context)
@@ -45,12 +46,12 @@ export const mutation = {
   },
 
   updateList: async (_, args, context) => {
-    const { List, id } = args
+    const { list, id } = args
     const request = {
       acronym: acronymList,
       id,
       document : {
-        fields: mapKeyValues({...List, id}),
+        fields: mapKeyValues({...list, id}),
       }
     }
     const response = await documentMutations.updateDocument(_, request, context)
@@ -58,7 +59,7 @@ export const mutation = {
   },
 
   addListItem: async (_, args, context) => {
-    const { listItem, listItem: { ListId } } = args
+    const { listItem, listItem: { listId } } = args
     const request = {
       acronym: acronymListProduct,
       document : {
@@ -66,7 +67,7 @@ export const mutation = {
       }
     }
     await documentMutations.createDocument(_, request, context)
-    return await queries.list(_, { id: ListId }, context)
+    return await queries.list(_, { id: listId }, context)
   },
 
   deleteListItem: async (_, args, context) => {
