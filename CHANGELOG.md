@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Creation of `VtexIdclientAutCookie` header
 
+### Changed
+- Using new @resolvers directive to set Vary http headers
+
 ## [2.32.3] - 2018-10-9
 ### Fixed
 - Fix product search by slug returning no products because Catalog API is case-sensitive.
