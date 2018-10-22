@@ -54,7 +54,7 @@ const paths = {
   document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
   documentFields: (account, acronym, fields = '_all', id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
   documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
-  searchDocument: (account, acronym, fields) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}`,
+  searchDocument: (account, acronym, { fields, where }) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`,
 
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
