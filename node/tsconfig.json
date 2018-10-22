@@ -7,6 +7,10 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "lib": [
+      "esnext.asynciterable",
+      "es2017"
+    ],
     "target": "es2017",
     "module": "commonjs",
     "sourceMap": false,
