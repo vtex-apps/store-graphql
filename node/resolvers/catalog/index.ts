@@ -70,13 +70,11 @@ export const queries = {
   },
 
   facets: (_, { facets }, ctx) => {
-    ctx.vary('x-vtex-segment')
     const { dataSources: { catalog } } = ctx
     return catalog.facets(facets)
   },
 
   product: async (_, { slug }, ctx) => {
-    ctx.vary('x-vtex-segment')
     const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
 
@@ -91,7 +89,6 @@ export const queries = {
   },
 
   products: async (_, args, ctx) => {
-    ctx.vary('x-vtex-segment')
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
@@ -119,7 +116,6 @@ export const queries = {
   categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
   search: async (_, args, ctx: ServiceContext) => {
-    ctx.vary('x-vtex-segment')
     const { map: mapParams, query, rest } = args
 
     if (query == null || mapParams == null) {

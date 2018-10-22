@@ -1,8 +1,10 @@
 import { Colossus } from '@vtex/api'
-import {map} from 'ramda'
-import {cache, dataSources} from './dataSources'
-import {resolvers} from './resolvers'
-import {catalogProxy} from './routes/catalogProxy'
+import { map } from 'ramda'
+
+import { cache, dataSources } from './dataSources'
+import { schemaDirectives } from './directives'
+import { resolvers } from './resolvers'
+import { catalogProxy } from './routes/catalogProxy'
 
 const prepare = (handler) => async (ctx: ServiceContext) => {
   try {
@@ -52,6 +54,7 @@ export default {
     cache,
     dataSources,
     resolvers,
+    schemaDirectives
   },
   routes: map(prepare, {
     catalogProxy
