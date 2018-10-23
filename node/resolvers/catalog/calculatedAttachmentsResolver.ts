@@ -15,13 +15,6 @@ type SchemaItem = {
   priceTable: String
 }
 
-type Sku = {
-  complementName: String
-  images: Array<{ imageUrl: String }>
-  itemId: String
-  name: String
-}
-
 const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
