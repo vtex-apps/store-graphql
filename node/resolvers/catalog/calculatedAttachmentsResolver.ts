@@ -39,15 +39,10 @@ const domainValueRegex = /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
  *
  * @return {Object} skuInfo
  */
-const getSkuInfo = ({
-  simulationUrl,
-  catalogDataSource,
-  marketingData,
-  headers,
-}) => async (schemaItem: SchemaItem) => {
-  const products = await catalogDataSource.productBySku([schemaItem.id])
-  const { items: skus = [] } = head(products) || {}
-  const sku: Sku = find(({ itemId }) => itemId === schemaItem.id, skus)
+const getSkuInfo = ({ simulationUrl, skuByIdUrl, marketingData, headers }) => async (
+  schemaItem: SchemaItem
+) => {
+  const { data: sku } = await http.get(`${skuByIdUrl}${schemaItem.id}`, { headers })
 
   /**
    * TODO:
@@ -64,16 +59,13 @@ const getSkuInfo = ({
     ...(isEmpty(marketingData) ? {} : { marketingData }),
   }
 
-  const orderForm = prop(
-    'data',
-    await http.post(simulationUrl, payload, { headers })
-  )
+  const orderForm = prop('data', await http.post(simulationUrl, payload, { headers }))
 
   return {
     ...schemaItem,
-    name: sku.name,
-    description: sku.complementName,
-    image: head(sku.images).imageUrl,
+    name: sku.SkuName,
+    description: sku.ProductDescription,
+    image: prop('ImageUrl', head(sku.Images)),
     price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
   }
 }
@@ -90,14 +82,9 @@ const getSkuInfo = ({
  */
 const parseDomainSkus = ({ skusString, getSkuInfo }) =>
   map(async (item: String) => {
-    const [
-      _,
-      id,
-      minQuantity,
-      maxQuantity,
-      defaultQuantity,
-      priceTable,
-    ] = item.match(/#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/)
+    const [_, id, minQuantity, maxQuantity, defaultQuantity, priceTable] = item.match(
+      /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
+    )
 
     const schemaSku = {
       id,
@@ -122,9 +109,7 @@ const parseDomainSkus = ({ skusString, getSkuInfo }) =>
  * @return {Object} parsedDomain
  */
 const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => {
-  const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(
-    domainValueRegex
-  )
+  const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(domainValueRegex)
   const required = minTotalItems > 0
   const multiple = maxTotalItems > minTotalItems
 
@@ -158,8 +143,7 @@ const reduceAttachments = ({ attachments, getSkuInfo }) =>
       const schemaFromDomains = await attachmentDomainValues.reduce(
         async (accumulatedPromise, { FieldName, DomainValues }) => {
           const accumulated = await accumulatedPromise
-          if (!DomainValues || !domainValueRegex.test(DomainValues))
-            return { ...accumulated }
+          if (!DomainValues || !domainValueRegex.test(DomainValues)) return { ...accumulated }
           const { domainProperties, domainItems, domainRequired } = accumulated
           const {
             minTotalItems,
@@ -191,10 +175,7 @@ const reduceAttachments = ({ attachments, getSkuInfo }) =>
           return {
             domainProperties: { ...domainProperties, [FieldName]: property },
             domainItems: { ...domainItems, ...domainSkus },
-            domainRequired: [
-              ...domainRequired,
-              ...(required ? [FieldName] : []),
-            ],
+            domainRequired: [...domainRequired, ...(required ? [FieldName] : [])],
           }
         },
         { domainProperties: {}, domainItems: [], domainRequired: [] }
@@ -221,7 +202,7 @@ const reduceAttachments = ({ attachments, getSkuInfo }) =>
 export default async (
   { name, attachments },
   _,
-  { vtex: { account, authToken }, dataSources: { catalog, session } }
+  { vtex: { account, authToken }, dataSources: { session } }
 ) => {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
@@ -242,6 +223,7 @@ export default async (
   const simulationUrl = paths.orderFormSimulation(account, {
     querystring: 'sc=1&localPipeline=true',
   })
+  const skuByIdUrl = paths.skuById(account)
 
   const utms = await session.getSegmentData()
   const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, utms))
@@ -250,7 +232,7 @@ export default async (
     attachments,
     getSkuInfo: getSkuInfo({
       simulationUrl,
-      catalogDataSource: catalog,
+      skuByIdUrl,
       marketingData,
       headers,
     }),
