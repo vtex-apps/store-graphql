@@ -68,7 +68,12 @@ const paths = {
 
   logisticsConfig: account => ({
     shipping: `http://${account}.vtexcommercestable.com.br/api/logistics/pub/shipping/configuration`
-  })
+  }),
+
+  /** Catalog API
+   * Docs: https://documenter.getpostman.com/view/845/vtex-catalog-api/Hs44#dc127f25-fc71-8188-1de3-0d2dff8fed11
+   */
+  skuById: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/`
 }
 
 export default paths
