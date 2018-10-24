@@ -1,7 +1,6 @@
 import http from 'axios'
 import { propEq, prop, head, find, map, pluck, isEmpty, pickBy, both } from 'ramda'
-import { renameKeysWith } from 'ramda-adjunct'
-import camelCase from 'lodash.camelcase'
+import { camelCase, renameKeysWith } from '../../utils'
 import paths from '../paths'
 
 type SchemaItem = {
@@ -32,21 +31,23 @@ const domainValueRegex = /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
  *
  * @return {Object} skuInfo
  */
-const getSkuInfo = ({ simulationUrl, skuByIdUrl, marketingData, headers }) => async (
-  schemaItem: SchemaItem
-) => {
+const getSkuInfo = ({
+  simulationUrl,
+  skuByIdUrl,
+  marketingData,
+  headers,
+  segmentData: { countryCode },
+}) => async (schemaItem: SchemaItem) => {
   const { data: sku } = await http.get(`${skuByIdUrl}${schemaItem.id}`, { headers })
 
   /**
    * TODO:
    *
-   * - get store salesChannel
-   * - get store country
    * - get user login status
    */
   const payload = {
     items: [{ id: schemaItem.id, quantity: 1, seller: 1 }],
-    country: 'BRA',
+    country: countryCode,
     isCheckedIn: false,
     priceTables: [schemaItem.priceTable],
     ...(isEmpty(marketingData) ? {} : { marketingData }),
@@ -213,13 +214,13 @@ export default async (
     'Content-Type': 'application/json',
   }
 
+  const { segmentData } = await session.getSegmentData()
+  const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+
   const simulationUrl = paths.orderFormSimulation(account, {
-    querystring: 'sc=1&localPipeline=true',
+    querystring: `sc=${segmentData.channel}&localPipeline=true`,
   })
   const skuByIdUrl = paths.skuById(account)
-
-  const utms = await session.getSegmentData()
-  const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, utms))
 
   const reducedAttachmentSchema = await reduceAttachments({
     attachments,
@@ -228,6 +229,7 @@ export default async (
       skuByIdUrl,
       marketingData,
       headers,
+      segmentData,
     }),
   })
 
