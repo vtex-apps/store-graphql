@@ -15,7 +15,6 @@
     "node-fetch": "^2.1.2",
     "qs": "^6.5.2",
     "ramda": "^0.24.1",
-    "ramda-adjunct": "^2.10.0",
     "slugify": "^1.2.6",
     "ts-node": "3.3.0",
     "typescript": "^2.5.2",
