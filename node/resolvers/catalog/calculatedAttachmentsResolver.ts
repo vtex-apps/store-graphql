@@ -14,6 +14,11 @@ type SchemaItem = {
   priceTable: String
 }
 
+type Seller = {
+  sellerId: Number
+  sellerDefault: Boolean
+}
+
 const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
@@ -37,6 +42,7 @@ const getSkuInfo = ({
   marketingData,
   headers,
   segmentData: { countryCode },
+  sellerId
 }) => async (schemaItem: SchemaItem) => {
   const { data: sku } = await http.get(`${skuByIdUrl}${schemaItem.id}`, { headers })
 
@@ -46,7 +52,7 @@ const getSkuInfo = ({
    * - get user login status
    */
   const payload = {
-    items: [{ id: schemaItem.id, quantity: 1, seller: 1 }],
+    items: [{ id: schemaItem.id, quantity: 1, seller: sellerId }],
     country: countryCode,
     isCheckedIn: false,
     priceTables: [schemaItem.priceTable],
@@ -194,7 +200,7 @@ const reduceAttachments = ({ attachments, getSkuInfo }) =>
  * @returns string
  */
 export default async (
-  { name, attachments },
+  { name, attachments, sellers },
   _,
   { vtex: { account, authToken }, dataSources: { session } }
 ) => {
@@ -214,13 +220,15 @@ export default async (
     'Content-Type': 'application/json',
   }
 
-  const { segmentData } = await session.getSegmentData()
+  const segmentData = await session.getSegmentData()
   const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
 
   const simulationUrl = paths.orderFormSimulation(account, {
     querystring: `sc=${segmentData.channel}&localPipeline=true`,
   })
   const skuByIdUrl = paths.skuById(account)
+
+  const { sellerId } = find(propEq('sellerDefault', true) , sellers) as Seller
 
   const reducedAttachmentSchema = await reduceAttachments({
     attachments,
@@ -230,6 +238,7 @@ export default async (
       marketingData,
       headers,
       segmentData,
+      sellerId
     }),
   })
 
