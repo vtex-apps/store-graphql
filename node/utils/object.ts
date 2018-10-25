@@ -1,4 +1,4 @@
-import { curry, toPairs, pipe, map, adjust, fromPairs } from 'ramda'
+import { adjust, curry, fromPairs, map, pipe, toPairs } from 'ramda'
 
 /**
  * Creates a new object with the own properties of the provided object, but the
@@ -20,8 +20,8 @@ import { curry, toPairs, pipe, map, adjust, fromPairs } from 'ramda'
 const renameKeysWith = curry((func, object) =>
   pipe(
     toPairs,
-    map(adjust(func, 0)),
-    fromPairs
+    map(adjust(func, 0) as any),
+    fromPairs as any
   )(object)
 )
 
