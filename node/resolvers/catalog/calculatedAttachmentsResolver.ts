@@ -1,5 +1,21 @@
 import http from 'axios'
-import { both, find, head, isEmpty, map, pickBy, pluck, prop, propEq } from 'ramda'
+import {
+  both,
+  complement,
+  compose,
+  drop,
+  filter,
+  find,
+  head,
+  isEmpty,
+  map,
+  match,
+  pickBy,
+  pluck,
+  prop,
+  propEq,
+  split,
+} from 'ramda'
 import { camelCase, renameKeysWith } from '../../utils'
 import paths from '../paths'
 
@@ -22,6 +38,18 @@ interface Seller {
 const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
+const isNotEmpty = complement(isEmpty)
+const splitBySemiColon = split(';')
+const splitAndFilterEmpty = compose(
+  filter(isNotEmpty),
+  splitBySemiColon
+)
+/** When there's multiple nested groups in a regex, the first index is the full match, which we don't need */
+const matchAndDropFirst = regex =>
+  compose(
+    drop(1),
+    match(regex)
+  )
 
 const domainValueRegex = /^\[(\d+)-?(\d+)\]((?:#\w+\[\d+-\d+\]\[\d+\]\w*;?)+)/
 
@@ -42,7 +70,7 @@ const getSkuInfo = ({
   marketingData,
   headers,
   segmentData: { countryCode },
-  sellerId
+  sellerId,
 }) => async (schemaItem: SchemaItem) => {
   const { data: sku } = await http.get(`${skuByIdUrl}${schemaItem.id}`, { headers })
 
@@ -76,110 +104,94 @@ const getSkuInfo = ({
  * Returns an object with min, max and default quantities, sku infos like name and price table value
  *
  * @param {string} skusString
- * @param {function} getSkuInfo
  *
  * @return {Array} parsedSku
  */
-const parseDomainSkus = ({ skusString, getSkuInfo }) => // tslint:disable-line
-  map(async (item: string) => {
-    const [_, id, minQuantity, maxQuantity, defaultQuantity, priceTable] = item.match(
+const parseDomainSkus = ({ skusString }) =>
+  map(item => {
+    const [id, minQuantity, maxQuantity, defaultQuantity, priceTable] = matchAndDropFirst(
       /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
-    )
+    )(item)
 
-    const schemaSku = {
-      defaultQuantity,
-      id,
-      maxQuantity,
-      minQuantity,
-      priceTable,
-    }
-
-    const skuInfo = await getSkuInfo(schemaSku)
-
-    return skuInfo
-  }, skusString.split(';').filter(str => str.length !== 0))
+    return { defaultQuantity, id, maxQuantity, minQuantity, priceTable }
+  }, splitAndFilterEmpty(skusString)) as [SchemaItem]
 
 /**
  * Parses DomainValues min/max values and get information for each sku
  *
  * @param {string} FieldName
  * @param {string} DomainValues
- * @param {function} getSkuInfo
  *
  * @return {Object} parsedDomain
  */
-const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => { // tslint:disable-line
-  const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(domainValueRegex)
+const parseDomain = ({ FieldName, DomainValues }) => {
+  const [minTotalItems, maxTotalItems, skusString] = matchAndDropFirst(domainValueRegex)(
+    DomainValues
+  )
   const required = minTotalItems > 0
   const multiple = maxTotalItems > minTotalItems
 
-  const domainSkus = {
-    [FieldName]: await Promise.all(parseDomainSkus({ skusString, getSkuInfo })),
-  }
+  const domainSkus = { [FieldName]: parseDomainSkus({ skusString }) }
 
   return { minTotalItems, maxTotalItems, domainSkus, required, multiple }
 }
+
+const reduceAttachmentDomains = attachmentDomains =>
+  attachmentDomains.reduce(
+    (accumulated, { FieldName, DomainValues }) => {
+      if (!DomainValues || !domainValueRegex.test(DomainValues)) {
+        return accumulated
+      }
+      const { domainProperties, domainItems, domainRequired } = accumulated
+      const { minTotalItems, maxTotalItems, domainSkus, required, multiple } = parseDomain({
+        DomainValues,
+        FieldName,
+      })
+
+      const enumProperty = {
+        enum: pluck('id')(domainSkus[FieldName]),
+        type: 'string',
+      }
+
+      const property = multiple
+        ? {
+            items: enumProperty,
+            maxTotalItems,
+            minTotalItems,
+            type: 'array',
+            uniqueItems: true,
+          }
+        : enumProperty
+
+      return {
+        domainItems: { ...domainItems, ...domainSkus },
+        domainProperties: { ...domainProperties, [FieldName]: property },
+        domainRequired: [...domainRequired, ...(required ? [FieldName] : [])],
+      }
+    },
+    { domainProperties: {}, domainItems: [], domainRequired: [] }
+  )
 
 /**
  * Recurses through all the attachments of a single SKU and all its children
  * to generate properties, items and required values for the schema
  *
- *
  * @param {Array<Object>} attachments
- * @param {function} getSkuInfo
  *
  * @returns {Object} schemaFromAttachments
  */
-const reduceAttachments = ({ attachments, getSkuInfo }) => // tslint:disable-line
+const reduceAttachments = ({ attachments }) =>
   attachments.reduce(
-    async (accumulatedPromise, { domainValues }) => {
-      const accumulated = await accumulatedPromise
+    (accumulated, { domainValues }) => {
       // If there are no attachments, do nothing and skip
-      if (!attachments) { return { ...accumulated } }
+      if (!attachments) {
+        return accumulated
+      }
 
       const { properties, items, required } = accumulated
-      const attachmentDomainValues = JSON.parse(domainValues)
+      const attachmentDomains = JSON.parse(domainValues)
 
-      const schemaFromDomains = await attachmentDomainValues.reduce(
-        async (accumulatedPromise, { FieldName, DomainValues }) => { // tslint:disable-line
-          const accumulated = await accumulatedPromise // tslint:disable-line
-          if (!DomainValues || !domainValueRegex.test(DomainValues)) { return { ...accumulated } }
-          const { domainProperties, domainItems, domainRequired } = accumulated
-          const {
-            minTotalItems,
-            maxTotalItems,
-            domainSkus,
-            required, // tslint:disable-line
-            multiple,
-          } = await parseDomain({
-            DomainValues,
-            FieldName,
-            getSkuInfo,
-          })
-
-          const enumProperty = {
-            enum: pluck('id')(domainSkus[FieldName]),
-            type: 'string',
-          }
-
-          const property = multiple
-            ? {
-                items: enumProperty,
-                maxTotalItems,
-                minTotalItems,
-                type: 'array',
-                uniqueItems: true,
-              }
-            : enumProperty
-
-          return {
-            domainItems: { ...domainItems, ...domainSkus },
-            domainProperties: { ...domainProperties, [FieldName]: property },
-            domainRequired: [...domainRequired, ...(required ? [FieldName] : [])],
-          }
-        },
-        { domainProperties: {}, domainItems: [], domainRequired: [] }
-      )
+      const schemaFromDomains = reduceAttachmentDomains(attachmentDomains)
 
       return {
         items: { ...items, ...schemaFromDomains.domainItems },
@@ -214,33 +226,23 @@ export default async (
     type: 'object',
   }
 
-  const headers = {
-    Accept: 'application/json',
-    Authorization: `bearer ${authToken}`,
-    'Content-Type': 'application/json',
-  }
+  // const headers = {
+  //   Accept: 'application/json',
+  //   Authorization: `bearer ${authToken}`,
+  //   'Content-Type': 'application/json',
+  // }
 
-  const segmentData = await session.getSegmentData()
-  const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+  // const segmentData = await session.getSegmentData()
+  // const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
 
-  const simulationUrl = paths.orderFormSimulation(account, {
-    querystring: `sc=${segmentData.channel}&localPipeline=true`,
-  })
-  const skuByIdUrl = paths.skuById(account)
+  // const simulationUrl = paths.orderFormSimulation(account, {
+  //   querystring: `sc=${segmentData.channel}&localPipeline=true`,
+  // })
+  // const skuByIdUrl = paths.skuById(account)
 
-  const { sellerId } = find(propEq('sellerDefault', true) , sellers) as Seller
+  // const { sellerId } = find(propEq('sellerDefault', true), sellers) as Seller
 
-  const reducedAttachmentSchema = await reduceAttachments({
-    attachments,
-    getSkuInfo: getSkuInfo({
-      headers,
-      marketingData,
-      segmentData,
-      sellerId,
-      simulationUrl,
-      skuByIdUrl,
-    }),
-  })
+  const reducedAttachmentSchema = reduceAttachments({ attachments })
 
   const calculatedSchema = { ...schema, ...reducedAttachmentSchema }
 
