@@ -10,6 +10,7 @@ export const resolvers = {
       }),
       attachments
     ),
+    calculatedAttachments: calculatedAttachmentsResolver,
     images: ({images = []}, {quantity}) => map(
       image => ({
         cacheId: image.imageId,
@@ -32,6 +33,5 @@ export const resolvers = {
       (name: string) => ({ name, values: sku[name] }),
       sku.variations || []
     ),
-    calculatedAttachments: calculatedAttachmentsResolver,
   }
 }
