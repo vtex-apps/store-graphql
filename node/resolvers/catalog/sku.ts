@@ -1,4 +1,5 @@
 import { find, head, map, replace, slice } from 'ramda'
+import calculatedAttachmentsResolver from './calculatedAttachmentsResolver'
 
 export const resolvers = {
   SKU: {
@@ -9,6 +10,7 @@ export const resolvers = {
       }),
       attachments
     ),
+    calculatedAttachments: calculatedAttachmentsResolver,
     images: ({images = []}, {quantity}) => map(
       image => ({
         cacheId: image.imageId,
