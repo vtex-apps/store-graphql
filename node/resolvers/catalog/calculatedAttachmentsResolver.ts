@@ -1,22 +1,22 @@
 import http from 'axios'
-import { propEq, prop, head, find, map, pluck, isEmpty, pickBy, both } from 'ramda'
+import { both, find, head, isEmpty, map, pickBy, pluck, prop, propEq } from 'ramda'
 import { camelCase, renameKeysWith } from '../../utils'
 import paths from '../paths'
 
-type SchemaItem = {
-  defaultQuantity: String
-  id: String
-  image: String
-  maxQuantity: String
-  minQuantity: String
-  name: String
-  price: Number
-  priceTable: String
+interface SchemaItem {
+  defaultQuantity: string
+  id: string
+  image: string
+  maxQuantity: string
+  minQuantity: string
+  name: string
+  price: number
+  priceTable: string
 }
 
-type Seller = {
-  sellerId: Number
-  sellerDefault: Boolean
+interface Seller {
+  sellerId: number
+  sellerDefault: boolean
 }
 
 const isTruthy = val => !!val
@@ -52,9 +52,9 @@ const getSkuInfo = ({
    * - get user login status
    */
   const payload = {
-    items: [{ id: schemaItem.id, quantity: 1, seller: sellerId }],
     country: countryCode,
     isCheckedIn: false,
+    items: [{ id: schemaItem.id, quantity: 1, seller: sellerId }],
     priceTables: [schemaItem.priceTable],
     ...(isEmpty(marketingData) ? {} : { marketingData }),
   }
@@ -63,9 +63,9 @@ const getSkuInfo = ({
 
   return {
     ...schemaItem,
-    name: sku.SkuName,
     description: sku.ProductDescription,
     image: prop('ImageUrl', head(sku.Images)),
+    name: sku.SkuName,
     price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
   }
 }
@@ -80,24 +80,24 @@ const getSkuInfo = ({
  *
  * @return {Array} parsedSku
  */
-const parseDomainSkus = ({ skusString, getSkuInfo }) =>
-  map(async (item: String) => {
+const parseDomainSkus = ({ skusString, getSkuInfo }) => // tslint:disable-line
+  map(async (item: string) => {
     const [_, id, minQuantity, maxQuantity, defaultQuantity, priceTable] = item.match(
       /#(\w+)\[(\d+)-(\d+)\]\[(\d+)\](\w*)/
     )
 
     const schemaSku = {
-      id,
-      minQuantity,
-      maxQuantity,
       defaultQuantity,
+      id,
+      maxQuantity,
+      minQuantity,
       priceTable,
     }
 
     const skuInfo = await getSkuInfo(schemaSku)
 
     return skuInfo
-  }, skusString.split(';').filter(str => str.length != 0))
+  }, skusString.split(';').filter(str => str.length !== 0))
 
 /**
  * Parses DomainValues min/max values and get information for each sku
@@ -108,7 +108,7 @@ const parseDomainSkus = ({ skusString, getSkuInfo }) =>
  *
  * @return {Object} parsedDomain
  */
-const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => {
+const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => { // tslint:disable-line
   const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(domainValueRegex)
   const required = minTotalItems > 0
   const multiple = maxTotalItems > minTotalItems
@@ -130,51 +130,51 @@ const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => {
  *
  * @returns {Object} schemaFromAttachments
  */
-const reduceAttachments = ({ attachments, getSkuInfo }) =>
+const reduceAttachments = ({ attachments, getSkuInfo }) => // tslint:disable-line
   attachments.reduce(
     async (accumulatedPromise, { domainValues }) => {
       const accumulated = await accumulatedPromise
       // If there are no attachments, do nothing and skip
-      if (!attachments) return { ...accumulated }
+      if (!attachments) { return { ...accumulated } }
 
       const { properties, items, required } = accumulated
       const attachmentDomainValues = JSON.parse(domainValues)
 
       const schemaFromDomains = await attachmentDomainValues.reduce(
-        async (accumulatedPromise, { FieldName, DomainValues }) => {
-          const accumulated = await accumulatedPromise
-          if (!DomainValues || !domainValueRegex.test(DomainValues)) return { ...accumulated }
+        async (accumulatedPromise, { FieldName, DomainValues }) => { // tslint:disable-line
+          const accumulated = await accumulatedPromise // tslint:disable-line
+          if (!DomainValues || !domainValueRegex.test(DomainValues)) { return { ...accumulated } }
           const { domainProperties, domainItems, domainRequired } = accumulated
           const {
             minTotalItems,
             maxTotalItems,
             domainSkus,
-            required,
+            required, // tslint:disable-line
             multiple,
           } = await parseDomain({
-            FieldName,
             DomainValues,
+            FieldName,
             getSkuInfo,
           })
 
           const enumProperty = {
-            type: 'string',
             enum: pluck('id')(domainSkus[FieldName]),
+            type: 'string',
           }
 
           const property = multiple
             ? {
-                type: 'array',
                 items: enumProperty,
-                minTotalItems,
                 maxTotalItems,
+                minTotalItems,
+                type: 'array',
                 uniqueItems: true,
               }
             : enumProperty
 
           return {
-            domainProperties: { ...domainProperties, [FieldName]: property },
             domainItems: { ...domainItems, ...domainSkus },
+            domainProperties: { ...domainProperties, [FieldName]: property },
             domainRequired: [...domainRequired, ...(required ? [FieldName] : [])],
           }
         },
@@ -182,11 +182,11 @@ const reduceAttachments = ({ attachments, getSkuInfo }) =>
       )
 
       return {
+        items: { ...items, ...schemaFromDomains.domainItems },
         properties: {
           ...properties,
           ...schemaFromDomains.domainProperties,
         },
-        items: { ...items, ...schemaFromDomains.domainItems },
         required: [...required, ...schemaFromDomains.domainRequired],
       }
     },
@@ -205,13 +205,13 @@ export default async (
   { vtex: { account, authToken }, dataSources: { session } }
 ) => {
   const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'http://json-schema.org/draft-07/schema#',
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    items: {},
+    properties: {},
+    required: [],
     title: name,
     type: 'object',
-    required: [],
-    properties: {},
-    items: {},
   }
 
   const headers = {
@@ -233,12 +233,12 @@ export default async (
   const reducedAttachmentSchema = await reduceAttachments({
     attachments,
     getSkuInfo: getSkuInfo({
+      headers,
+      marketingData,
+      segmentData,
+      sellerId,
       simulationUrl,
       skuByIdUrl,
-      marketingData,
-      headers,
-      segmentData,
-      sellerId
     }),
   })
 
