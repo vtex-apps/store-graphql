@@ -98,6 +98,7 @@ type SKU {
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
+  calculatedAttachments: String
 }
 
 type KitItem {

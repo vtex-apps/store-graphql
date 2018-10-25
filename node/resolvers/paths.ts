@@ -14,6 +14,7 @@ const paths = {
   orderFormPaymentTokenId: (account, { orderFormId, tokenId }) => `${paths.orderForm(account)}/${orderFormId}/paymentData/paymentToken/${tokenId}`,
   orderFormProfile: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/clientProfileData`,
   orderFormShipping: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/shippingData`,
+  orderFormSimulation: (account, {querystring}) => `http://${account}.vtexcommercestable.com.br/api/checkout/pvt/orderForms/simulation?${querystring}`,
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
@@ -67,7 +68,12 @@ const paths = {
 
   logisticsConfig: account => ({
     shipping: `http://${account}.vtexcommercestable.com.br/api/logistics/pub/shipping/configuration`
-  })
+  }),
+
+  /** Catalog API
+   * Docs: https://documenter.getpostman.com/view/845/vtex-catalog-api/Hs44#dc127f25-fc71-8188-1de3-0d2dff8fed11
+   */
+  skuById: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/`
 }
 
 export default paths

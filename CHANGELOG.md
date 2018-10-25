@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.34.0] - 2018-10-24
+### Added
+- Add `calculatedAttachments` resolver for the SKU.
+
 ## [2.33.0] - 2018-10-22
 ### Added
 - Filtering of documents search with `where` param 
