@@ -21,15 +21,15 @@ export const queries = {
     const listInfo = await documentQueries.document(_, request, context)
     const listItems = await documentQueries.searchDocuments(_, requestProducts, context)
     const listProducts = listItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
-    const products = await Promise.all(
+    const items = await Promise.all(
       map(async item => {
         const productsResponse = await catalog.productBySku([path(['productId'], item)])
         const product = nth(0, productsResponse)
-        return product
+        return { ...item, product }
       }, listProducts)
     )
 
-    return { id, ...parseFieldsToJson(listInfo.fields), products }
+    return { id, ...parseFieldsToJson(listInfo.fields), items }
   }
 }
 
