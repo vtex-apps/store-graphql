@@ -1,19 +1,20 @@
 type List {
-    id: String
+    id: ID
     name: String
     isPublic: Boolean
     createdBy: String
     createdIn: String
     updatedBy: String
     updatedIn: String
-    products: [Product]
+    items: [ListItem]
 }
 
 type ListItem {
-    id: String
-    productId: String
-    skuId: String
+    id: ID
+    productId: ID
+    skuId: ID
     quantity: Int
+    product: Product
 }
 
 input ListInput {
@@ -22,8 +23,8 @@ input ListInput {
 }
 
 input ListItemInput {
-    listId: String!
-    productId: String!
-    skuId: String
+    listId: ID!
+    productId: ID!
+    skuId: ID
     quantity: Int
 }
