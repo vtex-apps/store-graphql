@@ -1,5 +1,6 @@
 import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 import { mapKeyValues, parseFieldsToJson } from '../document/index'
+import { map, path, nth } from 'ramda'
 
 const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
 const fieldsListProduct = ['quantity', 'productId', 'skuId', 'id']
@@ -9,6 +10,7 @@ const acronymListProduct = 'LP'
 export const queries = {
   list: async (_, args, context) => {
     const { id } = args
+    const { dataSources : { catalog } } = context
     const request = { acronym: acronymList, fields, id }
     const requestProducts = {
       acronym: acronymListProduct,
@@ -18,8 +20,15 @@ export const queries = {
     }
     const listInfo = await documentQueries.document(_, request, context)
     const listItems = await documentQueries.searchDocuments(_, requestProducts, context)
-    const products = listItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
-    // Get products information from Catalog
+    const listProducts = listItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
+    const products = await Promise.all(
+      map(async item => {
+        const productsResponse = await catalog.productBySku([path(['productId'], item)])
+        const product = nth(0, productsResponse)
+        return product
+      }, listProducts)
+    )
+
     return { id, ...parseFieldsToJson(listInfo.fields), products }
   }
 }

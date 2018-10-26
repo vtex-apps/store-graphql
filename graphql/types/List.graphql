@@ -6,14 +6,7 @@ type List {
     createdIn: String
     updatedBy: String
     updatedIn: String
-    products: [ListItem]
-}
-
-type ListItem {
-    id: String
-    productId: String
-    skuId: String
-    quantity: Int
+    products: [Product]
 }
 
 input ListInput {
