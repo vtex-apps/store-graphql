@@ -9,6 +9,13 @@ type List {
     products: [Product]
 }
 
+type ListItem {
+    id: String
+    productId: String
+    skuId: String
+    quantity: Int
+}
+
 input ListInput {
     name: String!
     isPublic: Boolean

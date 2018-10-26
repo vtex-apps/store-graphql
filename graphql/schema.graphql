@@ -201,7 +201,8 @@ type Query {
 
   """ Get the Wish List informations by the received id """
   list(
-    id: String
+    id: String,
+    page: Int = 1
   ): List
 }
 
