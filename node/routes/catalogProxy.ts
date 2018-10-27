@@ -8,15 +8,16 @@ const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf(
 export const catalogProxy = async (ctx: ServiceContext) => {
   const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query} = ctx
 
-  const baseURL = isPlatformGC(account)
-    ? `http://api.gocommerce.com/${account}/search`
-    : `http://${account}.vtexcommercestable.com.br/api/catalog_system`
+  const [host, basePath] = isPlatformGC(account)
+    ? ['api.gocommerce.com', `${account}/search`]
+    : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
   const {data} = await axios.request({
-    baseURL,
+    baseURL: `http://${host}/${basePath}`,
     headers: {
       'Authorization': authToken,
       'Proxy-Authorization': authToken,
+      'X-VTEX-Proxy-To': `https://${host}`,
       ...cookie && {cookie},
     },
     params: query,
