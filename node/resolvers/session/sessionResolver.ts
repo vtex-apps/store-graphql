@@ -1,7 +1,7 @@
 
 import { path, toLower } from 'ramda'
 
-const convertToBool = str => toLower(str) === 'true'
+const convertToBool = str => !!str && (toLower(str) === 'true')
 
 const profileFields = (profile, user) => ({
   document: path(['document', 'value'], profile),
@@ -25,10 +25,10 @@ const setProfileData = (profile, user) => (
 export const sessionFields = session => {
   const { namespaces } = session
   return namespaces ? {
-    adminUserEmail: path(['adminUserEmail', 'value'], namespaces.authentication),
-    adminUserId: path(['adminUserId', 'value'], namespaces.authentication),
+    adminUserEmail: path(['authentication', 'adminUserEmail', 'value'], namespaces),
+    adminUserId: path(['authentication', 'adminUserId', 'value'], namespaces),
     id: session.id,
-    impersonable: convertToBool(namespaces.impersonate.canImpersonate.value),
+    impersonable: convertToBool(path(['impersonate', 'canImpersonate', 'value'], namespaces)),
     impersonate: {
       ...setProfileData(namespaces.profile, namespaces.impersonate)
     },
