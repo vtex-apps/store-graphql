@@ -131,7 +131,7 @@ const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => { // tsli
  * @returns {Object} schemaFromAttachments
  */
 const reduceAttachments = ({ attachments, getSkuInfo }) => // tslint:disable-line
-  attachments.reduce(
+  Array.isArray(attachments) && attachments.reduce(
     async (accumulatedPromise, { domainValues }) => {
       const accumulated = await accumulatedPromise
       // If there are no attachments, do nothing and skip
