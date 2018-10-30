@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.34.2] - 2018-10-30
+### Fixed
+- canImpersonate of undefined
+- reduce of undefined
+
 ## [2.34.1] - 2018-10-27
 ### Fixed
 - Call catalog endpoint with HTTPS
