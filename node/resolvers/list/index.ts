@@ -49,8 +49,8 @@ export const mutation = {
   deleteList: async (_, args, context) => {
     const { id } = args
     const request = { acronym: acronymList, documentId: id }
-    const { products } = await queries.list(_, { id, page: 1 }, context)
-    products.map(item => mutation.deleteListItem(_, { id: item.id }, context))
+    const { items } = await queries.list(_, { id, page: 1 }, context)
+    items.map(item => mutation.deleteListItem(_, { id: item.id }, context))
     return await documentMutations.deleteDocument(_, request, context)
   },
 
@@ -77,7 +77,7 @@ export const mutation = {
       }
     }
     // Make this query to check if the skuId received is valid
-    // If it isn't it throws an exception.
+    // If it isn't, it throws an exception.
     await catalog.productBySku([listItem.skuId])
     // Check if there is a product with the same sku id stored
     // If yes, throw an exception.
