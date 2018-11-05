@@ -1,11 +1,12 @@
 import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 import { mapKeyValues, parseFieldsToJson } from '../document/index'
+import ResolverError from '../../errors/resolverError'
 import { map, path, nth } from 'ramda'
 
 const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
 const fieldsListProduct = ['quantity', 'skuId', 'productId', 'id']
-const acronymList = 'WL'
 const acronymListProduct = 'LP'
+const acronymList = 'WL'
 
 export const queries = {
   list: async (_, args, context) => {
@@ -67,12 +68,28 @@ export const mutation = {
   },
 
   addListItem: async (_, args, context) => {
-    const { listItem, listItem: { listId } } = args
+    const { listItem, listItem: { listId, skuId } } = args
+    const { dataSources : { catalog } } = context
     const request = {
       acronym: acronymListProduct,
       document : {
         fields: mapKeyValues(listItem)
       }
+    }
+    // Make this query to check if the skuId received is valid
+    // If it isn't it throws an exception.
+    await catalog.productBySku([listItem.skuId])
+    // Check if there is a product with the same sku id stored
+    // If yes, throw an exception.
+    const requestProducts = {
+      acronym: acronymListProduct,
+      fields: fieldsListProduct,
+      filters: [`skuId=${skuId} AND listId=${listId}`],
+      page: 1,
+    }
+    const productsResponse = await documentQueries.searchDocuments(_, requestProducts, context);
+    if (productsResponse.length) {
+      throw new ResolverError('Cannot add duplicated products.', 406)
     }
     await documentMutations.createDocument(_, request, context)
     return await queries.list(_, { id: listId, page: 1 }, context)
