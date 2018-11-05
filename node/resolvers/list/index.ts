@@ -3,7 +3,7 @@ import { mapKeyValues, parseFieldsToJson } from '../document/index'
 import { map, path, nth } from 'ramda'
 
 const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
-const fieldsListProduct = ['quantity', 'productId', 'skuId', 'id']
+const fieldsListProduct = ['quantity', 'skuId', 'productId', 'id']
 const acronymList = 'WL'
 const acronymListProduct = 'LP'
 
@@ -23,12 +23,11 @@ export const queries = {
     const listProducts = listItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
     const items = await Promise.all(
       map(async item => {
-        const productsResponse = await catalog.productBySku([path(['productId'], item)])
+        const productsResponse = await catalog.productBySku([path(['skuId'], item)])
         const product = nth(0, productsResponse)
         return { ...item, product }
       }, listProducts)
     )
-
     return { id, ...parseFieldsToJson(listInfo.fields), items }
   }
 }
