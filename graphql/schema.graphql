@@ -3,7 +3,7 @@ type Query {
   product(
     """ Product slug """
     slug: String
-  ): Product @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Product @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """ Product search filtered and ordered """
   products(
@@ -27,7 +27,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): [Product] @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): [Product] @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """ Get facets category """
   facets(
