@@ -29,6 +29,9 @@ export const resolvers = {
             return { ...kitItem, product, sku }
           })
     ),
+    productPrice: ({productPrice}) => {
+      return !productPrice ? {} : productPrice
+    },
     variations: sku => sku && map(
       (name: string) => ({ name, values: sku[name] }),
       sku.variations || []

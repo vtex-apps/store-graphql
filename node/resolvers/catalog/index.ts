@@ -89,7 +89,7 @@ export const queries = {
   },
 
   products: async (_, args, ctx) => {
-    const { dataSources: { catalog } } = ctx
+    const { dataSources: { catalog, fixedPrice } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
@@ -97,7 +97,21 @@ export const queries = {
         500
       )
     }
-    return catalog.products(args)
+    var products = await catalog.products(args);
+
+    products = await Promise.all(products.map(async (product) => {
+      product.items = await Promise.all(product.items.map(async(item) => {
+        var productPrices = await fixedPrice.fixedPrices(item.itemId);
+        return { ...item, ...{ productPrice :  productPrices } }
+      }));
+      return product;
+    }));
+
+    //let p = products.map(x => x.items)
+    //let p = products.map(x => x.items.map(y => y.productPrice));
+    console.log(JSON.stringify(products))
+    
+    return products;
   },
 
   brand: async (_, args, { dataSources: { catalog } }) => {

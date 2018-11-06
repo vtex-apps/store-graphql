@@ -95,6 +95,7 @@ type SKU {
   unitMultiplier: Float
   kitItems: [KitItem]
   images (quantity: Int = 10) : [Image]
+  productPrice: ProductPrice
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
@@ -193,4 +194,19 @@ type Installment {
 type Reference {
   Key: String
   Value: String
+}
+
+type ProductPrice {
+  itemId: String
+  basePrice: Float
+  listPrice: Float
+  costPrice: Float
+  fixedPrices: [FixedPrice]
+}
+
+type FixedPrice {
+  tradePolicyId: Int
+  value: Float
+  listPrice: Float
+  minQuantity: Int
 }
