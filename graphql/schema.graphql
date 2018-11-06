@@ -33,7 +33,7 @@ type Query {
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets @response(vary: "x-vtex-segment")
+  ): Facets @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -90,7 +90,7 @@ type Query {
     postalCode: String,
     """ Country of postal code """
     country: String
-  ): ShippingData
+  ): ShippingData @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
@@ -110,7 +110,7 @@ type Query {
     maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
-  ): Suggestions
+  ): Suggestions @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Search documents """
   documents(
@@ -140,10 +140,10 @@ type Query {
   benefits(
     """ List of Products """
     items: [ShippingItem]
-  ): [Benefit]
+  ): [Benefit] @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """ Get the options available to authenticate users """
-  loginOptions: LoginOptions
+  loginOptions: LoginOptions @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get the IDs for the provided search context slugs """
   searchContextFromParams(
@@ -154,7 +154,7 @@ type Query {
   ): SearchContext
 
   """ Get logistics information about the store """
-  logistics: LogisticsData
+  logistics: LogisticsData @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
