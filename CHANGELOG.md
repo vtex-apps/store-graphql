@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Fixed
 - `calculatedAttachments` now returns an empty string if the product does not fit the requirements to generate the schema
+- `calculatedAttachments` now returns properly the properties as array or string
 
 ## [2.35.1] - 2018-11-08
 

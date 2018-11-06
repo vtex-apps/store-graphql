@@ -112,7 +112,7 @@ const parseDomainSkus = ({ skusString, getSkuInfo }) => // tslint:disable-line
 const parseDomain = async ({ FieldName, DomainValues, getSkuInfo }) => { // tslint:disable-line
   const [_, minTotalItems, maxTotalItems, skusString] = DomainValues.match(domainValueRegex)
   const required = minTotalItems > 0
-  const multiple = maxTotalItems > minTotalItems
+  const multiple = maxTotalItems > 1
 
   const domainSkus = {
     [FieldName]: await Promise.all(parseDomainSkus({ skusString, getSkuInfo })),
