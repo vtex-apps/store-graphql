@@ -59,7 +59,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search @response(vary: "x-vtex-segment")
+  ): Search @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """ Get category details """
   category(
