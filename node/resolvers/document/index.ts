@@ -54,7 +54,7 @@ export const queries = {
 }
 
 export const mutations = {
-  createDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+  createDocument: async (_, args, { vtex: ioContext }) => {
     const { acronym, document: { fields } } = args
     const url = paths.documents(ioContext.account, acronym)
     const { data: { Id, Href, DocumentId } } = await http.post(
@@ -70,7 +70,7 @@ export const mutations = {
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  updateDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+  updateDocument: async (_, args, { vtex: ioContext }) => {
     const { acronym, document: { fields } } = args
     const url = paths.documents(ioContext.account, acronym)
     const { data: { Id, Href, DocumentId } } = await http.patch(
@@ -86,7 +86,7 @@ export const mutations = {
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  deleteDocument: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+  deleteDocument: async (_, args, { vtex: ioContext }) => {
     const { acronym, documentId } = args
     const url = paths.document(ioContext.account, acronym, documentId)
     await http.delete(
