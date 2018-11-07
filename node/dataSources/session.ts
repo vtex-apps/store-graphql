@@ -22,15 +22,7 @@ export class SessionDataSource extends RESTDataSource<ServiceContext> {
     super()
   }
 
-  public getSegmentData = async () => {
-    try {
-      return await this.get<SegmentData>('/segments')
-    } catch (e) {
-      // todo: log error on colossus
-      // return "default" segment if session is down
-      return {channel: '1'} as SegmentData
-    }
-  }
+  public getSegmentData = () => this.get<SegmentData>('/segments')
 
   get baseURL() {
     const {vtex: {account}} = this.context
