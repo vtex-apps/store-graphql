@@ -75,7 +75,7 @@ const paths = {
    */
   skuById: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/`,
 
-  subscriptionAggregations: (account, schema, where, field, type, interval) =>
+  subscriptionAggregations: (account, { schema, where, field, type, interval }) =>
     `http://api.vtex.com/api/dataentities/subscriptions/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
 }
 

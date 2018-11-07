@@ -24,7 +24,7 @@ export const queries = {
     const interval = "day"
 
     return await makeRequest(
-      paths.subscriptionAggregations(account, schema, where, field, type, interval),
+      paths.subscriptionAggregations(account, { schema, where, field, type, interval }),
       authToken
     ).then(({ data: { result } }) => {
       const counts = {
