@@ -91,6 +91,11 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
     }
   )
 
+  public updateOrderFormAssemblyOptions = (orderFormId: string, itemIndex: number, assemblyOptionId: string, assemblyData: any) => this.post(
+    `/pub/orderForm/${orderFormId}/items/${itemIndex}/assemblyOptions/${assemblyOptionId}`,
+    assemblyData
+  )
+
   public orderForm = () => this.post(
     `/pub/orderForm`,
     { expectedOrderFormSections: ['items'] },

@@ -114,3 +114,17 @@ input OrderFormPaymentTokenInput {
   paymentSystem: String
   paymentSystemName: String
 }
+
+input OrderFormAssemblyInput {
+  noSplitItem: Boolean
+  composition: OrderFormComposition
+}
+
+input OrderFormComposition {
+  items: [OrderFormCompositionItem]
+}
+
+input OrderFormCompositionItem {
+  id: ID
+  quantity: Int
+}

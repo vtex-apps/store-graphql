@@ -132,5 +132,11 @@ export const mutations: Record<string, Resolver> = {
 
   updateOrderFormShipping: (root, {orderFormId, address}, {dataSources: {checkout}}) => {
     return checkout.updateOrderFormShipping(orderFormId, {address})
+  },
+
+  updateOrderFormAssemblyOptions: (root, {orderFormId, itemIndex, assemblyOptionId, assemblyData}, {dataSources: {checkout}}) => {
+    return checkout.updateOrderFormAssemblyOptions(orderFormId, itemIndex, assemblyOptionId, assemblyData)
+    console.log(checkout.updateOrderFormAssemblyOptions(orderFormId, itemIndex, assemblyOptionId, assemblyData))
+    return null
   }
 }
