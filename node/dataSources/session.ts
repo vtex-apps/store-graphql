@@ -1,7 +1,7 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
-const DEFAULT_TIMEOUT_MS = 1.5 * 1000
+const DEFAULT_TIMEOUT_MS = 800
 
 export interface SegmentData {
   campaigns?: any
