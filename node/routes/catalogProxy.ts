@@ -1,8 +1,9 @@
 import axios from 'axios'
 import * as qs from 'qs'
 
-const THIRTY_SECONDS = 30
-const TWENTY_MINUTES_S = 20 * 60
+const TIMEOUT_MS = 2 * 1000
+const MAX_AGE_S = 30
+const STALE_IF_ERROR_S = 20 * 60
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
@@ -23,9 +24,10 @@ export const catalogProxy = async (ctx: ServiceContext) => {
     },
     params: query,
     paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
+    timeout: TIMEOUT_MS,
     url: encodeURI(path),
   })
 
-  ctx.set('cache-control', production ? `public, max-age=${THIRTY_SECONDS}, stale-if-error=${TWENTY_MINUTES_S}` : 'no-store, no-cache')
+  ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
   ctx.body = data
 }

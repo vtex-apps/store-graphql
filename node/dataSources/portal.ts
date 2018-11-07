@@ -2,6 +2,8 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
 
+const DEFAULT_TIMEOUT_MS = 4 * 1000
+
 interface AutocompleteArgs {
   maxRows: string
   searchTerm: string
@@ -26,6 +28,10 @@ export class PortalDataSource extends RESTDataSource<ServiceContext> {
   }
 
   protected willSendRequest (request: RequestOptions) {
+    if (!request.timeout) {
+      request.timeout = DEFAULT_TIMEOUT_MS
+    }
+
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       withAuthToken(request.headers)(this.context.vtex)

@@ -1,6 +1,8 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
+const DEFAULT_TIMEOUT_MS = 1.5 * 1000
+
 export interface SegmentData {
   campaigns?: any
   channel: string
@@ -38,6 +40,10 @@ export class SessionDataSource extends RESTDataSource<ServiceContext> {
   protected willSendRequest (request: RequestOptions) {
     const {cookies, vtex: {authToken}} = this.context
     const segment = cookies.get('vtex_segment')
+
+    if (!request.timeout) {
+      request.timeout = DEFAULT_TIMEOUT_MS
+    }
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
