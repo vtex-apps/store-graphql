@@ -56,7 +56,6 @@ type OrderFormItemMetadataItem {
 
 type OrderFormAssemblyOptions {
   id: String
-  inputValues: ???
   name: String
   required: Boolean
 }
