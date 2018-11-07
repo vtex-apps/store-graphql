@@ -4,7 +4,7 @@ const paths = {
   /** Checkout API
    * Docs: https://documenter.getpostman.com/view/18468/vtex-checkout-api/6Z2QYJM
    */
- addItem: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/items`,
+  addItem: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/items`,
   changeToAnonymousUser: (account, { orderFormId }) => `http://${account}.vtexcommercestable.com.br/checkout/changeToAnonymousUser/${orderFormId}`,
   orderForm: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
   orderFormCustomData: (account, { orderFormId, appId, field }) => `${paths.orderForm(account)}/${orderFormId}/customData/${appId}/${field}`,
@@ -14,7 +14,7 @@ const paths = {
   orderFormPaymentTokenId: (account, { orderFormId, tokenId }) => `${paths.orderForm(account)}/${orderFormId}/paymentData/paymentToken/${tokenId}`,
   orderFormProfile: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/clientProfileData`,
   orderFormShipping: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/shippingData`,
-  orderFormSimulation: (account, {querystring}) => `http://${account}.vtexcommercestable.com.br/api/checkout/pvt/orderForms/simulation?${querystring}`,
+  orderFormSimulation: (account, { querystring }) => `http://${account}.vtexcommercestable.com.br/api/checkout/pvt/orderForms/simulation?${querystring}`,
   shipping: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForms/simulation`,
   updateItems: (account, data) => `${paths.addItem(account, data)}/update`,
 
@@ -73,7 +73,10 @@ const paths = {
   /** Catalog API
    * Docs: https://documenter.getpostman.com/view/845/vtex-catalog-api/Hs44#dc127f25-fc71-8188-1de3-0d2dff8fed11
    */
-  skuById: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/`
+  skuById: account => `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/`,
+
+  subscriptionAggregations: (account, schema, where, field, type, interval) =>
+    `http://api.vtex.com/api/dataentities/subscriptions/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
 }
 
 export default paths
