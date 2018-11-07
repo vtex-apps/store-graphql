@@ -60,13 +60,13 @@ type OrderFormAssemblyOptions {
   required: Boolean
 }
 
-type OrderFormComposition {
-  items: [OrderFormCompositionItem]
+type OrderFormAssemblyOptionsComposition {
+  items: [OrderFormAssemblyOptionsCompositionItem]
   maxQuantity: Int
   minQuantity: Int
 }
 
-type OrderFormCompositionItem {
+type OrderFormAssemblyOptionsCompositionItem {
   id: String
   maxQuantity: Int
   minQuantity: Int
