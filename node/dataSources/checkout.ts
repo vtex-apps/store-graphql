@@ -32,7 +32,7 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
 
   public cancelOrder = (orderFormId: string, reason: string) => this.post(
     `/pub/orders/${orderFormId}/user-cancel-request`,
-    {reason},
+    { reason },
   )
 
   public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.put(
@@ -93,7 +93,7 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
 
   public orderForm = () => this.post(
     `/pub/orderForm`,
-    {expectedOrderFormSections: ['items']},
+    { expectedOrderFormSections: ['items'] },
   )
 
   public orders = () => this.get(
@@ -106,11 +106,11 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   )
 
   get baseURL() {
-    const {vtex: {account}} = this.context
-    return `http://${account}.vtexcommercestable.com.br/api/checkout`
+    const { vtex: { account } } = this.context
+    return `http://${account}.vtexcommercebeta.com.br/api/checkout`
   }
 
-  protected async didReceiveResponse (response: Response, request: Request) {
+  protected async didReceiveResponse(response: Response, request: Request) {
     const result = await super.didReceiveResponse(response, request)
 
     const rawHeaders = (response.headers as any).raw() as Record<string, any>
@@ -123,8 +123,8 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
     return result
   }
 
-  protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken}, headers} = this.context
+  protected willSendRequest(request: RequestOptions) {
+    const { vtex: { authToken }, headers } = this.context
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
