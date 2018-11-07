@@ -158,6 +158,12 @@ type Query {
 
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
+
+  """ Get count of subscriptions by status """
+  subscriptionsCountByStatus(
+    initialDate: String!,
+    endDate: String!
+  ): SubscriptionStatusCount
 }
 
 type Mutation {
