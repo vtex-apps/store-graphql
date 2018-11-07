@@ -3,7 +3,7 @@ import { mapKeyValues, parseFieldsToJson } from '../document/index'
 import ResolverError from '../../errors/resolverError'
 import { map, path, nth } from 'ramda'
 
-const fields = ['name', 'isPublic', 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
+const fields = ['name', 'isPublic'] //, 'createdBy', 'createdIn', 'updatedBy', 'updatedIn']
 const fieldsListProduct = ['quantity', 'skuId', 'productId', 'id']
 const acronymListProduct = 'LP'
 const acronymList = 'WL'
