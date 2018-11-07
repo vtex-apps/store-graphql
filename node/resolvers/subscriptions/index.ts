@@ -27,17 +27,14 @@ export const queries = {
       paths.subscriptionAggregations(account, { schema, where, field, type, interval }),
       authToken
     ).then(({ data: { result } }) => {
-      const counts = {
-        active: 0,
-        canceled: 0,
-        paused: 0
-      }
-
-      result && result.map(item => {
-        counts[item.key] = item.value
-      })
-
-      return counts
+      return result.reduce((acc, item) => ({
+        ...acc,
+        [item.key]: item.value,
+      }), {
+          active: 0,
+          canceled: 0,
+          paused: 0,
+        })
     })
   }
 }
