@@ -1,6 +1,8 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
+const DEFAULT_TIMEOUT_MS = 4 * 1000
+
 interface ProductsArgs {
   query: string
   category: string
@@ -87,6 +89,10 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
     const segment = cookies.get('vtex_segment')
     const [appMajorNumber] = process.env.VTEX_APP_VERSION.split('.')
     const appMajor = `${appMajorNumber}.x`
+
+    if (!request.timeout) {
+      request.timeout = DEFAULT_TIMEOUT_MS
+    }
 
     forEachObjIndexed(
       (value: string, param: string) => request.params.set(param, value),

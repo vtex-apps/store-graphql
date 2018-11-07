@@ -71,7 +71,11 @@ export const mutations: Record<string, Resolver> = {
   addItem: async (root, {orderFormId, items}, {dataSources: {checkout, session}}) => {
     const [{marketingData}, segmentData] = await Promise.all([
       checkout.orderForm(),
-      session.getSegmentData()
+      session.getSegmentData().catch((err) => {
+        // todo: log error using colossus
+        console.error(err)
+        return {} as SegmentData
+      })
     ])
 
     if (shouldUpdateMarketingData(marketingData, segmentData)) {
