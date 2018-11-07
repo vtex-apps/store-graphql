@@ -3,6 +3,7 @@ type OrderForm {
   cacheId: ID
   orderFormId: String
   value: Float
+  itemMetadata: OrderFormItemMetadata
   items: [OrderFormItem]
   salesChannel: String
   loggedIn: Boolean
@@ -36,6 +37,41 @@ type OrderFormItem {
   sellingPrice: Float
   rewardValue: Int
   isGift: Boolean
+}
+
+type OrderFormItemMetadata {
+  items: [OrderFormItemMetadataItem]
+}
+
+type OrderFormItemMetadataItem {
+  assemblyOptions: [OrderFormAssemblyOptions]
+  detailUrl: String
+  ean: String
+  id: String
+  imageUrl: String
+  name: String
+  productId: String
+  refId: String
+}
+
+type OrderFormAssemblyOptions {
+  id: String
+  inputValues: ???
+  name: String
+  required: Boolean
+}
+
+type OrderFormComposition {
+  items: [OrderFormCompositionItem]
+  maxQuantity: Int
+  minQuantity: Int
+}
+
+type OrderFormCompositionItem {
+  id: String
+  maxQuantity: Int
+  minQuantity: Int
+  priceTable: String
 }
 
 type Totalizer {
