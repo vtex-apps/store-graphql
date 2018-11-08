@@ -1,7 +1,7 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
-const DEFAULT_TIMEOUT_MS = 4 * 1000
+const DEFAULT_TIMEOUT_MS = 8 * 1000
 
 interface ProductsArgs {
   query: string

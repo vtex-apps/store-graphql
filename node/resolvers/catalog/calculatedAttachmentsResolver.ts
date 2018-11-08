@@ -1,6 +1,7 @@
 import http from 'axios'
+import * as camelCase from 'camelcase'
 import { both, find, head, isEmpty, map, pickBy, pluck, prop, propEq } from 'ramda'
-import { camelCase, renameKeysWith } from '../../utils'
+import { renameKeysWith } from '../../utils'
 import paths from '../paths'
 
 interface SchemaItem {
@@ -221,7 +222,13 @@ export default async (
   }
 
   const segmentData = await session.getSegmentData()
-  const marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+  let marketingData = {}
+  try {
+    marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+  } catch (e) {
+    // TODO: Log to Splunk
+    console.error(e)
+  }
 
   const simulationUrl = paths.orderFormSimulation(account, {
     querystring: `sc=${segmentData.channel}&localPipeline=true`,
