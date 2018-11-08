@@ -35,8 +35,13 @@ export default (options: HttpResolverOptions) => {
       config.headers.cookie = cookie
       config.headers.host = host
     }
+
+    const hostname = parse(builtUrl).hostname
+
     if (secure) {
-      config.headers['X-Vtex-Proxy-To'] = `https://${parse(builtUrl).hostname}`
+      config.headers['X-Vtex-Proxy-To'] = `https://${hostname}`
+    } else if (enableCookies && cookie) {
+      config.headers['X-Vtex-Proxy-To'] = `http://${hostname}`
     }
 
     const vtexResponse = await axios.request(config)

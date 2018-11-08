@@ -7,7 +7,10 @@ import paths from '../paths'
 
 
 const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql') => http.request({
-  headers: withAuthToken({...authHeaders.profile, 'vtex-ui-id-version': vtexIdVersion})(ctx),
+  headers: withAuthToken({
+    ...authHeaders.profile,
+    'vtex-ui-id-version': vtexIdVersion,
+  })(ctx),
   method,
   url,
 })
