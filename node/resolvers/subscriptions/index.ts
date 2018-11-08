@@ -1,33 +1,15 @@
-import http from 'axios'
-
-import paths from '../paths'
-
-const makeRequest = async (url, token, data?, method = 'GET') => http.request({
-  data,
-  headers: {
-    'Proxy-Authorization': token,
-    'VtexIdclientAutCookie': token
-  },
-  method,
-  url,
-})
-
-
 export const queries = {
-  subscriptionsCountByStatus: async (_, args, config) => {
-    const { vtex: { account, authToken } } = config
+  subscriptionsCountByStatus: async (_, args, { dataSources: { subscription } }) => {
+    const options = {
+      where: `createdAt between ${args.initialDate} and ${args.endDate}`,
+      schema: "bi-v1",
+      field: "status",
+      type: "count",
+      interval: "day"
+    }
 
-    const where = `createdAt between ${args.initialDate} and ${args.endDate}`
-    const schema = "bi-v1"
-    const field = "status"
-    const type = "count"
-    const interval = "day"
-
-    return await makeRequest(
-      paths.subscriptionAggregations(account, { schema, where, field, type, interval }),
-      authToken
-    ).then(({ data: { result } }) => {
-      return result.reduce((acc, item) => ({
+    return await subscription.subscriptionAggregations(options).then((data) => {
+      return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
         [item.key]: item.value,
       }), {

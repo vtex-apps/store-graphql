@@ -163,7 +163,8 @@ type Query {
   subscriptionsCountByStatus(
     initialDate: String!,
     endDate: String!
-  ): SubscriptionStatusCount
+  ): SubscriptionStatusCount  @cacheControl(scope: PRIVATE)
+
 }
 
 type Mutation {
