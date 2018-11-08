@@ -35,6 +35,6 @@ export const resolvers = {
     ...authQueries,
     ...logisticsQueries,
     ...sessionQueries,
-    ...subscriptionsQueries
+    ...subscriptionsQueries,
   },
 }
