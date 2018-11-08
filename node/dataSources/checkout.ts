@@ -1,6 +1,8 @@
 import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
+const DEFAULT_TIMEOUT_MS = 4 * 1000
+
 export interface SimulationData {
   country: string
   items: any[]
@@ -130,6 +132,11 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
 
   protected willSendRequest(request: RequestOptions) {
     const { vtex: { account, authToken }, headers } = this.context
+
+    if (!request.timeout) {
+      request.timeout = DEFAULT_TIMEOUT_MS
+    }
+    
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
