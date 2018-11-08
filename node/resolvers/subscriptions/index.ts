@@ -8,7 +8,7 @@ export const queries = {
       interval: "day"
     }
 
-    return await subscription.subscriptionAggregations(options).then((data) => {
+    return subscription.subscriptionAggregations(options).then((data) => {
       return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
         [item.key]: item.value,
