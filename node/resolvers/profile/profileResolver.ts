@@ -77,7 +77,7 @@ export default async (_, args, { vtex: ioContext, request: { headers: { cookie }
   const startsWithVtexId = (val, key) => key.startsWith(`VtexIdclientAutCookie_${account}`)
   const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
   if (!token) {
-    throw new ResolverError('User is not authenticated.', 401)
+    return null
   }
   const addressRequest = await configRequest(ioContext, paths.identity(account, { token }))
   return await http.request(addressRequest).then(prop('data')).then(profile(ioContext, args))
