@@ -3,7 +3,7 @@ import { mapKeyValues, parseFieldsToJson } from '../document/index'
 import ResolverError from '../../errors/resolverError'
 import { map, path, nth } from 'ramda'
 
-const fields = ['name', 'isPublic', 'createdIn', 'updatedIn']
+const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn']
 const fieldsListProduct = ['quantity', 'skuId', 'productId', 'id']
 const acronymListProduct = 'LP'
 const acronymList = 'WL'
@@ -21,9 +21,9 @@ const checkDuplicatedListItem = async (_, { listId, skuId }, context) => {
     filters: [`skuId=${skuId} AND listId=${listId}`],
     page: 1,
   }
-  const itemsResponse = await documentQueries.searchDocuments(_, request, context);
+  const itemsResponse = await documentQueries.searchDocuments(_, request, context)
   if (itemsResponse.length) {
-    throw new ResolverError('Cannot add duplicated products.', 406)
+    throw new ResolverError('Cannot add duplicated items.', 406)
   }
 }
 
