@@ -1,0 +1,5 @@
+type SubscriptionStatusCount {
+  active: Int!,
+  paused: Int!,
+  canceled: Int!
+}
