@@ -1,6 +1,8 @@
 import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
+const DEFAULT_TIMEOUT_MS = 4 * 1000
+
 export interface SimulationData {
   country: string
   items: any[]
@@ -25,7 +27,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public addItem = (orderFormId: string, items: any) => this.post(
     `/pub/orderForm/${orderFormId}/items`,
     {
-      expectedOrderFormSections: ['items'],
       orderItems: items,
     }
   )
@@ -38,7 +39,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.put(
     `/pub/orderForm/${orderFormId}/customData/${appId}/${field}`,
     {
-      expectedOrderFormSections: ['customData'],
       value,
     }
   )
@@ -46,7 +46,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public updateItems = (orderFormId: string, orderItems: any) => this.post(
     `/pub/orderForm/${orderFormId}/items/update`,
     {
-      expectedOrderFormSections: ['items'],
       orderItems,
     }
   )
@@ -54,7 +53,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
     `/pub/orderForm/${orderFormId}/profile`,
     {
-      expectedOrderFormSections: ['items'],
       ignoreProfileData,
     }
   )
@@ -62,33 +60,23 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   public updateOrderFormPayment = (orderFormId: string, payments: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/paymentData`,
     {
-      expectedOrderFormSections: ['items'],
       payments,
     }
   )
 
   public updateOrderFormProfile = (orderFormId: string, fields: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/clientProfileData`,
-    {
-      expectedOrderFormSections: ['items'],
-      ...fields,
-    }
+    fields,
   )
 
   public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/shippingData`,
-    {
-      expectedOrderFormSections: ['items'],
-      ...shipping,
-    }
+    shipping,
   )
 
   public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/marketingData`,
-    {
-      expectedOrderFormSections: ['items'],
-      ...marketingData,
-    }
+    marketingData,
   )
 
   public orderForm = () => this.post(
@@ -124,7 +112,12 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   }
 
   protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken}, headers} = this.context
+    const {vtex: {account, authToken}, headers} = this.context
+
+    if (!request.timeout) {
+      request.timeout = DEFAULT_TIMEOUT_MS
+    }
+
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
@@ -134,6 +127,7 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
         'Cookie': headers.cookie,
         Host: headers['x-forwarded-host'],
         'Proxy-Authorization': authToken,
+        'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
       }
     )
   }

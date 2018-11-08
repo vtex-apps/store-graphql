@@ -8,12 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [2.37.0] - 2018-11-08
+### Added
+- Subscription resolvers
 
 ## [2.36.0] - 2018-11-08
 
-## [2.35.0] - 2018-11-08
-### Added
-- Subscription resolvers
+## [2.35.1] - 2018-11-08
+
+## [2.35.0] - 2018-11-7
 
 ## [2.34.4] - 2018-11-06
 
