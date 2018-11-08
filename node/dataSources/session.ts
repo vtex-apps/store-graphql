@@ -40,7 +40,6 @@ export class SessionDataSource extends RESTDataSource<ServiceContext> {
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
-        Authorization: authToken,
         ...segment && {Cookie: `vtex_segment=${segment}`},
         'Proxy-Authorization': authToken,
       }
