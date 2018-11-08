@@ -1,6 +1,7 @@
 import http from 'axios'
 import {complement,compose,drop,filter,find,isEmpty,map,match,pluck,prop,propEq,reduce,split,test} from 'ramda'
 
+import { headers } from '../headers'
 import paths from '../paths'
 import { getMarketingDataFromSegment } from './marketingData'
 
@@ -167,6 +168,50 @@ const filterValidAttachments = ({ attachments }) => {
   return validAttachments
 }
 
+/**
+ * Gets name, description, images (from Search API) and priceTable (from Checkout API)
+ * for a single SKU
+ *
+ * @param {string} simulationUrl
+ * @param {Class} catalogDataSource
+ * @param {Object} marketingData
+ * @param {Object} headers
+ *
+ * @return {Object} skuInfo
+ */
+const getSkuInfo = async ({
+  simulationUrl,
+  skuByIdUrl,
+  marketingData,
+  countryCode,
+  sellerId,
+  schemaItem
+}) => {
+  const { data: sku } = await http.get(`${skuByIdUrl}${schemaItem.id}`, { headers })
+
+  /**
+   * TODO:
+   * - get user login status
+   */
+  const payload = {
+    country: countryCode,
+    isCheckedIn: false,
+    items: [{ id: schemaItem.id, quantity: 1, seller: sellerId }],
+    priceTables: [schemaItem.priceTable],
+    ...(isEmpty(marketingData) ? {} : { marketingData }),
+  }
+
+  const orderForm = prop('data', await http.post(simulationUrl, payload, { headers }))
+
+  return {
+    ...schemaItem,
+    description: sku.ProductDescription,
+    image: prop('ImageUrl', head(sku.Images)),
+    name: sku.SkuName,
+    price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
+  }
+}
+
 const tryParse = str => {
   try {
     return JSON.parse(str)
@@ -186,11 +231,10 @@ export const queries = {
    */
   calculatedAttachments: async (
     _,
-    skuJSON,
+    params,
     { assert, cookies, dataSources: { session }, vtex: { account, authToken } }
   ) => {
-    
-    const sku = tryParse(skuJSON)
+    const sku = tryParse(params.sku)
     if (!sku) {
       return returnEmpty()
     }
@@ -224,16 +268,27 @@ export const queries = {
     })
     const skuByIdUrl = paths.skuById(account)
     const { sellerId } = find(propEq('sellerDefault', true), sellers) as Seller
-    const schema = { title: name, ...schemaBase }
 
     const validAttachments = filterValidAttachments({ attachments })
     if (!validAttachments.length) {
       return returnEmpty()
     }
 
-    const reducedAttachmentSchema = generateSchema({ attachments: validAttachments })
+    const generatedSchema = generateSchema({ attachments: validAttachments })
 
-    const calculatedSchema = { ...schema, ...reducedAttachmentSchema }
+    const schemaItemsWithPrice = await Promise.all (Object.values(generatedSchema.items).map(items => new Promise((resolve) => {
+        const skuPromises = items.map(item => getSkuInfo({
+          countryCode: segmentData.countryCode,
+          marketingData,
+          sellerId,
+          schemaItem
+          simulationUrl,
+          skuByIdUrl,
+        }))
+      })))
+    
+
+    const calculatedSchema = { title: name, ...schemaBase, ...generatedSchema }
 
     return JSON.stringify(calculatedSchema)
   },

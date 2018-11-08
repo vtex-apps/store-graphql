@@ -30,6 +30,6 @@ const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
 
-const getMarketingDataFromSegment = async ({ segmentData }) => renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+const getMarketingDataFromSegment = ({ segmentData }) => renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
 
 export { getMarketingDataFromSegment }
