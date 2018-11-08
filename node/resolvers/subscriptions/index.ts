@@ -1,10 +1,10 @@
 export const queries = {
   subscriptionsCountByStatus: async (_, args, { dataSources: { subscription } }) => {
     const options = {
-      field: "status",
-      interval: "day",
-      schema: "bi-v1",
-      type: "count",
+      field: 'status',
+      interval: 'day',
+      schema: 'bi-v1',
+      type: 'count',
       where: `createdAt between ${args.initialDate} and ${args.endDate}`,
     }
 
