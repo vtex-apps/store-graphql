@@ -25,7 +25,7 @@ export const catalogProxy = async (ctx: ServiceContext) => {
     params: query,
     paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
     timeout: TIMEOUT_MS,
-    url: encodeURI(path),
+    url: encodeURI(path.trim()),
   })
 
   ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
