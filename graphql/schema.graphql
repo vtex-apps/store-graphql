@@ -158,6 +158,12 @@ type Query {
 
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
+
+  """ Calculate SKU Attachments to create a JSON Schema """
+  calculatedAttachments(
+    """ A JSON object from SKU from Search API """
+    sku: String
+  ): String
 }
 
 type Mutation {

@@ -2,6 +2,7 @@ import '../axiosConfig'
 
 import { mutations as authMutations, queries as authQueries } from './auth'
 import { fieldResolvers as benefitsFieldResolvers, queries as benefitsQueries } from './benefits'
+import { queries as calculatedAttachmentsQueries } from './calculatedAttachments'
 import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } from './catalog'
 import { fieldResolvers as checkoutFieldResolvers, mutations as checkoutMutations, queries as checkoutQueries } from './checkout'
 import { mutations as documentMutations, queries as documentQueries } from './document'
@@ -14,25 +15,26 @@ Promise = require('bluebird')
 Promise.config({ longStackTraces: true })
 
 export const resolvers = {
-  ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
-  ...profileRootResolvers,
+  ...catalogFieldResolvers,
   ...checkoutFieldResolvers,
+  ...profileRootResolvers,
   Mutation: {
-    ...profileMutations,
-    ...checkoutMutations,
     ...authMutations,
+    ...checkoutMutations,
     ...documentMutations,
+    ...profileMutations,
     ...sessionMutations
   },
   Query: {
-    ...catalogQueries,
+    ...authQueries,
     ...benefitsQueries,
-    ...profileQueries,
+    ...catalogQueries,
+    ...calculatedAttachmentsQueries,
     ...checkoutQueries,
     ...documentQueries,
-    ...authQueries,
     ...logisticsQueries,
+    ...profileQueries,
     ...sessionQueries
   },
 }

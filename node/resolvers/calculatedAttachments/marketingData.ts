@@ -1,4 +1,5 @@
-import { adjust, curry, fromPairs, map, pipe, toPairs } from 'ramda'
+import * as camelCase from 'camelcase'
+import { adjust, both, curry, fromPairs, map, pickBy, pipe, toPairs } from 'ramda'
 
 /**
  * Creates a new object with the own properties of the provided object, but the
@@ -25,4 +26,10 @@ const renameKeysWith = curry((func, object) =>
   )(object)
 )
 
-export { renameKeysWith }
+const isTruthy = val => !!val
+const isUtm = (_, key) => key.startsWith('utm')
+const isValidUtm = both(isUtm, isTruthy)
+
+const getMarketingDataFromSegment = async ({ segmentData }) => renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+
+export { getMarketingDataFromSegment }
