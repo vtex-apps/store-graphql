@@ -1,8 +1,8 @@
 import { serialize } from 'cookie'
-import { identity, merge } from 'ramda'
+import { identity } from 'ramda'
 
 import ResolverError from '../../errors/resolverError'
-import { headers, withAuthToken } from '../headers'
+import { headers } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import { sessionFields } from './sessionResolver'
@@ -11,11 +11,14 @@ const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
 const VTEXID_EXPIRES = 86400
 
-const makeRequest = async (_, args, config, url, data?, method?, enableCookies = true) => {
+const makeRequest = async (_, args, config, url, data?, method?) => {
   const response = await httpResolver({
     data,
-    enableCookies,
-    headers: withAuthToken(headers.json),
+    enableCookies: true,
+    headers: (ctx: any) => ({
+      ...headers.json,
+      'Proxy-Authorization': `${ctx.authToken}`
+    }),
     merge: (bodyData, responseData, res) => {
       return { ...res }
     },
