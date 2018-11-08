@@ -2,9 +2,8 @@ type List {
     id: ID
     name: String
     isPublic: Boolean
-    createdBy: String
+    owner: String
     createdIn: String
-    updatedBy: String
     updatedIn: String
     items: [ListItem]
 }
@@ -20,6 +19,7 @@ type ListItem {
 input ListInput {
     name: String!
     isPublic: Boolean
+    owner: String
 }
 
 input ListItemInput {
