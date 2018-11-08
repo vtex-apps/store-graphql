@@ -112,7 +112,7 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
 
   get baseURL() {
     const { vtex: { account } } = this.context
-    return `http://${account}.vtexcommercebeta.com.br/api/checkout`
+    return `http://${account}.vtexcommercestable.com.br/api/checkout`
   }
 
   protected async didReceiveResponse(response: Response, request: Request) {
@@ -129,7 +129,7 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
   }
 
   protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken }, headers } = this.context
+    const { vtex: { account, authToken }, headers } = this.context
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
@@ -137,8 +137,10 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
         Authorization: authToken,
         'Content-Type': 'application/json',
         'Cookie': headers.cookie,
-        Host: headers['x-forwarded-host'],
+        'Host': headers['x-forwarded-host'],
         'Proxy-Authorization': authToken,
+        'X-VTEX-Janus-Router-CurrentApp-EnvironmentType': 'beta',
+        'X-VTEX-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
       }
     )
   }
