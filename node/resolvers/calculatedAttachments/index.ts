@@ -1,9 +1,31 @@
-import http from 'axios'
-import {complement,compose,drop,filter,find,isEmpty,map,match,pluck,prop,propEq,reduce,split,test} from 'ramda'
+import { complement, compose, drop, filter, find, head, isEmpty, map, mapObjIndexed, match, pluck, prop, propEq, reduce, split, test } from 'ramda'
 
+import ResolverError from '../../errors/resolverError'
 import { headers } from '../headers'
+import httpResolver from '../httpResolver'
 import paths from '../paths'
+
 import { getMarketingDataFromSegment } from './marketingData'
+
+const makeRequest = async (_, args, config, url, data?, method?) => {
+  const response = await httpResolver({
+    data,
+    enableCookies: true,
+    headers: (ctx: any) => ({
+      ...headers.json,
+      'Proxy-Authorization': `${ctx.authToken}`,
+    }),
+    merge: (bodyData, responseData, res) => {
+      return { ...res }
+    },
+    method,
+    url,
+  })(_, args, config)
+  if (response.status > 400) {
+    throw new ResolverError('ERROR', response.data)
+  }
+  return response
+}
 
 const isNotEmpty = complement(isEmpty)
 const splitBySemiColon = split(';')
@@ -168,106 +190,45 @@ const filterValidAttachments = ({ attachments }) => {
   return validAttachments
 }
 
-/**
- * Gets name, description, images (from Search API) and priceTable (from Checkout API)
- * for a single SKU
- *
- * @param {string} simulationUrl
- * @param {Class} catalogDataSource
- * @param {Object} marketingData
- * @param {Object} headers
- *
- * @return {Object} skuInfo
- */
-const getSkuInfo = async ({
-  simulationUrl,
-  skuByIdUrl,
-  marketingData,
-  countryCode,
-  sellerId,
-  schemaItem
-}) => {
-  const { data: sku } = await http.get(`${skuByIdUrl}${schemaItem.id}`, { headers })
-
-  /**
-   * TODO:
-   * - get user login status
-   */
-  const payload = {
-    country: countryCode,
-    isCheckedIn: false,
-    items: [{ id: schemaItem.id, quantity: 1, seller: sellerId }],
-    priceTables: [schemaItem.priceTable],
-    ...(isEmpty(marketingData) ? {} : { marketingData }),
-  }
-
-  const orderForm = prop('data', await http.post(simulationUrl, payload, { headers }))
-
-  return {
-    ...schemaItem,
-    description: sku.ProductDescription,
-    image: prop('ImageUrl', head(sku.Images)),
-    name: sku.SkuName,
-    price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
-  }
-}
-
-const tryParse = str => {
-  try {
-    return JSON.parse(str)
-  } catch (e) {
-    return false
-  }
-}
-
 export const queries = {
   /**
    * Create a calculated schema from the attachments, for `vtex.product-customizer` to consume
-   * 
+   *
    * @param {*} _
    * @param {*} skuJSON
    * @param {*} { assert, cookies, dataSources: { session }, vtex: { account, authToken } }
    * @returns string
    */
-  calculatedAttachments: async (
-    _,
-    params,
-    { assert, cookies, dataSources: { session }, vtex: { account, authToken } }
-  ) => {
-    const sku = tryParse(params.sku)
-    if (!sku) {
-      return returnEmpty()
-    }
-
-    const { attachments, name, sellers } = sku
+  calculatedAttachments: async (_, { sku, sellerId }, ctx) => {
+    const {
+      assert,
+      cookies,
+      dataSources,
+      vtex: { account },
+    } = ctx
+    const { attachments, name } = sku
     if (!attachments && !attachments.length) {
       return returnEmpty()
     }
 
     /**
      * NOTE:
-     * Session cookies are a hard requirement in order to query priceTables
-     * with the correct pricing values for that session.
-     * In the case of delivery, each location can have it's own priceTable, with
-     * different prices for different stores or geolocation regions.
-     * It's also used to get the store's current salesChannel and country.
+     * Session cookies are a hard requirement in order to get the current session's salesChannel and countryCode.
+     * This is needed to get the correct prices from checkout.
+     * It also can be used to query priceTables with the segment information.
      *
-     * TLDR.: No session cookies, no priceTables, no calculatedAttachments, no delivery.
+     * TLDR.: No session cookies, no salesChannel, no calculatedAttachments, no delivery.
      */
     const segment = cookies.get('vtex_segment')
+    // TODO: Log to Splunk
     assert(
       segment,
       406,
       'Cookie vtex_segment is not set. Ensure that `vtex.session-app` is installed and working.'
     )
 
-    const segmentData = await session.getSegmentData()
+    const segmentData = await dataSources.session.getSegmentData()
     const marketingData = getMarketingDataFromSegment(segmentData)
-    const simulationUrl = paths.orderFormSimulation(account, {
-      querystring: `sc=${segmentData.channel}&localPipeline=true`,
-    })
-    const skuByIdUrl = paths.skuById(account)
-    const { sellerId } = find(propEq('sellerDefault', true), sellers) as Seller
 
     const validAttachments = filterValidAttachments({ attachments })
     if (!validAttachments.length) {
@@ -276,19 +237,57 @@ export const queries = {
 
     const generatedSchema = generateSchema({ attachments: validAttachments })
 
-    const schemaItemsWithPrice = await Promise.all (Object.values(generatedSchema.items).map(items => new Promise((resolve) => {
-        const skuPromises = items.map(item => getSkuInfo({
-          countryCode: segmentData.countryCode,
-          marketingData,
-          sellerId,
-          schemaItem
-          simulationUrl,
-          skuByIdUrl,
-        }))
-      })))
-    
+    const schemaItemsWithPricePromises = mapObjIndexed(
+      value =>
+        new Promise(async resolveItems => {
+          const skuPromises = map(
+            (schemaItem: SchemaItem) =>
+              new Promise(async resolveItem => {
+                // TODO: get user login status
+                const payload = {
+                  country: segmentData.countryCode,
+                  isCheckedIn: false,
+                  items: [{ id: schemaItem.id, quantity: 1, seller: sellerId }],
+                  priceTables: [schemaItem.priceTable],
+                  ...(!isEmpty(marketingData) && { marketingData }),
+                }
 
-    const calculatedSchema = { title: name, ...schemaBase, ...generatedSchema }
+                const orderFormPromise = dataSources.checkout.simulation(payload, {
+                  localPipeline: true,
+                  sc: segmentData.channel,
+                })
+
+                const skuPromise = makeRequest(_, '', ctx, paths.skuById(account, schemaItem.id))
+
+                const [{ data: skuData }, orderForm] = await Promise.all([
+                  skuPromise,
+                  orderFormPromise,
+                ])
+
+                resolveItem({
+                  ...schemaItem,
+                  description: skuData.ProductDescription,
+                  image: prop('ImageUrl', head(skuData.Images)),
+                  name: skuData.SkuName,
+                  price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
+                })
+              }),
+            value
+          ) as [Promise<SchemaItem>]
+
+          resolveItems(Promise.all(skuPromises))
+        }),
+      generatedSchema.items
+    )
+
+    const schemaItemsWithPrice = await Promise.props(schemaItemsWithPricePromises)
+
+    const calculatedSchema = {
+      title: name,
+      ...schemaBase,
+      ...generatedSchema,
+      items: schemaItemsWithPrice,
+    }
 
     return JSON.stringify(calculatedSchema)
   },
@@ -303,9 +302,4 @@ interface SchemaItem {
   name: string
   price: number
   priceTable: string
-}
-
-interface Seller {
-  sellerId: number
-  sellerDefault: boolean
 }
