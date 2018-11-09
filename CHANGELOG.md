@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- `calculatedAttachments` is now an isolated query instead of being a resolver for all product queries
+
 ### Fixed
-- `calculatedAttachments` now returns an empty JSON if the product does not fit the requirements to generate the schema
-- `calculatedAttachments` now parses properly the properties as array or string
+- `calculatedAttachments` validates and warns if session cookies are not available
+- `calculatedAttachments` returns an empty JSON if the product does not fit the requirements to generate the schema
+- `calculatedAttachments` parses properly the schema properties as array or string
 
 ## [2.35.1] - 2018-11-08
 
