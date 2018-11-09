@@ -1,12 +1,20 @@
 import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
+import { stringify } from 'qs'
 import { forEachObjIndexed } from 'ramda'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
+
+export interface MarketingData {
+  utmSource: string
+  utmMedium: string
+  utmCampaign: string
+}
 
 export interface SimulationData {
   country: string
   items: any[]
   postalCode: string
+  marketingData: MarketingData
 }
 
 const SetCookieWhitelist = [
@@ -92,6 +100,14 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
     '/pub/orderForms/simulation',
     simulation,
   )
+
+  public simulation = (simulation: SimulationData, query: any) => {
+    const sanitizedQuery = stringify(query).trim()
+    return this.post(
+      `/pub/orderForms/simulation?${sanitizedQuery}`,
+      simulation,
+    )
+  }
 
   get baseURL() {
     const {vtex: {account}} = this.context
