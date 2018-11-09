@@ -12,7 +12,6 @@ import { queries as subscriptionsQueries } from './subscriptions'
 
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
-Promise.config({ longStackTraces: true })
 
 export const resolvers = {
   ...catalogFieldResolvers,
