@@ -193,3 +193,21 @@ type Reference {
   Key: String
   Value: String
 }
+
+input InputSKU {
+  name: String
+  attachments: [InputAttachment]
+}
+
+input InputAttachment {
+  id: ID
+  name: String
+  required: Boolean
+  domainValues: [InputDomainValues]
+}
+
+input InputDomainValues {
+  FieldName: String
+  MaxCaracters: String
+  DomainValues: String
+}

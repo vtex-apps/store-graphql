@@ -162,8 +162,9 @@ type Query {
   """ Calculate SKU Attachments to create a JSON Schema """
   calculatedAttachments(
     """ A JSON object from SKU from Search API """
-    sku: String
-  ): String
+    sku: InputSKU!,
+    sellerId: String!
+  ): String @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
 }
 
 type Mutation {
