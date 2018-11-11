@@ -3,3 +3,9 @@ type SubscriptionStatusCount {
   paused: Int!,
   canceled: Int!
 }
+
+type SubscriptionOrder {
+  status: String!,
+  orderGroup: String!,
+  date: String!
+}
