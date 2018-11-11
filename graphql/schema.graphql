@@ -165,6 +165,9 @@ type Query {
     endDate: String!
   ): SubscriptionStatusCount  @cacheControl(scope: PRIVATE)
 
+ """ Get a list of SubscriptionOrders """
+  listSubscriptionOrders: [SubscriptionOrder]
+
 }
 
 type Mutation {

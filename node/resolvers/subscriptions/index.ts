@@ -18,5 +18,9 @@ export const queries = {
           paused: 0,
         })
     })
+  },
+
+  listSubscriptionOrders: async (_, args, { dataSources: { subscription } }) => {
+    return subscription.getSubscriptionOrders()
   }
 }

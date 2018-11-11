@@ -19,12 +19,18 @@ export class SubscriptionDataSource extends RESTDataSource<ServiceContext> {
     const { vtex: { account } } = this.context
 
     return this.get(
-      `/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
+      `s/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
     )
   }
 
+  public getSubscriptionOrders = () => {
+    const { vtex: { account } } = this.context
+
+    return this.get(`_orders/search/?an=${account}&_fields=_all`)
+  }
+
   get baseURL() {
-    return `http://api.vtex.com/api/dataentities/subscriptions`
+    return `http://api.vtex.com/api/dataentities/subscription`
   }
 
   protected willSendRequest(request: RequestOptions) {
