@@ -6,6 +6,19 @@ type SubscriptionStatusCount {
 
 type SubscriptionOrder {
   status: String!,
-  orderGroup: String!,
+  orderGroup: String,
   date: String!
+}
+
+type SubscriptionOrdersStatusCount {
+   triggered: Int!,
+   in_process: Int!,
+   failure: Int!,
+   success: Int!,
+   expired: Int!,
+   order_error: Int!,
+   payment_error: Int!,
+   skiped: Int!,
+   success_with_no_order: Int!,
+   success_with_partial_order: Int!
 }

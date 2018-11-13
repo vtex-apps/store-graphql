@@ -1,6 +1,5 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
-import { headers, withAuthToken } from '../resolvers/headers'
 
 interface AggregationsArgs {
   schema: string
@@ -10,27 +9,35 @@ interface AggregationsArgs {
   interval: string
 }
 
-export class SubscriptionDataSource extends RESTDataSource<ServiceContext> {
-  constructor() {
-    super()
-  }
+interface SubscriptionsOrdersArgs {
+  where: string
+  schema: string
+  fields: string
+}
 
+export class SubscriptionDataSource extends RESTDataSource<ServiceContext> {
   public subscriptionAggregations = ({ schema, where, field, type, interval }: AggregationsArgs) => {
     const { vtex: { account } } = this.context
 
     return this.get(
-      `s/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
+      `subscriptions/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
     )
   }
 
-  public getSubscriptionOrders = () => {
+  public getSubscriptionOrders = ({ where, schema, fields }: SubscriptionsOrdersArgs) => {
     const { vtex: { account } } = this.context
 
-    return this.get(`_orders/search/?an=${account}&_fields=_all`)
+    return this.get(`subscription_orders/search/?an=${account}&_fields=${fields}&_schema=${schema}${where ? `&_where=${where}` : ''}`)
+  }
+
+  public getSubscriptionOrdersAggregations = ({ schema, where, field, type, interval }: AggregationsArgs) => {
+    const { vtex: { account } } = this.context
+
+    return this.get(`subscription_orders/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`)
   }
 
   get baseURL() {
-    return `http://api.vtex.com/api/dataentities/subscription`
+    return `http://api.vtex.com/api/dataentities`
   }
 
   protected willSendRequest(request: RequestOptions) {
