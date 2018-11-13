@@ -165,9 +165,18 @@ type Query {
     endDate: String!
   ): SubscriptionStatusCount  @cacheControl(scope: PRIVATE)
 
- """ Get a list of SubscriptionOrders """
-  listSubscriptionOrders: [SubscriptionOrder]
+  """ Get count of subscriptions by status """
+  subscriptionsOrdersCountByStatus(
+    initialDate: String!,
+    endDate: String!
+  ): SubscriptionOrdersStatusCount  @cacheControl(scope: PRIVATE)
 
+  """ Get a list of SubscriptionOrders """
+  listSubscriptionOrdersByStatus(
+    initialDate: String!,
+    endDate: String!,
+    status: String!
+  ): [SubscriptionOrder]
 }
 
 type Mutation {
