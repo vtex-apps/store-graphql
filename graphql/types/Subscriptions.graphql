@@ -17,13 +17,13 @@ type SubscriptionOrder {
 """ Count of SubscriptioOrders by status """
 type SubscriptionOrdersStatusCount {
    triggered: Int!,
-   in_process: Int!,
+   inProcess: Int!,
    failure: Int!,
    success: Int!,
    expired: Int!,
-   order_error: Int!,
-   payment_error: Int!,
+   orderError: Int!,
+   paymentError: Int!,
    skiped: Int!,
-   success_with_no_order: Int!,
-   success_with_partial_order: Int!
+   successWithNoOrder: Int!,
+   successWithPartialOrder: Int!
 }
