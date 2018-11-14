@@ -1,7 +1,7 @@
 import { prop } from 'ramda'
 
 export const resolvers = {
-  SubscriptionOrdersStatusCount: {
+  SubscriptionsOrdersStatusCount: {
     inProcess: prop('in_process'),
     orderError: prop('order_error'),
     paymentError: prop('payment_error'),
