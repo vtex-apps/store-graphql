@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.39.0] - 2018-11-14
+### Added
+- `SubscriptionOrders` resolvers
+
 ## [2.38.0] - 2018-11-09
 
 ## [2.37.0] - 2018-11-08
