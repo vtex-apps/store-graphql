@@ -19,7 +19,7 @@ export class SubscriptionsGroupDataSource extends RESTDataSource<ServiceContext>
   }
 
   protected willSendRequest(request: RequestOptions) {
-    const { cookies, vtex: { authToken } } = this.context
+    const { cookies, vtex: { account, authToken } } = this.context
     const client = cookies.get('VtexIdclientAutCookie')
 
     forEachObjIndexed(
