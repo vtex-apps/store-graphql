@@ -1,15 +1,18 @@
 import { generateBetweenConstraint, generateOrConstraint } from '../masterDataQueryBuilders'
+import { resolvers as subscriptionOrdersStatusCountResolvers } from './subscription'
 
 const SUBSCRIPTION_ORDERS_SCHEMA = "subscription_orders-v1"
 const SUBSCRIPTION_SCHEMA = 'bi-v1'
-
-const fieldResolver = (field) => field.replace(/(_[a-z])/g, char => char.toUpperCase()).replace(/(_)/g, '')
 
 const generateListWhere = (statusList, args) => {
   if (statusList.length == 0)
     return `(${generateBetweenConstraint('date', args.initialDate, args.endDate)})`
   else
     return `(${generateOrConstraint(statusList, 'status')}) AND (${generateBetweenConstraint('date', args.initialDate, args.endDate)})`
+}
+
+export const fieldResolvers = {
+  ...subscriptionOrdersStatusCountResolvers,
 }
 
 export const queries = {
@@ -72,18 +75,18 @@ export const queries = {
     return subscription.getSubscriptionOrdersAggregations(options).then((data) => {
       return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
-        [fieldResolver(item.key)]: item.value,
+        [item.key]: item.value,
       }), {
           triggered: 0,
-          inProcess: 0,
+          "in_process": 0,
           failure: 0,
           success: 0,
           expired: 0,
-          orderError: 0,
-          paymentError: 0,
+          "order_error": 0,
+          "payment_error": 0,
           skiped: 0,
-          successWithNoOrder: 0,
-          successWithPartialOrder: 0
+          "success_with_no_order": 0,
+          "success_with_partial_order": 0
         })
     })
   }
