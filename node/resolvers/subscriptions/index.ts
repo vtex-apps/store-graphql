@@ -1,6 +1,28 @@
 const SUBSCRIPTION_ORDERS_SCHEMA = "subscription_orders-v1"
 const SUBSCRIPTION_SCHEMA = 'bi-v1'
 
+const generateTimeConstraint = (field, initialDate, endDate) => {
+  return `${field} between ${initialDate} and ${endDate}`
+}
+
+const generateStatusConstraint = (statusList) => {
+  let count
+  return statusList.reduce((result, status) => {
+    count++
+
+    if (count == 1) return `status=${status}`
+
+    return `${result} OR status=${status}`
+  }, '')
+}
+
+const generateListWhere = (statusList, args) => {
+  if (statusList.length == 0)
+    return `(${generateTimeConstraint('date', args.initialDate, args.endDate)})`
+  else
+    return `(${generateStatusConstraint(statusList)}) AND (${generateTimeConstraint('date', args.initialDate, args.endDate)})`
+}
+
 export const queries = {
   subscriptionsCountByStatus: async (_, args, { dataSources: { subscription } }) => {
     const options = {
@@ -8,7 +30,7 @@ export const queries = {
       interval: 'day',
       schema: SUBSCRIPTION_SCHEMA,
       type: 'count',
-      where: `createdAt between ${args.initialDate} and ${args.endDate}`,
+      where: generateTimeConstraint('createdAt', args.initialDate, args.endDate),
     }
 
     return subscription.subscriptionAggregations(options).then((data) => {
@@ -24,20 +46,19 @@ export const queries = {
   },
 
   listSubscriptionOrdersByStatus: async (_, args, { dataSources: { subscription } }) => {
-
     let where
     switch (args.status) {
       case "SUCCESSFUL":
-        where = `(status=SUCCESS OR status=SUCCESS_WITH_NO_ORDER OR status=SUCCESS_WITH_PARTIAL_ORDER) AND (date between ${args.initialDate} and ${args.endDate})`
+        where = generateListWhere(['SUCCESS', 'SUCCESS_WITH_NO_ORDER', 'SUCCESS_WITH_PARTIAL_ORDER'], args)
         break
       case "ERROR":
-        where = `(status=FAILURE OR status=ORDER_ERROR OR status=PAYMENT_ERROR) AND (date between ${args.initialDate} and ${args.endDate})`
+        where = generateListWhere(['FAILURE', 'ORDER_ERROR', 'PAYMENT_ERROR'], args)
         break
       case "ALL":
-        where = `(date between ${args.initialDate} and ${args.endDate})`
+        where = generateListWhere([], args)
         break
       default:
-        where = `(status=${args.status}) AND (date between ${args.initialDate} and ${args.endDate})`
+        where = generateListWhere([args.status], args)
         break
     }
 
@@ -56,7 +77,7 @@ export const queries = {
       interval: 'day',
       schema: SUBSCRIPTION_ORDERS_SCHEMA,
       type: 'count',
-      where: `date between ${args.initialDate} and ${args.endDate}`
+      where: `${generateTimeConstraint('date', args.initialDate, args.endDate)}`
     }
 
     return subscription.getSubscriptionOrdersAggregations(options).then((data) => {
