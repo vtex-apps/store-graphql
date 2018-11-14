@@ -65,19 +65,10 @@ export const resolvers = {
       return queries.products(root, { ...args, query, map }, ctx)
     },
     recordsFiltered: async (root, args, ctx) => {
-      if (!path(['queryArgs', 'map', 'length'], root)) {
-        return 0
-      }
+      const { dataSources: { catalog } } = ctx
 
       try {
-        const facets = await resolvers.Search.facets(root, args, ctx)
-
-        const recordsFiltered = facets.Departments.reduce(
-          (total, dept) => total + dept.Quantity,
-          0
-        )
-
-        return recordsFiltered
+        return catalog.productsQuantity(root.queryArgs)
       } catch (e) {
         return 0
       }
