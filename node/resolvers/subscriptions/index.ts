@@ -1,26 +1,15 @@
+import { generateBetweenConstraint, generateOrConstraint } from '../masterDataQueryBuilders'
+
 const SUBSCRIPTION_ORDERS_SCHEMA = "subscription_orders-v1"
 const SUBSCRIPTION_SCHEMA = 'bi-v1'
 
-const generateTimeConstraint = (field, initialDate, endDate) => {
-  return `${field} between ${initialDate} and ${endDate}`
-}
-
-const generateStatusConstraint = (statusList) => {
-  let count
-  return statusList.reduce((result, status) => {
-    count++
-
-    if (count == 1) return `status=${status}`
-
-    return `${result} OR status=${status}`
-  }, '')
-}
+const fieldResolver = (field) => field.replace(/(_[a-z])/g, char => char.toUpperCase()).replace(/(_)/g, '')
 
 const generateListWhere = (statusList, args) => {
   if (statusList.length == 0)
-    return `(${generateTimeConstraint('date', args.initialDate, args.endDate)})`
+    return `(${generateBetweenConstraint('date', args.initialDate, args.endDate)})`
   else
-    return `(${generateStatusConstraint(statusList)}) AND (${generateTimeConstraint('date', args.initialDate, args.endDate)})`
+    return `(${generateOrConstraint(statusList, 'status')}) AND (${generateBetweenConstraint('date', args.initialDate, args.endDate)})`
 }
 
 export const queries = {
@@ -30,7 +19,7 @@ export const queries = {
       interval: 'day',
       schema: SUBSCRIPTION_SCHEMA,
       type: 'count',
-      where: generateTimeConstraint('createdAt', args.initialDate, args.endDate),
+      where: generateBetweenConstraint('createdAt', args.initialDate, args.endDate),
     }
 
     return subscription.subscriptionAggregations(options).then((data) => {
@@ -77,24 +66,24 @@ export const queries = {
       interval: 'day',
       schema: SUBSCRIPTION_ORDERS_SCHEMA,
       type: 'count',
-      where: `${generateTimeConstraint('date', args.initialDate, args.endDate)}`
+      where: `${generateBetweenConstraint('date', args.initialDate, args.endDate)}`
     }
 
     return subscription.getSubscriptionOrdersAggregations(options).then((data) => {
       return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
-        [item.key]: item.value,
+        [fieldResolver(item.key)]: item.value,
       }), {
           triggered: 0,
-          "in_process": 0,
-          "failure": 0,
-          "success": 0,
-          "expired": 0,
-          "order_error": 0,
-          "payment_error": 0,
-          "skiped": 0,
-          "success_with_no_order": 0,
-          "success_with_partial_order": 0
+          inProcess: 0,
+          failure: 0,
+          success: 0,
+          expired: 0,
+          orderError: 0,
+          paymentError: 0,
+          skiped: 0,
+          successWithNoOrder: 0,
+          successWithPartialOrder: 0
         })
     })
   }
