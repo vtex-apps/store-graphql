@@ -1,5 +1,5 @@
 import { generateBetweenConstraint, generateOrConstraint } from '../masterDataQueryBuilders'
-import { resolvers as subscriptionOrdersStatusCountResolvers } from './subscription'
+import { resolvers as subscriptionsOrdersStatusCountResolvers } from './subscription'
 
 const SUBSCRIPTION_ORDERS_SCHEMA = "subscription_orders-v1"
 const SUBSCRIPTION_SCHEMA = 'bi-v1'
@@ -12,11 +12,11 @@ const generateListWhere = (statusList, args) => {
 }
 
 export const fieldResolvers = {
-  ...subscriptionOrdersStatusCountResolvers,
+  ...subscriptionsOrdersStatusCountResolvers,
 }
 
 export const queries = {
-  subscriptionsCountByStatus: async (_, args, { dataSources: { subscription } }) => {
+  subscriptionsCountByStatus: async (_, args, { dataSources: { subscriptions } }) => {
     const options = {
       field: 'status',
       interval: 'day',
@@ -25,7 +25,7 @@ export const queries = {
       where: generateBetweenConstraint('createdAt', args.initialDate, args.endDate),
     }
 
-    return subscription.subscriptionAggregations(options).then((data) => {
+    return subscriptions.subscriptionsAggregations(options).then((data) => {
       return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
         [item.key]: item.value,
@@ -37,7 +37,7 @@ export const queries = {
     })
   },
 
-  listSubscriptionOrdersByStatus: async (_, args, { dataSources: { subscription } }) => {
+  listSubscriptionsOrdersByStatus: async (_, args, { dataSources: { subscriptions } }) => {
     let where
     switch (args.status) {
       case "SUCCESSFUL":
@@ -60,10 +60,10 @@ export const queries = {
       fields: "_all"
     }
 
-    return subscription.getSubscriptionOrders(options)
+    return subscriptions.getSubscriptionsOrders(options)
   },
 
-  subscriptionsOrdersCountByStatus: async (_, args, { dataSources: { subscription } }) => {
+  subscriptionsOrdersCountByStatus: async (_, args, { dataSources: { subscriptions } }) => {
     const options = {
       field: 'status',
       interval: 'day',
@@ -72,7 +72,7 @@ export const queries = {
       where: `${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
     }
 
-    return subscription.getSubscriptionOrdersAggregations(options).then((data) => {
+    return subscriptions.getSubscriptionsOrdersAggregations(options).then((data) => {
       return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
         [item.key]: item.value,
@@ -89,5 +89,13 @@ export const queries = {
           "success_with_partial_order": 0
         })
     })
+  }
+}
+
+export const mutations = {
+  subscriptionsOrderRetry: async (_, args, { dataSources: { subscriptionsGroup } }) => {
+    await subscriptionsGroup.retry(args)
+
+    return true
   }
 }
