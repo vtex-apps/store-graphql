@@ -49,7 +49,8 @@ export class SubscriptionsDataSource extends RESTDataSource<ServiceContext> {
       (value: string, header) => request.headers.set(header, value),
       {
         'Proxy-Authorization': authToken,
-        'VtexIdclientAutCookie': authToken
+        'VtexIdclientAutCookie': authToken,
+        'X-Vtex-Proxy-To': `https://api.vtex.com`,
       }
     )
   }
