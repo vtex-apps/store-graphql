@@ -51,28 +51,26 @@ const getQueryAndFacets = ({ map: unsortedMap = '', query: queryParam = '', rest
 export const resolvers = {
   Search: {
     facets: (root, _, ctx) => {
-      const { dataSources: { catalog } } = ctx
       const args = root.queryArgs || {}
 
       const { facets } = getQueryAndFacets(args)
 
-      return queries.facets(_, { ...args, facets }, ctx)
+      return queries.facets(root, { ...args, facets }, ctx)
     },
     products: (root, _, ctx) => {
-      const { dataSources: { catalog } } = ctx
       const args = root.queryArgs || {}
 
       const { map, query } = getQueryAndFacets(args)
 
-      return queries.products(_, { ...args, query, map }, ctx)
+      return queries.products(root, { ...args, query, map }, ctx)
     },
-    recordsFiltered: async (root, _, ctx) => {
+    recordsFiltered: async (root, args, ctx) => {
       if (!path(['queryArgs', 'map', 'length'], root)) {
         return 0
       }
 
       try {
-        const facets = await resolvers.Search.facets(root, _, ctx)
+        const facets = await resolvers.Search.facets(root, args, ctx)
 
         const recordsFiltered = facets.Departments.reduce(
           (total, dept) => total + dept.Quantity,
