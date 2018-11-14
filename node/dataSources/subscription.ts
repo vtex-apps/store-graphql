@@ -9,7 +9,7 @@ interface AggregationsArgs {
   interval: string
 }
 
-interface SubscriptionsOrdersArgs {
+interface SubscriptionOrdersArgs {
   where: string
   schema: string
   fields: string
@@ -24,7 +24,7 @@ export class SubscriptionDataSource extends RESTDataSource<ServiceContext> {
     )
   }
 
-  public getSubscriptionOrders = ({ where, schema, fields }: SubscriptionsOrdersArgs) => {
+  public getSubscriptionOrders = ({ where, schema, fields }: SubscriptionOrdersArgs) => {
     const { vtex: { account } } = this.context
 
     return this.get(`subscription_orders/search/?an=${account}&_fields=${fields}&_schema=${schema}${where ? `&_where=${where}` : ''}`)
