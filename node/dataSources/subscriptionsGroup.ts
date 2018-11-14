@@ -26,6 +26,7 @@ export class SubscriptionsGroupDataSource extends RESTDataSource<ServiceContext>
       (value: string, header) => request.headers.set(header, value),
       {
         'Proxy-Authorization': authToken,
+        'X-Vtex-Proxy-To': `https://${account}.vtexcommercestable.com.br`,
         'Cookie': `VtexIdClientAutCookie=${client}`
       }
     )
