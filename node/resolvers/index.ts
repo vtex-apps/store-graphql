@@ -8,12 +8,13 @@ import { mutations as documentMutations, queries as documentQueries } from './do
 import { queries as logisticsQueries } from './logistics'
 import { mutations as profileMutations, queries as profileQueries, rootResolvers as profileRootResolvers } from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
-import { queries as subscriptionsQueries } from './subscriptions'
+import { fieldResolvers as subscriptionsFieldResolvers, queries as subscriptionsQueries } from './subscriptions'
 
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
 
 export const resolvers = {
+  ...subscriptionsFieldResolvers,
   ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
   ...profileRootResolvers,
