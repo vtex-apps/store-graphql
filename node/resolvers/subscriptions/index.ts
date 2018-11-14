@@ -1,14 +1,16 @@
 import { generateBetweenConstraint, generateOrConstraint } from '../masterDataQueryBuilders'
 import { resolvers as subscriptionsOrdersStatusCountResolvers } from './subscription'
 
-const SUBSCRIPTION_ORDERS_SCHEMA = "subscription_orders-v1"
+const SUBSCRIPTION_ORDERS_SCHEMA = 'subscription_orders-v1'
 const SUBSCRIPTION_SCHEMA = 'bi-v1'
 
 const generateListWhere = (statusList, args) => {
-  if (statusList.length == 0)
+  if (statusList.length === 0) {
     return `${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
-  else
+  }
+  else {
     return `${generateOrConstraint(statusList, 'status')} AND ${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
+  }
 }
 
 export const fieldResolvers = {
@@ -40,13 +42,13 @@ export const queries = {
   listSubscriptionsOrdersByStatus: async (_, args, { dataSources: { subscriptions } }) => {
     let where
     switch (args.status) {
-      case "SUCCESSFUL":
+      case 'SUCCESSFUL':
         where = generateListWhere(['SUCCESS', 'SUCCESS_WITH_NO_ORDER', 'SUCCESS_WITH_PARTIAL_ORDER'], args)
         break
-      case "ERROR":
+      case 'ERROR':
         where = generateListWhere(['FAILURE', 'ORDER_ERROR', 'PAYMENT_ERROR'], args)
         break
-      case "ALL":
+      case 'ALL':
         where = generateListWhere([], args)
         break
       default:
@@ -55,9 +57,9 @@ export const queries = {
     }
 
     const options = {
-      where,
+      fields: '_all',
       schema: SUBSCRIPTION_ORDERS_SCHEMA,
-      fields: "_all"
+      where
     }
 
     return subscriptions.getSubscriptionsOrders(options)
@@ -77,16 +79,16 @@ export const queries = {
         ...acc,
         [item.key]: item.value,
       }), {
-          triggered: 0,
-          "in_process": 0,
-          failure: 0,
-          success: 0,
           expired: 0,
-          "order_error": 0,
-          "payment_error": 0,
+          failure: 0,
+          'in_process': 0,
+          'order_error': 0,
+          'payment_error': 0,
           skiped: 0,
-          "success_with_no_order": 0,
-          "success_with_partial_order": 0
+          success: 0,
+          'success_with_no_order': 0,
+          'success_with_partial_order': 0,
+          triggered: 0
         })
     })
   }

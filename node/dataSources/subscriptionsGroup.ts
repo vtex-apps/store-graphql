@@ -25,9 +25,9 @@ export class SubscriptionsGroupDataSource extends RESTDataSource<ServiceContext>
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
+        'Cookie': `VtexIdClientAutCookie=${client}`,
         'Proxy-Authorization': authToken,
         'X-Vtex-Proxy-To': `https://${account}.vtexcommercestable.com.br`,
-        'Cookie': `VtexIdClientAutCookie=${client}`
       }
     )
   }
