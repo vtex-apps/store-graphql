@@ -4,7 +4,7 @@ export const generateBetweenConstraint = (field, lowerLimit, upperLimit) => {
 
 export const generateOrConstraint = (list, field) => {
   return `(${list.reduce((result, value) => {
-    if (result === '') return `${field}=${value}`
+    if (result === '') { return `${field}=${value}` }
 
     return `${result} OR ${field}=${value}`
   }, '')})`
