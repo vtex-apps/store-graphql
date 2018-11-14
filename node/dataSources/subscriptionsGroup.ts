@@ -1,0 +1,33 @@
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { forEachObjIndexed } from 'ramda'
+
+interface RetryArgs {
+  orderGroup: string
+  instanceId: string
+  workflowId: string
+}
+
+export class SubscriptionsGroupDataSource extends RESTDataSource<ServiceContext> {
+  public retry = ({ orderGroup, instanceId, workflowId }: RetryArgs) => {
+    return this.post(`${orderGroup}/instances/${instanceId}/workflow/${workflowId}/retry`)
+  }
+
+  get baseURL() {
+    const { vtex: { account } } = this.context
+
+    return `http://${account}.vtexcommercestable.com.br/api/rns/subscriptions-group`
+  }
+
+  protected willSendRequest(request: RequestOptions) {
+    const { cookies, vtex: { authToken } } = this.context
+    const client = cookies.get('VtexIdclientAutCookie')
+
+    forEachObjIndexed(
+      (value: string, header) => request.headers.set(header, value),
+      {
+        'Proxy-Authorization': authToken,
+        'Cookie': `VtexIdClientAutCookie=${client}`
+      }
+    )
+  }
+}
