@@ -12,6 +12,10 @@ type SubscriptionOrder {
   orderGroup: String,
   """ SubscriptioOrder creation date """
   date: String!
+  """DataInstanceId"""
+  dataInstanceId: String!
+  """WorkflowId"""
+  workflowId:String!
 }
 
 """ Count of SubscriptioOrders by status """

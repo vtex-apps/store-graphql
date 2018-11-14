@@ -6,9 +6,9 @@ const SUBSCRIPTION_SCHEMA = 'bi-v1'
 
 const generateListWhere = (statusList, args) => {
   if (statusList.length == 0)
-    return `(${generateBetweenConstraint('date', args.initialDate, args.endDate)})`
+    return `${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
   else
-    return `(${generateOrConstraint(statusList, 'status')}) AND (${generateBetweenConstraint('date', args.initialDate, args.endDate)})`
+    return `${generateOrConstraint(statusList, 'status')} AND ${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
 }
 
 export const fieldResolvers = {
@@ -69,7 +69,7 @@ export const queries = {
       interval: 'day',
       schema: SUBSCRIPTION_ORDERS_SCHEMA,
       type: 'count',
-      where: `${generateBetweenConstraint('date', args.initialDate, args.endDate)}`
+      where: `${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
     }
 
     return subscription.getSubscriptionOrdersAggregations(options).then((data) => {
