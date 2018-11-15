@@ -11,7 +11,9 @@ const sortMapAndQuery = (map: string[], query: string[]) => {
   const zipped = zip(map, query)
 
   const sorted = sort(([a], [b]) => {
-    if (a !== b && a === 'c') {
+    if (a !== b && a === 'productClusterIds') {
+      return -1
+    } else if (a !== b && a === 'c') {
       return -1
     } else if (a === b && a === 'c') {
       return 0
@@ -68,7 +70,7 @@ export const resolvers = {
       const { dataSources: { catalog } } = ctx
 
       try {
-        return catalog.productsQuantity(root.queryArgs)
+        return catalog.productsQuantity(Object.assign({}, root.queryArgs, getQueryAndFacets(root.queryArgs)))
       } catch (e) {
         return 0
       }
