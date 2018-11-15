@@ -54,15 +54,12 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
   public productsQuantity = async (args: ProductsArgs) => {
     const { vtex: ioContext, vtex: { account } } = this.context
 
-    const { headers } = await http.head(
+    const { headers: { resources } } = await http.head(
       `https://${account}.vtexcommercestable.com.br/api/catalog_system${this.productSearchUrl(args)}`,
       {
         headers: withAuthToken()(ioContext),
       }
     )
-
-    console.log(headers)
-    const { resources } = headers
 
     const [_, quantity] = resources.split('/')
 
