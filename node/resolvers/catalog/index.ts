@@ -8,6 +8,7 @@ import { resolvers as facetsResolvers } from './facets'
 import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
+import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
 import { Slugify } from './slug'
 
@@ -51,6 +52,7 @@ export const fieldResolvers = {
   ...offerResolvers,
   ...productResolvers,
   ...recommendationResolvers,
+  ...searchResolvers,
   ...skuResolvers,
 }
 
@@ -122,18 +124,6 @@ export const queries = {
       throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
     }
 
-    const queryWithRest = query + (rest && '/' + rest.replace(/,/g, '/'))
-
-    const facetValues = queryWithRest + '?map=' + mapParams
-
-    const productsPromise = queries.products(_, { ...args, query: queryWithRest }, ctx)
-    const facetsPromise = queries.facets(_, { facets: facetValues }, ctx)
-
-    const [products, facets] = await Promise.all([
-      productsPromise,
-      facetsPromise,
-    ])
-
     const categoryMetaData = async () => {
       const category = findInTree(
         await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
@@ -165,16 +155,9 @@ export const queries = {
 
     const { titleTag, metaTagDescription } = await searchMetaData()
 
-    const recordsFiltered = facets.Departments.reduce(
-      (total, dept) => total + dept.Quantity,
-      0
-    )
-
     return {
-      facets,
       metaTagDescription,
-      products,
-      recordsFiltered,
+      queryArgs: args,
       titleTag,
     }
   },
