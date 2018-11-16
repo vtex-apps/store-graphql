@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.40.0] - 2018-11-16
+### Changed
+- Isolate the query to `facets` and `products` from the search resolver.
+
 ## [2.39.1] - 2018-11-16
 
 ## [2.39.0] - 2018-11-14
