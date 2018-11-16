@@ -1,5 +1,5 @@
 import { queries as documentQueries, mutations as documentMutations } from '../document/index'
-import { mapKeyValues, parseFieldsToJson } from '../document/index'
+import { mapKeyValues, parseFieldsToJson } from '../../utils/object'
 import ResolverError from '../../errors/resolverError'
 import { map, path, nth } from 'ramda'
 

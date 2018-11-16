@@ -1,24 +1,9 @@
 import http from 'axios'
-import { mergeAll, union, zipObj } from 'ramda'
+import { union } from 'ramda'
 import { withAuthToken, withMDPagination } from '../headers'
 import paths from '../paths'
 import { uploadAttachment } from './attachment'
-
-/**
- * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
- */
-export const mapKeyValues = document => Object.keys(document).map(key => ({
-  key,
-  value: document[key],
-}))
-
-/*
- * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
- * to a JSON format.
- */
-export const parseFieldsToJson = fields => mergeAll(
-  fields.map(field => zipObj([field.key], [field.value])),
-)
+import { parseFieldsToJson, mapKeyValues } from '../../utils/object'
 
 export const queries = {
   documents: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
