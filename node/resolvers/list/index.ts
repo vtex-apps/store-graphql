@@ -36,16 +36,13 @@ const checkNewListItem = async (_, listItem, context) => {
   checkListItemQuantity(path(['quantity', listItem]))
 }
 
-const getListItemsWithProductInfo = async (items, catalog) => {
-  const waza = await Promise.all(
+const getListItemsWithProductInfo = async (items, catalog) => await Promise.all(
     map(async item => {
       const productsResponse = await catalog.productBySku([path(['skuId'], item)])
       const product = nth(0, productsResponse)
       return { ...item, product }
     }, items)
   )
-  return waza
-  }
 
 const getListItems = async (_, args, context) => {
   const { dataSources: { catalog } } = context
