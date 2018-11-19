@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as qs from 'qs'
+import { keys } from 'ramda'
 
 const TIMEOUT_MS = 7 * 1000
 const MAX_AGE_S = 30
@@ -14,7 +15,7 @@ export const catalogProxy = async (ctx: ServiceContext) => {
     ? ['api.gocommerce.com', `${account}/search`]
     : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
-  const {data} = await axios.request({
+  const {data, headers} = await axios.request({
     baseURL: `http://${host}/${basePath}`,
     headers: {
       'Authorization': authToken,
@@ -27,6 +28,10 @@ export const catalogProxy = async (ctx: ServiceContext) => {
     timeout: TIMEOUT_MS,
     url: encodeURI(path.trim()),
   })
+
+  for (const headerKey of keys(headers)) {
+    ctx.set(headerKey, headers[headerKey])
+  }
 
   ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
   ctx.body = data
