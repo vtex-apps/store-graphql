@@ -29,9 +29,9 @@ export const catalogProxy = async (ctx: ServiceContext) => {
     url: encodeURI(path.trim()),
   })
 
-  for (const headerKey of keys(headers)) {
+  keys(headers).forEach(headerKey => {
     ctx.set(headerKey, headers[headerKey])
-  }
+  })
 
   ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
   ctx.body = data
