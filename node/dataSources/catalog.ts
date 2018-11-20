@@ -55,7 +55,7 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
     const { vtex: ioContext, vtex: { account } } = this.context
 
     const { headers: { resources } } = await http.head(
-      this.baseURL + this.productSearchUrl(args),
+      `${this.baseURL}${this.productSearchUrl(args)}`,
       {
         headers: withAuthToken()(ioContext),
       }
