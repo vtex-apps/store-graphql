@@ -204,6 +204,12 @@ type Query {
     id: ID,
     page: Int = 1
   ): List
+
+  """ Get all lists from the received owner """
+  listsByOwner(
+    owner: ID!
+    page: Int = 1
+  ) : [List]
 }
 
 type Mutation {

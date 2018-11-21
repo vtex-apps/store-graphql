@@ -67,6 +67,22 @@ export const queries = {
     const items = await getListItems(_, args, context)
     
     return { id, ...parseFieldsToJson(listInfo.fields), items }
+  },
+
+  listsByOwner: async (_, { owner, page }, context) => {
+    const request = {
+      acronym: acronymList,
+      fields,
+      filters: [`owner=${owner}`],
+      page,
+    }
+    const responseLists = await documentQueries.searchDocuments({}, request, context)
+    const lists = await map(async list => {
+      const listInfo = parseFieldsToJson(list.fields)
+      const items = await getListItems(_, { id: listInfo.id, page }, context)
+      return { ...listInfo, items }
+    }, responseLists)
+    return lists
   }
 }
 
