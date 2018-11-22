@@ -16,6 +16,13 @@ type OrderForm {
   totalizers: [Totalizer]
   clientProfileData: ClientProfile
   shippingData: OrderFormShippingData
+  storePreferencesData: StorePreferencesData
+}
+
+type StorePreferencesData {
+  countryCode: String
+  currencyCode: String
+  timeZone: String
 }
 
 type OrderFormItem {
@@ -83,6 +90,7 @@ input OrderFormAddressInput {
   number: String
   complement: String
   neighborhood: String
+  geoCoordinate: [Float]
 }
 
 input OrderFormPaymentInput {
