@@ -135,6 +135,6 @@ export const mutations: Record<string, Resolver> = {
   },
 
   updateOrderFormShipping: (root, {orderFormId, address}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormShipping(orderFormId, {address})
+    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] })
   }
 }
