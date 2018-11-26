@@ -90,7 +90,7 @@ input OrderFormAddressInput {
   number: String
   complement: String
   neighborhood: String
-  geoCoordinate: [Float]
+  geoCoordinates: [Float]
 }
 
 input OrderFormPaymentInput {
