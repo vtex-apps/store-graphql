@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Added `items` and `properties` fields to `DomainValues` that can offer parsed data to the client.
+
+### Removed
+- Removed `calculatedAttachments` from `SKU` data type.
 
 ## [2.41.2] - 2018-12-05
 ### Changed

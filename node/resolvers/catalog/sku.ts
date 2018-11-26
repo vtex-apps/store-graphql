@@ -1,16 +1,22 @@
 import { find, head, map, replace, slice } from 'ramda'
-import calculatedAttachmentsResolver from './calculatedAttachmentsResolver'
+
+import { attachmentItemsResolver, attachmentPropertiesResolver } from './attachmentsResolvers'
 
 export const resolvers = {
+  Attachment: {
+    domainValues: ({ domainValues, sellers }) =>
+      JSON.parse(domainValues).map(domainValue => ({ ...domainValue, sellers }))
+  },
+  DomainValues : {
+    items: attachmentItemsResolver,
+    properties: attachmentPropertiesResolver,
+  },
   SKU: {
-    attachments: ({attachments = []}) => map(
-      attachment => ({
-        ...attachment,
-        domainValues: JSON.parse(attachment.domainValues),
-      }),
-      attachments
-    ),
-    calculatedAttachments: calculatedAttachmentsResolver,
+    attachments: ({attachments = [], sellers = []}) =>
+      map(
+        attachment => ({ ...attachment, sellers }),
+        attachments
+      ),
     images: ({images = []}, {quantity}) => map(
       image => ({
         cacheId: image.imageId,
