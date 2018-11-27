@@ -1,5 +1,8 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import http from 'axios'
 import { forEachObjIndexed } from 'ramda'
+
+import { withAuthToken } from '../resolvers/headers'
 
 const DEFAULT_TIMEOUT_MS = 8 * 1000
 
@@ -44,22 +47,23 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
     `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`
   )
 
-  public products = ({
-    query = '',
-    category = '',
-    specificationFilters,
-    priceRange = '',
-    collection = '',
-    salesChannel = '',
-    orderBy = '',
-    from = 0,
-    to = 9,
-    map = ''
-  }: ProductsArgs) => {
-    const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
-    return this.get(
-      `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
+  public products = (args: ProductsArgs) => {
+    return this.get(this.productSearchUrl(args))
+  }
+
+  public productsQuantity = async (args: ProductsArgs) => {
+    const { vtex: ioContext, vtex: { account } } = this.context
+
+    const { headers: { resources } } = await http.head(
+      `${this.baseURL}${this.productSearchUrl(args)}`,
+      {
+        headers: withAuthToken()(ioContext),
+      }
     )
+
+    const [_, quantity] = resources.split('/')
+
+    return parseInt(quantity, 10)
   }
 
   public brands = () => this.get(
@@ -116,6 +120,24 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
         Authorization: authToken,
         ...segment && {Cookie: `vtex_segment=${segment}`},
       }
+    )
+  }
+
+  private productSearchUrl = ({
+    query = '',
+    category = '',
+    specificationFilters,
+    priceRange = '',
+    collection = '',
+    salesChannel = '',
+    orderBy = '',
+    from = 0,
+    to = 9,
+    map = ''
+  }: ProductsArgs) => {
+    const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
+    return (
+      `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
     )
   }
 }
