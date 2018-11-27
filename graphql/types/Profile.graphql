@@ -78,7 +78,7 @@ type Address {
   state: String
   number: String
   street: String
-  geoCoordinate: [Float]
+  geoCoordinates: [Float]
   postalCode: String
   city: String
   reference: String
@@ -130,7 +130,7 @@ input AddressInput {
   state: String
   number: String
   street: String
-  geoCoordinate: [Float]
+  geoCoordinates: [Float]
   postalCode: String
   city: String
   reference: String
