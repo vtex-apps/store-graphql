@@ -18,10 +18,10 @@ const checkDuplicatedListItem = async (_, { listId, skuId }, context) => {
   const request = {
     acronym: acronymListProduct,
     fields: fieldsListProduct,
-    filters: [`skuId=${skuId} AND listId=${listId}`],
+    where: `skuId=${skuId} AND listId=${listId}`,
     page: 1,
   }
-  const itemsResponse = await documentQueries.searchDocuments(_, request, context)
+  const itemsResponse = await documentQueries.documents(_, request, context)
   if (itemsResponse.length) {
     throw new ResolverError('Cannot add duplicated items.', 406)
   }
@@ -50,10 +50,10 @@ const getListItems = async (_, args, context) => {
   const requestItems = {
     acronym: acronymListProduct,
     fields: fieldsListProduct,
-    filters: [`listId=${id}`],
+    where: `listId=${id}`,
     page,
   }
-  let listItems = await documentQueries.searchDocuments({}, requestItems, context)
+  let listItems = await documentQueries.documents({}, requestItems, context)
   listItems = listItems.map(item => ({ ...parseFieldsToJson(item.fields) }))
   return getListItemsWithProductInfo(listItems, catalog)
 }
@@ -65,7 +65,7 @@ export const queries = {
     
     const listInfo = await documentQueries.document(_, request, context)
     const items = await getListItems(_, args, context)
-    
+
     return { id, ...parseFieldsToJson(listInfo.fields), items }
   },
 
@@ -73,10 +73,10 @@ export const queries = {
     const request = {
       acronym: acronymList,
       fields,
-      filters: [`owner=${owner}`],
+      where: `owner=${owner}`,
       page,
     }
-    const responseLists = await documentQueries.searchDocuments({}, request, context)
+    const responseLists = await documentQueries.documents({}, request, context)
     const lists = await map(async list => {
       const listInfo = parseFieldsToJson(list.fields)
       const items = await getListItems(_, { id: listInfo.id, page }, context)
