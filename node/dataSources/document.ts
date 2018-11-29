@@ -8,10 +8,6 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     public getDocument = (acronym, id, fields) => this.get(
         `${acronym}/documents/${id}?_fields=${fields}`
     )
-
-    public getDocuments = acronym => this.get(
-        `${acronym}/documents`
-    )
     
     public searchDocuments = (acronym, fields, where) => this.get(
         `${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`
