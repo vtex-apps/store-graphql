@@ -22,13 +22,17 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     `${acronym}/documents`, parseFieldsToJson(fields)
   )
 
+  public deleteDocument = (acronym, documentId) => this.delete(
+    `${acronym}/documents/${documentId}`
+  )
+
+  public willSendRequest(request) {
+    request.headers.set('Authorization', this.context.vtex.authToken)
+    request.headers.set('Accept', 'application/vnd.vtex.ds.v10+json')
+  }
+
   get baseURL() {
     const { vtex: { account } } = this.context
     return `http://api.vtex.com/${account}/dataentities/`
-  }
-
-  willSendRequest(request) {
-    request.headers.set('Authorization', this.context.vtex.authToken)
-    request.headers.set('Accept', 'application/vnd.vtex.ds.v10+json')
   }
 }

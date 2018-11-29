@@ -37,19 +37,9 @@ export const mutations = {
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  deleteDocument: async (_, args, { vtex: ioContext }) => {
+  deleteDocument: async (_, args, { dataSources: { document } }) => {
     const { acronym, documentId } = args
-    const url = paths.document(ioContext.account, acronym, documentId)
-    await http.delete(
-      url,
-      {
-        headers: {
-          Accept: 'application/vnd.vtex.ds.v10+json',
-          Authorization: ioContext.authToken,
-          ['Content-Type']: 'application/json',
-        },
-      },
-    )
+    await document.deleteDocument(acronym, documentId)
     return {id: documentId}
   },
 
