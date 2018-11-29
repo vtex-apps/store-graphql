@@ -18,6 +18,10 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     `${acronym}/documents`, parseFieldsToJson(fields)
   )
 
+  public updateDocument = (acronym, fields) => this.patch(
+    `${acronym}/documents`, parseFieldsToJson(fields)
+  )
+
   get baseURL() {
     const { vtex: { account } } = this.context
     return `http://api.vtex.com/${account}/dataentities/`

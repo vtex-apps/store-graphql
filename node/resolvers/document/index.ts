@@ -31,19 +31,9 @@ export const mutations = {
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  updateDocument: async (_, args, { vtex: ioContext }) => {
+  updateDocument: async (_, args, { dataSources: { document } }) => {
     const { acronym, document: { fields } } = args
-    const url = paths.documents(ioContext.account, acronym)
-    const { data: { Id, Href, DocumentId } } = await http.patch(
-      url, parseFieldsToJson(fields),
-      {
-        headers: {
-          Accept: 'application/vnd.vtex.ds.v10+json',
-          Authorization: ioContext.authToken,
-          ['Content-Type']: 'application/json',
-        },
-      },
-    )
+    const { Id, Href, DocumentId } = await document.updateDocument(acronym, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
