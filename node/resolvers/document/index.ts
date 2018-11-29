@@ -25,19 +25,9 @@ export const queries = {
 }
 
 export const mutations = {
-  createDocument: async (_, args, { vtex: ioContext }) => {
+  createDocument: async (_, args, { dataSources: { document } }) => {
     const { acronym, document: { fields } } = args
-    const url = paths.documents(ioContext.account, acronym)
-    const { data: { Id, Href, DocumentId } } = await http.post(
-      url, parseFieldsToJson(fields),
-      {
-        headers: {
-          Accept: 'application/vnd.vtex.ds.v10+json',
-          Authorization: ioContext.authToken,
-          ['Content-Type']: 'application/json',
-        },
-      },
-    )
+    const { Id, Href, DocumentId } = await document.createDocument(acronym, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
