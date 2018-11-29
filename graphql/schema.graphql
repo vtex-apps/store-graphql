@@ -315,7 +315,4 @@ type Mutation {
   createList(list: ListInput): List
   updateList(id: ID!, list: ListInput): List 
   deleteList(id: ID!): List
-  addListItem(listItem: ListItemInput): List
-  deleteListItem(id: ID!): ListItem
-  updateListItem(listId: ID!, itemId: ID!, quantity: Int!): List
 }

@@ -36,11 +36,11 @@ input ListInput {
     isPublic: Boolean
     """ List's owner """
     owner: String
+    """ List items """
+    items: [ListItemInput]
 }
 
 input ListItemInput {
-    """ List id """
-    listId: ID!
     """ Product id """
     productId: ID!
     """ Sku id """
