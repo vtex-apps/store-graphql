@@ -6,11 +6,10 @@ import { uploadAttachment } from './attachment'
 import { parseFieldsToJson, mapKeyValues } from '../../utils/object'
 
 export const queries = {
-  documents: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+  documents: async (_, args, { dataSources: { document } }) => {
     const { acronym, fields, page, pageSize, where } = args
     const fieldsWithId = union(fields, ['id'])
-    const url = paths.searchDocument(ioContext.account, acronym, { fields: fieldsWithId, where })
-    const { data } = await http.get(url, { headers: withMDPagination()(ioContext, cookie)(page, pageSize) })
+    const data = await document.searchDocuments(acronym, fieldsWithId, where)
     return data.map(document => ({
       cacheId: document.id,
       fields: mapKeyValues(document),
@@ -18,11 +17,10 @@ export const queries = {
     }))
   },
 
-  searchDocuments: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+  searchDocuments: async (_, args, { dataSources: { document } }) => {
     const { acronym, fields, filters, page, pageSize } = args
     const fieldsWithId = union(fields, ['id'])
-    const url = paths.searchDocument(ioContext.account, acronym, { fields: fieldsWithId, where: filters })
-    const { data } = await http.get(url, { headers: withMDPagination()(ioContext, cookie)(page, pageSize) })
+    const data = await document.searchDocuments(acronym, fieldsWithId, filters)
     return data.map(document => ({
       cacheId: document.id,
       fields: mapKeyValues(document),
@@ -30,11 +28,10 @@ export const queries = {
     }))
   }, 
 
-  document: async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
+  document: async (_, args, { dataSources: { document } }) => {
     const { acronym, fields, id } = args
-    const url = paths.documentFields(ioContext.account, acronym, fields, id)
-    const { data } = await http.get(url, { headers: withAuthToken()(ioContext, cookie) })
-    return { cacheId: data.id, id: data.id, fields: mapKeyValues(data) }
+    const data = await document.getDocument(acronym, id, fields)
+    return { id, cacheId: id, fields: mapKeyValues(data) }
   },
 }
 
