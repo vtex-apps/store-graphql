@@ -51,11 +51,8 @@ const paths = {
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
    */
-  attachment: (account, acronym, id, field, filename?) => `${paths.document(account, acronym, id)}/${field}/attachments${filename ? `/${filename}` : ''}`,
-  document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
-  documentFields: (account, acronym, fields = '_all', id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
-  documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
-  searchDocument: (account, acronym, { fields, where }) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`,
+  attachment: (account, acronym, id, field, filename?) => 
+    `http://api.vtex.com/${account}/dataentities/${acronym}/documents/${id}/${field}/attachments${filename ? `/${filename}` : ''}`,
 
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,

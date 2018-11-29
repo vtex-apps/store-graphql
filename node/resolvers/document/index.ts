@@ -1,9 +1,6 @@
-import http from 'axios'
 import { union } from 'ramda'
-import { withAuthToken, withMDPagination } from '../headers'
-import paths from '../paths'
 import { uploadAttachment } from './attachment'
-import { parseFieldsToJson, mapKeyValues } from '../../utils/object'
+import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
   documents: async (_, args, { dataSources: { document } }) => {
@@ -40,7 +37,7 @@ export const mutations = {
   deleteDocument: async (_, args, { dataSources: { document } }) => {
     const { acronym, documentId } = args
     await document.deleteDocument(acronym, documentId)
-    return {id: documentId}
+    return { id: documentId }
   },
 
   uploadAttachment: async (root, args, {vtex: ioContext}, info) => uploadAttachment(args, ioContext)
