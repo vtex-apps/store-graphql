@@ -126,20 +126,6 @@ type Query {
     where: String
   ): [Document]
 
-  """ Search documents with filter """
-  searchDocuments(
-    """ Schema name. e.g.: CL, AD"""
-    acronym: String,
-    """ Fields that will be returned by document. e.g.: _fields=email,firstName,document """
-    fields: [String],
-    """ Filters that will selected the documents that will be returned. e.g.: search?email=example@mail.com,age=18"""
-    filters: [String]
-    """ Pagination. Default: 1 """
-    page: Int = 1,
-    """ Items returned in the page. Default: 15"""
-    pageSize: Int = 15
-  ): [Document]
-
   """ Get document """
   document(
     """ Schema name. e.g.: CL, AD"""

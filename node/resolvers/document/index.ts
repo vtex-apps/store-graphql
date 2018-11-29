@@ -17,17 +17,6 @@ export const queries = {
     }))
   },
 
-  searchDocuments: async (_, args, { dataSources: { document } }) => {
-    const { acronym, fields, filters, page, pageSize } = args
-    const fieldsWithId = union(fields, ['id'])
-    const data = await document.searchDocuments(acronym, fieldsWithId, filters)
-    return data.map(document => ({
-      cacheId: document.id,
-      fields: mapKeyValues(document),
-      id: document.id,
-    }))
-  }, 
-
   document: async (_, args, { dataSources: { document } }) => {
     const { acronym, fields, id } = args
     const data = await document.getDocument(acronym, id, fields)
