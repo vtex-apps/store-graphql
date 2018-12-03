@@ -58,6 +58,11 @@ const getListItems = async (_, args, context) => {
   return getListItemsWithProductInfo(listItems, catalog)
 }
 
+const addListItem = async (listId, item, context) => {
+  const { dataSources: { document } } = context
+  await document.createDocument(acronymListProduct, mapKeyValues({ listId, ...item }))
+}
+
 export const queries = {
   list: async (_, args, context) => {
     const { id } = args
@@ -89,21 +94,19 @@ export const queries = {
 export const mutation = {
   createList: async (_, args, context) => {
     const { list } = args
-    const request = {
-      acronym: acronymList,
-      document : {
-        fields: mapKeyValues(list)
-      }
-    }
-    const { documentId } = await documentMutations.createDocument(_, request, context)
-    return await queries.list(_, { id: documentId, page: 1 }, context)
+    const { dataSources: { document } } = context
+    const response = await document.createDocument(acronymList, mapKeyValues(list))
+    await map(async item => {
+      await addListItem(response.DocumentId, item, context)
+    }, list.items)
+    return await queries.list(_, { id: response.DocumentId }, context)
   },
 
   deleteList: async (_, args, context) => {
     const { id } = args
     const request = { acronym: acronymList, documentId: id }
     const { items } = await queries.list(_, { id, page: 1 }, context)
-    items.map(item => mutation.deleteListItem(_, { id: item.id }, context))
+    // items.map(item => mutation.deleteListItem(_, { id: item.id }, context))
     return await documentMutations.deleteDocument(_, request, context)
   },
 
@@ -120,34 +123,21 @@ export const mutation = {
     return await queries.list(_, { id: response.documentId, page: 1 }, context)
   },
 
-  addListItem: async (_, args, context) => {
-    const { listItem, listItem: { listId } } = args
-    const request = {
-      acronym: acronymListProduct,
-      document : {
-        fields: mapKeyValues(listItem)
-      }
-    }
-    checkNewListItem(_, listItem, context)
-    await documentMutations.createDocument(_, request, context)
-    return await queries.list(_, { id: listId, page: 1 }, context)
-  },
+  // deleteListItem: async (_, args, context) => {
+  //   return await documentMutations.deleteDocument(_, { acronym: acronymListProduct, documentId: args.id }, context)
+  // },
 
-  deleteListItem: async (_, args, context) => {
-    return await documentMutations.deleteDocument(_, { acronym: acronymListProduct, documentId: args.id }, context)
-  },
-
-  updateListItem: async (_, args, context) => {
-    const { listId, itemId, quantity } = args
-    const request = {
-      acronym: acronymListProduct,
-      id: itemId,
-      document : {
-        fields: mapKeyValues({quantity, id: itemId}),
-      }
-    }
-    checkListItemQuantity(quantity)
-    await documentMutations.updateDocument(_, request, context)
-    return await queries.list(_, { id: listId, page: 1 }, context)
-  }
+  // updateListItem: async (_, args, context) => {
+  //   const { listId, itemId, quantity } = args
+  //   const request = {
+  //     acronym: acronymListProduct,
+  //     id: itemId,
+  //     document : {
+  //       fields: mapKeyValues({quantity, id: itemId}),
+  //     }
+  //   }
+  //   checkListItemQuantity(quantity)
+  //   await documentMutations.updateDocument(_, request, context)
+  //   return await queries.list(_, { id: listId, page: 1 }, context)
+  // }
 }
