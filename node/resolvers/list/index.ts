@@ -102,12 +102,11 @@ export const mutation = {
     return await queries.list(_, { id: response.DocumentId }, context)
   },
 
-  deleteList: async (_, args, context) => {
-    const { id } = args
-    const request = { acronym: acronymList, documentId: id }
+  deleteList: async (_, { id }, context) => {
+    const { dataSources: { document } } = context
     const { items } = await queries.list(_, { id, page: 1 }, context)
-    // items.map(item => mutation.deleteListItem(_, { id: item.id }, context))
-    return await documentMutations.deleteDocument(_, request, context)
+    await map(async item => await document.deleteDocument(acronymListProduct, item.id), items)
+    return await document.deleteDocument(acronymList, id)
   },
 
   updateList: async (_, args, context) => {
@@ -122,10 +121,6 @@ export const mutation = {
     const response = await documentMutations.updateDocument(_, request, context)
     return await queries.list(_, { id: response.documentId, page: 1 }, context)
   },
-
-  // deleteListItem: async (_, args, context) => {
-  //   return await documentMutations.deleteDocument(_, { acronym: acronymListProduct, documentId: args.id }, context)
-  // },
 
   // updateListItem: async (_, args, context) => {
   //   const { listId, itemId, quantity } = args
