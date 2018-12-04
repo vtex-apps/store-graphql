@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.41.1] - 2018-12-03
+### Changed
+- Removes custom axios config to avoid custom error handling.
+
 ## [2.41.0] - 2018-11-27
 ### Changed
 - Update updateOrderFormShipping resolver and fix geoCoordinates field in address types
