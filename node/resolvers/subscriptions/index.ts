@@ -1,4 +1,4 @@
-import { generateBetweenConstraint, generateOrConstraint } from '../masterDataQueryBuilders'
+import { generateBetweenConstraint, generateOrConstraint } from '../../utils/masterDataQueryBuilders'
 import { resolvers as subscriptionsOrdersStatusCountResolvers } from './subscription'
 
 const SUBSCRIPTION_ORDERS_SCHEMA = 'subscription_orders-v1'
@@ -74,7 +74,7 @@ export const queries = {
       where: `${generateBetweenConstraint('date', args.initialDate, args.endDate)} AND (orderGroup is not null)`
     }
 
-    return subscriptions.getSubscriptionsOrdersAggregations(options).then((data) => {
+    return subscriptions.subscriptionsOrdersAggregations(options).then((data) => {
       return (data && data.result ? data.result : []).reduce((acc, item) => ({
         ...acc,
         [item.key]: item.value,
