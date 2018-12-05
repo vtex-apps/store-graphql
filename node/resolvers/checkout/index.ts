@@ -21,6 +21,9 @@ import paymentTokenResolver from './paymentTokenResolver'
  */
 const convertIntToFloat = int => int * 0.01
 
+const convertHttpToHttps =
+  (url: string) => url.startsWith('http:') ? url.replace('http', 'https') : url
+
 const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentData) => {
   const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
   const {utm_source, utm_campaign, utmi_campaign} = segmentData
@@ -42,6 +45,8 @@ export const fieldResolvers = {
     items: (orderForm) => {
       return map((item: OrderFormItem) => ({
         ...item,
+        detailUrl: convertHttpToHttps(item.detailUrl),
+        imageUrl: convertHttpToHttps(item.imageUrl),
         listPrice: convertIntToFloat(item.listPrice),
         price: convertIntToFloat(item.price),
         sellingPrice: convertIntToFloat(item.sellingPrice)
