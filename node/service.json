@@ -3,7 +3,7 @@
   "memory": 512,
   "ttl": 60,
   "timeout": 9,
-  "minReplicas": 4,
+  "minReplicas": 6,
   "maxReplicas": 20,
   "routes": {
     "catalogProxy": {

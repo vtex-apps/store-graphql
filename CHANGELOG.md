@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.41.2] - 2018-12-05
+### Changed
+- Changed min replicas to 6
+
 ## [2.41.1] - 2018-12-03
 ### Changed
 - Removes custom axios config to avoid custom error handling.
