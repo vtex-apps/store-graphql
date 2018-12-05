@@ -23,7 +23,9 @@ export interface HttpResolverOptions {
   merge?: ResponseMerger
 }
 
-export default (options: HttpResolverOptions) => {
+export type HttpResolver<T> = (root: any, args: any, context: Context) => Promise<T>
+
+export default <T=any>(options: HttpResolverOptions): HttpResolver<T> => {
   return async (root, args, { vtex: ioContext, request: { headers: { cookie, 'x-forwarded-host': host } }, response }: Context) => {
     const { secure = false, url, enableCookies, data, method = 'GET', headers = {}, merge = defaultMerge } = options
 

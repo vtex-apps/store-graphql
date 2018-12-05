@@ -157,8 +157,9 @@ type Query {
   logistics: LogisticsData
 
   pickupPoints(
-    lat: String,
-    long: String,
+    lat: String!,
+    long: String!,
+    maxDistance: Int,
   ): PickupPointQueryResponse
 
   """ Get profile information to session users """
