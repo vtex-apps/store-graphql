@@ -18,8 +18,8 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     `${acronym}/documents`, parseFieldsToJson(fields)
   )
 
-  public updateDocument = (acronym, fields) => this.patch(
-    `${acronym}/documents`, parseFieldsToJson(fields)
+  public updateDocument = (acronym, id, fields) => this.patch(
+    `${acronym}/documents/${id}`, parseFieldsToJson(fields)
   )
 
   public deleteDocument = (acronym, documentId) => this.delete(

@@ -41,6 +41,8 @@ input ListInput {
 }
 
 input ListItemInput {
+    """ List item id """
+    itemId: ID
     """ Product id """
     productId: ID!
     """ Sku id """

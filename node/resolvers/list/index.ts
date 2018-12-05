@@ -1,7 +1,7 @@
 import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 import { mapKeyValues } from '../../utils/object'
 import ResolverError from '../../errors/resolverError'
-import { map, path, nth } from 'ramda'
+import { map, path, nth, filter } from 'ramda'
 
 const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
 const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId']
@@ -64,6 +64,26 @@ const addItems = async (items, document) => {
   return Promise.all(promises)
 }
 
+const updateItems = async (items, dataSources) => {
+  const { document } = dataSources
+  const itemsId = await Promise.all(map(async item => {
+    if (item.itemId) {
+      if (!item.quantity) {
+        await document.deleteDocument(acronymListProduct, item.itemId)
+        return 'undefined'
+      } else {
+        await document.updateDocument(acronymListProduct, item.itemId, mapKeyValues(item))
+        return item.itemId
+      }
+    } else {
+      const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues(item))
+      return DocumentId
+    }
+  }, items))
+  const itemsUpdated = filter(item => item !== 'undefined', itemsId)
+  return itemsUpdated
+}
+
 export const queries = {
   list: async (_, { id }, { dataSources, dataSources: { document } }) => {
     const list = await document.getDocument(acronymList, id, fields)
@@ -78,7 +98,7 @@ export const queries = {
       const items = await getListItems(list.items, dataSources)
       return { ...list, items }
     }, lists)
-    return await Promise.all(listsWithProducts)
+    return Promise.all(listsWithProducts)
   }
 }
 
@@ -87,7 +107,7 @@ export const mutation = {
     const { dataSources: { document } } = context
     const itemsId = await addItems(list.items, document)
     const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
-    return await queries.list(_, { id: DocumentId }, context)
+    return queries.list(_, { id: DocumentId }, context)
   },
 
   deleteList: async (_, { id }, { dataSources: { document } }) => {
@@ -95,37 +115,13 @@ export const mutation = {
     map(async itemId => {
       await document.deleteDocument(acronymListProduct, itemId)
     }, list.items)
-    return await document.deleteDocument(acronymList, id)
+    return document.deleteDocument(acronymList, id)
   },
 
-  updateList: async (_, { id, list }, context) => {
-    console.log(id, list)
-    const waza = await queries.list(_, { id }, context)
-    console.log(waza)
-    // const { list, id } = args
-    // const request = {
-    //   acronym: acronymList,
-    //   id,
-    //   document : {
-    //     fields: mapKeyValues({...list, id}),
-    //   }
-    // }
-    // const response = await documentMutations.updateDocument(_, request, context)
-    // return await queries.list(_, { id: response.documentId, page: 1 }, context)
-    return true
+  updateList: async (_, { id, list, list: { items } }, context) => {
+    const { dataSources, dataSources: { document } } = context
+    const itemsUpdatedId = await updateItems(items, dataSources)
+    await document.updateDocument(acronymList, id, mapKeyValues({ ...list, items: itemsUpdatedId }))
+    return queries.list(_, { id }, context)
   },
-
-  // updateListItem: async (_, args, context) => {
-  //   const { listId, itemId, quantity } = args
-  //   const request = {
-  //     acronym: acronymListProduct,
-  //     id: itemId,
-  //     document : {
-  //       fields: mapKeyValues({quantity, id: itemId}),
-  //     }
-  //   }
-  //   checkListItemQuantity(quantity)
-  //   await documentMutations.updateDocument(_, request, context)
-  //   return await queries.list(_, { id: listId, page: 1 }, context)
-  // }
 }
