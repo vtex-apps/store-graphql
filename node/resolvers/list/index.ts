@@ -14,26 +14,27 @@ const checkListItemQuantity = quantity => {
   }
 }
 
-const checkDuplicatedListItem = async (_, { listId, skuId }, context) => {
-  const request = {
-    acronym: acronymListProduct,
-    fields: fieldsListProduct,
-    where: `skuId=${skuId} AND listId=${listId}`,
-    page: 1,
-  }
-  const itemsResponse = await documentQueries.documents(_, request, context)
-  if (itemsResponse.length) {
-    throw new ResolverError('Cannot add duplicated items.', 406)
+const checkDuplicatedListItem = async (items, item) => {
+  const itemDuplicated = filter(i => i.skuId === item.skuId, items)
+  if (itemDuplicated.length) {
+    // throw new ResolverError('Cannot add duplicated items.', 406)
   }
 }
 
-const checkNewListItem = async (_, listItem, context) => {
-  const { dataSources: { catalog } } = context
+const checkNewListItem = async (items, item, dataSources) => {
+  const { catalog } = dataSources
   // Make this query to check if the skuId received is valid
   // If it isn't, it throws an exception.
-  await catalog.productBySku([path(['skuId'], listItem)])
-  await checkDuplicatedListItem(_, listItem, context)
-  checkListItemQuantity(path(['quantity', listItem]))
+  const response = await catalog.productBySku([path(['skuId'], item)])
+  if (!response.length) throw new ResolverError('Cannot add an invalid product', 404)
+  await checkDuplicatedListItem(items, item)
+  checkListItemQuantity(path(['quantity', item]))
+}
+
+const validateItems = async (items = [], dataSources) => {
+  await map(async item => {
+    await checkNewListItem(items, item, dataSources)
+  }, items)
 }
 
 const getListItemsWithProductInfo = (items, catalog) => Promise.all(
@@ -57,7 +58,7 @@ const addListItem = async (item, document) => {
   return DocumentId
 }
 
-const addItems = async (items, document) => {
+const addItems = async (items = [], document) => {
   const promises = map(async item => {
     return addListItem(item, document)
   }, items)
@@ -103,9 +104,10 @@ export const queries = {
 }
 
 export const mutation = {
-  createList: async (_, { list }, context) => {
-    const { dataSources: { document } } = context
-    const itemsId = await addItems(list.items, document)
+  createList: async (_, { list, list: { items } }, context) => {
+    const { dataSources, dataSources: { document } } = context
+    await validateItems(items, dataSources)
+    const itemsId = await addItems(items, document)
     const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
     return queries.list(_, { id: DocumentId }, context)
   },
@@ -118,6 +120,12 @@ export const mutation = {
     return document.deleteDocument(acronymList, id)
   },
 
+  /**
+   * Update the list informations and its items.
+   * If the item given does not have the itemId, add it as a new item in the list
+   * If the item given has got an itemId, but its quantity is 0, remove it from the list
+   * Otherwise, update it.
+   */
   updateList: async (_, { id, list, list: { items } }, context) => {
     const { dataSources, dataSources: { document } } = context
     const itemsUpdatedId = await updateItems(items, dataSources)
