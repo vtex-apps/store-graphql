@@ -46,10 +46,9 @@ const getListItemsWithProductInfo = (items, catalog) => Promise.all(
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const promises = map(itemId => {
+  const items = itemsId ? await Promise.all(map(itemId => {
     return document.getDocument(acronymListProduct, itemId, fieldsListProduct)
-  }, itemsId)
-  const items = await Promise.all(promises)
+  }, itemsId)) : []
   return await getListItemsWithProductInfo(items, catalog)
 }
 
@@ -91,10 +90,11 @@ export const mutation = {
     return await queries.list(_, { id: DocumentId }, context)
   },
 
-  deleteList: async (_, { id }, context) => {
-    const { dataSources: { document } } = context
-    const { items } = await queries.list(_, { id, page: 1 }, context)
-    await map(async item => await document.deleteDocument(acronymListProduct, item.id), items)
+  deleteList: async (_, { id }, { dataSources: { document } }) => {
+    const list = await document.getDocument(acronymList, id, fields)
+    map(async itemId => {
+      await document.deleteDocument(acronymListProduct, itemId)
+    }, list.items)
     return await document.deleteDocument(acronymList, id)
   },
 
