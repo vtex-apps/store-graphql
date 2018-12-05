@@ -1,4 +1,4 @@
-import { headers, withAuthToken,  } from '../headers'
+import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 
