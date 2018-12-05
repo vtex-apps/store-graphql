@@ -1,5 +1,5 @@
-import { addIndex, map, pathOr, reject } from 'ramda'
-import { SimulationData } from '../../dataSources/checkout'
+import { addIndex, map, reject } from 'ramda'
+import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -184,7 +184,7 @@ export const mutations: Record<string, Resolver> = {
     return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
   },
   
-  updateOrderFormCheckin: (root, { orderFormId, checkin }, {dataSources: { checkout }}) => {
+  updateOrderFormCheckin: (root, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 }
