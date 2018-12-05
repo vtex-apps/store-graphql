@@ -6,7 +6,7 @@ const paths = {
    */
   addItem: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/items`,
   changeToAnonymousUser: (account, { orderFormId }) => `http://${account}.vtexcommercestable.com.br/checkout/changeToAnonymousUser/${orderFormId}`,
-  orderForm: (account: string) => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
+  orderForm: account => `http://${account}.vtexcommercestable.com.br/api/checkout/pub/orderForm`,
   orderFormCustomData: (account, { orderFormId, appId, field }) => `${paths.orderForm(account)}/${orderFormId}/customData/${appId}/${field}`,
   orderFormIgnoreProfile: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/profile`,
   orderFormPayment: (account, { orderFormId }) => `${paths.orderForm(account)}/${orderFormId}/attachments/paymentData`,
