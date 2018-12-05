@@ -39,9 +39,9 @@ export class SubscriptionsDataSource extends RESTDataSource<ServiceContext> {
 
     if (contentRange) {
       const total = parseInt(contentRange.split('/')[1])
-      return { body, total }
+      return { result: body, total }
     } else {
-      return { body }
+      return { ...body }
     }
   }
 

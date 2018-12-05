@@ -62,7 +62,7 @@ export const queries = {
       where
     }
 
-    return subscriptions.getSubscriptionsOrders(options)
+    return subscriptions.getSubscriptionsOrders(options).then( response => response.result )
   },
 
   nextSubscriptionsCountByPeriod: async (_, args, {  dataSources:{ subscriptions }} ) => {
