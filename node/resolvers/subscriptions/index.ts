@@ -68,17 +68,10 @@ export const queries = {
   nextSubscriptionsCountByPeriod: async (_, args, {  dataSources:{ subscriptions }} ) => {
     const options = {
       schema: SUBSCRIPTION_SCHEMA,
-      where: `${generateBetweenConstraint('nextPurchaseDate', args.initialDate, args.endDate)} AND (orderGroup is not null)`,
-      field: 'nextPurchaseDate',
-      type: 'date-time-interval',
-      interval: 'day',
-      subAggregations: 'orderGroup',
-      subAggregationsOp: 'cardinality'
+      where: `${generateBetweenConstraint('nextPurchaseDate', args.initialDate, args.endDate)}`,
     }
 
-    return subscriptions.subscriptionsAggregations(options).then(( { result }) => {
-      return result.reduce((accumulator, { count }) => accumulator + count, 0)
-    })
+    return subscriptions.getSubscriptions(options).then((response) => response.total)
   },
 
   subscriptionsOrdersCountByStatus: async (_, args, { dataSources: { subscriptions } }) => {
