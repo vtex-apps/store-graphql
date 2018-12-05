@@ -156,11 +156,11 @@ type Query {
   """ Get logistics information about the store """
   logistics: LogisticsData
 
-  pickupPoints(
+  nearPickupPoints(
     lat: String!,
     long: String!,
     maxDistance: Int,
-  ): PickupPointQueryResponse
+  ): NearPickupPointQueryResponse
 
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)

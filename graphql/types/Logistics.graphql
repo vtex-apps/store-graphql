@@ -21,6 +21,6 @@ type BusinessHours {
   closingTime: String
 }
 
-type PickupPointQueryResponse {
+type NearPickupPointQueryResponse {
   items: [PickupPoint]
 }
