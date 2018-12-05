@@ -313,6 +313,10 @@ type Mutation {
 
   """ List """
   createList(list: ListInput): List
+   """ Update the list informations and its items.
+   If the item given does not have the itemId, add it as a new item in the list.
+   If the item given has got an itemId, but its quantity is 0, remove it from the list.
+   Otherwise, update it. """
   updateList(id: ID!, list: ListInput): List 
   deleteList(id: ID!): List
 }
