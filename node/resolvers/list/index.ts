@@ -3,8 +3,8 @@ import { mapKeyValues, parseFieldsToJson } from '../../utils/object'
 import ResolverError from '../../errors/resolverError'
 import { map, path, nth } from 'ramda'
 
-const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items']
-const fieldsListProduct = ['quantity', 'skuId', 'productId']
+const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
+const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId']
 const acronymListProduct = 'LP'
 const acronymList = 'WL'
 
@@ -72,20 +72,14 @@ export const queries = {
     return { id, ...list, items }
   },
 
-  listsByOwner: async (_, { owner, page }, context) => {
-    const request = {
-      acronym: acronymList,
-      fields,
-      where: `owner=${owner}`,
-      page,
-    }
-    const responseLists = await documentQueries.documents({}, request, context)
-    const lists = await map(async list => {
-      const listInfo = parseFieldsToJson(list.fields)
-      const items = await getListItems({ id: listInfo.id, page }, context)
-      return { ...listInfo, items }
-    }, responseLists)
-    return lists
+  listsByOwner: async (_, { owner }, context) => {
+    const { dataSources, dataSources: { document } } = context
+    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`)
+    const listsWithProducts = map(async list => {
+      const items = await getListItems(list.items, dataSources)
+      return { ...list, items }
+    }, lists)
+    return await Promise.all(listsWithProducts)
   }
 }
 
