@@ -167,6 +167,14 @@ type Query {
     endDate: String!
   ): SubscriptionsStatusCount  @cacheControl(scope: PRIVATE)
 
+  """ Get count of next active subscriptions by period"""
+  nextSubscriptionsCountByPeriod(
+    """ Initial date. e.g.: 2018-10-13T00:00:00"""
+    initialDate: String!,
+    """ End date. e.g.: 2018-10-13T00:00:00"""
+    endDate: String!
+  ): Int  @cacheControl(scope: PRIVATE)
+
   """ Get count of subscriptions by status """
   subscriptionsOrdersCountByStatus(
     """ Initial date. e.g.: 2018-10-13T00:00:00"""

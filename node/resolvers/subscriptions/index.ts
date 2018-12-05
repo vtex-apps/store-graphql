@@ -2,7 +2,7 @@ import { generateBetweenConstraint, generateOrConstraint } from '../../utils/mas
 import { resolvers as subscriptionsOrdersStatusCountResolvers } from './subscription'
 
 const SUBSCRIPTION_ORDERS_SCHEMA = 'subscription_orders-v1'
-const SUBSCRIPTION_SCHEMA = 'bi-v1'
+const SUBSCRIPTION_SCHEMA = 'subscriptions-v1'
 
 const generateListWhere = (statusList, args) => {
   if (statusList.length === 0) {
@@ -63,6 +63,22 @@ export const queries = {
     }
 
     return subscriptions.getSubscriptionsOrders(options)
+  },
+
+  nextSubscriptionsCountByPeriod: async (_, args, {  dataSources:{ subscriptions }} ) => {
+    const options = {
+      schema: SUBSCRIPTION_SCHEMA,
+      where: `${generateBetweenConstraint('nextPurchaseDate', args.initialDate, args.endDate)} AND (orderGroup is not null)`,
+      field: 'nextPurchaseDate',
+      type: 'date-time-interval',
+      interval: 'day',
+      subAggregations: 'orderGroup',
+      subAggregationsOp: 'cardinality'
+    }
+
+    return subscriptions.subscriptionsAggregations(options).then(( { result }) => {
+      return result.reduce((accumulator, { count }) => accumulator + count, 0)
+    })
   },
 
   subscriptionsOrdersCountByStatus: async (_, args, { dataSources: { subscriptions } }) => {
