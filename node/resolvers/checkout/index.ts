@@ -182,5 +182,9 @@ export const mutations: Record<string, Resolver> = {
       noSplitItem: true,
     }
     return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
-  }
+  },
+  
+  updateOrderFormCheckin: (root, { orderFormId, checkin }, {dataSources: { checkout }}) => {
+    return checkout.updateOrderFormCheckin(orderFormId, checkin)
+  },
 }

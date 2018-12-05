@@ -18,6 +18,7 @@ type OrderForm {
   shippingData: OrderFormShippingData
   storePreferencesData: StorePreferencesData
   itemMetadata: ItemMetadata
+  checkedInPickupPointId: String
 }
 
 type StorePreferencesData {
