@@ -37,6 +37,13 @@
     {
       "name": "outbound-access",
       "attrs": {
+        "host": "logistics.vtexcommercestable.com.br",
+        "path": "/api/logistics/pvt/configuration/pickuppoints/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/logistics/pub/shipping/*"
       }

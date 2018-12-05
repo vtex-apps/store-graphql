@@ -155,5 +155,9 @@ export const mutations: Record<string, Resolver> = {
 
     const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
     return syncedOrderForm
-  }
+  },
+
+  updateOrderFormCheckin: (root, { orderFormId, checkin }, {dataSources: { checkout }}) => {
+    return checkout.updateOrderFormCheckin(orderFormId, checkin)
+  },
 }

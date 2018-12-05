@@ -156,6 +156,11 @@ type Query {
   """ Get logistics information about the store """
   logistics: LogisticsData
 
+  pickupPoints(
+    lat: String,
+    long: String,
+  ): PickupPointQueryResponse
+
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
 
@@ -236,6 +241,7 @@ type Mutation {
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
+  updateOrderFormCheckin(orderFormId: String, checkin: OrderFormCheckinInput): OrderForm
 
   """ Payment """
   createPaymentSession: PaymentSession

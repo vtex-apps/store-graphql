@@ -79,6 +79,11 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
     marketingData,
   )
 
+  public updateOrderFormCheckin = (orderFormId: string, checkinPayload: any) => this.post(
+    `pub/orderForm/${orderFormId}/checkIn`, 
+    checkinPayload,
+  )
+
   public orderForm = () => this.post(
     `/pub/orderForm`,
     {expectedOrderFormSections: ['items']},

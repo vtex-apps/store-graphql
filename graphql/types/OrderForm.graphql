@@ -17,6 +17,7 @@ type OrderForm {
   clientProfileData: ClientProfile
   shippingData: OrderFormShippingData
   storePreferencesData: StorePreferencesData
+  checkedInPickupPointId: String
 }
 
 type StorePreferencesData {
