@@ -27,6 +27,8 @@ type ListItem {
     quantity: Int
     """ The product's informations """
     product: Product
+    """ Date when it was added """
+    createdIn: String
 }
 
 input ListInput {
