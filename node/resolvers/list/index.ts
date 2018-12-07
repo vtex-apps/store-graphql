@@ -1,44 +1,8 @@
 import { mapKeyValues } from '../../utils/object'
 import ResolverError from '../../errors/resolverError'
 import { map, path, nth, filter } from 'ramda'
-
-const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
-const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
-const acronymListProduct = 'LP'
-const acronymList = 'WL'
-
-const checkListItemQuantity = quantity => {
-  if (!quantity || quantity < 0) {
-    throw 'The item quantity should be greater than 0'
-  }
-}
-
-// Make this query to check if the skuId received is valid
-  // If it isn't, it throws an exception.
-const checkProduct = async (item, catalog) => {
-  const response = await catalog.productBySku([path(['skuId'], item)])
-  if (!response.length) throw 'Cannot add an invalid product'
-}
-
-const checkDuplicatedListItem = (items, item) => {
-  const itemDuplicated = filter(i => i.skuId === item.skuId, items)
-  if (itemDuplicated.length > 1) {
-    throw 'Cannot add duplicated items.'
-  }
-}
-
-const checkNewListItem = (items, item, dataSources) => {
-  const { catalog } = dataSources
-  checkListItemQuantity(path(['quantity'], item))
-  checkDuplicatedListItem(items, item)
-  checkProduct(item, catalog)
-}
-
-const validateItems = (items = [], dataSources) => {
-  map(item => {
-    checkNewListItem(items, item, dataSources)
-  }, items)
-}
+import { validateItems, validateListItem } from './util'
+import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
 
 const getListItemsWithProductInfo = (items, catalog) => Promise.all(
     map(async item => {
@@ -73,18 +37,18 @@ const addItems = async (items = [], dataSources) => {
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsId = await Promise.all(map(async item => {
-    if (item.itemId) {
-      if (!item.quantity) {
-        await document.deleteDocument(acronymListProduct, item.itemId)
+    if (path(['itemId'], item)) {
+      if (!path(['quantity'], item)) {
+        await document.deleteDocument(acronymListProduct, path(['itemId'], item))
         return 'undefined'
       } else {
-        checkNewListItem(items, item, dataSources)
-        await document.updateDocument(acronymListProduct, item.itemId, mapKeyValues(item))
-        return item.itemId
+        validateListItem(items, item, dataSources)
+        await document.updateDocument(acronymListProduct, path(['itemId'], item), mapKeyValues(item))
+        return path(['itemId'], item)
       }
     } else {
-      checkNewListItem(items, item, dataSources)
-      const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues(item))
+      validateListItem(items, item, dataSources)
+      const { DocumentId } = await addListItem(item, document)
       return DocumentId
     }
   }, items))
@@ -103,7 +67,7 @@ export const queries = {
     const { dataSources, dataSources: { document } } = context
     const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`)
     const listsWithProducts = map(async list => {
-      const items = await getListItems(list.items, dataSources)
+      const items = await getListItems(path(['items'], list), dataSources)
       return { ...list, items }
     }, lists)
     return Promise.all(listsWithProducts)
