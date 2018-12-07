@@ -66,4 +66,10 @@ export const queries = {
     const url = paths.logisticsConfig(ioContext.account).pickupPoints(lat, long, maxDistance)
     return httpResolver<LogisticOuput>({ headers: fullHeader, method: 'GET', url })(root, args, context)
   },
+  pickupPoint: async (root, args, context) => {
+    const { vtex: ioContext, request } = context
+    const fullHeader = withAuthToken(headers.json)(ioContext, request.headers.cookie)
+    const url = paths.logisticsConfig(ioContext.account).pickupById(args.id)
+    return httpResolver({ headers: fullHeader, method: 'GET', url })(root, args, context)    
+  },
 }

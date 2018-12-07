@@ -164,6 +164,8 @@ type Query {
     maxDistance: Int,
   ): NearPickupPointQueryResponse
 
+  pickupPoint(id: String!): PickupPoint
+
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
 

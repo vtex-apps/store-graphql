@@ -10,6 +10,7 @@ export const resolvers = {
         addressType: 'pickup',
         country: country.acronym,
         geoCoordinates: [location.longitude, location.latitude],
+        id,
       }
     },
     friendlyName: ({ name }: LogisticPickupPoint) => name,
