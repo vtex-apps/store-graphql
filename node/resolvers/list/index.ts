@@ -1,4 +1,3 @@
-import { queries as documentQueries, mutations as documentMutations } from '../document/index'
 import { mapKeyValues } from '../../utils/object'
 import ResolverError from '../../errors/resolverError'
 import { map, path, nth, filter } from 'ramda'
@@ -10,30 +9,34 @@ const acronymList = 'WL'
 
 const checkListItemQuantity = quantity => {
   if (!quantity || quantity < 0) {
-    throw new ResolverError('The quantity should be greater than 0', 406)
+    throw 'The item quantity should be greater than 0'
   }
 }
 
-const checkDuplicatedListItem = async (items, item) => {
-  const itemDuplicated = filter(i => i.skuId === item.skuId, items)
-  if (itemDuplicated.length) {
-    // throw new ResolverError('Cannot add duplicated items.', 406)
-  }
-}
-
-const checkNewListItem = async (items, item, dataSources) => {
-  const { catalog } = dataSources
-  // Make this query to check if the skuId received is valid
+// Make this query to check if the skuId received is valid
   // If it isn't, it throws an exception.
-  const response = await catalog.productBySku([path(['skuId'], item)])
-  if (!response.length) throw new ResolverError('Cannot add an invalid product', 404)
-  await checkDuplicatedListItem(items, item)
-  checkListItemQuantity(path(['quantity', item]))
+const checkProduct = (item, catalog) => {
+  const response = catalog.productBySku([path(['skuId'], item)])
+  if (!response.length) throw 'Cannot add an invalid product'
 }
 
-const validateItems = async (items = [], dataSources) => {
-  await map(async item => {
-    await checkNewListItem(items, item, dataSources)
+const checkDuplicatedListItem = (items, item) => {
+  const itemDuplicated = filter(i => i.skuId === item.skuId, items)
+  if (itemDuplicated.length > 1) {
+    throw 'Cannot add duplicated items.'
+  }
+}
+
+const checkNewListItem = (items, item, dataSources) => {
+  const { catalog } = dataSources
+  checkListItemQuantity(path(['quantity'], item))
+  checkDuplicatedListItem(items, item)
+  checkProduct(item, catalog)
+}
+
+const validateItems = (items = [], dataSources) => {
+  map(item => {
+    checkNewListItem(items, item, dataSources)
   }, items)
 }
 
@@ -58,7 +61,9 @@ const addListItem = async (item, document) => {
   return DocumentId
 }
 
-const addItems = async (items = [], document) => {
+const addItems = async (items = [], dataSources) => {
+  const { document } = dataSources
+  validateItems(items, dataSources)
   const promises = map(async item => {
     return addListItem(item, document)
   }, items)
@@ -106,10 +111,13 @@ export const queries = {
 export const mutation = {
   createList: async (_, { list, list: { items } }, context) => {
     const { dataSources, dataSources: { document } } = context
-    await validateItems(items, dataSources)
-    const itemsId = await addItems(items, document)
-    const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
-    return queries.list(_, { id: DocumentId }, context)
+    try {
+      const itemsId = await addItems(items, dataSources)
+      const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
+      return queries.list(_, { id: DocumentId }, context)
+    } catch (error) {
+      throw new ResolverError(`Cannot create list: ${error}`, 406)
+    }
   },
 
   deleteList: async (_, { id }, { dataSources: { document } }) => {
