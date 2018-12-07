@@ -17,7 +17,7 @@ const getListItems = async (itemsId, dataSources) => {
   const items = itemsId ? await Promise.all(map(itemId => {
     return document.getDocument(acronymListProduct, itemId, fieldsListProduct)
   }, itemsId)) : []
-  return await getListItemsWithProductInfo(items, catalog)
+  return getListItemsWithProductInfo(items, catalog)
 }
 
 const addListItem = async (item, document) => {

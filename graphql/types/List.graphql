@@ -15,7 +15,6 @@ type List {
     """ List items """
     items: [ListItem]
 }
-
 type ListItem {
     """ Item id """
     id: ID
