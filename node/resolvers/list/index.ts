@@ -37,14 +37,15 @@ const addItems = async (items = [], dataSources) => {
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsId = await Promise.all(map(async item => {
-    if (path(['itemId'], item)) {
+    const itemId = path(['itemId'], item)
+    if (itemId) {
       if (!path(['quantity'], item)) {
-        await document.deleteDocument(acronymListProduct, path(['itemId'], item))
+        await document.deleteDocument(acronymListProduct, itemId)
         return 'undefined'
       } else {
         validateListItem(items, item, dataSources)
-        await document.updateDocument(acronymListProduct, path(['itemId'], item), mapKeyValues(item))
-        return path(['itemId'], item)
+        await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
+        return itemId
       }
     } else {
       validateListItem(items, item, dataSources)
