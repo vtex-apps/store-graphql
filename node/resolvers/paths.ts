@@ -67,6 +67,7 @@ const paths = {
 
   // https://documenter.getpostman.com/view/3848/vtex-logistics-api/Hs42#405fae80-9bbc-471b-92b5-3071bdbfa527
   logisticsConfig: (account: string) => ({
+    pickupById: (id: string) => `http://logistics.vtexcommercestable.com.br/api/logistics/pvt/configuration/pickuppoints/${id}?an=${account}`,
     pickupPoints: (lat: string, long: string, maxDistance: number) => `http://logistics.vtexcommercestable.com.br/api/logistics/pvt/configuration/pickuppoints/_search?an=${account}&page=1&pageSize=100&lat=${lat}&$lon=${long}&maxDistance=${maxDistance}`,
     shipping: `http://${account}.vtexcommercestable.com.br/api/logistics/pub/shipping/configuration`
   }),
