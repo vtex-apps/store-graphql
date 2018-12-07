@@ -3,7 +3,7 @@ import ResolverError from '../../errors/resolverError'
 import { map, path, nth, filter } from 'ramda'
 
 const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
-const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId']
+const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
 const acronymListProduct = 'LP'
 const acronymList = 'WL'
 
