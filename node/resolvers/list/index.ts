@@ -15,8 +15,8 @@ const checkListItemQuantity = quantity => {
 
 // Make this query to check if the skuId received is valid
   // If it isn't, it throws an exception.
-const checkProduct = (item, catalog) => {
-  const response = catalog.productBySku([path(['skuId'], item)])
+const checkProduct = async (item, catalog) => {
+  const response = await catalog.productBySku([path(['skuId'], item)])
   if (!response.length) throw 'Cannot add an invalid product'
 }
 
@@ -78,10 +78,12 @@ const updateItems = async (items, dataSources) => {
         await document.deleteDocument(acronymListProduct, item.itemId)
         return 'undefined'
       } else {
+        checkNewListItem(items, item, dataSources)
         await document.updateDocument(acronymListProduct, item.itemId, mapKeyValues(item))
         return item.itemId
       }
     } else {
+      checkNewListItem(items, item, dataSources)
       const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues(item))
       return DocumentId
     }
@@ -136,8 +138,12 @@ export const mutation = {
    */
   updateList: async (_, { id, list, list: { items } }, context) => {
     const { dataSources, dataSources: { document } } = context
-    const itemsUpdatedId = await updateItems(items, dataSources)
-    await document.updateDocument(acronymList, id, mapKeyValues({ ...list, items: itemsUpdatedId }))
-    return queries.list(_, { id }, context)
+    try {
+      const itemsUpdatedId = await updateItems(items, dataSources)
+      await document.updateDocument(acronymList, id, mapKeyValues({ ...list, items: itemsUpdatedId }))
+      return queries.list(_, { id }, context)
+    } catch (error) {
+      throw new ResolverError(`Cannot update the list: ${error}`, 406)
+    }
   },
 }
