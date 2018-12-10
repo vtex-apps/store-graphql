@@ -1,4 +1,4 @@
-import { headers, withAuthToken } from '../headers'
+import { headers, withAuthAsVTEXID, withAuthToken  } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import { resolvers as pickupResolvers } from './PickupPoint'
@@ -49,6 +49,10 @@ interface NearPickupPointsArgs {
   maxDistance: number | undefined,
 }
 
+interface PickupPointArgs {
+  id: string,
+}
+
 export const fieldResolvers = {
   ...pickupResolvers,
 }
@@ -59,17 +63,14 @@ export const queries = {
     method: 'GET',
     url: (account: string) => paths.logisticsConfig(account).shipping,
   }),
-  nearPickupPoints: async (root, args: NearPickupPointsArgs, context) => {
-    const { vtex: ioContext, request } = context
-    const fullHeader = withAuthToken(headers.json)(ioContext, request.headers.cookie)
-    const { lat, long, maxDistance = 50 } = args 
-    const url = paths.logisticsConfig(ioContext.account).pickupPoints(lat, long, maxDistance)
-    return httpResolver<LogisticOuput>({ headers: fullHeader, method: 'GET', url })(root, args, context)
-  },
-  pickupPoint: async (root, args, context) => {
-    const { vtex: ioContext, request } = context
-    const fullHeader = withAuthToken(headers.json)(ioContext, request.headers.cookie)
-    const url = paths.logisticsConfig(ioContext.account).pickupById(args.id)
-    return httpResolver({ headers: fullHeader, method: 'GET', url })(root, args, context)    
-  },
+  nearPickupPoints: httpResolver<LogisticOuput>({
+    headers: withAuthAsVTEXID(headers.json),
+    method: 'GET',
+    url: (account: string, { lat, long, maxDistance = 50 }: NearPickupPointsArgs) => paths.logisticsConfig(account).pickupPoints(lat, long, maxDistance)
+  }),
+  pickupPoint: httpResolver<LogisticPickupPoint>({
+    headers: withAuthAsVTEXID(headers.json),
+    method: 'GET',
+    url: (account: string, { id }: PickupPointArgs) => paths.logisticsConfig(account).pickupById(id)
+  }),
 }

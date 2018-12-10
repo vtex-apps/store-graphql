@@ -125,6 +125,9 @@
       "name": "POWER_USER_DS"
     },
     {
+      "name": "LogisticsAdmin"
+    },
+    {
       "name": "outbound-access",
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
