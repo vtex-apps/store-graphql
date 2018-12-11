@@ -1,6 +1,7 @@
 import { compose, map, omit, reject, toPairs } from 'ramda'
 
 import { queries as benefitsQueries } from '../benefits'
+import { Slugify as slugify } from './slug'
 
 const objToNameValue = (keyName: string, valueName: string, record: Record<string, any>) => compose(
   reject(value => typeof value === 'boolean' && value === false),
@@ -30,6 +31,8 @@ export const resolvers = {
     benefits: ({productId}, _, ctx) => benefitsQueries.benefits(_, {id: productId}, ctx),
 
     cacheId: ({linkText}) => linkText,
+
+    categories: ({categories}) => Array.isArray(categories) && map(slugify, categories),
 
     clusterHighlights: ({clusterHighlights = {}}) => objToNameValue('id', 'name', clusterHighlights),
 
