@@ -41,12 +41,11 @@ const updateItems = async (items, dataSources) => {
   map(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)), itemsToBeDeleted)
   const itemsUpdated = await Promise.all(await map(async item => {
     const itemId = path(['itemId'], item)
+    validateListItem(items, item, dataSources)
     if (itemId) {
-      validateListItem(items, item, dataSources)
       await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
       return itemId
     } else {
-      validateListItem(items, item, dataSources)
       return await addListItem(item, document)
     }
   }, otherItems))
