@@ -1,6 +1,6 @@
 import { mapKeyValues } from '../../utils/object'
 import ResolverError from '../../errors/resolverError'
-import { map, path, nth, filter } from 'ramda'
+import { map, path, nth, filter, difference } from 'ramda'
 import { validateItems, validateListItem } from './util'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
 
@@ -36,24 +36,20 @@ const addItems = async (items = [], dataSources) => {
 
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
-  const itemsId = await Promise.all(map(async item => {
+  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) == 0, items)
+  const otherItems = difference(items, itemsToBeDeleted)
+  map(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)), itemsToBeDeleted)
+  const itemsUpdated = await Promise.all(await map(async item => {
     const itemId = path(['itemId'], item)
     if (itemId) {
-      if (!path(['quantity'], item)) {
-        await document.deleteDocument(acronymListProduct, itemId)
-        return 'undefined'
-      } else {
-        validateListItem(items, item, dataSources)
-        await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
-        return itemId
-      }
+      validateListItem(items, item, dataSources)
+      await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
+      return itemId
     } else {
       validateListItem(items, item, dataSources)
-      const { DocumentId } = await addListItem(item, document)
-      return DocumentId
+      return await addListItem(item, document)
     }
-  }, items))
-  const itemsUpdated = filter(item => item !== 'undefined', itemsId)
+  }, otherItems))
   return itemsUpdated
 }
 
