@@ -59,9 +59,9 @@ export const queries = {
     return { id, ...list, items }
   },
 
-  listsByOwner: async (_, { owner }, context) => {
+  listsByOwner: async (_, { owner, page, pageSize }, context) => {
     const { dataSources, dataSources: { document } } = context
-    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`)
+    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize})
     const listsWithProducts = map(async list => {
       const items = await getListItems(path(['items'], list), dataSources)
       return { ...list, items }

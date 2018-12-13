@@ -195,6 +195,7 @@ type Query {
   listsByOwner(
     owner: ID!
     page: Int = 1
+    pageSize: Int = 15
   ) : [List]
 }
 

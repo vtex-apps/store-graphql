@@ -11,8 +11,10 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     `${acronym}/documents/${id}?_fields=${fields}`
   )
 
-  public searchDocuments = (acronym, fields, where) => this.get(
-    `${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`
+  public searchDocuments = (acronym, fields, where, { page, pageSize}) => this.get(
+    `${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`,
+    {},
+    { page, pageSize }
   )
 
   public createDocument = (acronym, fields) => this.post(
@@ -28,9 +30,10 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
   )
 
   public willSendRequest(request) {
+    const { vtex, cookie } = this.context
+    const { page, pageSize } = request
     request.headers = {
-      ...withMDPagination()(this.context.vtex, this.context.cookie)
-      (request.page, request.pageSize)
+      ...withMDPagination()(vtex, cookie)(page, pageSize)
     }
   }
 
