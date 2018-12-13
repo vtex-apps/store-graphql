@@ -83,10 +83,8 @@ export const mutation = {
   },
 
   deleteList: async (_, { id }, { dataSources: { document } }) => {
-    const list = await document.getDocument(acronymList, id, fields)
-    map(async itemId => {
-      await document.deleteDocument(acronymListProduct, itemId)
-    }, list.items)
+    const { items } = await document.getDocument(acronymList, id, fields)
+    items.forEach(itemId => document.deleteDocument(acronymListProduct, itemId))
     return document.deleteDocument(acronymList, id)
   },
 
