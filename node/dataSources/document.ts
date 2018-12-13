@@ -1,4 +1,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { withMDPagination } from '../resolvers/headers'
 import { parseFieldsToJson } from '../utils'
 
 export class DocumentDataSource extends RESTDataSource<ServiceContext> {
@@ -27,8 +28,10 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
   )
 
   public willSendRequest(request) {
-    request.headers.set('Authorization', this.context.vtex.authToken)
-    request.headers.set('Accept', 'application/vnd.vtex.ds.v10+json')
+    request.headers = {
+      ...withMDPagination()(this.context.vtex, this.context.cookie)
+      (request.page, request.pageSize)
+    }
   }
 
   get baseURL() {
