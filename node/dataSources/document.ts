@@ -8,21 +8,24 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
   }
 
   public getDocument = (acronym, id, fields) => this.get(
-    `${acronym}/documents/${id}?_fields=${fields}`
+    `${acronym}/documents/${id}`,
+    { _fields: fields }
   )
 
-  public searchDocuments = (acronym, fields, where, { page, pageSize}) => this.get(
-    `${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`,
-    {},
+  public searchDocuments = (acronym, _fields, _where, { page, pageSize}) => this.get(
+    `${acronym}/search`,
+    { _fields, _where },
     { page, pageSize }
   )
 
   public createDocument = (acronym, fields) => this.post(
-    `${acronym}/documents`, parseFieldsToJson(fields)
+    `${acronym}/documents`,
+    parseFieldsToJson(fields)
   )
 
   public updateDocument = (acronym, id, fields) => this.patch(
-    `${acronym}/documents/${id}`, parseFieldsToJson(fields)
+    `${acronym}/documents/${id}`,
+    parseFieldsToJson(fields)
   )
 
   public deleteDocument = (acronym, documentId) => this.delete(
