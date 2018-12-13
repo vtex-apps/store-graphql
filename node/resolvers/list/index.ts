@@ -34,11 +34,14 @@ const addItems = async (items = [], dataSources) => {
   return Promise.all(promises)
 }
 
+const deleteItems = (items, document) => (
+  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)))
+)
+
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) == 0, items)
   const otherItems = difference(items, itemsToBeDeleted)
-  itemsToBeDeleted.forEach(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)))
   const itemsUpdated = await Promise.all(await map(async item => {
     const itemId = path(['itemId'], item)
     validateListItem(items, item, dataSources)
@@ -49,6 +52,7 @@ const updateItems = async (items, dataSources) => {
       return await addListItem(item, document)
     }
   }, otherItems))
+  deleteItems(itemsToBeDeleted, document)
   return itemsUpdated
 }
 
@@ -84,7 +88,7 @@ export const mutation = {
 
   deleteList: async (_, { id }, { dataSources: { document } }) => {
     const { items } = await document.getDocument(acronymList, id, fields)
-    items.forEach(itemId => document.deleteDocument(acronymListProduct, itemId))
+    deleteItems(items, document)
     return document.deleteDocument(acronymList, id)
   },
 
