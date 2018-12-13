@@ -38,7 +38,7 @@ const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) == 0, items)
   const otherItems = difference(items, itemsToBeDeleted)
-  map(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)), itemsToBeDeleted)
+  itemsToBeDeleted.forEach(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)))
   const itemsUpdated = await Promise.all(await map(async item => {
     const itemId = path(['itemId'], item)
     validateListItem(items, item, dataSources)
