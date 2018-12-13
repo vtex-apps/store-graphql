@@ -6,7 +6,7 @@ export const queries = {
   documents: async (_, args, { dataSources: { document } }) => {
     const { acronym, fields, page, pageSize, where } = args
     const fieldsWithId = union(fields, ['id'])
-    const data = await document.searchDocuments(acronym, fieldsWithId, where)
+    const data = await document.searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
     return data.map(document => ({
       cacheId: document.id,
       fields: mapKeyValues(document),
