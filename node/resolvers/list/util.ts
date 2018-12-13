@@ -33,9 +33,7 @@ const validateListItem = (items, item, dataSources) => {
 }
 
 const validateItems = (items = [], dataSources) => {
-  map(item => {
-    validateListItem(items, item, dataSources)
-  }, items)
+  items.forEach(item => validateListItem(items, item, dataSources))
 }
 
 export { validateItems, validateListItem }

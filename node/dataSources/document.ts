@@ -35,8 +35,13 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
   public willSendRequest(request) {
     const { vtex, cookie } = this.context
     const { page, pageSize } = request
-    request.headers = {
-      ...withMDPagination()(vtex, cookie)(page, pageSize)
+    if (page && pageSize) {
+      request.headers = withMDPagination()(vtex, cookie)(page, pageSize)
+    } else {
+      request.headers = {
+        Authorization: this.context.vtex.authToken,
+        Accept: 'application/vnd.vtex.ds.v10+json'
+      }
     }
   }
 
