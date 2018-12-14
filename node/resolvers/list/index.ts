@@ -14,9 +14,8 @@ const getListItemsWithProductInfo = (items, catalog) => Promise.all(
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(itemId => {
-    return document.getDocument(acronymListProduct, itemId, fieldsListProduct)
-  }, itemsId)) : []
+  const items = itemsId ? await Promise.all(map(itemId => 
+    document.getDocument(acronymListProduct, itemId, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
 
@@ -28,9 +27,7 @@ const addListItem = async (item, document) => {
 const addItems = async (items = [], dataSources) => {
   const { document } = dataSources
   validateItems(items, dataSources)
-  const promises = map(async item => {
-    return addListItem(item, document)
-  }, items)
+  const promises = map(async item => addListItem(item, document), items)
   return Promise.all(promises)
 }
 
@@ -48,9 +45,8 @@ const updateItems = async (items, dataSources) => {
     if (itemId) {
       await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
       return itemId
-    } else {
-      return await addListItem(item, document)
     }
+    return await addListItem(item, document)
   }, otherItems))
   deleteItems(itemsToBeDeleted, document)
   return itemsUpdated
