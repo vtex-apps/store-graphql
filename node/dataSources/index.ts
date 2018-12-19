@@ -10,8 +10,6 @@ import { OMSDataSource } from './oms'
 import { PortalDataSource } from './portal'
 import { ProfileDataSource } from './profile'
 import { SessionDataSource } from './session'
-import { SubscriptionsDataSource } from './subscriptions'
-import { SubscriptionsGroupDataSource } from './subscriptionsGroup'
 
 export const dataSources = () => ({
   callcenterOperator: new CallcenterOperatorDataSource(),
@@ -21,11 +19,9 @@ export const dataSources = () => ({
   identity: new IdentityDataSource(),
   licenseManager: new LicenseManagerDataSource(),
   logistics: new LogisticsDataSource(),
-  messages: new Messages(undefined, {metrics}),
+  messages: new Messages(undefined, { metrics }),
   oms: new OMSDataSource(),
   portal: new PortalDataSource(),
-  profile: new ProfileDataSource(undefined, {metrics}),
-  session: new SessionDataSource(),
-  subscriptions: new SubscriptionsDataSource(),
-  subscriptionsGroup: new SubscriptionsGroupDataSource(),
+  profile: new ProfileDataSource(undefined, { metrics }),
+  session: new SessionDataSource()
 })

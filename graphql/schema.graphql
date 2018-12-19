@@ -177,32 +177,6 @@ type Query {
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
 
-  """ Get count of subscriptions by status """
-  subscriptionsCountByStatus(
-    """ Initial date. e.g.: 2018-10-13T00:00:00"""
-    initialDate: String!,
-    """ End date. e.g.: 2018-10-13T00:00:00"""
-    endDate: String!
-  ): SubscriptionsStatusCount  @cacheControl(scope: PRIVATE) @deprecated
-
-  """ Get count of subscriptions by status """
-  subscriptionsOrdersCountByStatus(
-    """ Initial date. e.g.: 2018-10-13T00:00:00"""
-    initialDate: String!,
-    """ End date. e.g.: 2018-10-13T00:00:00"""
-    endDate: String!
-  ): SubscriptionsOrdersStatusCount  @cacheControl(scope: PRIVATE) @deprecated
-
-  """ Get a list of SubscriptionsOrders """
-  listSubscriptionsOrdersByStatus(
-    """ Initial date. e.g.: 2018-10-13T00:00:00"""
-    initialDate: String!,
-    """ End date. e.g.: 2018-10-13T00:00:00"""
-    endDate: String!,
-    """ Subscription Order status, it also can be: ALL, ERROR, SUCCESSFUL."""
-    status: String!
-  ): [SubscriptionsOrder]
-
   """ Get the Wish List informations by the received id """
   list(
     """ The list document id """
@@ -335,9 +309,6 @@ type Mutation {
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
 
-  """ Subscriptions DEPRECATED"""
-  subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean @deprecated
-
   """ List """
   createList(list: ListInput): List
    """ Update the list informations and its items.
@@ -346,4 +317,5 @@ type Mutation {
    Otherwise, update it. """
   updateList(id: ID!, list: ListInput): List
   deleteList(id: ID!): List
+  uploadAttachment(acronym: String!, documentId: ID!, field: String!, file: Upload!): AttachmentResponse
 }
