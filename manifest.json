@@ -9,10 +9,8 @@
     "graphql": "1.x",
     "node": "3.x"
   },
-  "mustUpdateAt": "2017-09-05",
   "scripts": {
-    "prereleasy": "bash lint.sh",
-    "postreleasy": "vtex publish --verbose"
+    "prereleasy": "bash lint.sh"
   },
   "policies": [
     {
