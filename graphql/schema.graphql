@@ -187,14 +187,17 @@ type Query {
 
   """ Get the Wish List informations by the received id """
   list(
-    id: ID,
-    page: Int = 1
+    """ The list document id """
+    id: ID
   ): List
 
   """ Get all lists from the received owner """
   listsByOwner(
+    """ The list's owner id """
     owner: ID!
+    """ The page that will be fetched """
     page: Int = 1
+    """ The page size """
     pageSize: Int = 15
   ) : [List]
 }
