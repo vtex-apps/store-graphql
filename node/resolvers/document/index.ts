@@ -38,10 +38,5 @@ export const mutations = {
     const { acronym, documentId } = args
     await document.deleteDocument(acronym, documentId)
     return { id: documentId }
-  },
-
-  uploadAttachment: async (_, args, { dataSources: document }) => {
-    console.log('document', document)
-    return uploadAttachment(args, document)
   }
 }
