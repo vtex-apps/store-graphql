@@ -51,9 +51,6 @@ const paths = {
   /** Master Data API v1
    * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
    */
-  attachment: (account, acronym, id, field, filename?) => 
-    `http://api.vtex.com/${account}/dataentities/${acronym}/documents/${id}/${field}/attachments${filename ? `/${filename}` : ''}`,
-
   profile: account => ({
     address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
     attachments: (id, field) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}/${field}/attachments`,
