@@ -40,5 +40,8 @@ export const mutations = {
     return { id: documentId }
   },
 
-  uploadAttachment: async (root, args, {vtex: ioContext}, info) => uploadAttachment(args, ioContext)
+  uploadAttachment: async (_, args, { dataSources: document }) => {
+    console.log('document', document)
+    return uploadAttachment(args, document)
+  }
 }

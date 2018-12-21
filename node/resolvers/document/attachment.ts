@@ -1,13 +1,10 @@
 import FormData from 'form-data'
-import fetch from 'node-fetch'
 import ResolverError from '../../errors/resolverError'
-import paths from '../paths'
 
-export const uploadAttachment = async (args, ioContext) => {
-  const {authToken, account} = ioContext
-  const {acronym, documentId, field, file} = args
-
-  const {stream, filename, mimetype} = await file
+export const uploadAttachment = async (args, ctx) => {
+  const { dataSources: { document } } = ctx
+  const { acronym, documentId, field, file } = args
+  const { stream, filename, mimetype } = await file
   const buffer = await new Promise((resolve, reject) => {
     const bufs = []
     stream.on('data', d => bufs.push(d))
@@ -19,21 +16,13 @@ export const uploadAttachment = async (args, ioContext) => {
 
   const formData = new FormData()
 
-  formData.append(field, buffer, {filename, contentType: mimetype, knownLength: buffer.byteLength})
+  formData.append(field, buffer, { filename, contentType: mimetype, knownLength: buffer.byteLength })
 
-  const response = await fetch(paths.attachment(account, acronym, documentId, field), {
-    body: formData,
-    headers: {
-      'Proxy-Authorization': authToken,
-      'VtexIdclientAutCookie': authToken,
-      ...formData.getHeaders(),
-    },
-    method: 'POST',
-  }).then(res => res.text())
+  const response = await document.uploadAttachment(acronym, documentId, field, formData)
 
   if (response) {
     throw new ResolverError(response, 500)
   }
 
-  return {filename, mimetype}
+  return { filename, mimetype }
 }

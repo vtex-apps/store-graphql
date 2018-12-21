@@ -12,7 +12,7 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     { _fields: fields }
   )
 
-  public searchDocuments = (acronym, _fields, _where, { page, pageSize}) => this.get(
+  public searchDocuments = (acronym, _fields, _where, { page, pageSize }) => this.get(
     `${acronym}/search`,
     { _fields, _where },
     { page, pageSize }
@@ -32,11 +32,23 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     `${acronym}/documents/${documentId}`
   )
 
+  public uploadAttachment = (acronym, documentId, fields, formData) => this.post(
+    `${acronym}/documents/${documentId}/${fields}/attachments`,
+    formData,
+    { formData }
+  )
+
   public willSendRequest(request) {
     const { vtex, cookie } = this.context
-    const { page, pageSize } = request
+    const { page, pageSize, formData } = request
     if (page && pageSize) {
       request.headers = withMDPagination()(vtex, cookie)(page, pageSize)
+    } else if (formData) {
+      request.headers = {
+        'Proxy-Authorization': this.context.vtex.authToken,
+        'VtexIdclientAutCookie': this.context.vtex.authToken,
+        ...formData.getHeaders()
+      }
     } else {
       request.headers = {
         Authorization: this.context.vtex.authToken,
