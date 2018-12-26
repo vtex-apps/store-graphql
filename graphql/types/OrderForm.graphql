@@ -76,7 +76,7 @@ input OrderFormItemInput {
   id: Int
   index: Int
   quantity: Int
-  seller: Int
+  seller: ID
 }
 
 input OrderFormAddressInput {
