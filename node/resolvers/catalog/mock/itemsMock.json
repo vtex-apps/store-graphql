@@ -1,0 +1,581 @@
+{  
+  "items":[  
+     {  
+        "additionalInfo":{  
+           "dimension":{  
+              "cubicweight":1,
+              "height":1,
+              "length":1,
+              "weight":1,
+              "width":1
+           },
+           "categoriesIds":"/4/",
+           "productClusterId":"137",
+           "commercialConditionId":"1",
+           "brandName":"Pizza",
+           "brandId":"2000004",
+           "offeringInfo":null,
+           "offeringType":null,
+           "offeringTypeId":null
+        },
+        "sellerSku":"17",
+        "priceTable":null,
+        "priceValidUntil":"2019-12-12T18:01:08.3149595Z",
+        "callCenterOperator":null,
+        "commission":0,
+        "freightCommission":0,
+        "taxCode":"",
+        "uniqueId":"63D1D478FCD54263A5CB5A75634A8A90",
+        "id":"17",
+        "productId":"13",
+        "refId":"1111",
+        "ean":null,
+        "name":"Pepperoni Small",
+        "skuName":"Small",
+        "modalType":null,
+        "parentItemIndex":null,
+        "parentAssemblyBinding":null,
+        "tax":0,
+        "priceDefinitions":{  
+           "listPrice":[  
+              {  
+                 "value":1490,
+                 "quantity":1
+              }
+           ],
+           "price":[  
+              {  
+                 "value":1490,
+                 "quantity":1
+              }
+           ],
+           "sellingPrice":[  
+              {  
+                 "value":1490,
+                 "quantity":1
+              }
+           ]
+        },
+        "price":1490,
+        "listPrice":1490,
+        "manualPrice":null,
+        "sellingPrice":1490,
+        "orderRewardStatus":"invoiced",
+        "rewardValue":0,
+        "isGift":false,
+        "preSaleDate":null,
+        "productCategoryIds":"/4/",
+        "productCategories":{  
+           "4":"Pizzas"
+        },
+        "quantity":1,
+        "seller":"1",
+        "sellerChain":[  
+           "1"
+        ],
+        "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155439-55-55/pepperoni-feast.0e1c4c9e7b8900d08cc51ff285fd9ae3.1.jpg?v=636770441237070000",
+        "detailUrl":"/pizza-pepperoni/p",
+        "components":[  
+
+        ],
+        "bundleItems":[  
+
+        ],
+        "attachments":[  
+
+        ],
+        "attachmentOfferings":[  
+
+        ],
+        "offerings":[  
+
+        ],
+        "priceTags":[  
+
+        ],
+        "availability":"available",
+        "measurementUnit":"un",
+        "unitMultiplier":1
+     },
+     {  
+        "additionalInfo":{  
+           "dimension":{  
+              "cubicweight":1,
+              "height":1,
+              "length":1,
+              "weight":1,
+              "width":1
+           },
+           "categoriesIds":"/4/7/",
+           "productClusterId":"137",
+           "commercialConditionId":"1",
+           "brandName":"Pizza",
+           "brandId":"2000004",
+           "offeringInfo":null,
+           "offeringType":null,
+           "offeringTypeId":null
+        },
+        "sellerSku":"14",
+        "priceTable":"small",
+        "priceValidUntil":"2019-12-12T18:01:08.3149595Z",
+        "callCenterOperator":null,
+        "commission":0,
+        "freightCommission":0,
+        "taxCode":"",
+        "uniqueId":"E569EA554E754EA78BDF1FEB51E1E14C",
+        "id":"14",
+        "productId":"12",
+        "refId":"14",
+        "ean":null,
+        "name":"Classic Crust",
+        "skuName":"Classic Crust",
+        "modalType":null,
+        "parentItemIndex":0,
+        "parentAssemblyBinding":"Pepperoni - Small_Crust",
+        "tax":0,
+        "priceDefinitions":{  
+           "listPrice":[  
+              {  
+                 "value":1490,
+                 "quantity":1
+              }
+           ],
+           "price":[  
+              {  
+                 "value":1490,
+                 "quantity":1
+              }
+           ],
+           "sellingPrice":[  
+              {  
+                 "value":1490,
+                 "quantity":1
+              }
+           ]
+        },
+        "price":1490,
+        "listPrice":1490,
+        "manualPrice":null,
+        "sellingPrice":1490,
+        "orderRewardStatus":"invoiced",
+        "rewardValue":0,
+        "isGift":false,
+        "preSaleDate":null,
+        "productCategoryIds":"/4/7/",
+        "productCategories":{  
+           "4":"Pizzas",
+           "7":"Crust"
+        },
+        "quantity":1,
+        "seller":"1",
+        "sellerChain":[  
+           "1"
+        ],
+        "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155413-55-55/classic.png?v=636759866429100000",
+        "detailUrl":"/classic-crust/p",
+        "components":[  
+
+        ],
+        "bundleItems":[  
+
+        ],
+        "attachments":[  
+
+        ],
+        "attachmentOfferings":[  
+
+        ],
+        "offerings":[  
+
+        ],
+        "priceTags":[  
+
+        ],
+        "availability":"available",
+        "measurementUnit":"un",
+        "unitMultiplier":1
+     },
+     {  
+        "additionalInfo":{  
+           "dimension":{  
+              "cubicweight":1,
+              "height":1,
+              "length":1,
+              "weight":1,
+              "width":1
+           },
+           "categoriesIds":"/4/6/",
+           "productClusterId":"137",
+           "commercialConditionId":"1",
+           "brandName":"Pizza",
+           "brandId":"2000004",
+           "offeringInfo":null,
+           "offeringType":null,
+           "offeringTypeId":null
+        },
+        "sellerSku":"9",
+        "priceTable":"basic",
+        "priceValidUntil":"2019-12-12T18:01:08.3149595Z",
+        "callCenterOperator":null,
+        "commission":0,
+        "freightCommission":0,
+        "taxCode":"",
+        "uniqueId":"59E1B1B5E767465298420E212C91A250",
+        "id":"9",
+        "productId":"7",
+        "refId":"3",
+        "ean":null,
+        "name":"Pepperoni",
+        "skuName":"Pepperoni",
+        "modalType":null,
+        "parentItemIndex":0,
+        "parentAssemblyBinding":"Pepperoni - Small_Basic Toppings",
+        "tax":0,
+        "priceDefinitions":{  
+           "listPrice":[  
+              {  
+                 "value":0,
+                 "quantity":1
+              }
+           ],
+           "price":[  
+              {  
+                 "value":0,
+                 "quantity":1
+              }
+           ],
+           "sellingPrice":[  
+              {  
+                 "value":0,
+                 "quantity":1
+              }
+           ]
+        },
+        "price":0,
+        "listPrice":0,
+        "manualPrice":null,
+        "sellingPrice":0,
+        "orderRewardStatus":"invoiced",
+        "rewardValue":0,
+        "isGift":false,
+        "preSaleDate":null,
+        "productCategoryIds":"/4/6/",
+        "productCategories":{  
+           "4":"Pizzas",
+           "6":"Toppings"
+        },
+        "quantity":1,
+        "seller":"1",
+        "sellerChain":[  
+           "1"
+        ],
+        "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155428-55-55/Topping_Pepperoni.jpg.png?v=636766047561270000",
+        "detailUrl":"/pepperoni/p",
+        "components":[  
+
+        ],
+        "bundleItems":[  
+
+        ],
+        "attachments":[  
+
+        ],
+        "attachmentOfferings":[  
+
+        ],
+        "offerings":[  
+
+        ],
+        "priceTags":[  
+
+        ],
+        "availability":"available",
+        "measurementUnit":"un",
+        "unitMultiplier":1
+     }
+  ],
+  "sellers":[  ],
+  "giftRegistryData":null,
+  "receiptData":{  },
+  "contextData":{  
+     "loggedIn":false,
+     "hasAccessToOrderFormEnabledByLicenseManager":false,
+     "userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36",
+     "userId":""
+  },
+  "marketPlaceOrderId":"",
+  "marketPlaceOrderGroup":null,
+  "marketplaceServicesEndpoint":null,
+  "orderFormId":"e512a5d7681a4fdcb5094bfc0c79e5e5",
+  "sequence":"500170",
+  "affiliateId":"",
+  "status":"",
+  "callCenterOperator":"",
+  "userProfileId":"76428d54-a18e-40f3-92d8-3c599474353a",
+  "hostName":"delivery",
+  "creationVersion":"2.155.18.3152",
+  "creationEnvironment":"BETA",
+  "lastChangeVersion":"2.155.18.3152",
+  "workflowInstanceId":"B6422F3E7EB344A1A872B3FB5DDA39E3",
+  "marketplacePaymentValue":null,
+  "orderId":"882980123840-01",
+  "orderGroup":"882980123840",
+  "state":"on-order-completed",
+  "isCheckedIn":false,
+  "sellerOrderId":"00-882980123840-01",
+  "storeId":null,
+  "checkedInPickupPointId":null,
+  "value":2980,
+  "totals":[  ],
+  "clientProfileData":{  },
+  "ratesAndBenefitsData":{  },
+  "shippingData":{  },
+  "paymentData":{  },
+  "clientPreferencesData":{  },
+  "commercialConditionData":null,
+  "marketingData":null,
+  "storePreferencesData":{  },
+  "openTextField":null,
+  "invoiceData":null,
+  "itemMetadata":{  
+     "items":[  
+        {  
+           "id":"17",
+           "name":"Pepperoni Small",
+           "skuName":"Small",
+           "productId":"13",
+           "refId":"1111",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155439-55-55/pepperoni-feast.0e1c4c9e7b8900d08cc51ff285fd9ae3.1.jpg?v=636770441237070000",
+           "detailUrl":"/pizza-pepperoni/p",
+           "assemblyOptions":[  
+              {  
+                 "id":"Pepperoni - Small_Crust",
+                 "name":"Pepperoni - Small",
+                 "required":true,
+                 "inputValues":{  
+
+                 },
+                 "composition":{  
+                    "minQuantity":1,
+                    "maxQuantity":1,
+                    "items":[  
+                       {  
+                          "id":"14",
+                          "minQuantity":1,
+                          "maxQuantity":1,
+                          "priceTable":"small"
+                       }
+                    ]
+                 }
+              },
+              {  
+                 "id":"Pepperoni - Small_Toppings",
+                 "name":"Pepperoni - Small",
+                 "required":true,
+                 "inputValues":{  
+
+                 },
+                 "composition":{  
+                    "minQuantity":0,
+                    "maxQuantity":10,
+                    "items":[  
+                       {  
+                          "id":"8",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       },
+                       {  
+                          "id":"9",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       },
+                       {  
+                          "id":"10",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       },
+                       {  
+                          "id":"11",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       },
+                       {  
+                          "id":"36",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       },
+                       {  
+                          "id":"37",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       },
+                       {  
+                          "id":"38",
+                          "minQuantity":0,
+                          "maxQuantity":3,
+                          "priceTable":"small"
+                       }
+                    ]
+                 }
+              },
+              {  
+                 "id":"Pepperoni - Small_Basic Toppings",
+                 "name":"Pepperoni - Small",
+                 "required":true,
+                 "inputValues":{  
+
+                 },
+                 "composition":{  
+                    "minQuantity":1,
+                    "maxQuantity":2,
+                    "items":[  
+                       {  
+                          "id":"9",
+                          "minQuantity":1,
+                          "maxQuantity":1,
+                          "priceTable":"basic"
+                       },
+                       {  
+                          "id":"11",
+                          "minQuantity":0,
+                          "maxQuantity":1,
+                          "priceTable":"basic"
+                       }
+                    ]
+                 }
+              }
+           ]
+        },
+        {  
+           "id":"14",
+           "name":"Classic Crust",
+           "skuName":"Classic Crust",
+           "productId":"12",
+           "refId":"14",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155413-55-55/classic.png?v=636759866429100000",
+           "detailUrl":"/classic-crust/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"8",
+           "name":"Ham",
+           "skuName":"Ham",
+           "productId":"6",
+           "refId":"2",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155432-55-55/Topping_Jamon.jpg.png?v=636766052579200000",
+           "detailUrl":"/ham/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"9",
+           "name":"Pepperoni",
+           "skuName":"Pepperoni",
+           "productId":"7",
+           "refId":"3",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155428-55-55/Topping_Pepperoni.jpg.png?v=636766047561270000",
+           "detailUrl":"/pepperoni/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"10",
+           "name":"Champignon",
+           "skuName":"Champignon",
+           "productId":"8",
+           "refId":"4",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155436-55-55/Topping_Champinones.png?v=636766057405600000",
+           "detailUrl":"/champignon/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"11",
+           "name":"Onion",
+           "skuName":"Onion",
+           "productId":"9",
+           "refId":"5",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155427-55-55/Topping_Cebolla.jpg.png?v=636766046799500000",
+           "detailUrl":"/onion/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"36",
+           "name":"Black Olives",
+           "skuName":"Black Olives",
+           "productId":"23",
+           "refId":"151113",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155430-55-55/Topping_Aceitunas-Negras.jpg.png?v=636766049376970000",
+           "detailUrl":"/black-olives/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"37",
+           "name":"Green Pepper",
+           "skuName":"Green Pepper",
+           "productId":"24",
+           "refId":"123123",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155431-55-55/PIMIENTO-VERDE.png?v=636766050771230000",
+           "detailUrl":"/green-pepper/p",
+           "assemblyOptions":[  
+
+           ]
+        },
+        {  
+           "id":"38",
+           "name":"Pineapple",
+           "skuName":"Pineapple",
+           "productId":"25",
+           "refId":"121211",
+           "ean":null,
+           "imageUrl":"http://delivery.vteximg.com.br/arquivos/ids/155435-55-55/Topping_Pina.jpg.png?v=636766056177370000",
+           "detailUrl":"/pineapple/p",
+           "assemblyOptions":[  
+
+           ]
+        }
+     ]
+  },
+  "taxData":null,
+  "customData":null,
+  "hooksData":null,
+  "changeData":null,
+  "subscriptionData":null,
+  "salesChannel":"1",
+  "followUpEmail":"b9d92e2fd6b1447385c14d836594ae4d@ct.vtex.com.br",
+  "creationDate":"2018-12-12T18:02:18.0240352Z",
+  "lastChange":"2018-12-12T18:02:30.1917395Z",
+  "timeZoneCreationDate":"2018-12-12T16:02:18.0240352",
+  "timeZoneLastChange":"2018-12-12T16:02:30.1917395",
+  "isCompleted":true,
+  "merchantName":null,
+  "userType":"",
+  "roundingError":0,
+  "allowEdition":false,
+  "allowCancellation":true,
+  "isUserDataVisible":false,
+  "allowChangeSeller":false
+}

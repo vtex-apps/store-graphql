@@ -3,7 +3,7 @@ import axios from 'axios'
 import * as qs from 'qs'
 import { keys } from 'ramda'
 
-const TIMEOUT_MS = 7 * 1000
+const TIMEOUT_MS = 60 * 1000
 const MAX_AGE_S = 30
 const STALE_IF_ERROR_S = 20 * 60
 

@@ -195,3 +195,9 @@ type Reference {
   Key: String
   Value: String
 }
+
+input AssemblyOptionInput {
+  id: String!
+  quantity: Int!
+  type: String!
+}

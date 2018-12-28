@@ -241,6 +241,7 @@ type Mutation {
   updateOrderFormIgnoreProfile(orderFormId: String, ignoreProfileData: Boolean): OrderForm
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
+  addAssemblyOptions(orderFormId: String, itemId: String, assemblyOptionsId: String, options: [AssemblyOptionInput]): OrderForm
 
   """ Payment """
   createPaymentSession: PaymentSession
