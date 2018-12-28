@@ -4,6 +4,7 @@ import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
+import { addOptionsForItems } from './attachmentsHelper'
 import paymentTokenResolver from './paymentTokenResolver'
 
 import { queries as sessionQueries } from '../session'
@@ -100,7 +101,12 @@ export const mutations: Record<string, Resolver> = {
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
     }
 
-    return await checkout.addItem(orderFormId, items)
+    const cleanItems = items.map(({ options, assemblyOptionPreffix, ...rest }) => rest)
+  
+    const addItem = await checkout.addItem(orderFormId, cleanItems)
+
+    await addOptionsForItems(items, checkout, addItem)
+    return addItem
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
@@ -155,5 +161,15 @@ export const mutations: Record<string, Resolver> = {
 
     const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
     return syncedOrderForm
+  },
+
+  addAssemblyOptions: async (root, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
+    const body = {
+      composition: {
+        items: options,
+      },
+      noSplitItem: true,
+    }
+    return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
   }
 }

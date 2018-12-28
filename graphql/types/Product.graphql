@@ -39,6 +39,7 @@ type Product {
   jsonSpecifications: String
   """ List of benefits associated with this product """
   benefits: [Benefit]
+  itemMetadata: ItemMetadata
 }
 
 type OnlyProduct {
@@ -193,4 +194,10 @@ type Installment {
 type Reference {
   Key: String
   Value: String
+}
+
+input AssemblyOptionInput {
+  id: String!
+  quantity: Int!
+  type: String!
 }

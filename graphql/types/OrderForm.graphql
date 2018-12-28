@@ -17,6 +17,7 @@ type OrderForm {
   clientProfileData: ClientProfile
   shippingData: OrderFormShippingData
   storePreferencesData: StorePreferencesData
+  itemMetadata: ItemMetadata
 }
 
 type StorePreferencesData {
@@ -52,6 +53,58 @@ type OrderFormItem {
   sellingPrice: Float
   rewardValue: Int
   isGift: Boolean
+  parentItemIndex: Int
+  parentAssemblyBinding: String
+}
+
+type ItemMetadata {
+  items: [ItemMetadataUnit]
+  priceTable: [ItemPriceTable]
+}
+
+type ItemPriceTable {
+  type: String
+  values: [PriceTableItem]
+}
+
+type PriceTableItem {
+  id: String
+  price: Int
+  priceTable: String
+}
+
+type ItemMetadataUnit {
+  id: ID
+  name: String
+  skuName: String
+  productId: String
+  refId: String
+  ean: String
+  imageUrl: String
+  detailUrl: String
+  assemblyOptions: [AssemblyOption]
+}
+
+type AssemblyOption {
+  id: String
+  name: String
+  required: Boolean
+  inputValues: String
+  composition: CompositionType
+}
+
+type CompositionType {
+  minQuantity: Int
+  maxQuantity: Int
+  items: [CompositionItem]
+}
+
+type CompositionItem {
+  id: String
+  minQuantity: Int
+  maxQuantity: Int
+  priceTable: String
+  price: Int
 }
 
 type Totalizer {
@@ -86,6 +139,8 @@ input OrderFormItemInput {
   index: Int
   quantity: Int
   seller: ID
+  options: [AssemblyOptionInput]
+  assemblyOptionPreffix: String
 }
 
 input OrderFormAddressInput {
