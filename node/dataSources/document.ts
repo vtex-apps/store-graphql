@@ -18,10 +18,10 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     { _fields: fields }
   )
 
-  public searchDocuments = (acronym: string, fields: string[], where: string, { page, pageSize }: PaginationArgs) => this.get(
+  public searchDocuments = (acronym: string, fields: string[], where: string, pagination: PaginationArgs) => this.get(
     `${acronym}/search`,
     { _fields: fields, _where: where },
-    { headers: { page, pageSize } }
+    { headers: { ...pagination } }
   )
 
   public createDocument = (acronym: string, fields: string[]) => this.post(
@@ -50,7 +50,7 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     const pageSize = request.headers.get('pageSize')
     const formDataHeaders = request.headers.get('formDataHeaders')
     if (page && pageSize) {
-      request.headers = withMDPagination()(vtex, cookie)(page, pageSize)
+      request.headers = withMDPagination()(vtex, cookie)(+page, +pageSize)
     } else if (formDataHeaders) {
       request.headers = {
         'Proxy-Authorization': this.context.vtex.authToken,
