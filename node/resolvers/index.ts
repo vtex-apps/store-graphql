@@ -3,6 +3,7 @@ import { fieldResolvers as benefitsFieldResolvers, queries as benefitsQueries } 
 import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } from './catalog'
 import { fieldResolvers as checkoutFieldResolvers, mutations as checkoutMutations, queries as checkoutQueries } from './checkout'
 import { mutations as documentMutations, queries as documentQueries } from './document'
+import { mutation as listMutations, queries as listQueries } from './list'
 import { queries as logisticsQueries } from './logistics'
 import { mutations as profileMutations, queries as profileQueries, rootResolvers as profileRootResolvers } from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
@@ -23,7 +24,8 @@ export const resolvers = {
     ...authMutations,
     ...documentMutations,
     ...sessionMutations,
-    ...subscriptionsMutations
+    ...subscriptionsMutations,
+    ...listMutations,
   },
   Query: {
     ...catalogQueries,
@@ -35,5 +37,6 @@ export const resolvers = {
     ...logisticsQueries,
     ...sessionQueries,
     ...subscriptionsQueries,
+    ...listQueries,
   },
 }

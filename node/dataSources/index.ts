@@ -1,6 +1,7 @@
 import { LRUCache } from '@vtex/api'
 import { CatalogDataSource } from './catalog'
 import { CheckoutDataSource } from './checkout'
+import { DocumentDataSource } from './document'
 import { PortalDataSource } from './portal'
 import { SessionDataSource } from './session'
 import { SubscriptionsDataSource } from './subscriptions'
@@ -11,6 +12,7 @@ const TEN_SECONDS_MS = 10 * 1000
 export const dataSources = () => ({
   catalog: new CatalogDataSource(),
   checkout: new CheckoutDataSource(),
+  document: new DocumentDataSource(),
   portal: new PortalDataSource(),
   session: new SessionDataSource(),
   subscriptions: new SubscriptionsDataSource(),
