@@ -1,4 +1,4 @@
-import { filter, map, path } from 'ramda'
+import { filter, path } from 'ramda'
 
 export const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
 export const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
@@ -7,7 +7,7 @@ export const acronymList = 'WL'
 
 const checkListItemQuantity = quantity => {
   if (!quantity || quantity < 0) {
-    throw 'The item quantity should be greater than 0'
+    throw new Error('The item quantity should be greater than 0')
   }
 }
 
@@ -15,13 +15,15 @@ const checkListItemQuantity = quantity => {
 // If it isn't, it throws an exception.
 const checkProduct = async (item, catalog) => {
   const response = await catalog.productBySku([path(['skuId'], item)])
-  if (!response.length) throw 'Cannot add an invalid product'
+  if (!response.length) {
+    throw new Error('Cannot add an invalid product')
+  }
 }
 
 const checkDuplicatedListItem = (items, item) => {
   const itemDuplicated = filter(i => path(['skuId'], i) === path(['skuId'], item), items)
   if (itemDuplicated.length > 1) {
-    throw 'Cannot add duplicated items.'
+    throw new Error('Cannot add duplicated items.')
   }
 }
 

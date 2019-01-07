@@ -1,7 +1,7 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
 import FormData from 'form-data'
-import { parseFieldsToJson } from '../utils'
 import { withMDPagination } from '../resolvers/headers'
+import { parseFieldsToJson } from '../utils'
 
 interface PaginationArgs {
   page: string,
@@ -18,9 +18,9 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
     { _fields: fields }
   )
 
-  public searchDocuments = (acronym: string, _fields: string[], _where: string, { page, pageSize }: PaginationArgs) => this.get(
+  public searchDocuments = (acronym: string, fields: string[], where: string, { page, pageSize }: PaginationArgs) => this.get(
     `${acronym}/search`,
-    { _fields, _where },
+    { _fields: fields, _where: where },
     { headers: { page, pageSize } }
   )
 
@@ -59,8 +59,8 @@ export class DocumentDataSource extends RESTDataSource<ServiceContext> {
       }
     } else {
       request.headers = {
-        Authorization: this.context.vtex.authToken,
-        Accept: 'application/vnd.vtex.ds.v10+json'
+        Accept: 'application/vnd.vtex.ds.v10+json',
+        Authorization: this.context.vtex.authToken
       }
     }
   }

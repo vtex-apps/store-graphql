@@ -1,6 +1,6 @@
-import { mapKeyValues } from '../../utils/object'
+import { difference, filter, map, nth, path } from 'ramda'
 import ResolverError from '../../errors/resolverError'
-import { map, path, nth, filter, difference } from 'ramda'
+import { mapKeyValues } from '../../utils/object'
 import { validateItems, validateListItem } from './util'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
 
@@ -37,9 +37,9 @@ const deleteItems = (items, document) => (
 
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
-  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) == 0, items)
+  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) === 0, items)
   const otherItems = difference(items, itemsToBeDeleted)
-  const itemsUpdated = await Promise.all(await map(async item => {
+  const itemsUpdated = await map(async item => {
     const itemId = path(['itemId'], item)
     validateListItem(items, item, dataSources)
     if (itemId) {
@@ -47,7 +47,7 @@ const updateItems = async (items, dataSources) => {
       return itemId
     }
     return await addListItem(item, document)
-  }, otherItems))
+  }, otherItems)
   deleteItems(itemsToBeDeleted, document)
   return itemsUpdated
 }
