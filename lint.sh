@@ -1,3 +1,2 @@
 #!/bin/bash
-cd node/
-yarn lint
+yarn --cwd node lint

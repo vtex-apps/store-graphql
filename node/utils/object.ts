@@ -1,4 +1,4 @@
-import { adjust, curry, fromPairs, map, pipe, toPairs } from 'ramda'
+import { adjust, curry, fromPairs, map, mergeAll, pipe, toPairs, zipObj } from 'ramda'
 
 /**
  * Creates a new object with the own properties of the provided object, but the
@@ -25,4 +25,20 @@ const renameKeysWith = curry((func, object) =>
   )(object)
 )
 
-export { renameKeysWith }
+/**
+ * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
+ */
+const mapKeyValues = document => Object.keys(document).map(key => ({
+  key,
+  value: document[key],
+}))
+
+/*
+ * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
+ * to a JSON format.
+ */
+const parseFieldsToJson = fields => mergeAll(
+  fields.map(field => zipObj([field.key], [field.value])),
+)
+
+export { renameKeysWith, mapKeyValues, parseFieldsToJson }

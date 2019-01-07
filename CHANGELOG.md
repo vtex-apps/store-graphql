@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.43.0] - 2019-01-07
+### Added
+- Add product list resolver.
+
 ## [2.42.0] - 2018-12-26
 ### Fixed
 - Fix `seller` field type on OrderFormInput to accept strings as valid values

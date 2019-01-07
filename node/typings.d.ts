@@ -4,6 +4,7 @@ import { Context as KoaContext } from 'koa'
 import { dataSources } from './dataSources'
 import { CatalogDataSource } from './dataSources/catalog'
 import { CheckoutDataSource } from './dataSources/checkout'
+import { DocumentDataSource } from './dataSources/document'
 import { PortalDataSource } from './dataSources/portal'
 import { SessionDataSource } from './dataSources/session'
 
@@ -25,11 +26,13 @@ declare global {
     vtex: IOContext
     dataSources: StoreGraphQLDataSources
     originalPath: string
+    cookie: string
   }
 
   interface StoreGraphQLDataSources {
     catalog: CatalogDataSource
     checkout: CheckoutDataSource
+    document: DocumentDataSource
     portal: PortalDataSource
     session: SessionDataSource
   }
