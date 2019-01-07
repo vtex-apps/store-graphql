@@ -1,5 +1,4 @@
 import { union } from 'ramda'
-import { uploadAttachment } from './attachment'
 import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
@@ -7,10 +6,10 @@ export const queries = {
     const { acronym, fields, page, pageSize, where } = args
     const fieldsWithId = union(fields, ['id'])
     const data = await document.searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
-    return data.map(document => ({
-      cacheId: document.id,
-      fields: mapKeyValues(document),
-      id: document.id,
+    return data.map(doc => ({
+      cacheId: doc.id,
+      fields: mapKeyValues(doc),
+      id: doc.id,
     }))
   },
 

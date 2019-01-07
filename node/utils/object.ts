@@ -1,4 +1,4 @@
-import { adjust, curry, fromPairs, map, pipe, toPairs, mergeAll, zipObj } from 'ramda'
+import { adjust, curry, fromPairs, map, mergeAll, pipe, toPairs, zipObj } from 'ramda'
 
 /**
  * Creates a new object with the own properties of the provided object, but the
