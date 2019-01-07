@@ -1,53 +1,61 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { withMDPagination } from '../resolvers/headers'
+import FormData from 'form-data'
 import { parseFieldsToJson } from '../utils'
+import { withMDPagination } from '../resolvers/headers'
+
+interface PaginationArgs {
+  page: string,
+  pageSize: string
+}
 
 export class DocumentDataSource extends RESTDataSource<ServiceContext> {
   constructor() {
     super()
   }
 
-  public getDocument = (acronym, id, fields) => this.get(
+  public getDocument = (acronym: string, id: string, fields: string[]) => this.get(
     `${acronym}/documents/${id}`,
     { _fields: fields }
   )
 
-  public searchDocuments = (acronym, _fields, _where, { page, pageSize }) => this.get(
+  public searchDocuments = (acronym: string, _fields: string[], _where: string, { page, pageSize }: PaginationArgs) => this.get(
     `${acronym}/search`,
     { _fields, _where },
-    { page, pageSize }
+    { headers: { page, pageSize } }
   )
 
-  public createDocument = (acronym, fields) => this.post(
+  public createDocument = (acronym: string, fields: string[]) => this.post(
     `${acronym}/documents`,
     parseFieldsToJson(fields)
   )
 
-  public updateDocument = (acronym, id, fields) => this.patch(
+  public updateDocument = (acronym: string, id: string, fields: string[]) => this.patch(
     `${acronym}/documents/${id}`,
     parseFieldsToJson(fields)
   )
 
-  public deleteDocument = (acronym, documentId) => this.delete(
+  public deleteDocument = (acronym: string, documentId: string) => this.delete(
     `${acronym}/documents/${documentId}`
   )
 
-  public uploadAttachment = (acronym, documentId, fields, formData) => this.post(
+  public uploadAttachment = (acronym: string, documentId: string, fields: string, formData: FormData) => this.post(
     `${acronym}/documents/${documentId}/${fields}/attachments`,
     formData,
-    { formData }
+    { headers: { formDataHeaders: { ...formData.getHeaders() } } }
   )
 
   public willSendRequest(request) {
     const { vtex, cookie } = this.context
-    const { page, pageSize, formData } = request
+    const page = request.headers.get('page')
+    const pageSize = request.headers.get('pageSize')
+    const formDataHeaders = request.headers.get('formDataHeaders')
     if (page && pageSize) {
       request.headers = withMDPagination()(vtex, cookie)(page, pageSize)
-    } else if (formData) {
+    } else if (formDataHeaders) {
       request.headers = {
         'Proxy-Authorization': this.context.vtex.authToken,
         'VtexIdclientAutCookie': this.context.vtex.authToken,
-        ...formData.getHeaders()
+        ...formDataHeaders
       }
     } else {
       request.headers = {
