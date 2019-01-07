@@ -26,6 +26,7 @@ declare global {
     vtex: IOContext
     dataSources: StoreGraphQLDataSources
     originalPath: string
+    cookie: string
   }
 
   interface StoreGraphQLDataSources {
