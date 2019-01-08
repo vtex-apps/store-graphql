@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.43.1] - 2019-01-08
+### Changed
+- Using IO/CI for releasing this repo
+
 ## [2.43.0] - 2019-01-07
 ### Added
 - Add product list resolver.
