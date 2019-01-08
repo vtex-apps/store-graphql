@@ -10,7 +10,10 @@ const prepare = (handler) => async (ctx: Context) => {
   try {
     await handler(ctx)
   } catch (err) {
+    console.log('Error in proxy', err)
     const logger = new Logger(ctx.vtex)
+
+    ctx.set('Cache-Control', 'no-cache, no-store')
 
     if (err.code && err.message && err.status) {
       ctx.status = err.status
