@@ -1,5 +1,4 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed } from 'ramda'
+import { OutboundDataSource, withOutboundAuth, withSegment, withTimeout } from '@vtex/api'
 
 const DEFAULT_TIMEOUT_MS = 5 * 1000
 
@@ -17,32 +16,17 @@ export interface SegmentData {
   cultureInfo: string
 }
 
-export class SessionDataSource extends RESTDataSource<ServiceContext> {
-  constructor() {
-    super()
-  }
+export class SessionDataSource extends OutboundDataSource<Context> {
+  protected modifiers = [
+    withTimeout(DEFAULT_TIMEOUT_MS),
+    withOutboundAuth,
+    withSegment,
+  ]
 
-  public getSegmentData = () => this.get<SegmentData>('/segments')
+  public getSegmentData = async () => this.get<SegmentData>('/segments')
 
   get baseURL() {
     const {vtex: {account}} = this.context
     return `http://${account}.vtexcommercestable.com.br/api`
-  }
-
-  protected willSendRequest (request: RequestOptions) {
-    const {cookies, vtex: {authToken}} = this.context
-    const segment = cookies.get('vtex_segment')
-
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-        'Proxy-Authorization': authToken,
-      }
-    )
   }
 }

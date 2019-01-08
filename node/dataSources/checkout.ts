@@ -1,5 +1,5 @@
-import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed } from 'ramda'
+import { forward, OutboundDataSource, useHttps, withAuth, withCookies, withHeader, withOutboundAuth, withTimeout } from '@vtex/api'
+import { Request, Response } from 'apollo-datasource-rest'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
@@ -19,9 +19,21 @@ const isWhitelistedSetCookie = (cookie: string) => {
   return SetCookieWhitelist.includes(key)
 }
 
-export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
-  constructor() {
-    super()
+export class CheckoutDataSource extends OutboundDataSource<Context> {
+  protected modifiers = [
+    withAuth,
+    withOutboundAuth,
+    withCookies,
+    useHttps,
+    withHeader('Content-Type', 'application/json'),
+    withHeader('Accept', 'application/json'),
+    withTimeout(DEFAULT_TIMEOUT_MS),
+    forward('x-forwarded-host')
+  ]
+
+  get baseURL() {
+    const {vtex: {account}} = this.context
+    return `http://${account}.vtexcommercestable.com.br/api/checkout`
   }
 
   public addItem = (orderFormId: string, items: any) => this.post(
@@ -93,11 +105,6 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
     simulation,
   )
 
-  get baseURL() {
-    const {vtex: {account}} = this.context
-    return `http://${account}.vtexcommercestable.com.br/api/checkout`
-  }
-
   protected async didReceiveResponse (response: Response, request: Request) {
     const result = await super.didReceiveResponse(response, request)
 
@@ -109,26 +116,5 @@ export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
     }
 
     return result
-  }
-
-  protected willSendRequest (request: RequestOptions) {
-    const {vtex: {account, authToken}, headers} = this.context
-
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        Accept: 'application/json',
-        Authorization: authToken,
-        'Content-Type': 'application/json',
-        'Cookie': headers.cookie,
-        Host: headers['x-forwarded-host'],
-        'Proxy-Authorization': authToken,
-        'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
-      }
-    )
   }
 }

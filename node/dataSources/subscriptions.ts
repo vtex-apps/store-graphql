@@ -1,5 +1,4 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed } from 'ramda'
+import { OutboundDataSource, useHttps, withAuth, withLegacyAppAuth, withOutboundAuth } from '@vtex/api'
 
 interface AggregationsArgs {
   schema: string
@@ -15,7 +14,14 @@ interface SubscriptionsOrdersArgs {
   fields: string
 }
 
-export class SubscriptionsDataSource extends RESTDataSource<ServiceContext> {
+export class SubscriptionsDataSource extends OutboundDataSource<Context> {
+  protected modifiers = [
+    withAuth,
+    withOutboundAuth,
+    withLegacyAppAuth,
+    useHttps,
+  ]
+
   public subscriptionsAggregations = ({ schema, where, field, type, interval }: AggregationsArgs) => {
     const { vtex: { account } } = this.context
 
@@ -40,18 +46,5 @@ export class SubscriptionsDataSource extends RESTDataSource<ServiceContext> {
 
   get baseURL() {
     return `http://api.vtex.com/api/dataentities`
-  }
-
-  protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken } } = this.context
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        'Proxy-Authorization': authToken,
-        'VtexIdclientAutCookie': authToken,
-        'X-Vtex-Proxy-To': `https://api.vtex.com`,
-      }
-    )
   }
 }

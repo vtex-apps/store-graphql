@@ -1,4 +1,5 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { OutboundDataSource, withAuth, withHeader, withSegment, withTimeout } from '@vtex/api'
+import { RequestOptions } from 'apollo-datasource-rest'
 import http from 'axios'
 import { forEachObjIndexed } from 'ramda'
 
@@ -22,10 +23,13 @@ interface ProductsArgs {
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<ServiceContext> {
-  constructor() {
-    super()
-  }
+export class CatalogDataSource extends OutboundDataSource<Context> {
+  protected modifiers = [
+    withAuth,
+    withHeader('Accept-Encoding', 'gzip'),
+    withSegment,
+    withTimeout(DEFAULT_TIMEOUT_MS),
+  ]
 
   public product = (slug: string) => this.get(
     `/pub/products/search/${slug && slug.toLowerCase()}/p`
@@ -95,14 +99,10 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
   }
 
   protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken, production}, cookies} = this.context
+    const {vtex: {production}, cookies} = this.context
     const segment = cookies.get('vtex_segment')
     const [appMajorNumber] = process.env.VTEX_APP_VERSION.split('.')
     const appMajor = `${appMajorNumber}.x`
-
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
 
     forEachObjIndexed(
       (value: string, param: string) => request.params.set(param, value),
@@ -110,15 +110,6 @@ export class CatalogDataSource extends RESTDataSource<ServiceContext> {
         '__v': appMajor,
         'production': production ? 'true' : 'false',
         ...segment && {'vtex_segment': segment},
-      }
-    )
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        'Accept-Encoding': 'gzip',
-        Authorization: authToken,
-        ...segment && {Cookie: `vtex_segment=${segment}`},
       }
     )
   }
