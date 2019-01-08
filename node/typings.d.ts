@@ -1,5 +1,4 @@
-import { IOContext as ioContext } from '@vtex/api'
-import { Context as KoaContext } from 'koa'
+import { IOContext, ServiceContext } from '@vtex/api'
 
 import { dataSources } from './dataSources'
 import { CatalogDataSource } from './dataSources/catalog'
@@ -9,21 +8,7 @@ import { PortalDataSource } from './dataSources/portal'
 import { SessionDataSource } from './dataSources/session'
 
 declare global {
-  interface IOContext extends ioContext {
-    params: {
-      [param: string]: string
-    }
-    route: {
-      id: string
-      declarer: string
-      params: {
-        [param: string]: string
-      }
-    },
-  }
-
-  interface ServiceContext extends KoaContext {
-    vtex: IOContext
+  interface Context extends ServiceContext {
     dataSources: StoreGraphQLDataSources
     originalPath: string
     cookie: string
