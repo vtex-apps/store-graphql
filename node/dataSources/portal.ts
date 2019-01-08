@@ -1,6 +1,4 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed } from 'ramda'
-import { withAuthToken } from '../resolvers/headers'
+import { OutboundDataSource, withAuth, withLegacyUserAuth, withOutboundAuth, withTimeout } from '@vtex/api'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
@@ -11,10 +9,13 @@ interface AutocompleteArgs {
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
-export class PortalDataSource extends RESTDataSource<ServiceContext> {
-  constructor() {
-    super()
-  }
+export class PortalDataSource extends OutboundDataSource<Context> {
+  protected modifiers = [
+    withTimeout(DEFAULT_TIMEOUT_MS),
+    withAuth,
+    withOutboundAuth,
+    withLegacyUserAuth
+  ]
 
   public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
     `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
@@ -25,16 +26,5 @@ export class PortalDataSource extends RESTDataSource<ServiceContext> {
     return isPlatformGC(account)
       ? `http://api.gocommerce.com/${account}/search/buscaautocomplete`
       : `http://${account}.vtexcommercestable.com.br/buscaautocomplete`
-  }
-
-  protected willSendRequest (request: RequestOptions) {
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      withAuthToken(request.headers)(this.context.vtex)
-    )
   }
 }
