@@ -8,7 +8,7 @@ const STALE_IF_ERROR_S = 20 * 60
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
-export const catalogProxy = async (ctx: ServiceContext) => {
+export const catalogProxy = async (ctx: Context) => {
   try {
     const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query} = ctx
 

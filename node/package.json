@@ -1,7 +1,7 @@
 {
   "name": "vtex.store-graphql",
   "dependencies": {
-    "@vtex/api": "^0.48.0",
+    "@vtex/api": "1.6.0-beta.0",
     "apollo-datasource-rest": "^0.1.5",
     "apollo-server-errors": "^2.0.2",
     "axios": "0.16.2",
@@ -23,7 +23,7 @@
     "@types/bluebird-global": "^3.5.0",
     "@types/camelcase": "^4.1.0",
     "@types/es6-shim": "^0.31.32",
-    "@types/koa": "^2.0.46",
+    "@types/koa": "^2.0.48",
     "@types/node": "^7.0.8",
     "@types/qs": "^6.5.1",
     "@types/ramda": "types/npm-ramda#dist",
