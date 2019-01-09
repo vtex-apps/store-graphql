@@ -6,11 +6,16 @@ import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { catalogProxy } from './routes/catalogProxy'
 
-const prepare = (handler) => async (ctx: ServiceContext) => {
+const metrics = new MetricsAccumulator()
+
+const prepare = (handler) => async (ctx: Context) => {
   try {
     await handler(ctx)
   } catch (err) {
-    const colossus = new Colossus(ctx.vtex)
+    console.log('Error in proxy catalog', err)
+    const logger = new Logger(ctx.vtex)
+
+    ctx.set('Cache-Control', 'no-cache, no-store')
 
     if (err.code && err.message && err.status) {
       ctx.status = err.status
@@ -53,4 +58,5 @@ export default {
   routes: map(prepare, {
     catalogProxy
   }),
+  statusTrack: metrics.statusTrack
 }
