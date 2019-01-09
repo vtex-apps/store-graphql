@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.44.0] - 2019-01-09
 ### Changed
 - Upgrading node-vtex-api from 0.x to 1.x
 - Removing unnecessary try..catch block in catalogProxy
