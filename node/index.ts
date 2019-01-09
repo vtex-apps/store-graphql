@@ -1,4 +1,4 @@
-import { Colossus } from '@vtex/api'
+import { Logger, MetricsAccumulator } from '@vtex/api'
 import { map } from 'ramda'
 
 import { cache, dataSources } from './dataSources'
@@ -6,11 +6,16 @@ import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { catalogProxy } from './routes/catalogProxy'
 
-const prepare = (handler) => async (ctx: ServiceContext) => {
+const metrics = new MetricsAccumulator()
+
+const prepare = (handler) => async (ctx: Context) => {
   try {
     await handler(ctx)
   } catch (err) {
-    const colossus = new Colossus(ctx.vtex)
+    console.log('Error in proxy catalog', err)
+    const logger = new Logger(ctx.vtex)
+
+    ctx.set('Cache-Control', 'no-cache, no-store')
 
     if (err.code && err.message && err.status) {
       ctx.status = err.status
@@ -18,14 +23,14 @@ const prepare = (handler) => async (ctx: ServiceContext) => {
         code: err.code,
         message: err.message
       }
-      colossus.sendLog('-', {
-        code: err.code,
-        message: err.message,
+      logger.error(err, {
         path: ctx.originalPath,
         status: err.status,
-      }, 'error')
+      })
       return
     }
+
+    logger.error(err)
 
     if (err.response) {
       ctx.status = err.response.status || 500
@@ -36,15 +41,9 @@ const prepare = (handler) => async (ctx: ServiceContext) => {
             err.response.config.url} `
           : ''} status=${err.response.status} data=${err.response.data}`,
       )
-      const errorDetails = err.response.config
-        ? {method: err.response.config.method, url: err.response.config.url}
-        : {status: err.response.status, data: err.response.data}
-
-      colossus.sendLog('-', errorDetails, 'error')
       return
     }
 
-    colossus.sendLog('-', err, 'error')
     throw err
   }
 }
@@ -59,4 +58,5 @@ export default {
   routes: map(prepare, {
     catalogProxy
   }),
+  statusTrack: metrics.statusTrack
 }

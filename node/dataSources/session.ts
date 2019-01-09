@@ -17,7 +17,7 @@ export interface SegmentData {
   cultureInfo: string
 }
 
-export class SessionDataSource extends RESTDataSource<ServiceContext> {
+export class SessionDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }

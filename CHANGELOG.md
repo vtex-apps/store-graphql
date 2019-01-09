@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.44.0] - 2019-01-09
+### Changed
+- Upgrading node-vtex-api from 0.x to 1.x
+- Removing unnecessary try..catch block in catalogProxy
+
 ## [2.43.2] - 2019-01-08
 
 ## [2.43.1] - 2019-01-08

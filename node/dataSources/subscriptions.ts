@@ -15,7 +15,7 @@ interface SubscriptionsOrdersArgs {
   fields: string
 }
 
-export class SubscriptionsDataSource extends RESTDataSource<ServiceContext> {
+export class SubscriptionsDataSource extends RESTDataSource<Context> {
   public subscriptionsAggregations = ({ schema, where, field, type, interval }: AggregationsArgs) => {
     const { vtex: { account } } = this.context
 

@@ -22,7 +22,7 @@ interface ProductsArgs {
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<ServiceContext> {
+export class CatalogDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }

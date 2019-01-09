@@ -1,3 +1,4 @@
+import { IOContext } from '@vtex/api'
 import axios from 'axios'
 import { prop } from 'ramda'
 import * as parse from 'url-parse'
@@ -23,7 +24,7 @@ export interface HttpResolverOptions {
 }
 
 export default (options: HttpResolverOptions) => {
-  return async (root, args, { vtex: ioContext, request: { headers: { cookie, 'x-forwarded-host': host } }, response }: ServiceContext) => {
+  return async (root, args, { vtex: ioContext, request: { headers: { cookie, 'x-forwarded-host': host } }, response }: Context) => {
     const { secure = false, url, enableCookies, data, method = 'GET', headers = {}, merge = defaultMerge } = options
 
     const builtUrl = (typeof url === 'function') ? url(ioContext.account, args, root) : url
