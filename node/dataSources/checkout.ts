@@ -19,7 +19,7 @@ const isWhitelistedSetCookie = (cookie: string) => {
   return SetCookieWhitelist.includes(key)
 }
 
-export class CheckoutDataSource extends RESTDataSource<ServiceContext> {
+export class CheckoutDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }
