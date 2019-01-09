@@ -1,3 +1,4 @@
+import { IOContext } from '@vtex/api'
 import axios from 'axios'
 import { prop } from 'ramda'
 import * as parse from 'url-parse'
