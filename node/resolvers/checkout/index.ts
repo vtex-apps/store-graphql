@@ -32,7 +32,7 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
 }
 
 type Resolver<TArgs=any, TRoot=any> =
-  (root: TRoot, args: TArgs, context: ServiceContext) => Promise<any>
+  (root: TRoot, args: TArgs, context: Context) => Promise<any>
 
 export const fieldResolvers = {
   OrderForm: {

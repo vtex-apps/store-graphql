@@ -117,7 +117,7 @@ export const queries = {
 
   categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
-  search: async (_, args, ctx: ServiceContext) => {
+  search: async (_, args, ctx: Context) => {
     const { map: mapParams, query, rest } = args
 
     if (query == null || mapParams == null) {

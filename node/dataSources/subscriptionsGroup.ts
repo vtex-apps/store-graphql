@@ -7,7 +7,7 @@ interface RetryArgs {
   workflowId: string
 }
 
-export class SubscriptionsGroupDataSource extends RESTDataSource<ServiceContext> {
+export class SubscriptionsGroupDataSource extends RESTDataSource<Context> {
   public retry = ({ orderGroup, instanceId, workflowId }: RetryArgs) => {
     return this.post(`${orderGroup}/instances/${instanceId}/workflow/${workflowId}/retry`)
   }
