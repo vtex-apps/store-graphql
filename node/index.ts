@@ -1,4 +1,4 @@
-import { Colossus } from '@vtex/api'
+import { Logger, MetricsAccumulator } from '@vtex/api'
 import { map } from 'ramda'
 
 import { cache, dataSources } from './dataSources'
@@ -18,14 +18,14 @@ const prepare = (handler) => async (ctx: ServiceContext) => {
         code: err.code,
         message: err.message
       }
-      colossus.sendLog('-', {
-        code: err.code,
-        message: err.message,
+      logger.error(err, {
         path: ctx.originalPath,
         status: err.status,
-      }, 'error')
+      })
       return
     }
+
+    logger.error(err)
 
     if (err.response) {
       ctx.status = err.response.status || 500
@@ -36,15 +36,9 @@ const prepare = (handler) => async (ctx: ServiceContext) => {
             err.response.config.url} `
           : ''} status=${err.response.status} data=${err.response.data}`,
       )
-      const errorDetails = err.response.config
-        ? {method: err.response.config.method, url: err.response.config.url}
-        : {status: err.response.status, data: err.response.data}
-
-      colossus.sendLog('-', errorDetails, 'error')
       return
     }
 
-    colossus.sendLog('-', err, 'error')
     throw err
   }
 }

@@ -11,7 +11,7 @@ interface AutocompleteArgs {
 
 const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
-export class PortalDataSource extends RESTDataSource<ServiceContext> {
+export class PortalDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }

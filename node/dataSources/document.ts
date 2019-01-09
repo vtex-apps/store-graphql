@@ -8,7 +8,7 @@ interface PaginationArgs {
   pageSize: string
 }
 
-export class DocumentDataSource extends RESTDataSource<ServiceContext> {
+export class DocumentDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }
