@@ -1,6 +1,7 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
+import { Functions } from "@gocommerce/utils"
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
@@ -8,8 +9,6 @@ interface AutocompleteArgs {
   maxRows: string
   searchTerm: string
 }
-
-const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
 
 export class PortalDataSource extends RESTDataSource<Context> {
   constructor() {
@@ -22,7 +21,8 @@ export class PortalDataSource extends RESTDataSource<Context> {
 
   get baseURL() {
     const {vtex: {account}} = this.context
-    return isPlatformGC(account)
+
+    return Functions.isGoCommerceAcc(this.context)
       ? `http://api.gocommerce.com/${account}/search/buscaautocomplete`
       : `http://${account}.vtexcommercestable.com.br/buscaautocomplete`
   }
