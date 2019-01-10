@@ -200,4 +200,5 @@ input AssemblyOptionInput {
   id: String!
   quantity: Int!
   type: String!
+  seller: String!
 }

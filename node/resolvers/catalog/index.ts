@@ -95,7 +95,7 @@ export const queries = {
 
     if (products.length > 0) {
       const product = head(products)
-      return { ...product, itemMetadata: { ...itemsMock.itemMetadata, sellers: head(product.items).sellers } }
+      return { ...product, itemMetadata: { ...itemsMock.itemMetadata } }
     }
 
     throw new ResolverError(
