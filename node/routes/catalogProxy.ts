@@ -1,7 +1,7 @@
+import { Functions } from '@gocommerce/utils'
 import axios from 'axios'
 import * as qs from 'qs'
 import { keys } from 'ramda'
-import { Functions } from "@gocommerce/utils"
 
 const TIMEOUT_MS = 7 * 1000
 const MAX_AGE_S = 30
