@@ -30,7 +30,8 @@ interface ItemMetadata {
         id: string,
         minQuantity: number,
         maxQuantity: number,
-        priceTable: string
+        priceTable: string,
+        seller: string,
       }>,
     }
   }>,
@@ -45,14 +46,13 @@ interface FetchPriceInput {
   priceTable: string,
   marketingData: any,
   countryCode: string,
-  sellerId: number,
+  seller: string,
   headers: any,
   url: string,
 }
 
 interface Parent {
   items: ItemMetadata[],
-  sellers: Seller[],
 }
 
 interface PriceType {
@@ -64,7 +64,7 @@ const fetchPrice = async ({
   id, 
   priceTable, 
   countryCode, 
-  sellerId, 
+  seller, 
   marketingData, 
   headers, 
   url,
@@ -73,7 +73,7 @@ const fetchPrice = async ({
   const payload = {
       country: countryCode,
       isCheckedIn: false,
-      items: [{ id, quantity: 1, seller: sellerId }],
+      items: [{ id, quantity: 1, seller }],
       priceTables: [priceTable],
       ...(isEmpty(marketingData) ? {} : { marketingData }),
     }
@@ -87,7 +87,7 @@ const fetchPrice = async ({
 
 export const resolvers = {
   ItemMetadata: {
-    priceTable: async ({items, sellers}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }) => {
+    priceTable: async ({items}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }) => {
       const headers = {
         Accept: 'application/json',
         Authorization: `bearer ${authToken}`,
@@ -106,19 +106,17 @@ export const resolvers = {
       const simulationUrl = paths.orderFormSimulation(account, {
         querystring: `sc=${segmentData.channel}&localPipeline=true`,
       })
-
-      const { sellerId } = find(propEq('sellerDefault', true) , sellers) as Seller
   
-      const itemsToFetch = [] as Array<{ id: string, priceTable: string }>
+      const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
         assemblyOptions.map(({ composition: { items: compItems } }) => { 
-          compItems.map(({ id, priceTable }) => itemsToFetch.push({ id, priceTable }))
+          compItems.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
         })
       })
   
-      const priceData = await Promise.all(itemsToFetch.map(({ id, priceTable }) => 
-        fetchPrice({ id, priceTable, countryCode: segmentData.countryCode, sellerId, marketingData, headers, url: simulationUrl })))
+      const priceData = await Promise.all(itemsToFetch.map(({ id, priceTable, seller }) => 
+        fetchPrice({ id, priceTable, countryCode: segmentData.countryCode, seller, marketingData, headers, url: simulationUrl })))
       
       const prices = priceData.reduce<{ [key: string]: Array<{ price: number, id: string }>}>((prev, curr) => {
         const { id, priceTable, price } = curr

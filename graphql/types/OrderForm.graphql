@@ -105,6 +105,7 @@ type CompositionItem {
   maxQuantity: Int
   priceTable: String
   price: Int
+  seller: String
 }
 
 type Totalizer {
