@@ -1,7 +1,7 @@
+import { Functions } from '@gocommerce/utils'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
-import { Functions } from "@gocommerce/utils"
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
