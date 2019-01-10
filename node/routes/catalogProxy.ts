@@ -1,3 +1,4 @@
+import { Functions } from '@gocommerce/utils'
 import axios from 'axios'
 import * as qs from 'qs'
 import { keys } from 'ramda'
@@ -6,12 +7,10 @@ const TIMEOUT_MS = 7 * 1000
 const MAX_AGE_S = 30
 const STALE_IF_ERROR_S = 20 * 60
 
-const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf('gc-') === 0
-
 export const catalogProxy = async (ctx: Context) => {
   const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query} = ctx
 
-  const [host, basePath] = isPlatformGC(account)
+  const [host, basePath] = Functions.isGoCommerceAcc(ctx)
     ? ['api.gocommerce.com', `${account}/search`]
     : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
