@@ -12,7 +12,7 @@ export const catalogProxy = async (ctx: Context) => {
 
   const [host, basePath] = Functions.isGoCommerceAcc(ctx)
     ? ['api.gocommerce.com', `${account}/search`]
-    : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
+    : [`${account}.vtexcommercebeta.com.br`, 'api/catalog_system']
 
   const {data, headers} = await axios.request({
     baseURL: `http://${host}/${basePath}`,
