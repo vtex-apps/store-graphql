@@ -8,14 +8,13 @@ import { resolvers as categoryResolvers } from './category'
 import { resolvers as facetsResolvers } from './facets'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as itemMetadataResolvers } from './itemMetadata'
+import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
 import { Slugify } from './slug'
-
-import itemsMock from './mock/itemsMock.json'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -61,6 +60,7 @@ export const fieldResolvers = {
   ...searchResolvers,
   ...skuResolvers,
   ...itemMetadataResolvers,
+  ...itemMetadataUnitResolvers,
 }
 
 export const queries = {
@@ -94,8 +94,7 @@ export const queries = {
     const products = await catalog.product(slug)
 
     if (products.length > 0) {
-      const product = head(products)
-      return { ...product, itemMetadata: { ...itemsMock.itemMetadata } }
+      return head(products)
     }
 
     throw new ResolverError(
