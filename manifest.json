@@ -5,6 +5,9 @@
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
+  "dependencies": {
+    "infra:service-node": "3.1.0-beta.0"
+  },
   "builders": {
     "graphql": "1.x",
     "node": "3.x"
