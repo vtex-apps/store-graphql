@@ -23,6 +23,14 @@ type StorePreferencesData {
   countryCode: String
   currencyCode: String
   timeZone: String
+  currencyFormatInfo: CurrencyFormatInfo
+}
+
+type CurrencyFormatInfo {
+  currencyDecimalDigits: Int
+  currencyDecimalSeparator: String
+  currencyGroupSeparator: String
+  startsWithCurrencySymbol: Boolean
 }
 
 type OrderFormItem {
@@ -121,4 +129,9 @@ input OrderFormPaymentTokenInput {
   bin: String
   paymentSystem: String
   paymentSystemName: String
+}
+
+input OrderFormCheckinInput {
+  isCheckedIn: Boolean
+  pickupPointId: String
 }
