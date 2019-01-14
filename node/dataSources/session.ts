@@ -24,6 +24,8 @@ export class SessionDataSource extends RESTDataSource<Context> {
 
   public getSegmentData = () => this.get<SegmentData>('/segments')
 
+  public getSession = () => this.get('/sessions/?items=*')
+
   get baseURL() {
     const {vtex: {account}} = this.context
     return `http://${account}.vtexcommercestable.com.br/api`
@@ -32,6 +34,7 @@ export class SessionDataSource extends RESTDataSource<Context> {
   protected willSendRequest (request: RequestOptions) {
     const {cookies, vtex: {authToken}} = this.context
     const segment = cookies.get('vtex_segment')
+    const sessionCookie = cookies.get('vtex_session')
 
     if (!request.timeout) {
       request.timeout = DEFAULT_TIMEOUT_MS
@@ -40,8 +43,8 @@ export class SessionDataSource extends RESTDataSource<Context> {
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-        'Proxy-Authorization': authToken,
+        ...segment && {Cookie: `vtex_segment=${segment};vtex_session=${sessionCookie}`},
+        'Proxy-Authorization': authToken
       }
     )
   }
