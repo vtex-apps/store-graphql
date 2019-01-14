@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.44.2] - 2019-01-14
+
+### Added
+- Add `currencyFormatInfo` on `storePreferencesData`, and its respective type.
+
 ## [2.44.1] - 2019-01-10
 ### Added
 - @gocommerce/utils module to resolve if the current account is GoCommerce
