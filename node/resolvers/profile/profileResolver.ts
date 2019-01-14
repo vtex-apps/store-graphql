@@ -1,30 +1,6 @@
 import http from 'axios'
-import { parse as parseCookie } from 'cookie'
-import { compose, head, join, mapObjIndexed, merge, pick, pickBy, pipe, pluck, prop, split, values } from 'ramda'
-import { headers, withAuthAsVTEXID, withAuthToken } from '../headers'
+import { compose, head, join, mapObjIndexed, merge, pick, pipe, pluck, prop, split, values } from 'ramda'
 import paths from '../paths'
-
-const configRequest = async (ctx, url) => ({
-  headers: withAuthToken(headers.profile)(ctx),
-  method: 'GET',
-  url,
-})
-
-const isValidTelemarketing = async ({ ioContext, email}) => {
-  const { account } = ioContext
-
-  const config = {
-    headers: withAuthAsVTEXID(headers.json)(ioContext),
-    method: 'GET',
-    url: `http://${account}.vtexcommercestable.com.br/api/license-manager/account`
-  }
-
-  const accountId = await http.request(config).then(prop('data')).then(data => data.id).catch(e => console.log('error', e))
-  
-  config.url = `http://licensemanager.vtex.com.br/api/pvt/accounts/${accountId}/products/2/logins/${email}/resources/Televendas/granted?ignoreIsAdmin=False`
-  
-  return await http.request(config).then(prop('data'))
-}
 
 export const pickCustomFieldsFromData = (customFields: string, data) => customFields && compose(
   values,
@@ -37,12 +13,7 @@ export const customFieldsFromGraphQLInput = (customFieldsInput) => compose(
   pluck('key')
 )(customFieldsInput)
 
-const profile = (ctx, {customFields}) => async (data) => {
-  if (data === null) {
-    return data
-  }
-
-  const { user } = data
+export const getProfileData = async (ctx, { customFields }, userEmail) => {
   const config = {
     headers: {
       'Proxy-Authorization': ctx.authToken,
@@ -50,7 +21,7 @@ const profile = (ctx, {customFields}) => async (data) => {
     },
   }
 
-  const profileURL = paths.profile(ctx.account).filterUser(user, customFields)
+  const profileURL = paths.profile(ctx.account).filterUser(userEmail, customFields)
   const profileData = await http.get(profileURL, config).then<any>(pipe(prop('data'), head))
 
   if (profileData && profileData.id) {
@@ -77,31 +48,15 @@ const profile = (ctx, {customFields}) => async (data) => {
       })
     }
 
-    return merge({ payments, address, cacheId: user }, profileData)
+    const result = merge({ payments, address, cacheId: userEmail }, profileData)
+
+    console.log('result >>>>> ', result)
+
+    return result
   }
+
   return {
-    cacheId: user,
-    email: user
+    cacheId: userEmail,
+    email: userEmail
   }
-}
-
-export default async (_, args, { vtex: ioContext, request: { headers: { cookie } } }) => {
-  const { account } = ioContext
-  const parsedCookies = parseCookie(cookie || '')
-
-  const startsWithVtexId = (val, key) => key.startsWith(`VtexIdclientAutCookie_${account}`)
-  const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
-
-  if (!token) {
-    const currentUser = parsedCookies['vtex-current-user']
-    const teleUserEmail = currentUser  && JSON.parse(currentUser).email
-    const isValidTele = teleUserEmail && await isValidTelemarketing({ioContext, email: teleUserEmail})
-    const customerEmail = parsedCookies['vtex-impersonated-customer-email']
-    const data = { user: customerEmail }
-
-    return isValidTele ? new Promise((resolve) => resolve(data)).then(profile(ioContext,args)) : null
-  }
-  
-  const addressRequest = await configRequest(ioContext, paths.identity(account, { token }))
-  return await http.request(addressRequest).then(prop('data')).then(profile(ioContext, args))
 }

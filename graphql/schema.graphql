@@ -102,7 +102,7 @@ type Query {
   profile(
     """ Comma separated fields """
     customFields: String
-  ): Profile @cacheControl(scope: PRIVATE)
+  ): Profile @cacheControl(scope: PRIVATE) @withCurrentUser
 
   """ Get auto complete suggestions in search """
   autocomplete(
