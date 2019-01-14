@@ -15,7 +15,7 @@ type Order {
   totals: [OrderItemTotal]
   paymentData: OrderItemPaymentData
   shippingData: OrderItemShippingData
-  storePreferencesData: OrderItemStorePreferencesData
+  storePreferencesData: StorePreferencesData
 }
 
 type OrderItem {
@@ -97,8 +97,3 @@ type OrderItemShippingDataAddress {
   reference: String
 }
 
-type OrderItemStorePreferencesData {
-  currencyCode: String
-  countryCode: String
-  currencySymbol: String
-}
