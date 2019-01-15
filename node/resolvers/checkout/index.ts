@@ -1,3 +1,4 @@
+import { parse } from 'cookie'
 import { map } from 'ramda'
 import { SimulationData } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
@@ -5,6 +6,8 @@ import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
+
+import { queries as sessionQueries } from '../session'
 
 /**
  * It will convert an integer to float moving the
@@ -54,8 +57,27 @@ export const fieldResolvers = {
 }
 
 export const queries: Record<string, Resolver> = {
-  orderForm: (root, args, {dataSources: {checkout}}) => {
-    return checkout.orderForm()
+  orderForm: async (root, args, ctx) => {
+    const {dataSources: {checkout, session}, request: { headers: { cookie } }} = ctx
+
+    const cookieParsed = parse(cookie)
+    const coOrderFormId = cookieParsed['checkout.vtex.com'] && cookieParsed['checkout.vtex.com'].split('=')[1]
+    const sessionData = await sessionQueries.getSession(root, args, ctx)
+    if (sessionData.orderFormId) {
+      if (!coOrderFormId) {
+        ctx.request.headers.cookie = `${cookie}; checkout.vtex.com=__ofid=${sessionData.orderFormId}`
+      } else if (sessionData.orderFormId !== coOrderFormId) {
+        await session.editSession('orderFormId', coOrderFormId)
+      }
+    }
+
+    const orderForm = await checkout.orderForm()
+
+    if (!sessionData.orderFormId) {
+      // Saving orderFormId on session
+      await session.editSession('orderFormId', orderForm.orderFormId)
+    }
+    return orderForm
   },
 
   orders: (root, args, {dataSources: {checkout}}) => {

@@ -32,6 +32,7 @@ export const sessionFields = session => {
     impersonate: {
       ...setProfileData(namespaces.profile, namespaces.impersonate)
     },
+    orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
     ...setProfileData(namespaces.profile, namespaces.authentication)
   } : {}
 }
