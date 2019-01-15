@@ -1,5 +1,5 @@
 import { parse } from 'cookie'
-import { map } from 'ramda'
+import { equals, map, path } from 'ramda'
 import { SimulationData } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
@@ -8,6 +8,7 @@ import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
 
 import { queries as sessionQueries } from '../session'
+import { SessionFields } from '../session/sessionResolver'
 
 /**
  * It will convert an integer to float moving the
@@ -32,6 +33,21 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
     && (utmSource !== utm_source
     || utmCampaign !== utm_campaign
     || utmiCampaign !== utmi_campaign)
+}
+
+const syncOrderFormAndSessionAddress = async (orderForm, sessionAddress, session, ctx) => {
+  const orderFormAddress = path(['shippingData', 'selectedAddresses', '0'], orderForm)
+
+  if (!orderFormAddress && sessionAddress) {
+    const args = { orderFormId: orderForm.orderFormId, address: sessionAddress }
+    return mutations.updateOrderFormShipping({}, args, ctx)
+  }
+
+  if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
+    // salva na session
+    await session.editSession('address', orderFormAddress)
+  }
+  return orderForm
 }
 
 type Resolver<TArgs=any, TRoot=any> =
@@ -62,7 +78,7 @@ export const queries: Record<string, Resolver> = {
 
     const cookieParsed = parse(cookie)
     const coOrderFormId = cookieParsed['checkout.vtex.com'] && cookieParsed['checkout.vtex.com'].split('=')[1]
-    const sessionData = await sessionQueries.getSession(root, args, ctx)
+    const sessionData = await sessionQueries.getSession(root, args, ctx) as SessionFields
     if (sessionData.orderFormId) {
       if (!coOrderFormId) {
         ctx.request.headers.cookie = `${cookie}; checkout.vtex.com=__ofid=${sessionData.orderFormId}`
@@ -77,7 +93,8 @@ export const queries: Record<string, Resolver> = {
       // Saving orderFormId on session
       await session.editSession('orderFormId', orderForm.orderFormId)
     }
-    return orderForm
+
+    return syncOrderFormAndSessionAddress(orderForm, sessionData.address, session, ctx)
   },
 
   orders: (root, args, {dataSources: {checkout}}) => {
