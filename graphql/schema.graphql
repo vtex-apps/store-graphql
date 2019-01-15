@@ -3,7 +3,7 @@ type Query {
   product(
     """ Product slug """
     slug: String
-  ): Product @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
+  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT)
 
   """ Product search filtered and ordered """
   products(
@@ -27,13 +27,13 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): [Product] @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT)
 
   """ Get facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets @response(vary: "x-vtex-segment")
+  ): Facets @cacheControl(scope: SEGMENT)
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -59,7 +59,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search @response(vary: "x-vtex-segment") @cacheControl(scope: PUBLIC, maxAge: SHORT)
+  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT)
 
   """ Get category details """
   category(
@@ -321,6 +321,6 @@ type Mutation {
    If the item given does not have the itemId, add it as a new item in the list.
    If the item given has got an itemId, but its quantity is 0, remove it from the list.
    Otherwise, update it. """
-  updateList(id: ID!, list: ListInput): List 
+  updateList(id: ID!, list: ListInput): List
   deleteList(id: ID!): List
 }
