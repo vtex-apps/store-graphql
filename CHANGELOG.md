@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.45.0] - 2019-01-16
+### Changed
+- Using new SEGMENT scoped directive
+
 ## [2.44.2] - 2019-01-14
 
 ### Added
