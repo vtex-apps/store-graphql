@@ -15,8 +15,10 @@ type PaymentToken {
 
 """ Payment data used by profile resolvers """
 type PaymentProfile {
+    """ Id representing this payment form used as reference for the cache"""
+    cacheId: ID,
     """ Id representing this payment form"""
-    id: String
+    id: String,
     """ Id for the payment system related to this payment form"""
     paymentSystem: String,
     """ The name of the payment system """
