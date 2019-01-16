@@ -46,6 +46,11 @@ declare global {
   interface UserAddress {
     id: string
   }
+
+  interface CurrentProfile {
+    email: string
+    id: string
+  }
 }
 
 export {}
