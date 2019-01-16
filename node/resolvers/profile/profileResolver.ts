@@ -31,32 +31,38 @@ const fixAddresses = async (context, currentProfile: CurrentProfile, profileId: 
 
   const addressesToFix = await http.get(addressURL, config).then(prop('data'))
 
-  addressesToFix.map(async (address) => {
-    await http.patch(paths.profile(context.account).address(address.id),{ userId: currentProfile.userId }, config)
+  const fixed = addressesToFix.map(async (address) => {
+    http.patch(paths.profile(context.account).address(address.id),{ userId: currentProfile.userId }, config)
+    address.userId = currentProfile.userId
+
+    return address
   })
+
+  return await Promise.all(fixed)
 }
 
-export const getProfileData = async (context, { customFields }, currentProfile: CurrentProfile) => {
+export const getProfileData = async (context, currentProfile: CurrentProfile, args) => {
   const config = getProfileHeadersConfig(context)
+  const { customFields } = args
 
   const profileURL = paths.profile(context.account).filterUser(currentProfile.email, customFields)
   const profileData = await http.get(profileURL, config).then<any>(pipe(prop('data'), head))
 
-  if(profileData && profileData.userId) {
+  if(profileData && profileData.userId === currentProfile.userId) {
     profileData.address = await getAddresses(context, currentProfile, profileData.id)
   }
-
+  
   return profileData
 }
 
 export const getAddresses = async (context, currentProfile: CurrentProfile, profileId) => {
   const config = getProfileHeadersConfig(context)
-
-  await fixAddresses(context,currentProfile, profileId)
-
   const addressURL = paths.profile(context.account).filterAddress(currentProfile.userId)
 
-  return await http.get(addressURL, config).then(prop('data'))
+  const addresses = await fixAddresses(context,currentProfile, profileId)
+  const fixedAddresses = await http.get(addressURL, config).then(prop('data'))
+
+  return addresses.concat(fixedAddresses)
 }
 
 export const getPayments = async (context, userId: String, addresses) => {
