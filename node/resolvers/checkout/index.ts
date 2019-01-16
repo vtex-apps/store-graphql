@@ -35,19 +35,18 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
     || utmiCampaign !== utmi_campaign)
 }
 
-const syncOrderFormAndSessionAddress = async (orderForm, sessionAddress, session, ctx) => {
-  const orderFormAddress = path(['shippingData', 'selectedAddresses', '0'], orderForm)
+const syncOrderFormAndSessionAddress = async (orderFormAddress, orderFormId, sessionAddress, ctx) => {
+  const {dataSources: {session, checkout}} = ctx
 
   if (!orderFormAddress && sessionAddress) {
-    const args = { orderFormId: orderForm.orderFormId, address: sessionAddress }
-    return mutations.updateOrderFormShipping({}, args, ctx)
+    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
   }
 
   if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
     // salva na session
     await session.editSession('address', orderFormAddress)
   }
-  return orderForm
+  return null
 }
 
 type Resolver<TArgs=any, TRoot=any> =
@@ -94,7 +93,9 @@ export const queries: Record<string, Resolver> = {
       await session.editSession('orderFormId', orderForm.orderFormId)
     }
 
-    return syncOrderFormAndSessionAddress(orderForm, sessionData.address, session, ctx)
+    const orderFormAddress = path(['shippingData', 'selectedAddresses', '0'], orderForm)
+    const newOrderForm = await syncOrderFormAndSessionAddress(orderFormAddress, orderForm.orderFormId, sessionData.address, ctx)
+    return newOrderForm || orderForm
   },
 
   orders: (root, args, {dataSources: {checkout}}) => {
@@ -173,7 +174,13 @@ export const mutations: Record<string, Resolver> = {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
-  updateOrderFormShipping: (root, {orderFormId, address}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] })
+  updateOrderFormShipping: async (root, {orderFormId, address}, ctx) => {
+    const {dataSources: {checkout}} = ctx
+    const [sessionData, orderForm] = await Promise.all([
+      sessionQueries.getSession(root, {}, ctx) as SessionFields,
+      checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] }),
+    ])
+    await syncOrderFormAndSessionAddress(address, orderFormId, sessionData.address, ctx)
+    return orderForm
   }
 }
