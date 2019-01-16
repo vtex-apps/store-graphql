@@ -62,9 +62,9 @@ const returnOldOnNotChanged = (oldData) => (error) => {
 
 export const mutations = {
   createAddress: async (_, args, config) => { 
-    addressPatch(_, args, config)
+    await addressPatch(_, args, config)
 
-    return await getProfileData(config.vtex, config.currentProfile, args)
+    return getProfileData(config.vtex, config.currentProfile, args)
   },
 
   deleteAddress: async (_, args, config) => {
@@ -80,17 +80,17 @@ export const mutations = {
       paths.profile(account).address(addressId), authToken, null, 'DELETE'
     )
 
-    return await getProfileData(config.vtex, config.currentProfile, args)
+    return getProfileData(config.vtex, config.currentProfile, args)
   },
 
-  updateAddress: async (_, args, config) =>  addressPatch(_, args, config),
+  updateAddress: (_, args, config) => addressPatch(_, args, config),
 
   updateProfile: async (_, args, config) => {
     const customFieldsStr = customFieldsFromGraphQLInput(args.customFields || [])
     const oldData = await getProfileData(config.vtex, config.currentProfile, { customFields: customFieldsStr })
     const newData = reduce(addFieldsToObj, args.fields || {}, args.customFields || [])
 
-    return await makeRequest(
+    return makeRequest(
       paths.profile(config.vtex.account).profile(oldData.id), config.vtex.authToken, newData, 'PATCH'
     ).then(() => getProfileData(config.vtex, config.currentProfile, { customFields: customFieldsStr }))
     .catch(returnOldOnNotChanged(oldData))
@@ -106,7 +106,7 @@ export const mutations = {
     await makeRequest(paths.profile(account).profile(id), authToken, { [field]: '' }, 'PATCH')
     await uploadAttachment({ acronym: 'CL', documentId: id, field, file }, ctx)
 
-    return await getProfileData(ctx.vtex, ctx.currentProfile, args)
+    return getProfileData(ctx.vtex, ctx.currentProfile, args)
   },
 
   uploadProfilePicture: async (root, args, ctx) => {
@@ -116,12 +116,12 @@ export const mutations = {
 
     await uploadAttachment({ acronym: 'CL', documentId: id, field, file }, ctx)
 
-    return await getProfileData(ctx.vtex, ctx.currentProfile, args)
+    return getProfileData(ctx.vtex, ctx.currentProfile, args)
   }
 }
 
 export const queries = {
-  profile: async (_, args, { vtex: ioContext, currentProfile }) => await getProfileData(ioContext, currentProfile, args),
+  profile: (_, args, { vtex: ioContext, currentProfile }) => getProfileData(ioContext, currentProfile, args),
 }
 
 export const fieldResolvers = fieldR
