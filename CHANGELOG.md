@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `withCurrentProfile` to get the session that will be used on the profile related queries.
 
 ## [2.45.1] - 2019-01-30
 
