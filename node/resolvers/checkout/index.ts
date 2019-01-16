@@ -1,5 +1,4 @@
-import { parse } from 'cookie'
-import { equals, map, path } from 'ramda'
+import { map } from 'ramda'
 import { SimulationData } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
@@ -9,6 +8,7 @@ import paymentTokenResolver from './paymentTokenResolver'
 
 import { queries as sessionQueries } from '../session'
 import { SessionFields } from '../session/sessionResolver'
+import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
 
 /**
  * It will convert an integer to float moving the
@@ -35,20 +35,6 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
     || utmiCampaign !== utmi_campaign)
 }
 
-const syncOrderFormAndSessionAddress = async (orderFormAddress, orderFormId, sessionAddress, ctx) => {
-  const {dataSources: {session, checkout}} = ctx
-
-  if (!orderFormAddress && sessionAddress) {
-    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
-  }
-
-  if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
-    // salva na session
-    await session.editSession('address', orderFormAddress)
-  }
-  return null
-}
-
 type Resolver<TArgs=any, TRoot=any> =
   (root: TRoot, args: TArgs, context: Context) => Promise<any>
 
@@ -73,29 +59,15 @@ export const fieldResolvers = {
 
 export const queries: Record<string, Resolver> = {
   orderForm: async (root, args, ctx) => {
-    const {dataSources: {checkout, session}, request: { headers: { cookie } }} = ctx
+    const {dataSources: {checkout}} = ctx
 
-    const cookieParsed = parse(cookie)
-    const coOrderFormId = cookieParsed['checkout.vtex.com'] && cookieParsed['checkout.vtex.com'].split('=')[1]
     const sessionData = await sessionQueries.getSession(root, args, ctx) as SessionFields
-    if (sessionData.orderFormId) {
-      if (!coOrderFormId) {
-        ctx.request.headers.cookie = `${cookie}; checkout.vtex.com=__ofid=${sessionData.orderFormId}`
-      } else if (sessionData.orderFormId !== coOrderFormId) {
-        await session.editSession('orderFormId', coOrderFormId)
-      }
-    }
+    await syncCheckoutAndSessionPreCheckout(sessionData, ctx)
 
     const orderForm = await checkout.orderForm()
 
-    if (!sessionData.orderFormId) {
-      // Saving orderFormId on session
-      await session.editSession('orderFormId', orderForm.orderFormId)
-    }
-
-    const orderFormAddress = path(['shippingData', 'selectedAddresses', '0'], orderForm)
-    const newOrderForm = await syncOrderFormAndSessionAddress(orderFormAddress, orderForm.orderFormId, sessionData.address, ctx)
-    return newOrderForm || orderForm
+    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+    return syncedOrderForm
   },
 
   orders: (root, args, {dataSources: {checkout}}) => {
@@ -180,7 +152,8 @@ export const mutations: Record<string, Resolver> = {
       sessionQueries.getSession(root, {}, ctx) as SessionFields,
       checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] }),
     ])
-    await syncOrderFormAndSessionAddress(address, orderFormId, sessionData.address, ctx)
-    return orderForm
+
+    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+    return syncedOrderForm
   }
 }
