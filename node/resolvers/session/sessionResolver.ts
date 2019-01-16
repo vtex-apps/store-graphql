@@ -18,7 +18,7 @@ export interface SessionFields extends ProfileFields {
   impersonable?: boolean,
   impersonate?: { profile: ProfileFields },
   orderFormId?: string,
-  address?: string,
+  address?: any,
 }
 
 const convertToBool = str => !!str && (toLower(str) === 'true')
