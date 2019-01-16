@@ -8,7 +8,6 @@ import { PortalDataSource } from './dataSources/portal'
 import { SessionDataSource } from './dataSources/session'
 
 declare global {
-
   interface Context extends ServiceContext {
     dataSources: StoreGraphQLDataSources
     originalPath: string
@@ -49,7 +48,7 @@ declare global {
 
   interface CurrentProfile {
     email: string
-    id: string
+    userId: string
   }
 }
 

@@ -9,12 +9,12 @@ const getSessionCurrentProfile = async (context) : Promise<CurrentProfile>  => {
   const currentSession = await session.getSession()
   if(!currentSession.namespaces || !currentSession.namespaces.cookie['VtexIdclientAutCookie'])
     throw new ResolverError(`ERROR no session`, currentSession)
-
+    
   const { namespaces: { profile: { email, id } } } = currentSession
-
+  
   return {
     email: email.value,
-    id: id.value
+    userId: id.value
   }
 }
 
