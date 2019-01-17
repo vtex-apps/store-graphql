@@ -6,12 +6,16 @@ import { CheckoutDataSource } from './dataSources/checkout'
 import { DocumentDataSource } from './dataSources/document'
 import { PortalDataSource } from './dataSources/portal'
 import { SessionDataSource } from './dataSources/session'
+import { ProfileDataSource } from './dataSources/profile'
+import { PaymentsDataSource } from './dataSources/payments'
+
 
 declare global {
   interface Context extends ServiceContext {
     dataSources: StoreGraphQLDataSources
     originalPath: string
     cookie: string
+    currentProfile: CurrentProfile
   }
 
   interface StoreGraphQLDataSources {
@@ -20,6 +24,8 @@ declare global {
     document: DocumentDataSource
     portal: PortalDataSource
     session: SessionDataSource
+    profile: ProfileDataSource
+    payments: PaymentsDataSource
   }
 
   interface OrderFormItem {
