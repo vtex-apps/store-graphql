@@ -4,11 +4,13 @@ import { dataSources } from './dataSources'
 import { CatalogDataSource } from './dataSources/catalog'
 import { CheckoutDataSource } from './dataSources/checkout'
 import { DocumentDataSource } from './dataSources/document'
-import { PortalDataSource } from './dataSources/portal'
-import { SessionDataSource } from './dataSources/session'
-import { ProfileDataSource } from './dataSources/profile'
+import { IdentityDataSource } from './dataSources/identity'
+import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { PaymentsDataSource } from './dataSources/payments'
-
+import { PortalDataSource } from './dataSources/portal'
+import { ProfileDataSource } from './dataSources/profile'
+import { SessionDataSource } from './dataSources/session'
+import { TelemarketingDataSource } from './dataSources/telemarketing'
 
 declare global {
   interface Context extends ServiceContext {
@@ -22,10 +24,13 @@ declare global {
     catalog: CatalogDataSource
     checkout: CheckoutDataSource
     document: DocumentDataSource
-    portal: PortalDataSource
-    session: SessionDataSource
-    profile: ProfileDataSource
+    identity: IdentityDataSource
+    licenseManager: LicenseManagerDataSource
     payments: PaymentsDataSource
+    portal: PortalDataSource
+    profile: ProfileDataSource
+    session: SessionDataSource
+    telemarketing: TelemarketingDataSource
   }
 
   interface OrderFormItem {
