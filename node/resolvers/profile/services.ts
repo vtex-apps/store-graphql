@@ -21,9 +21,10 @@ export const updateProfile = async (context: Context, profile) => {
 
   const customFieldsStr = customFieldsFromGraphQLInput(profile.customFields || [])
   const oldData = await dataSources.profile.getProfileInfo(currentProfile.email, { customFields: customFieldsStr })
-  const newData = reduce(addFieldsToObj, profile || {}, profile.customFields || [])
-
-  newData.id = oldData.id
+  const newData = {
+    ...reduce(addFieldsToObj, profile || {}, profile.customFields || []),
+    id: oldData.id,
+  }
   
   return dataSources.profile.updateProfileInfo(newData).then(
     () => getProfile(context, { customFields: customFieldsStr }))
@@ -77,13 +78,14 @@ export const getAddresses = async (context: Context, profileId: string) => {
   return addresses.concat(fixedAddresses)
 }
 
-export const createAddress = async (context: Context, address) => {
+export const createAddress = (context: Context, address) => {
   const { dataSources: { profile }, currentProfile } = context
 
-  address.id = ''
-  address.userId = currentProfile.userId
-
-  profile.updateAddress(address)
+  profile.updateAddress({
+    ...address,
+    id: '',
+    userId: currentProfile.userId,
+  })
 }
 
 export const deleteAddress = async (context: Context, addressId: string) => {
@@ -99,11 +101,10 @@ export const updateAddress = async (context: Context, address) => {
 
   await validateAddress(context, address.id)
 
-  address.userId = currentProfile.userId
-
-  await profile.updateAddress(address)
-
-  return address
+  return profile.updateAddress({
+    ...address,
+    userId: currentProfile.userId,
+  })
 }
 
 // Aux
@@ -131,11 +132,11 @@ const validateAddress = async (context: Context, addressId: string) => {
 
   const address = await profile.getAddress(addressId)
 
-  if(!address)
-    throw new ResolverError(`This address doesn't beglong to the current user`, 404)
+  if (!address)
+    throw new ResolverError(`Address not found`, 404)
 
-  if(address.userId !== currentProfile.userId)
-    throw new ResolverError(`This address doesn't beglong to the current user`, 403)
+  if (address.userId !== currentProfile.userId)
+    throw new ResolverError(`This address doesn't belong to the current user`, 403)
 
   return address
 }
@@ -148,9 +149,11 @@ const fixAddresses = async (context: Context, currentProfile: CurrentProfile, pr
   const addressesToFix = await profile.getUserAddresses(profileId)
 
   return Promise.all(addressesToFix.map(async (address) => {
-    profile.updateAddress({ userId: currentProfile.userId, id: address.id })
-    address.userId = currentProfile.userId
-
-    return address
+    await profile.updateAddress({ userId: currentProfile.userId, id: address.id })
+    
+    return {
+      ...address,
+      userId: currentProfile.userId,
+    }
   }))
 }
