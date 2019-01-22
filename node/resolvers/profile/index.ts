@@ -1,5 +1,5 @@
-import { getProfile, updateProfile, createAddress, updateAddress, deleteAddress, updateProfilePicture } from './services'
 import fieldR from './fieldResolvers'
+import { createAddress, deleteAddress, getProfile, updateAddress, updateProfile, updateProfilePicture } from './services'
 
 export const mutations = {
   createAddress: async (_, args, context) => { 

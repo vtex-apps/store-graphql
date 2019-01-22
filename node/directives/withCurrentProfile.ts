@@ -1,8 +1,8 @@
 import { parse as parseCookie } from 'cookie'
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
-import { head, pickBy, values } from 'ramda'
 import jwtDecode from 'jwt-decode' 
+import { head, pickBy, values } from 'ramda'
 
 import ResolverError from '../errors/resolverError'
 
@@ -54,8 +54,10 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
     const teleUserEmail = adminInfo && adminInfo.sub  
     const isValidTele = teleUserEmail && await isValidCallcenterOperator(context, teleUserEmail)
 
-    if(!isValidTele) throw new ResolverError(`Unauthorized`, 401)
-
+    if(!isValidTele) {
+      throw new ResolverError(`Unauthorized`, 401)
+    }
+    
     const customerEmail = parsedCookies['vtex-impersonated-customer-email']
 
     return profile.getProfileInfo(customerEmail).then(({ email, userId }) => ({ email, userId }))
