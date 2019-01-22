@@ -11,7 +11,7 @@ import { ProfileDataSource } from './profile'
 import { SessionDataSource } from './session'
 import { SubscriptionsDataSource } from './subscriptions'
 import { SubscriptionsGroupDataSource } from './subscriptionsGroup'
-import { TelemarketingDataSource } from './telemarketing'
+import { CallcenterOperatorDataSource } from './callcenterOperator'
 
 
 const TEN_SECONDS_MS = 10 * 1000
@@ -28,7 +28,7 @@ export const dataSources = () => ({
   session: new SessionDataSource(),
   subscriptions: new SubscriptionsDataSource(),
   subscriptionsGroup: new SubscriptionsGroupDataSource(),
-  telemarketing: new TelemarketingDataSource()
+  callcenterOperator: new CallcenterOperatorDataSource()
 })
 
 const cacheStorage = new LRUCache<string, any>({

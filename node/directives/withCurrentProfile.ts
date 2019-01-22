@@ -52,7 +52,7 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
     const adminInfo =  jwtDecode(adminTokenJWT)
 
     const teleUserEmail = adminInfo && adminInfo.sub  
-    const isValidTele = teleUserEmail && await isValidTelemarketing(context, teleUserEmail)
+    const isValidTele = teleUserEmail && await isValidCallcenterOperator(context, teleUserEmail)
 
     if(!isValidTele) throw new ResolverError(`Unauthorized`, 401)
 
@@ -64,9 +64,9 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
   return identity.getUserWithToken(userToken).then((data) => ({ userId: data.userId, email: data.user }))
 }
 
-const isValidTelemarketing = (context: Context, email: string) => {
-  const { dataSources: { telemarketing, licenseManager} } = context
+const isValidCallcenterOperator = (context: Context, email: string) => {
+  const { dataSources: { callcenterOperator, licenseManager} } = context
 
-  return licenseManager.getAccountId().then((id) => telemarketing.isValidTelemarketing({ email, accountId: id }))
+  return licenseManager.getAccountId().then((id) => callcenterOperator.isValidCallcenterOperator({ email, accountId: id }))
 }
 

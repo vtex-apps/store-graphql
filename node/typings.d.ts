@@ -10,7 +10,7 @@ import { PaymentsDataSource } from './dataSources/payments'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SessionDataSource } from './dataSources/session'
-import { TelemarketingDataSource } from './dataSources/telemarketing'
+import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 
 declare global {
   interface Context extends ServiceContext {
@@ -30,7 +30,7 @@ declare global {
     portal: PortalDataSource
     profile: ProfileDataSource
     session: SessionDataSource
-    telemarketing: TelemarketingDataSource
+    callcenterOperator: CallcenterOperatorDataSource
   }
 
   interface OrderFormItem {
