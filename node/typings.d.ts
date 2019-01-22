@@ -1,6 +1,7 @@
 import { ServiceContext } from '@vtex/api'
 
 import { dataSources } from './dataSources'
+import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
 import { CheckoutDataSource } from './dataSources/checkout'
 import { DocumentDataSource } from './dataSources/document'
@@ -10,7 +11,6 @@ import { PaymentsDataSource } from './dataSources/payments'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SessionDataSource } from './dataSources/session'
-import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 
 declare global {
   interface Context extends ServiceContext {

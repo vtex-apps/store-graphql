@@ -1,4 +1,4 @@
-import { compose, join, mapObjIndexed, pick, pluck, split, values, reduce } from 'ramda'
+import { compose, join, mapObjIndexed, pick, pluck, reduce, split, values } from 'ramda'
 
 import ResolverError from '../../errors/resolverError'
 import { uploadAttachment } from '../document/attachment'
@@ -31,7 +31,7 @@ export const updateProfile = async (context: Context, profile) => {
   .catch(returnOldOnNotChanged(oldData))
 }
 
-export const updateProfilePicture = async (context: Context, args, shouldDelete: Boolean) => {
+export const updateProfilePicture = async (context: Context, args, shouldDelete: boolean) => {
   const { dataSources: { profile }, currentProfile } = context
 
   const file = args.file
@@ -40,7 +40,9 @@ export const updateProfilePicture = async (context: Context, args, shouldDelete:
   const { id } = await profile.getProfileInfo(currentProfile.email)
 
   // Should delete the field before uploading new profilePicture
-  shouldDelete && await profile.updateProfileInfo({ id, [field]: 'teste' })
+  if(shouldDelete) {
+    await profile.updateProfileInfo({ id, [field]: '' })
+  }
 
   await uploadAttachment({ acronym: 'CL', documentId: id, field, file }, context)
 
@@ -52,8 +54,9 @@ export const getPayments = async (context: Context, profileId: string) => {
 
   const paymentsRawData = await payments.getUserPayments(currentProfile.userId)
  
-  if (!paymentsRawData)
+  if (!paymentsRawData) {
     return null
+  }
 
   const addresses = await getAddresses(context, profileId)
   const availableAccounts = JSON.parse(paymentsRawData.paymentData).availableAccounts
@@ -132,11 +135,13 @@ const validateAddress = async (context: Context, addressId: string) => {
 
   const address = await profile.getAddress(addressId)
 
-  if (!address)
+  if (!address) {
     throw new ResolverError(`Address not found`, 404)
+  }
 
-  if (address.userId !== currentProfile.userId)
+  if (address.userId !== currentProfile.userId) {
     throw new ResolverError(`This address doesn't belong to the current user`, 403)
+  }
 
   return address
 }
@@ -150,7 +155,7 @@ const fixAddresses = async (context: Context, currentProfile: CurrentProfile, pr
 
   return Promise.all(addressesToFix.map(async (address) => {
     await profile.updateAddress({ userId: currentProfile.userId, id: address.id })
-    
+
     return {
       ...address,
       userId: currentProfile.userId,

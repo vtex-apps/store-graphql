@@ -2,7 +2,7 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
 export class PaymentsDataSource extends RESTDataSource<Context> {
-  public getUserPayments = (userId: String) => {
+  public getUserPayments = (userId: string) => {
     return this.get(`${userId}/vcs-checkout`)
   }
 
