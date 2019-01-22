@@ -40,7 +40,7 @@ export const updateProfilePicture = async (context: Context, args, shouldDelete:
   const { id } = await profile.getProfileInfo(currentProfile.email)
 
   // Should delete the field before uploading new profilePicture
-  if(shouldDelete) {
+  if (shouldDelete) {
     await profile.updateProfileInfo({ id, [field]: '' })
   }
 
@@ -84,7 +84,7 @@ export const getAddresses = async (context: Context, profileId: string) => {
 export const createAddress = (context: Context, address) => {
   const { dataSources: { profile }, currentProfile } = context
 
-  profile.updateAddress({
+  return profile.updateAddress({
     ...address,
     id: '',
     userId: currentProfile.userId,
@@ -96,7 +96,7 @@ export const deleteAddress = async (context: Context, addressId: string) => {
 
   await validateAddress(context, addressId)
 
-  profile.deleteAddress(addressId)
+  return profile.deleteAddress(addressId)
 }
 
 export const updateAddress = async (context: Context, address) => {

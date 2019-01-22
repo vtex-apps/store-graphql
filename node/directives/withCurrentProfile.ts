@@ -49,12 +49,12 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
   if (!userToken) {
     const startsWithVtexId = (val, key) => key.startsWith(`VtexIdclientAutCookie`) 
     const adminTokenJWT = head(values(pickBy(startsWithVtexId, parsedCookies)))
-    const adminInfo =  jwtDecode(adminTokenJWT)
+    const adminInfo = jwtDecode(adminTokenJWT)
 
-    const teleUserEmail = adminInfo && adminInfo.sub  
-    const isValidTele = teleUserEmail && await isValidCallcenterOperator(context, teleUserEmail)
+    const callOpUserEmail = adminInfo && adminInfo.sub  
+    const isValidCallOp = callOpUserEmail && await isValidCallcenterOperator(context, callOpUserEmail)
 
-    if(!isValidTele) {
+    if (!isValidCallOp) {
       throw new ResolverError(`Unauthorized`, 401)
     }
     

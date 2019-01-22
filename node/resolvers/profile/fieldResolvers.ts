@@ -20,7 +20,7 @@ export default {
       return obj.customFields
     },
     payments: (obj, args, context) => obj.id && getPayments(context, obj.id),
-    profilePicture: (obj, args, context) =>  obj.profilePicture && obj.id
+    profilePicture: (obj, args, context) => obj.profilePicture && obj.id
        && `//api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${obj.id}/profilePicture/attachments/${obj.profilePicture}`
   },
   ProfileCustomField: {
