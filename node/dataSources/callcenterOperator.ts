@@ -1,13 +1,13 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
-interface IsValidTelemarketingArgs {
+interface IsValidCallcenterOperatorArgs {
   email: string
   accountId: string
 }
 
-export class TelemarketingDataSource extends RESTDataSource<Context> {
-  public isValidTelemarketing = ({ email, accountId }: IsValidTelemarketingArgs) => {
+export class CallcenterOperatorDataSource extends RESTDataSource<Context> {
+  public isValidCallcenterOperator = ({ email, accountId }: IsValidCallcenterOperatorArgs) => {
     return this.get(`${accountId}/products/2/logins/${email}/resources/Televendas/granted?ignoreIsAdmin=False`)
   }
 
