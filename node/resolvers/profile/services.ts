@@ -46,7 +46,7 @@ export const updateProfilePicture = async (context: Context, args, shouldDelete:
   return getProfile(context, args)
 }
 
-export const getPayments = async (context: Context, profileId: String) => {
+export const getPayments = async (context: Context, profileId: string) => {
   const { dataSources: { payments }, currentProfile} = context
 
   const paymentsRawData = await payments.getUserPayments(currentProfile.userId)
@@ -60,7 +60,7 @@ export const getPayments = async (context: Context, profileId: String) => {
   return availableAccounts.map((account) => {
     const {bin, availableAddresses, accountId, ...cleanAccount} = account
     const accountAddress = addresses.find(
-      (addr) => addr.addressName === availableAddresses[0]
+      (addr: UserAddress) => addr.addressName === availableAddresses[0]
     )
     return {...cleanAccount, id: accountId, address: accountAddress}
   })
@@ -68,7 +68,7 @@ export const getPayments = async (context: Context, profileId: String) => {
 
 // CRUD Address
 
-export const getAddresses = async (context: Context, profileId: String) => {
+export const getAddresses = async (context: Context, profileId: string) => {
   const { dataSources: { profile }, currentProfile } = context
 
   const addresses = await fixAddresses(context,currentProfile, profileId)
@@ -86,7 +86,7 @@ export const createAddress = async (context: Context, address) => {
   profile.updateAddress(address)
 }
 
-export const deleteAddress = async (context: Context, addressId: String) => {
+export const deleteAddress = async (context: Context, addressId: string) => {
   const { dataSources: { profile } } = context
 
   await validateAddress(context, addressId)
@@ -126,7 +126,7 @@ const customFieldsFromGraphQLInput = (customFieldsInput) => compose(
   pluck('key')
 )(customFieldsInput)
 
-const validateAddress = async (context: Context, addressId: String) => {
+const validateAddress = async (context: Context, addressId: string) => {
   const { dataSources: { profile }, currentProfile } = context
 
   const address = await profile.getAddress(addressId)
@@ -142,7 +142,7 @@ const validateAddress = async (context: Context, addressId: String) => {
 
 // This fix is necessary because some addresses were saved with the profile.id as userId instead of the actual profile.userId
 // TO DO: Remove this on the Future
-const fixAddresses = async (context: Context, currentProfile: CurrentProfile, profileId: String) => {
+const fixAddresses = async (context: Context, currentProfile: CurrentProfile, profileId: string) => {
   const { dataSources: { profile } } = context
 
   const addressesToFix = await profile.getUserAddresses(profileId)
