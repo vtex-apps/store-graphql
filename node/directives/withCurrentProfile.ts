@@ -2,6 +2,7 @@ import { parse as parseCookie } from 'cookie'
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { head, pickBy, values } from 'ramda'
+import jwtDecode from 'jwt-decode' 
 
 import ResolverError from '../errors/resolverError'
 
@@ -42,12 +43,15 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
 
   const parsedCookies = parseCookie(cookie || '')
 
-  const startsWithVtexId = (val, key) => key.startsWith(`VtexIdclientAutCookie_${account}`)
-  const token = head(values(pickBy(startsWithVtexId, parsedCookies)))
+  const startsWithVtexIdAccount = (val, key) => key.startsWith(`VtexIdclientAutCookie_${account}`)
+  const userToken = head(values(pickBy(startsWithVtexIdAccount, parsedCookies)))
 
-  if (!token) {
-    const currentUser = parsedCookies['vtex-current-user']
-    const teleUserEmail = currentUser  && JSON.parse(currentUser).email
+  if (!userToken) {
+    const startsWithVtexId = (val, key) => key.startsWith(`VtexIdclientAutCookie`) 
+    const adminTokenJWT = head(values(pickBy(startsWithVtexId, parsedCookies)))
+    const adminInfo =  jwtDecode(adminTokenJWT)
+
+    const teleUserEmail = adminInfo && adminInfo.sub  
     const isValidTele = teleUserEmail && await isValidTelemarketing(context, teleUserEmail)
 
     if(!isValidTele) throw new ResolverError(`Unauthorized`, 401)
@@ -57,7 +61,7 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
     return profile.getProfileInfo(customerEmail).then(({ email, userId }) => ({ email, userId }))
   }
 
-  return identity.getUserWithToken(token).then((data) => ({ userId: data.userId, email: data.user }))
+  return identity.getUserWithToken(userToken).then((data) => ({ userId: data.userId, email: data.user }))
 }
 
 const isValidTelemarketing = (context: Context, email: string) => {

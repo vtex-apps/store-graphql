@@ -55,6 +55,11 @@ declare global {
 
   interface UserAddress {
     id: string
+    addressName: string
+  }
+
+  interface UserProfile {
+    id: string
   }
 
   interface CurrentProfile {
