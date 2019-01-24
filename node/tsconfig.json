@@ -21,6 +21,7 @@
     "enable": false
   },
   "include": [
+    "../typedql/**/*",
     "./**/*"
   ],
   "exclude": [

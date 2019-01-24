@@ -14,7 +14,7 @@ const getListItemsWithProductInfo = (items, catalog) => Promise.all(
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(itemId => 
+  const items = itemsId ? await Promise.all(map(itemId =>
     document.getDocument(acronymListProduct, itemId, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
@@ -59,7 +59,7 @@ export const queries = {
     return { id, ...list, items }
   },
 
-  listsByOwner: async (_, { owner, page, pageSize }, context) => {
+  listsByOwner: async (_, { owner, page = 1, pageSize = 15 }, context) => {
     const { dataSources, dataSources: { document } } = context
     const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize})
     const listsWithProducts = map(async list => {

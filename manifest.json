@@ -6,7 +6,7 @@
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
   "builders": {
-    "graphql": "1.x",
+    "typedql": "0.x",
     "node": "3.x"
   },
   "scripts": {

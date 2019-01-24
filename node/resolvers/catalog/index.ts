@@ -1,7 +1,8 @@
 import { ApolloError } from 'apollo-server-errors'
 import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
-import ResolverError from '../../errors/resolverError'
 
+import { Product } from '../../dataSources/catalog'
+import ResolverError from '../../errors/resolverError'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as facetsResolvers } from './facets'
@@ -12,6 +13,20 @@ import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
 import { Slugify } from './slug'
+
+const defaultSearchArgs = {
+  category: '',
+  collection: '',
+  from: 0,
+  map: '',
+  orderBy: 'OrderByPriceDESC',
+  priceRange: '',
+  query: '',
+  rest: '',
+  salesChannel: '',
+  specificationFilters: null,
+  to: 9
+}
 
 /**
  * It will extract the slug from the HREF in the item
@@ -59,8 +74,12 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_, args, { dataSources: { portal } }) => {
-    const { itemsReturned } = await portal.autocomplete(args)
+  autocomplete: async (_, args, { dataSources: { portal } }: Context) => {
+    const {
+      maxRows = 12,
+      searchTerm,
+    } = args
+    const { itemsReturned } = await portal.autocomplete({maxRows, searchTerm})
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
@@ -73,15 +92,14 @@ export const queries = {
     }
   },
 
-  facets: (_, { facets }, ctx) => {
+  facets: (_, { facets = ''}, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     return catalog.facets(facets)
   },
 
-  product: async (_, { slug }, ctx) => {
+  product: async (_, { slug }, ctx: Context): Promise<Product> => {
     const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
-
     if (products.length > 0) {
       return head(products)
     }
@@ -92,19 +110,20 @@ export const queries = {
     )
   },
 
-  products: async (_, args, ctx) => {
+  products: async (_, pArgs, ctx: Context): Promise<Product[]> => {
     const { dataSources: { catalog } } = ctx
-    const queryTerm = args.query
-    if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
+    const args = {...pArgs, ...defaultSearchArgs}
+    const {query} = args
+    if (query == null || test(/[\?\&\[\]\=\,]/, query)) {
       throw new ResolverError(
-        `The query term: '${queryTerm}' contains invalid characters.`,
+        `The query term: '${query}' contains invalid characters.`,
         500
       )
     }
     return catalog.products(args)
   },
 
-  brand: async (_, args, { dataSources: { catalog } }) => {
+  brand: async (_, args, { dataSources: { catalog } }: Context) => {
     const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id')), brands)
     if (!brand) {
@@ -113,13 +132,14 @@ export const queries = {
     return brand
   },
 
-  brands: async (_, __, { dataSources: { catalog } }) => catalog.brands(),
+  brands: async (_, __, { dataSources: { catalog } }: Context) => catalog.brands(),
 
   category: async (_, { id }, { dataSources: { catalog } }) => catalog.category(id),
 
-  categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
+  categories: async (_, { treeLevel = 3 }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
-  search: async (_, args, ctx: Context) => {
+  search: async (_, pArgs, ctx: Context) => {
+    const args = {...pArgs, ...defaultSearchArgs}
     const { map: mapParams, query, rest } = args
 
     if (query == null || mapParams == null) {

@@ -11,7 +11,7 @@ export const resolvers = {
       attachments
     ),
     calculatedAttachments: calculatedAttachmentsResolver,
-    images: ({images = []}, {quantity}) => map(
+    images: ({images = []}, {quantity = 10}) => map(
       image => ({
         cacheId: image.imageId,
         ...image,

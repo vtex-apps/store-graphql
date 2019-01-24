@@ -2,6 +2,7 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import http from 'axios'
 import { forEachObjIndexed } from 'ramda'
 
+import { Product as SchemaProduct } from '../../typedql/catalog/product'
 import { withAuthToken } from '../resolvers/headers'
 
 const DEFAULT_TIMEOUT_MS = 8 * 1000
@@ -19,6 +20,14 @@ interface ProductsArgs {
   map: string
 }
 
+export type Product = Pick<SchemaProduct,
+  'productId'
+  | 'brand'
+  | 'linkText'
+  | 'link'
+  | 'titleTag'
+  >
+
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
@@ -27,28 +36,28 @@ export class CatalogDataSource extends RESTDataSource<Context> {
     super()
   }
 
-  public product = (slug: string) => this.get(
+  public product = (slug: string) => this.get<Product[]>(
     `/pub/products/search/${slug && slug.toLowerCase()}/p`
   )
 
-  public productByEan = (id: string) => this.get(
+  public productByEan = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=alternateIds_Ean=${id}`
   )
 
-  public productById = (id: string) => this.get(
+  public productById = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=productId:${id}`
   )
 
-  public productByReference = (id: string) => this.get(
+  public productByReference = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=alternateIds_RefId=${id}`
   )
 
-  public productBySku = (skuIds: string[]) => this.get(
+  public productBySku = (skuIds: string[]) => this.get<Product[]>(
     `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`
   )
 
   public products = (args: ProductsArgs) => {
-    return this.get(this.productSearchUrl(args))
+    return this.get<Product[]>(this.productSearchUrl(args))
   }
 
   public productsQuantity = async (args: ProductsArgs) => {

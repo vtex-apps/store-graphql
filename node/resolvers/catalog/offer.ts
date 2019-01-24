@@ -1,15 +1,11 @@
-import {comparator, filter, gte, head, lte, sort} from 'ramda'
+import { comparator, filter, gte, head, lte, sort } from 'ramda'
 
-const InstallmentsCriteria = {
-  ALL: 'ALL',
-  MAX: 'MAX',
-  MIN: 'MIN',
-}
+import { InstallmentsCriteria } from '../../../typedql/catalog/installments'
 
 export const resolvers = {
   Offer: {
     Installments: ({Installments}, args, __) => {
-      const {criteria, rates} = args
+      const {criteria = InstallmentsCriteria.ALL, rates = true} = args
       if (criteria === InstallmentsCriteria.ALL) {
         return Installments
       }
