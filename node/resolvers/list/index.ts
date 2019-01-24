@@ -1,20 +1,20 @@
-import { difference, filter, map, nth, path } from 'ramda'
+import { concat, filter, map, nth, path } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import { mapKeyValues } from '../../utils/object'
 import { validateItems, validateListItem } from './util'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
 
 const getListItemsWithProductInfo = (items, catalog) => Promise.all(
-    map(async item => {
-      const productsResponse = await catalog.productBySku([path(['skuId'], item)])
-      const product = nth(0, productsResponse)
-      return { ...item, product }
-    }, items)
-  )
+  map(async item => {
+    const productsResponse = await catalog.productBySku([path(['skuId'], item)])
+    const product = nth(0, productsResponse)
+    return { ...item, product }
+  }, items)
+)
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(itemId => 
+  const items = itemsId ? await Promise.all(map(itemId =>
     document.getDocument(acronymListProduct, itemId, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
@@ -38,18 +38,27 @@ const deleteItems = (items, document) => (
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) === 0, items)
-  const otherItems = difference(items, itemsToBeDeleted)
-  const itemsUpdated = await map(async item => {
-    const itemId = path(['itemId'], item)
-    validateListItem(items, item, dataSources)
-    if (itemId) {
-      await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
-      return itemId
-    }
-    return await addListItem(item, document)
-  }, otherItems)
+  const itemsToBeAdded = filter(item => !path(['itemId'], item), items)
+  const itemsToBeUpdated = filter(item => path(['itemId'], item) && path(['quantity'], item) > 0, items)
+
   deleteItems(itemsToBeDeleted, document)
-  return itemsUpdated
+
+  const itemsIdAdded = await Promise.all(
+    map(async item => await addListItem(item, document), itemsToBeAdded)
+  )
+
+  const itemsIdUpdated = map(
+      item => {
+        document.updateDocument(
+        acronymListProduct,
+        path(['itemId'], item),
+        mapKeyValues(item))
+        return path(['itemId'], item)
+      },
+      itemsToBeUpdated
+    )
+
+  return concat(itemsIdAdded, itemsIdUpdated)
 }
 
 export const queries = {
@@ -61,7 +70,7 @@ export const queries = {
 
   listsByOwner: async (_, { owner, page, pageSize }, context) => {
     const { dataSources, dataSources: { document } } = context
-    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize})
+    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
     const listsWithProducts = map(async list => {
       const items = await getListItems(path(['items'], list), dataSources)
       return { ...list, items }
