@@ -13,7 +13,7 @@ export const getProfile = (context: Context, args) => {
   const { customFields } = args
   const { dataSources: { profile }, currentProfile } = context
 
-  return profile.getProfileInfo(currentProfile.email, customFields)
+  return profile.getProfileInfo(currentProfile.email, customFields).then((profileData) => profileData ? profileData : { id: '', email: currentProfile.email })
 }
 
 export const updateProfile = async (context: Context, profile) => {
