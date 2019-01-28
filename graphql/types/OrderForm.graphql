@@ -82,6 +82,7 @@ type ItemMetadataUnit {
   ean: String
   imageUrl: String
   detailUrl: String
+  seller: String
   assemblyOptions: [AssemblyOption]
 }
 
