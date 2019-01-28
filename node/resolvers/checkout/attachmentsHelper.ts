@@ -31,7 +31,11 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   })
   const entries = Object.entries(types)
   for (const [type, parsedOptions] of entries) {
-    await checkout.addAssemblyOptions(orderFormId, itemIndex, `${assemblyPreffix}_${type}`, body(parsedOptions))
+    try {
+      await checkout.addAssemblyOptions(orderFormId, itemIndex, `${assemblyPreffix}_${type}`, body(parsedOptions))
+    } catch (err) {
+      // go on to next api call if one fails
+    }
   }
 }
 
