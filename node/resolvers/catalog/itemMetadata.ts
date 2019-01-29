@@ -1,13 +1,12 @@
 import http from 'axios'
 import * as camelCase from 'camelcase'
-import { both, find, head, isEmpty, pickBy, prop, propEq } from 'ramda'
+import { both, find, isEmpty, pickBy, prop, propEq } from 'ramda'
 import { renameKeysWith } from '../../utils'
 import paths from '../paths'
 
-interface Seller {
-  sellerId: number
-  sellerDefault: boolean
-}
+const isTruthy = val => !!val
+const isUtm = (_, key) => key.startsWith('utm')
+const isValidUtm = both(isUtm, isTruthy)
 
 interface ItemMetadata {
   id: string,
@@ -36,10 +35,6 @@ interface ItemMetadata {
     }
   }>,
 }
-
-const isTruthy = val => !!val
-const isUtm = (_, key) => key.startsWith('utm')
-const isValidUtm = both(isUtm, isTruthy)
 
 interface FetchPriceInput {
   id: string,
@@ -71,18 +66,18 @@ const fetchPrice = async ({
 }: FetchPriceInput):Promise<PriceType> => {
   // TODO: optimize this call sending multiple ids and/or priceTable...
   const payload = {
-      country: countryCode,
-      isCheckedIn: false,
-      items: [{ id, quantity: 1, seller }],
-      priceTables: [priceTable],
-      ...(isEmpty(marketingData) ? {} : { marketingData }),
-    }
-    const orderForm = prop('data', await http.post(url, payload, { headers }))
-    return {
-      id,
-      price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
-      priceTable,
-    }
+    country: countryCode,
+    isCheckedIn: false,
+    items: [{ id, quantity: 1, seller }],
+    priceTables: [priceTable],
+    ...(isEmpty(marketingData) ? {} : { marketingData }),
+  }
+  const orderForm = prop('data', await http.post(url, payload, { headers }))
+  return {
+    id,
+    price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
+    priceTable,
+  }
 }
 
 export const resolvers = {

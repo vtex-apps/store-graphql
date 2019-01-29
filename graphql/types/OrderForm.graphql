@@ -70,7 +70,6 @@ type ItemPriceTable {
 type PriceTableItem {
   id: String
   price: Int
-  priceTable: String
 }
 
 type ItemMetadataUnit {
