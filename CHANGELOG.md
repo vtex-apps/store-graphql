@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add logic to call addAssemblyOption to append assembly options to cart items
+- Add order form and product fields related to assembly options (like ItemMetadata)
 
 ## [2.49.1] - 2019-02-22
 ### Fixed
