@@ -1,5 +1,7 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
 import FormData from 'form-data'
+import { forEachObjIndexed } from 'ramda'
+
 import { withMDPagination } from '../resolvers/headers'
 import { parseFieldsToJson } from '../utils'
 
@@ -49,20 +51,24 @@ export class DocumentDataSource extends RESTDataSource<Context> {
     const page = request.headers.get('page')
     const pageSize = request.headers.get('pageSize')
     const formDataHeaders = request.headers.get('formDataHeaders')
+
+    let headers = {}
     if (page && pageSize) {
-      request.headers = withMDPagination()(vtex, cookie)(+page, +pageSize)
+      headers = withMDPagination()(vtex, cookie)(+page, +pageSize)
     } else if (formDataHeaders) {
-      request.headers = {
+      headers = {
         'Proxy-Authorization': this.context.vtex.authToken,
         'VtexIdclientAutCookie': this.context.vtex.authToken,
         ...formDataHeaders
       }
     } else {
-      request.headers = {
+      headers = {
         Accept: 'application/vnd.vtex.ds.v10+json',
         Authorization: this.context.vtex.authToken
       }
     }
+
+    forEachObjIndexed((value, key) => request.headers.set(key, value), headers)
   }
 
   get baseURL() {
