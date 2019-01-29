@@ -57,6 +57,60 @@ type OrderFormItem {
   parentAssemblyBinding: String
 }
 
+<<<<<<< HEAD
+=======
+type ItemMetadata {
+  items: [ItemMetadataUnit]
+  priceTable: [ItemPriceTable]
+}
+
+type ItemPriceTable {
+  type: String
+  values: [PriceTableItem]
+}
+
+type PriceTableItem {
+  id: String
+  price: Int
+}
+
+type ItemMetadataUnit {
+  id: ID
+  name: String
+  skuName: String
+  productId: String
+  refId: String
+  ean: String
+  imageUrl: String
+  detailUrl: String
+  seller: String
+  assemblyOptions: [AssemblyOption]
+}
+
+type AssemblyOption {
+  id: String
+  name: String
+  required: Boolean
+  inputValues: String
+  composition: CompositionType
+}
+
+type CompositionType {
+  minQuantity: Int
+  maxQuantity: Int
+  items: [CompositionItem]
+}
+
+type CompositionItem {
+  id: String
+  minQuantity: Int
+  maxQuantity: Int
+  priceTable: String
+  price: Int
+  seller: String
+}
+
+>>>>>>> formatting issues and remove nonexisting priceTable field on type PriceTableItem
 type Totalizer {
   id: ID
   name: String
