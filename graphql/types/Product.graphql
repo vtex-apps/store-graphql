@@ -184,6 +184,6 @@ type Reference {
 input AssemblyOptionInput {
   id: String!
   quantity: Int!
-  type: String!
+  assemblyId: String!
   seller: String!
 }
