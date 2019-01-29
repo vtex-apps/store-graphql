@@ -22,9 +22,7 @@ const getOrderFormIdFromCookie = (cookie): string | null => {
 
 export const syncCheckoutAndSessionPostChanges = async (sessionData: SessionFields, orderForm: GenericObject, ctx: Context): Promise<GenericObject> => {
   const orderFormAddress = path(['shippingData', 'selectedAddresses', '0'], orderForm)
-  // sync address
   const newOrderForm = await syncOrderFormAndSessionAddress(orderFormAddress, orderForm.orderFormId, sessionData.address, ctx)
-  // sync OFID
   await syncOrderFormAndSessionOrderFormId(orderForm.orderFormId, sessionData.orderFormId, ctx)
   return newOrderForm || orderForm
 }
@@ -41,7 +39,6 @@ const syncOrderFormAndSessionAddress = async (
   }
 
   if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
-    // salva na session
     await session.updateSession('address', orderFormAddress)
   }
   return null
