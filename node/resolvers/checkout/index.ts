@@ -101,7 +101,7 @@ export const mutations: Record<string, Resolver> = {
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
     }
 
-    const cleanItems = items.map(({ options, assemblyOptionPreffix, ...rest }) => rest)
+    const cleanItems = items.map(({ options, ...rest }) => rest)
   
     const addItem = await checkout.addItem(orderFormId, cleanItems)
 
