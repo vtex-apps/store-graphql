@@ -102,7 +102,7 @@ type Query {
   profile(
     """ Comma separated fields """
     customFields: String
-  ): Profile @cacheControl(scope: PRIVATE)
+  ): Profile @cacheControl(scope: PRIVATE) @withCurrentProfile
 
   """ Get auto complete suggestions in search """
   autocomplete(
@@ -209,10 +209,10 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
 
   """ Profile """
-  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile
-  updateAddress(id: String, fields: AddressInput): Profile
-  createAddress(fields: AddressInput): Profile
-  deleteAddress(id: String): Profile
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile @withCurrentProfile
+  updateAddress(id: String, fields: AddressInput): Profile @withCurrentProfile
+  createAddress(fields: AddressInput): Profile @withCurrentProfile
+  deleteAddress(id: String): Profile @withCurrentProfile
 
   """ Updates the Profile Picture by erasing the old ones """
   updateProfilePicture(
@@ -220,14 +220,14 @@ type Mutation {
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
     field: String
-  ): Profile
+  ): Profile @withCurrentProfile
   """ Uploads the Profile Picture by appending to the existing ones """
   uploadProfilePicture(
     """ File being uploaded """
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
     field: String
-  ): Profile
+  ): Profile @withCurrentProfile
 
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
