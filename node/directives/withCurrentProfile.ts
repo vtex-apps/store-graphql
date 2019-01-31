@@ -11,9 +11,9 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
     const { resolve = defaultFieldResolver } = field
     field.resolve = async (root, args, context, info) => {
       await getCurrentProfileFromSession(context).then(( currentProfile ) => {
-        context.currentProfile = currentProfile
+        context.vtex.currentProfile = currentProfile
       }).catch(async () => {
-        context.currentProfile = await getCurrentProfileFromCookies(context)
+        context.vtex.currentProfile = await getCurrentProfileFromCookies(context)
       })
 
       return resolve(root, args, context, info)

@@ -11,13 +11,13 @@ export const pickCustomFieldsFromData = (customFields: string, data) => customFi
 
 export const getProfile = (context: Context, args) => {
   const { customFields } = args
-  const { dataSources: { profile }, currentProfile } = context
+  const { dataSources: { profile }, vtex: { currentProfile }  } = context
 
   return profile.getProfileInfo(currentProfile.email, customFields).then((profileData) => profileData ? profileData : { id: '', email: currentProfile.email })
 }
 
 export const updateProfile = async (context: Context, profile) => {
-  const { dataSources, currentProfile } = context
+  const { dataSources, vtex: { currentProfile } } = context
 
   const customFieldsStr = customFieldsFromGraphQLInput(profile.customFields || [])
   const oldData = await dataSources.profile.getProfileInfo(currentProfile.email, { customFields: customFieldsStr })
@@ -32,7 +32,7 @@ export const updateProfile = async (context: Context, profile) => {
 }
 
 export const updateProfilePicture = async (context: Context, args, shouldDelete: boolean) => {
-  const { dataSources: { profile }, currentProfile } = context
+  const { dataSources: { profile }, vtex: { currentProfile } } = context
 
   const file = args.file
   const field = args.field || 'profilePicture'
@@ -50,7 +50,7 @@ export const updateProfilePicture = async (context: Context, args, shouldDelete:
 }
 
 export const getPayments = async (context: Context, profileId: string) => {
-  const { dataSources: { payments }, currentProfile} = context
+  const { dataSources: { payments }, vtex: { currentProfile } } = context
 
   const paymentsRawData = await payments.getUserPayments(currentProfile.userId)
  
@@ -73,7 +73,7 @@ export const getPayments = async (context: Context, profileId: string) => {
 // CRUD Address
 
 export const getAddresses = async (context: Context, profileId: string) => {
-  const { dataSources: { profile }, currentProfile } = context
+  const { dataSources: { profile }, vtex: { currentProfile } } = context
 
   const addresses = await fixAddresses(context,currentProfile, profileId)
   const fixedAddresses = await profile.getUserAddresses(currentProfile.userId)
@@ -82,7 +82,7 @@ export const getAddresses = async (context: Context, profileId: string) => {
 }
 
 export const createAddress = (context: Context, address) => {
-  const { dataSources: { profile }, currentProfile } = context
+  const { dataSources: { profile }, vtex: { currentProfile } } = context
 
   return profile.updateAddress({
     ...address,
@@ -100,7 +100,7 @@ export const deleteAddress = async (context: Context, addressId: string) => {
 }
 
 export const updateAddress = async (context: Context, address) => {
-  const { dataSources: { profile }, currentProfile } = context
+  const { dataSources: { profile }, vtex: { currentProfile } } = context
 
   await validateAddress(context, address.id)
 
@@ -131,7 +131,7 @@ const customFieldsFromGraphQLInput = (customFieldsInput) => compose(
 )(customFieldsInput)
 
 const validateAddress = async (context: Context, addressId: string) => {
-  const { dataSources: { profile }, currentProfile } = context
+  const { dataSources: { profile }, vtex: { currentProfile } } = context
 
   const address = await profile.getAddress(addressId)
 

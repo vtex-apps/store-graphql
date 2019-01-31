@@ -1,4 +1,4 @@
-import { ServiceContext } from '@vtex/api'
+import { IOContext, ServiceContext } from '@vtex/api'
 
 import { dataSources } from './dataSources'
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
@@ -17,6 +17,10 @@ declare global {
     dataSources: StoreGraphQLDataSources
     originalPath: string
     cookie: string
+    vtex: CustomIOContext
+  }
+
+  interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
   }
 
