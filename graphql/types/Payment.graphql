@@ -1,52 +1,54 @@
 type PaymentSession {
-    id: String,
-    name: String,
-    expiresAt: String,
+    id: String
+    name: String
+    expiresAt: String
 }
 
 type PaymentToken {
-    token: String,
-    bin: String,
-    lastDigits: String,
-    expiresAt: String,
-    paymentSystem: String,
-    paymentSystemName: String,
+    token: String
+    bin: String
+    lastDigits: String
+    expiresAt: String
+    paymentSystem: String
+    paymentSystemName: String
 }
 
 """ Payment data used by profile resolvers """
 type PaymentProfile {
+    """ Id representing this payment form used as reference for the cache"""
+    cacheId: ID
     """ Id representing this payment form"""
     id: String
     """ Id for the payment system related to this payment form"""
-    paymentSystem: String,
+    paymentSystem: String
     """ The name of the payment system """
-    paymentSystemName: String,
+    paymentSystemName: String
     """ Last digits of the card this type represents (in the form ************9999)"""
-    cardNumber: String,
+    cardNumber: String
     """ Billing address for this payment form (type definition in the Profile file)"""
     address: Address
 }
 
 input PaymentInput {
-    paymentSystem: String,
-    cardHolder: String,
-    cardNumber: String,
-    expiryDate: String,
-    csc: String,
-    document: String,
-    documentType: String,
-    partnerId: String,
-    address: PaymentAddress,
+    paymentSystem: String
+    cardHolder: String
+    cardNumber: String
+    expiryDate: String
+    csc: String
+    document: String
+    documentType: String
+    partnerId: String
+    address: PaymentAddress
 }
 
 input PaymentAddress {
-    postalCode: String,
-    street: String,
-    neighborhood: String,
-    city: String,
-    receiverName: String,
-    state: String,
-    country: String,
-    number: String,
-    complement: String,
+    postalCode: String
+    street: String
+    neighborhood: String
+    city: String
+    receiverName: String
+    state: String
+    country: String
+    number: String
+    complement: String
   }

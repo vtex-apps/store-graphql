@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.46.0] - 2019-01-31
+### Added
+- `withCurrentProfile` to get the session that will be used on the profile related queries.
+
 ## [2.45.1] - 2019-01-30
 
 ## [2.44.3] - 2019-01-30

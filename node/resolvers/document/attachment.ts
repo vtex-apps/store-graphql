@@ -19,7 +19,7 @@ export const uploadAttachment = async (args, ctx) => {
   formData.append(field, buffer, { filename, contentType: mimetype, knownLength: buffer.byteLength })
 
   const response = await document.uploadAttachment(acronym, documentId, field, formData)
-
+  
   if (response) {
     throw new ResolverError(response, 500)
   }
