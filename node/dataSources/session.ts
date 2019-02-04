@@ -25,6 +25,7 @@ export class SessionDataSource extends RESTDataSource<Context> {
   public getSegmentData = () => this.get<SegmentData>('/segments')
 
   public getSession = () => this.get('/sessions/?items=*')
+  public updateSession = (key: string, value: any) => this.post('/sessions', { public: { [key]: { value } } })
 
   get baseURL() {
     const {vtex: {account}} = this.context
@@ -44,7 +45,8 @@ export class SessionDataSource extends RESTDataSource<Context> {
       (value: string, header) => request.headers.set(header, value),
       {
         ...segment && {Cookie: `vtex_segment=${segment};vtex_session=${sessionCookie}`},
-        'Proxy-Authorization': authToken
+        'Content-Type': 'application/json',
+        'Proxy-Authorization': authToken,
       }
     )
   }

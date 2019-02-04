@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.46.1] - 2019-02-04
+### Added
+- Add logic to sync orderFormId in cookies with session (soon to be implemented by checkout)
+- Add logic to sync order form address with session (soon to be implemented by checkout)
+
 ## [2.46.0] - 2019-01-31
 ### Added
 - `withCurrentProfile` to get the session that will be used on the profile related queries.
