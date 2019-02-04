@@ -6,6 +6,10 @@ import httpResolver from '../httpResolver'
 import paths from '../paths'
 import paymentTokenResolver from './paymentTokenResolver'
 
+import { queries as sessionQueries } from '../session'
+import { SessionFields } from '../session/sessionResolver'
+import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
+
 /**
  * It will convert an integer to float moving the
  * float point two positions left.
@@ -54,8 +58,16 @@ export const fieldResolvers = {
 }
 
 export const queries: Record<string, Resolver> = {
-  orderForm: (root, args, {dataSources: {checkout}}) => {
-    return checkout.orderForm()
+  orderForm: async (root, args, ctx) => {
+    const {dataSources: {checkout}} = ctx
+
+    const sessionData = await sessionQueries.getSession(root, args, ctx) as SessionFields
+    await syncCheckoutAndSessionPreCheckout(sessionData, ctx)
+
+    const orderForm = await checkout.orderForm()
+
+    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+    return syncedOrderForm
   },
 
   orders: (root, args, {dataSources: {checkout}}) => {
@@ -134,7 +146,14 @@ export const mutations: Record<string, Resolver> = {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
-  updateOrderFormShipping: (root, {orderFormId, address}, {dataSources: {checkout}}) => {
-    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] })
+  updateOrderFormShipping: async (root, {orderFormId, address}, ctx) => {
+    const {dataSources: {checkout}} = ctx
+    const [sessionData, orderForm] = await Promise.all([
+      sessionQueries.getSession(root, {}, ctx) as SessionFields,
+      checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] }),
+    ])
+
+    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+    return syncedOrderForm
   }
 }
