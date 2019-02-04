@@ -1,4 +1,5 @@
 type Query {
+  lastUserOrder: Order @cacheControl(scope: PRIVATE)
     """ Get a specified product """
   product(
     """ Product slug """

@@ -5,6 +5,7 @@ import { fieldResolvers as checkoutFieldResolvers, mutations as checkoutMutation
 import { mutations as documentMutations, queries as documentQueries } from './document'
 import { mutation as listMutations, queries as listQueries } from './list'
 import { fieldResolvers as logisticsResolvers, queries as logisticsQueries } from './logistics'
+import { queries as omsQueries } from './oms'
 import { mutations as profileMutations, queries as profileQueries, fieldResolvers as profileFieldResolvers } from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
 import { fieldResolvers as subscriptionsFieldResolvers, mutations as subscriptionsMutations, queries as subscriptionsQueries } from './subscriptions'
@@ -39,5 +40,6 @@ export const resolvers = {
     ...sessionQueries,
     ...subscriptionsQueries,
     ...listQueries,
+    ...omsQueries,
   },
 }
