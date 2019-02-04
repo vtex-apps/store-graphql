@@ -71,6 +71,7 @@ type SessionProfile {
 type Address {
   cacheId: ID
   id: String
+  addressId: String
   userId: String
   receiverName: String
   complement: String

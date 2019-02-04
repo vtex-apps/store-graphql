@@ -47,7 +47,28 @@ const paths = {
   getSession: account => `${paths.session(account)}?items=*`,
   session: account => `http://${account}.vtexcommercestable.com.br/api/sessions`,
 
-  logisticsConfig: account => ({
+  /** Master Data API v1
+   * Docs: https://documenter.getpostman.com/view/164907/masterdata-api-v102/2TqWsD
+   */
+  attachment: (account, acronym, id, field, filename?) => `${paths.document(account, acronym, id)}/${field}/attachments${filename ? `/${filename}` : ''}`,
+  document: (account, acronym, id) => `${paths.documents(account, acronym)}/${id}`,
+  documentFields: (account, acronym, fields = '_all', id) => `${paths.document(account, acronym, id)}?_fields=${fields}`,
+  documents: (account, acronym) => `http://api.vtex.com/${account}/dataentities/${acronym}/documents`,
+  searchDocument: (account, acronym, { fields, where }) => `http://api.vtex.com/${account}/dataentities/${acronym}/search?_fields=${fields}${where ? `&_where=${encodeURIComponent(where)}` : ''}`,
+
+  profile: account => ({
+    address: (id) => `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
+    attachments: (id, field) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}/${field}/attachments`,
+    filterAddress: (id) => `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,country,state,number,street,postalCode,city,reference,addressName,addressType,geoCoordinate`,
+    filterUser: (email, customFields?) => join(',', [`http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,isCorporate,tradeName,corporateName,stateRegistration,corporateDocument,profilePicture`, customFields]),
+    payments: (id) => `http://${account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles/${id}/vcs-checkout`,
+    profile: (id) => `http://api.vtex.com/${account}/dataentities/CL/documents/${id}`,
+  }),
+
+  // https://documenter.getpostman.com/view/3848/vtex-logistics-api/Hs42#405fae80-9bbc-471b-92b5-3071bdbfa527
+  logisticsConfig: (account: string) => ({
+    pickupById: (id: string) => `http://logistics.vtexcommercestable.com.br/api/logistics/pvt/configuration/pickuppoints/${id}?an=${account}`,
+    pickupPoints: (lat: string, long: string, maxDistance: number) => `http://logistics.vtexcommercestable.com.br/api/logistics/pvt/configuration/pickuppoints/_search?an=${account}&page=1&pageSize=100&lat=${lat}&$lon=${long}&maxDistance=${maxDistance}`,
     shipping: `http://${account}.vtexcommercestable.com.br/api/logistics/pub/shipping/configuration`
   }),
 

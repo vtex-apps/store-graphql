@@ -1,5 +1,6 @@
 import { map } from 'ramda'
-import { SimulationData } from '../../dataSources/checkout'
+import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
+import { queries as logisticsQueries } from '../logistics/index'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -51,6 +52,13 @@ export const fieldResolvers = {
         price: convertIntToFloat(item.price),
         sellingPrice: convertIntToFloat(item.sellingPrice)
       }), orderForm.items)
+    },
+    pickupPoint: (orderForm, _, ctx) => {
+      const { isCheckedIn, checkedInPickupPointId } = orderForm
+      if (!isCheckedIn || !checkedInPickupPointId) {
+        return null
+      }
+      return logisticsQueries.pickupPoint({}, { id: checkedInPickupPointId }, ctx)
     },
     value: (orderForm) => {
       return convertIntToFloat(orderForm.value)
@@ -171,5 +179,8 @@ export const mutations: Record<string, Resolver> = {
       noSplitItem: true,
     }
     return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
-  }
+  },
+  updateOrderFormCheckin: (root, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
+    return checkout.updateOrderFormCheckin(orderFormId, checkin)
+  },
 }

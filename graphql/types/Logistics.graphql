@@ -4,3 +4,23 @@ type LogisticsData {
   """ Google Maps Geolocation API key """
   googleMapsKey: String
 }
+
+type PickupPoint {
+  businessHours: [BusinessHours]
+  isActive: Boolean
+  distance: Float
+  friendlyName: String
+  id: String
+  seller: String
+  address: Address
+}
+
+type BusinessHours {
+  openingTime: String
+  dayOfWeek: Int
+  closingTime: String
+}
+
+type NearPickupPointQueryResponse {
+  items: [PickupPoint]
+}

@@ -9,6 +9,16 @@ export interface SimulationData {
   postalCode: string
 }
 
+export interface UpdateCheckinArgs {
+  orderFormId: string,
+  checkin: CheckinArgs,
+}
+
+interface CheckinArgs {
+  isCheckedIn: boolean, 
+  pickupPointId?: string,
+}
+
 const SetCookieWhitelist = [
   'checkout.vtex.com',
   '.ASPXAUTH',
@@ -84,6 +94,11 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`, 
       body
     )
+
+  public updateOrderFormCheckin = (orderFormId: string, checkinPayload: CheckinArgs) => this.post(
+    `pub/orderForm/${orderFormId}/checkIn`, 
+    checkinPayload,
+  )
 
   public orderForm = () => this.post(
     `/pub/orderForm`,

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add logic to call addAssemblyOption to append assembly options to cart items
 - Add order form and product fields related to assembly options (like ItemMetadata)
+- added pickupPoints query
+- added updateOrderFormCheckin mutation
 
 ## [2.46.1] - 2019-02-04
 ### Added
