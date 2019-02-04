@@ -103,8 +103,8 @@ type CompositionItem {
   id: String
   minQuantity: Int
   maxQuantity: Int
+  initialQuantity: Int
   priceTable: String
-  price: Int
   seller: String
 }
 
