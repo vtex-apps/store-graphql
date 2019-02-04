@@ -81,6 +81,7 @@ type OrderFormShippingData {
   address: Address
   availableAddresses: [Address]!
   selectedAddresses: [Address]!
+  pickupPoints: [PickupPoint]
 }
 
 input OrderFormItemInput {
