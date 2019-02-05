@@ -118,15 +118,25 @@ type Query {
   """ Returns brands list """
   brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  """ Returns orderForm shipping simulation """
-  shipping(
+  """ OrderForm simulation """
+  simulation(
     """ List of SKU products """
-    items: [ShippingItem],
+    items: [SimulationItem],
     """ Postal code to freight calculator """
     postalCode: String,
     """ Country of postal code """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+  ): SimulationData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+
+  """ Returns orderForm shipping simulation """
+  shipping(
+    """ List of SKU products """
+    items: [SimulationItem],
+    """ Postal code to freight calculator """
+    postalCode: String,
+    """ Country of postal code """
+    country: String
+  ): ShippingData @deprecated(reason: "Use the simulation query instead") @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Returns checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
@@ -178,7 +188,7 @@ type Query {
   """ Get the benefits associated with a list of products """
   benefits(
     """ List of Products """
-    items: [ShippingItem]
+    items: [SimulationItem]
   ): [Benefit] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get the options available to authenticate users """

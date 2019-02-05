@@ -4,6 +4,45 @@ type PaymentSession {
     expiresAt: String
 }
 
+type PaymentOptions {
+  paymentSystem: String
+  bin: String
+  paymentName: String
+  paymentGroupName: String
+  value: Number
+  installments: [PaymentInstallments]
+}
+
+type PaymentInstallments {
+  count: Number
+  hasInterestRate: Boolean
+  interestRate: Number
+  value: Number
+  total: Number
+  sellerMerchantInstallments: [SellerInstallment]
+}
+
+type SellerInstallment {
+  id: String
+  count: Number
+  hasInterestRate: Boolean
+  interestRate: Number
+  value: Number
+  total: Number
+}
+
+type PaymentSystem {
+  id: Number
+  name: String
+  groupName: String
+  stringId: String
+  template: String
+  requiresDocument: Boolean
+  isCustom: Boolean
+  requiresAuthentication: Boolean
+  dueDate: String
+}
+
 type PaymentToken {
     token: String
     bin: String

@@ -96,8 +96,15 @@ export const queries: Record<string, Resolver> = {
     return checkout.orders()
   },
 
+  /**
+   * @deprecated Should be removed in the next major
+   */
   shipping: (_, args: SimulationData, {dataSources: {checkout}}) => {
-    return checkout.shipping(args)
+    return checkout.simulation(args)
+  },
+
+  simulation: (_, args: SimulationData, {dataSources: {checkout}}) => {
+    return checkout.simulation(args)
   },
 }
 

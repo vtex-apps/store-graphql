@@ -1,0 +1,44 @@
+type SimulationData {
+  ratesAndBenefitsData: BenefitsData
+  postalCode: String
+  country: String
+  messages: [MessageInfo]
+  paymentData: PaymentData
+  ...Shipping
+}
+
+type PaymentData {
+  installmentOptions: [PaymentOptions]
+  paymentSystems: [PaymentSystem]
+}
+
+type BenefitsData {
+  rateAndBenefitsIdentifiers: [BenefitsIdentifier]
+  teaser: [Benefit]
+}
+
+type BenefitsIdentifier {
+  id: String
+  name: String
+  featured: Boolean
+  description: String
+}
+
+type MessageInfo {
+  code: String,
+  text: String,
+  status: String,
+  fields: MessageFields
+}
+
+type MessageFields {
+  itemIndex: String
+  ean: String
+  skuName: String
+}
+
+input SimulationItem {
+  id: String
+  quantity: Number
+  seller: String
+}
