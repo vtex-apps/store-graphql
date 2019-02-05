@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.46.2-beta.0] - 2019-02-05
+
 ## [2.46.2-beta] - 2019-02-05
 ### Added
 - Add logic to call addAssemblyOption to append assembly options to cart items
