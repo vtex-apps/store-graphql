@@ -10,6 +10,8 @@ type Session {
   impersonable: Boolean,
   """ Object with information about impersonate user"""
   impersonate: ImpersonatedUser,
+  """ Customer address """
+  address: Address,
   """ Profile information of session user """
   profile: SessionProfile
 }
