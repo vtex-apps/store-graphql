@@ -1,9 +1,6 @@
 type ShippingData {
-  ...Shipping
-}
-
-fragment Shipping {
   logisticsInfo: [LogisticsInfo],
+  messages: [MessageInfo]
 }
 
 type LogisticsInfo {

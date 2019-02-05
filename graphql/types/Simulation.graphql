@@ -2,9 +2,9 @@ type SimulationData {
   ratesAndBenefitsData: BenefitsData
   postalCode: String
   country: String
+  logisticsInfo: [LogisticsInfo],
   messages: [MessageInfo]
   paymentData: PaymentData
-  ...Shipping
 }
 
 type PaymentData {
