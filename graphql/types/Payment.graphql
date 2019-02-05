@@ -9,30 +9,30 @@ type PaymentOptions {
   bin: String
   paymentName: String
   paymentGroupName: String
-  value: Number
+  value: Int
   installments: [PaymentInstallments]
 }
 
 type PaymentInstallments {
-  count: Number
+  count: Int
   hasInterestRate: Boolean
-  interestRate: Number
-  value: Number
-  total: Number
+  interestRate: Int
+  value: Int
+  total: Int
   sellerMerchantInstallments: [SellerInstallment]
 }
 
 type SellerInstallment {
   id: String
-  count: Number
+  count: Int
   hasInterestRate: Boolean
-  interestRate: Number
-  value: Number
-  total: Number
+  interestRate: Int
+  value: Int
+  total: Int
 }
 
 type PaymentSystem {
-  id: Number
+  id: Int
   name: String
   groupName: String
   stringId: String

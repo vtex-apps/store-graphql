@@ -39,6 +39,6 @@ type MessageFields {
 
 input SimulationItem {
   id: String
-  quantity: Number
+  quantity: Int
   seller: String
 }
