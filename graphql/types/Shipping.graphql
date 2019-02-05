@@ -15,3 +15,9 @@ type ShippingSLA {
   shippingEstimate: String
   shippingEstimateDate: String
 }
+
+input ShippingItem {
+  id: String,
+  quantity: String,
+  seller: String
+}

@@ -131,7 +131,7 @@ type Query {
   """ Returns orderForm shipping simulation """
   shipping(
     """ List of SKU products """
-    items: [SimulationItem],
+    items: [ShippingItem],
     """ Postal code to freight calculator """
     postalCode: String,
     """ Country of postal code """
