@@ -1,9 +1,11 @@
 import { map } from 'ramda'
 import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
-import { queries as logisticsQueries } from '../logistics/index'
 import { SegmentData } from '../../dataSources/session'
+
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
+import { queries as logisticsQueries } from '../logistics/index'
+
 import paths from '../paths'
 import { addOptionsForItems } from './attachmentsHelper'
 import paymentTokenResolver from './paymentTokenResolver'
