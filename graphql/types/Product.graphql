@@ -12,7 +12,7 @@ type Product {
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
   """ Product description """
-  description: String
+  description: IOMessage
   """ SKU objects of the product """
   items: [SKU]
   """ Product URL """

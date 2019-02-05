@@ -1,3 +1,5 @@
+scalar IOMessage
+
 type Query {
     """ Get a specified product """
   product(
