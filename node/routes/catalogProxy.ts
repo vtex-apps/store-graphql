@@ -29,6 +29,7 @@ export const catalogProxy = async (ctx: Context) => {
   })
 
   keys(headers).forEach(headerKey => {
+    const headerString = headerKey as string
     ctx.set(headerKey, headers[headerKey])
   })
 
