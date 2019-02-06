@@ -1,6 +1,6 @@
 import { compose, map, omit, reject, toPairs } from 'ramda'
-
 import { queries as benefitsQueries } from '../benefits'
+import { toIOMessage } from './../../utils/ioMessage'
 
 const objToNameValue = (keyName: string, valueName: string, record: Record<string, any>) => compose(
   reject(value => typeof value === 'boolean' && value === false),
@@ -11,15 +11,12 @@ const objToNameValue = (keyName: string, valueName: string, record: Record<strin
 const knownNotPG = [
   'allSpecifications',
   'brand',
-  'categories',
   'categoriesIds',
   'categoryId',
   'clusterHighlights',
   'productClusters',
-  'description',
   'items',
   'productId',
-  'productName',
   'link',
   'linkText',
   'productReference',
@@ -28,6 +25,12 @@ const knownNotPG = [
 export const resolvers = {
   Product: {
     benefits: ({productId}, _, ctx) => benefitsQueries.benefits(_, {id: productId}, ctx),
+
+    categories: ({categories}, _, ctx) => Promise.all(map((category: string) => toIOMessage(ctx, category), categories)),
+
+    description: ({description}, _, ctx) => toIOMessage(ctx, description),
+
+    productName: ({productName}, _, ctx) => toIOMessage(ctx, productName),
 
     cacheId: ({linkText}) => linkText,
 
@@ -54,6 +57,6 @@ export const resolvers = {
 
     recommendations: product => product,
 
-    titleTag: ({productTitle}) => productTitle
-  }
+    titleTag: ({productTitle}) => productTitle,
+  },
 }

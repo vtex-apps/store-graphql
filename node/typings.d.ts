@@ -11,6 +11,7 @@ import { PaymentsDataSource } from './dataSources/payments'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SessionDataSource } from './dataSources/session'
+import { Resources } from './resources'
 
 declare global {
   interface Context extends ServiceContext {
@@ -18,6 +19,7 @@ declare global {
     originalPath: string
     cookie: string
     vtex: CustomIOContext
+    resources: Resources
   }
 
   interface CustomIOContext extends IOContext {
