@@ -15,7 +15,7 @@ import { SubscriptionsGroupDataSource } from './subscriptionsGroup'
 
 const TEN_SECONDS_MS = 10 * 1000
 
-export const dataSources = (ctx: Context) => ({
+export const dataSources = () => ({
   callcenterOperator: new CallcenterOperatorDataSource(),
   catalog: new CatalogDataSource(),
   checkout: new CheckoutDataSource(),
