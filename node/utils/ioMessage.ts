@@ -1,12 +1,9 @@
-import { Resources } from '../resources'
+import { prop } from 'ramda'
 
 export const toIOMessage = async (ctx: Context, str: string) => {
-  if (!ctx.resources) {
-    ctx.resources = new Resources(ctx)
-  }
-  const {resources: {segment}} = ctx
+  const {dataSources: {session}} = ctx
   return {
     content: str,
-    from: await segment.getDefaultSalesChannel(),
+    from: await session.getSegmentData(true).then(prop('cultureInfo')),
   }
 }
