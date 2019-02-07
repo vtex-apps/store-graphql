@@ -8,7 +8,7 @@ type Facets {
 
 type Facet {
   Id: Int
-  Name: String!
+  Name: IOMessage!
   Quantity: Int!
   Link: String!
   Slug: String
