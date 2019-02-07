@@ -3,7 +3,6 @@ import { map } from 'ramda'
 import { cache, dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
-import { Resources } from './resources'
 import { catalogProxy } from './routes/catalogProxy'
 
 const metrics = new MetricsAccumulator()
