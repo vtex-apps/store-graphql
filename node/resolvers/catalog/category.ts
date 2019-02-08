@@ -1,5 +1,5 @@
 import { compose, last, prop, split } from 'ramda'
-import { toIOMessage } from '../../utils/ioMessage';
+import { toIOMessage } from '../../utils/ioMessage'
 
 const lastSegment = compose<string, string[], string>(last, split('/'))
 
