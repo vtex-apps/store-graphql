@@ -22,7 +22,7 @@ export class SessionDataSource extends RESTDataSource<Context> {
     super()
   }
 
-  public getSegmentData = () => this.get<SegmentData>('/segments')
+  public getSegmentData = (defaultSegment: boolean = false) => this.get<SegmentData>('/segments', {defaultSegment})
 
   public getSession = () => this.get('/sessions/?items=*')
   public updateSession = (key: string, value: any) => this.post('/sessions', { public: { [key]: { value } } })
@@ -33,8 +33,9 @@ export class SessionDataSource extends RESTDataSource<Context> {
   }
 
   protected willSendRequest (request: RequestOptions) {
+    const defaultSegment = request.params.get('defaultSegment') === 'true'
     const {cookies, vtex: {authToken}} = this.context
-    const segment = cookies.get('vtex_segment')
+    const segment = !defaultSegment ? cookies.get('vtex_segment') : undefined
     const sessionCookie = cookies.get('vtex_session')
 
     if (!request.timeout) {

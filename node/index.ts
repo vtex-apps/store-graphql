@@ -1,6 +1,5 @@
 import { Logger, MetricsAccumulator } from '@vtex/api'
 import { map } from 'ramda'
-
 import { cache, dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
@@ -21,7 +20,7 @@ const prepare = (handler) => async (ctx: Context) => {
       ctx.status = err.status
       ctx.body = {
         code: err.code,
-        message: err.message
+        message: err.message,
       }
       logger.error(err, {
         path: ctx.originalPath,
@@ -39,7 +38,7 @@ const prepare = (handler) => async (ctx: Context) => {
         `Error from HTTP request. ${err.response.config
           ? `method=${err.response.config.method} url=${
             err.response.config.url} `
-          : ''} status=${err.response.status} data=${err.response.data}`,
+          : ''} status=${err.response.status} data=${err.response.data}`
       )
       return
     }
@@ -53,10 +52,10 @@ export default {
     cache,
     dataSources,
     resolvers,
-    schemaDirectives
+    schemaDirectives,
   },
   routes: map(prepare, {
-    catalogProxy
+    catalogProxy,
   }),
-  statusTrack: metrics.statusTrack
+  statusTrack: metrics.statusTrack,
 }

@@ -1,13 +1,26 @@
 import { mutations as authMutations, queries as authQueries } from './auth'
 import { fieldResolvers as benefitsFieldResolvers, queries as benefitsQueries } from './benefits'
 import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } from './catalog'
-import { fieldResolvers as checkoutFieldResolvers, mutations as checkoutMutations, queries as checkoutQueries } from './checkout'
+import {
+  fieldResolvers as checkoutFieldResolvers,
+  mutations as checkoutMutations,
+  queries as checkoutQueries,
+} from './checkout'
 import { mutations as documentMutations, queries as documentQueries } from './document'
 import { mutation as listMutations, queries as listQueries } from './list'
 import { queries as logisticsQueries } from './logistics'
-import { fieldResolvers as profileFieldResolvers, mutations as profileMutations, queries as profileQueries} from './profile'
+import {
+  fieldResolvers as profileFieldResolvers,
+  mutations as profileMutations,
+  queries as profileQueries,
+} from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
-import { fieldResolvers as subscriptionsFieldResolvers, mutations as subscriptionsMutations, queries as subscriptionsQueries } from './subscriptions'
+import {
+  fieldResolvers as subscriptionsFieldResolvers,
+  mutations as subscriptionsMutations,
+  queries as subscriptionsQueries,
+} from './subscriptions'
+
 
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
