@@ -34,7 +34,6 @@ export class SessionDataSource extends RESTDataSource<Context> {
 
   protected willSendRequest (request: RequestOptions) {
     const defaultSegment = request.params.get('defaultSegment') === 'true'
-    request.params.delete('defaultSegment')
     const {cookies, vtex: {authToken}} = this.context
     const segment = !defaultSegment ? cookies.get('vtex_segment') : undefined
     const sessionCookie = cookies.get('vtex_session')
