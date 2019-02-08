@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.47.0] - 2019-02-08
+
 ## [2.46.1] - 2019-02-04
 ### Added
 - Add logic to sync orderFormId in cookies with session (soon to be implemented by checkout)
