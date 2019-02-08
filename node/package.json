@@ -25,6 +25,7 @@
     "@types/bluebird-global": "^3.5.0",
     "@types/camelcase": "^4.1.0",
     "@types/es6-shim": "^0.31.32",
+    "@types/graphql": "^14.0.5",
     "@types/koa": "^2.0.46",
     "@types/node": "^7.0.8",
     "@types/qs": "^6.5.1",

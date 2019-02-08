@@ -5,14 +5,14 @@ type Product {
   cacheId: ID
   categoryId: ID
   """ Categories of the product """
-  categories: [String]
+  categories: [IOMessage]
   """ Categories ids of the product """
   categoriesIds: [String]
   """ List of related products """
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
   """ Product description """
-  description: String
+  description: IOMessage
   """ SKU objects of the product """
   items: [SKU]
   """ Product URL """
@@ -22,7 +22,7 @@ type Product {
   """ Product ID """
   productId: ID
   """ Product name """
-  productName: String
+  productName: IOMessage
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties group  """
