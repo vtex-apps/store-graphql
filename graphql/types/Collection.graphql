@@ -1,0 +1,26 @@
+type Collection {
+  """
+  Collection name
+  """
+  name: String
+  """
+  Collection ID
+  """
+  id: Int
+  """
+  Is it possible to search the products of this collection using collection ID?
+  """
+  searchable: Boolean
+  """
+  Flag to indicate the products of this collection are special
+  """
+  highlight: Boolean
+  """
+  Date from which one can search products by collection id
+  """
+  dateFrom: String
+  """
+  Date until which one can search products by collection id
+  """
+  dateTo: String
+}
