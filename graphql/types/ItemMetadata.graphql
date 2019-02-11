@@ -27,7 +27,7 @@ type ItemMetadataUnit {
 }
 
 type AssemblyOption {
-  id: String
+  id: ID
   name: String
   required: Boolean
   composition: CompositionType
@@ -40,7 +40,7 @@ type CompositionType {
 }
 
 type CompositionItem {
-  id: String
+  id: ID
   minQuantity: Int
   maxQuantity: Int
   initialQuantity: Int
@@ -49,7 +49,7 @@ type CompositionItem {
 }
 
 input AssemblyOptionInput {
-  id: String!
+  id: ID!
   quantity: Int!
   assemblyId: String!
   seller: String!
