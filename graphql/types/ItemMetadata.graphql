@@ -1,0 +1,56 @@
+type ItemMetadata {
+  items: [ItemMetadataUnit]
+  priceTable: [ItemPriceTable]
+}
+
+type ItemPriceTable {
+  type: String
+  values: [PriceTableItem]
+}
+
+type PriceTableItem {
+  id: String
+  price: Int
+}
+
+type ItemMetadataUnit {
+  id: ID
+  name: String
+  skuName: String
+  productId: String
+  refId: String
+  ean: String
+  imageUrl: String
+  detailUrl: String
+  seller: String
+  assemblyOptions: [AssemblyOption]
+}
+
+type AssemblyOption {
+  id: ID
+  name: String
+  required: Boolean
+  composition: CompositionType
+}
+
+type CompositionType {
+  minQuantity: Int
+  maxQuantity: Int
+  items: [CompositionItem]
+}
+
+type CompositionItem {
+  id: ID
+  minQuantity: Int
+  maxQuantity: Int
+  initialQuantity: Int
+  priceTable: String
+  seller: String
+}
+
+input AssemblyOptionInput {
+  id: ID!
+  quantity: Int!
+  assemblyId: String!
+  seller: String!
+}

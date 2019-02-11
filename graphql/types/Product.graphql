@@ -39,6 +39,7 @@ type Product {
   jsonSpecifications: String
   """ List of benefits associated with this product """
   benefits: [Benefit]
+  itemMetadata: ItemMetadata
 }
 
 type OnlyProduct {

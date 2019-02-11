@@ -5,6 +5,7 @@ import ResolverError from '../../errors/resolverError'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as facetsResolvers } from './facets'
+import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
@@ -49,6 +50,7 @@ export const fieldResolvers = {
   ...brandResolvers,
   ...categoryResolvers,
   ...facetsResolvers,
+  ...itemMetadataUnitResolvers,
   ...offerResolvers,
   ...productResolvers,
   ...recommendationResolvers,
