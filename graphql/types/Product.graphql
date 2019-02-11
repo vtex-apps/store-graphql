@@ -98,6 +98,8 @@ type SKU {
   images (quantity: Int = 10) : [Image]
   sellers: [Seller]
   variations: [Property]
+  attachments: [Attachment]
+  calculatedAttachments: String
 }
 
 type KitItem {
@@ -105,6 +107,19 @@ type KitItem {
   amount: Int
   product: OnlyProduct
   sku: SKU
+}
+
+type Attachment {
+  id: ID
+  name: String
+  required: Boolean
+  domainValues: [DomainValues]
+}
+
+type DomainValues {
+  FieldName: String
+  MaxCaracters: String
+  DomainValues: String
 }
 
 enum InstallmentsCriteria {
@@ -179,11 +194,4 @@ type Installment {
 type Reference {
   Key: String
   Value: String
-}
-
-input AssemblyOptionInput {
-  id: String!
-  quantity: Int!
-  assemblyId: String!
-  seller: String!
 }

@@ -6,7 +6,6 @@ import { toIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as facetsResolvers } from './facets'
-import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as itemMetadataResolvers } from './itemMetadata'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as offerResolvers } from './offer'
@@ -53,14 +52,13 @@ export const fieldResolvers = {
   ...brandResolvers,
   ...categoryResolvers,
   ...facetsResolvers,
+  ...itemMetadataResolvers,
   ...itemMetadataUnitResolvers,
   ...offerResolvers,
   ...productResolvers,
   ...recommendationResolvers,
   ...searchResolvers,
   ...skuResolvers,
-  ...itemMetadataResolvers,
-  ...itemMetadataUnitResolvers,
 }
 
 export const queries = {
