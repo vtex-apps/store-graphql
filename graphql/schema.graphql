@@ -77,6 +77,18 @@ type Query {
     treeLevel: Int = 3
   ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
+  """ Get a list of categories (of level 1) whose name contains a given 'query' string"""
+  categorySearch(
+    """ String to be searched """
+    query: String
+  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
+  """ Get a list of departments (level 0 categories) whose name contains a given 'query' string """
+  departmentSearch(
+    """ String to be searched """
+    query: String
+  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
   """ Get brand details """
   brand(
     """ Brand id """
@@ -85,6 +97,18 @@ type Query {
 
   """ Get a list of brands """
   brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
+  """ Get a list of brands whose name contains a given 'query' string """
+  brandSearch(
+    """ String to be searched """
+    query: String
+  ): [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+
+  """ Get a list of collections whose name contains a given 'query' string """
+  collectionSearch(
+    """ String to be searched """
+    query: String
+  ): [Collection] @cacheControl(scope: PRIVATE)
 
   """ OrderForm simulation """
   shipping(
