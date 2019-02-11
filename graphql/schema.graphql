@@ -203,8 +203,8 @@ type Query {
     pageSize: Int = 15
   ) : [List]
 
-  """ Get last order of logged in user """
-  lastUserOrder: Order @cacheControl(scope: PRIVATE)
+  """ Get logged in user's last order """
+  userLastOrder: Order @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
