@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.47.1] - 2019-02-11
+### Added
+- Add assembly options fields to Order, OrderForm and Product types
+- Create ItemMetadata type
+
 ## [2.47.0] - 2019-02-08
 
 ## [2.46.1] - 2019-02-04

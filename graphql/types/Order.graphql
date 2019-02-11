@@ -41,6 +41,8 @@ type OrderItem {
   availability: String
   measurementUnit: String
   unitMultiplier: Int
+  parentItemIndex: Int
+  parentAssemblyBinding: String
 }
 
 type OrderItemAdditionalInfo {
