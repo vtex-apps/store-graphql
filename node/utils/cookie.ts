@@ -1,6 +1,14 @@
+import * as cookies from 'cookie'
+
 const appendToCookie = (ctx: Context, extraValue: string) => {
   const {request: { headers: { cookie } }} = ctx
   ctx.request.headers.cookie = `${cookie}; ${extraValue}`
 }
 
-export { appendToCookie }
+const isUserLoggedIn = (ctx: Context) => {
+  const { vtex: { account }, headers: {cookie} } = ctx
+  const parsedCookie = cookies.parse(cookie)
+  return !!parsedCookie[`VtexIdClientAutCookie_${account}`]
+}
+
+export { appendToCookie, isUserLoggedIn }

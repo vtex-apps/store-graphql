@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Add lastUserOrder query, fetching last logged in user order from OMS
+- Add userLastOrder query, fetching last logged in user order from OMS
 
 ## [2.47.1] - 2019-02-11
 ### Added
