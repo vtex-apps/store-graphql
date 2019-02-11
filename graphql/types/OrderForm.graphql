@@ -17,6 +17,7 @@ type OrderForm {
   clientProfileData: ClientProfile
   shippingData: OrderFormShippingData
   storePreferencesData: StorePreferencesData
+  itemMetadata: ItemMetadata
 }
 
 type StorePreferencesData {
@@ -52,6 +53,8 @@ type OrderFormItem {
   sellingPrice: Float
   rewardValue: Int
   isGift: Boolean
+  parentItemIndex: Int
+  parentAssemblyBinding: String
 }
 
 type Totalizer {
