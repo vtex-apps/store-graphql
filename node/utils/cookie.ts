@@ -8,7 +8,7 @@ const appendToCookie = (ctx: Context, extraValue: string) => {
 const isUserLoggedIn = (ctx: Context) => {
   const { vtex: { account }, headers: {cookie} } = ctx
   const parsedCookie = cookies.parse(cookie)
-  return !!parsedCookie[`VtexIdClientAutCookie_${account}`]
+  return !!parsedCookie[`VtexIdclientAutCookie_${account}`]
 }
 
 export { appendToCookie, isUserLoggedIn }
