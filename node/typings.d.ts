@@ -7,6 +7,7 @@ import { CheckoutDataSource } from './dataSources/checkout'
 import { DocumentDataSource } from './dataSources/document'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
+import { OMSDataSource } from './dataSources/oms'
 import { PaymentsDataSource } from './dataSources/payments'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
@@ -35,6 +36,7 @@ declare global {
     profile: ProfileDataSource
     session: SessionDataSource
     callcenterOperator: CallcenterOperatorDataSource
+    oms: OMSDataSource
   }
 
   interface OrderFormItem {
