@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.48.1] - 2019-02-12
+### Fixed
+- Fix cookie name in `isUserLoggedIn` function
+
 ## [2.48.0] - 2019-02-12
 ### Added
 - Add `userLastOrder` query, fetching last logged in user order from OMS
