@@ -9,6 +9,7 @@ import {
 import { mutations as documentMutations, queries as documentQueries } from './document'
 import { mutation as listMutations, queries as listQueries } from './list'
 import { queries as logisticsQueries } from './logistics'
+import { queries as omsQueries } from './oms'
 import {
   fieldResolvers as profileFieldResolvers,
   mutations as profileMutations,
@@ -51,5 +52,6 @@ export const resolvers = {
     ...sessionQueries,
     ...subscriptionsQueries,
     ...listQueries,
+    ...omsQueries,
   },
 }
