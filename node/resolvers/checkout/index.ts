@@ -163,7 +163,7 @@ export const mutations: Record<string, Resolver> = {
     return syncedOrderForm
   },
 
-  addAssemblyOptions: async (root, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
+  addAssemblyOptions: (root, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
     const body = {
       composition: {
         items: options,
