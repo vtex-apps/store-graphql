@@ -4,6 +4,12 @@ import { both, find, isEmpty, pickBy, prop, propEq } from 'ramda'
 import { renameKeysWith } from '../../utils'
 import paths from '../paths'
 
+const headersWithToken = (authToken) => ({
+  Accept: 'application/json',
+  Authorization: `bearer ${authToken}`,
+  'Content-Type': 'application/json',
+})
+
 const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
@@ -27,6 +33,7 @@ interface ItemMetadata {
       maxQuantity: number,
       items: Array<{
         id: string,
+        initialQuantity: number,
         minQuantity: number,
         maxQuantity: number,
         priceTable: string,
@@ -72,36 +79,40 @@ const fetchPrice = async ({
     priceTables: [priceTable],
     ...(isEmpty(marketingData) ? {} : { marketingData }),
   }
-  const orderForm = prop('data', await http.post(url, payload, { headers }))
+  const orderForm = await http.post(url, payload, { headers }).catch(() => null)
   return {
     id,
-    price: prop('value', find(propEq('id', 'Items'))(orderForm.totals)),
+    price: orderForm ? prop('value', find(propEq('id', 'Items'))(orderForm.data.totals)) : 0,
     priceTable,
+  }
+}
+
+const getSimulationPayload = async (session: any, account: string, authToken: string) => {
+  const segmentData = await session.getSegmentData().catch(() => null)
+  if (!segmentData) { return null }
+
+  let marketingData = {}
+  try {
+    marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+  } catch (e) {
+    // TODO: Log to Splunk
+    console.error(e)
+  }
+
+  const simulationUrl = paths.orderFormSimulation(account, {
+    querystring: `sc=${segmentData.channel}&localPipeline=true`,
+  })
+  return {
+    countryCode: segmentData.countryCode as string,
+    headers: headersWithToken(authToken),
+    marketingData,
+    url: simulationUrl,
   }
 }
 
 export const resolvers = {
   ItemMetadata: {
     priceTable: async ({items}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }) => {
-      const headers = {
-        Accept: 'application/json',
-        Authorization: `bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      }
-    
-      const segmentData = await session.getSegmentData()
-      let marketingData = {}
-      try {
-        marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
-      } catch (e) {
-        // TODO: Log to Splunk
-        console.error(e)
-      }
-    
-      const simulationUrl = paths.orderFormSimulation(account, {
-        querystring: `sc=${segmentData.channel}&localPipeline=true`,
-      })
-  
       const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
@@ -109,9 +120,15 @@ export const resolvers = {
           compItems.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
         })
       })
-  
-      const priceData = await Promise.all(itemsToFetch.map(({ id, priceTable, seller }) => 
-        fetchPrice({ id, priceTable, countryCode: segmentData.countryCode, seller, marketingData, headers, url: simulationUrl })))
+
+      const fetchPayload = await getSimulationPayload(session, account, authToken)
+
+      const itemsPromises = itemsToFetch.map(({ id, priceTable, seller }) => {
+        if (!fetchPayload) { return { id, priceTable, price: 0 } }
+        return fetchPrice({ ...fetchPayload, id, priceTable, seller })
+      })
+        
+      const priceData = await Promise.all(itemsPromises)
       
       const prices = priceData.reduce<{ [key: string]: Array<{ price: number, id: string }>}>((prev, curr) => {
         const { id, priceTable, price } = curr
