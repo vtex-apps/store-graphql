@@ -90,7 +90,6 @@ input OrderFormItemInput {
   quantity: Int
   seller: ID
   options: [AssemblyOptionInput]
-  assemblyOptionPreffix: String
 }
 
 input OrderFormAddressInput {

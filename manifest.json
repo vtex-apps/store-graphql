@@ -33,13 +33,6 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercebeta.com.br",
-        "path": "/api/catalog_system/*"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/checkout/pub/orderForm/*"
       }
@@ -47,21 +40,7 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercebeta.com.br",
-        "path": "/api/checkout/pub/orderForm/*"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
-        "path": "/api/checkout/pub/orders/*"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
-        "host": "{{account}}.vtexcommercebeta.com.br",
         "path": "/api/checkout/pub/orders/*"
       }
     },

@@ -3,7 +3,7 @@ import axios from 'axios'
 import * as qs from 'qs'
 import { keys } from 'ramda'
 
-const TIMEOUT_MS = 60 * 1000
+const TIMEOUT_MS = 7 * 1000
 const MAX_AGE_S = 30
 const STALE_IF_ERROR_S = 20 * 60
 
@@ -12,7 +12,7 @@ export const catalogProxy = async (ctx: Context) => {
 
   const [host, basePath] = Functions.isGoCommerceAcc(ctx)
     ? ['api.gocommerce.com', `${account}/search`]
-    : [`${account}.vtexcommercebeta.com.br`, 'api/catalog_system']
+    : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
   const {data, headers} = await axios.request({
     baseURL: `http://${host}/${basePath}`,
