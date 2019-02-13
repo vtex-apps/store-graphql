@@ -2,6 +2,13 @@ import { find, head, map, replace, slice } from 'ramda'
 
 export const resolvers = {
   SKU: {
+    attachments: ({attachments = []}) => map(
+      attachment => ({
+        ...attachment,
+        domainValues: JSON.parse(attachment.domainValues),
+      }),
+      attachments
+    ),
     images: ({images = []}, {quantity}) => map(
       image => ({
         cacheId: image.imageId,
