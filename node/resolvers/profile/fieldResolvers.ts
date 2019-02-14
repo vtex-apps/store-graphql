@@ -10,18 +10,12 @@ export default {
     cacheId: prop('id')
   },
   Profile: {
-    address: (obj, args, context) => obj.id && getAddresses(context, obj.id),
+    address: (obj, _, context) => getAddresses(context, obj.id),
     cacheId: prop('email'),
-    customFields: (obj) =>  {
-      if (obj && typeof obj.customFields === 'string') {
-        return pickCustomFieldsFromData(obj.customFields, obj)
-      }
-
-      return obj && obj.customFields
-    },
-    payments: (obj, args, context) => obj && obj.id && getPayments(context, obj.id),
-    profilePicture: (obj, args, context) => obj && obj.profilePicture && obj.id
-       && `//api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${obj.id}/profilePicture/attachments/${obj.profilePicture}`
+    customFields: (obj) => typeof obj.customFields === 'string' ? pickCustomFieldsFromData(obj.customFields, obj) : obj.customFields,
+    payments: (obj, _, context) => getPayments(context, obj.id),
+    profilePicture: (obj, _, context) => obj.profilePicture
+      && `//api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${obj.id}/profilePicture/attachments/${obj.profilePicture}`
   },
   ProfileCustomField: {
     cacheId: (root) => root.key
