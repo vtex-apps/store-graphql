@@ -69,6 +69,7 @@ type SessionProfile {
 }
 
 type Address {
+  addressId: String
   cacheId: ID
   id: String
   userId: String
