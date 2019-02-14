@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.48.2] - 2019-02-14
+
 ## [2.48.1] - 2019-02-12
 ### Fixed
 - Fix cookie name in `isUserLoggedIn` function
