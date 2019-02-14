@@ -80,29 +80,32 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-brands'}
   )
 
-  public brandSearch = (query: string = '') => this.get(
-    `/pub/brand/list/${query}`
-  )
+  public brandSearch = (query: string = '') =>
+    this.get(`/pub/brand/list/${query}`)
 
   public categories = (treeLevel: number) => this.get(
     `/pub/category/tree/${treeLevel}/`,
     {metric: 'catalog-categories'}
   )
 
-  public categorySearch = (query: string = '', parentId: string = '') => this.get(
-    `/pub/category/list?filter=${query}&parent=${parentId}`
-  )
+  public categorySearch = (query: string = '', parentId: string = '') =>
+    this.get(`/pub/category/list?filter=${query}&parent=${parentId}`)
 
   public collectionSearch = async (query: string = '') => {
-    const { vtex: { authToken, account, workspace }, cookies } = this.context
+    const {
+      vtex: { authToken, account, workspace },
+      cookies
+    } = this.context
     const clientAuth = cookies.get('VtexIdclientAutCookie')
     /* TODO: use this.context.vtex.region in getting these data */
     const { data } = await http.get(
-      `http://${workspace}--${account}.vtexcommercestable.com.br/api/catalog_system${this.collectionsUrl(query)}`,
+      `http://${workspace}--${account}.vtexcommercestable.com.br/api/catalog_system${this.collectionsUrl(
+        query
+      )}`,
       {
         headers: {
           'Proxy-Authorization': authToken,
-          'VtexIdclientAutCookie': clientAuth,
+          VtexIdclientAutCookie: clientAuth
         }
       }
     )
@@ -161,7 +164,8 @@ export class CatalogDataSource extends IODataSource {
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
 
-  private collectionsUrl = (query: string) => `/pvt/collection/search/${query}?pageSize=50`
+  private collectionsUrl = (query: string) =>
+    `/pvt/collection/search/${query}?pageSize=50`
 
   private productSearchUrl = ({
     query = '',
@@ -176,8 +180,15 @@ export class CatalogDataSource extends IODataSource {
     map = ''
   }: ProductsArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
-    return (
-      `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
-    )
+    return `/pub/products/search/${sanitizedQuery}?${category &&
+      !query &&
+      `&fq=C:/${category}/`}${(specificationFilters &&
+      specificationFilters.length > 0 &&
+      specificationFilters.map(filter => `&fq=${filter}`)) ||
+      ''}${priceRange && `&fq=P:[${priceRange}]`}${collection &&
+      `&fq=productClusterIds:${collection}`}${salesChannel &&
+      `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy &&
+      `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 &&
+      `&_from=${from}`}${to > -1 && `&_to=${to}`}`
   }
 }
