@@ -1,8 +1,7 @@
 import { parse as parseCookie } from 'cookie'
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
-import jwtDecode from 'jwt-decode' 
-import { head, pickBy, values } from 'ramda'
+import jwtDecode from 'jwt-decode'
 
 import ResolverError from '../errors/resolverError'
 
@@ -10,11 +9,20 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition (field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
     field.resolve = async (root, args, context, info) => {
-      await getCurrentProfileFromSession(context).then(( currentProfile ) => {
-        context.vtex.currentProfile = currentProfile
-      }).catch(async () => {
-        context.vtex.currentProfile = await getCurrentProfileFromCookies(context)
+      let currentProfile = null
+      await getCurrentProfileFromSession(context).then(( profile ) => {
+        currentProfile = profile
+      }).catch(async (_) => {
+        currentProfile = await getCurrentProfileFromCookies(context)
+      }).catch(_ => {
+        currentProfile = null
       })
+
+      if (!currentProfile || !currentProfile.email) {
+        return null
+      }
+
+      context.vtex.currentProfile = currentProfile
 
       return resolve(root, args, context, info)
     }
@@ -26,11 +34,12 @@ const getCurrentProfileFromSession = (context: Context) : Promise<CurrentProfile
 
   return session.getSession().then( ( currentSession ) => {
     if (currentSession.namespaces) {
-      const { namespaces: { profile: { email, id } } } = currentSession
+      const { namespaces: { profile } } = currentSession
+      const { email = null, id = null } = profile || {}
 
       return {
-        email: email.value,
-        userId: id.value
+        email: email && email.value,
+        userId: id && id.value
       }
     }
 
@@ -43,27 +52,28 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
 
   const parsedCookies = parseCookie(cookie || '')
 
-  const startsWithVtexIdAccount = (val, key) => key.startsWith(`VtexIdclientAutCookie_${account}`)
-  const userToken = head(values(pickBy(startsWithVtexIdAccount, parsedCookies)))
+  const userToken = parsedCookies[`VtexIdclientAutCookie_${account}`]
+  const adminToken = parsedCookies[`VtexIdclientAutCookie`]
 
-  if (!userToken) {
-    const startsWithVtexId = (val, key) => key.startsWith(`VtexIdclientAutCookie`) 
-    const adminTokenJWT = head(values(pickBy(startsWithVtexId, parsedCookies)))
-    const adminInfo = jwtDecode(adminTokenJWT)
+  if (!!userToken) {
+    return identity.getUserWithToken(userToken).then((data) => ({ userId: data.userId, email: data.user }))
+  }
+  else if (!userToken && !!adminToken) {
+    const adminInfo = jwtDecode(adminToken)
 
-    const callOpUserEmail = adminInfo && adminInfo.sub  
+    const callOpUserEmail = adminInfo && adminInfo.sub
     const isValidCallOp = callOpUserEmail && await isValidCallcenterOperator(context, callOpUserEmail)
 
     if (!isValidCallOp) {
       throw new ResolverError(`Unauthorized`, 401)
     }
-    
+
     const customerEmail = parsedCookies['vtex-impersonated-customer-email']
 
     return profile.getProfileInfo(customerEmail).then(({ email, userId }) => ({ email, userId }))
   }
 
-  return identity.getUserWithToken(userToken).then((data) => ({ userId: data.userId, email: data.user }))
+  return null
 }
 
 const isValidCallcenterOperator = (context: Context, email: string) => {

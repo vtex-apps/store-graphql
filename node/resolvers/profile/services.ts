@@ -25,7 +25,7 @@ export const updateProfile = async (context: Context, profile) => {
     ...reduce(addFieldsToObj, profile || {}, profile.customFields || []),
     id: oldData.id,
   }
-  
+
   return dataSources.profile.updateProfileInfo(newData).then(
     () => getProfile(context, { customFields: customFieldsStr }))
   .catch(returnOldOnNotChanged(oldData))
@@ -53,14 +53,14 @@ export const getPayments = async (context: Context, profileId: string) => {
   const { dataSources: { payments }, vtex: { currentProfile } } = context
 
   const paymentsRawData = await payments.getUserPayments(currentProfile.userId)
- 
+
   if (!paymentsRawData) {
     return null
   }
 
   const addresses = await getAddresses(context, profileId)
   const availableAccounts = JSON.parse(paymentsRawData.paymentData).availableAccounts
-  
+
   return availableAccounts.map((account) => {
     const {bin, availableAddresses, accountId, ...cleanAccount} = account
     const accountAddress = addresses.find(
