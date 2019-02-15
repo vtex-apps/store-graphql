@@ -216,11 +216,11 @@ export const queries = {
   brands: async (_: any, __: any, { dataSources: { catalog } }: Context) =>
     catalog.brands(),
 
-  brandSearch: async (
+  brandSearch: (
     _: any,
     { query }: any,
     { dataSources: { catalog } }: Context
-  ) => catalog.brandSearch(query) as Promise<Brand[]>,
+  ): Promise<Brand[]> => catalog.brandSearch(query),
 
   category: async (
     _: any,
@@ -252,23 +252,17 @@ export const queries = {
     return categories
   },
 
-  collectionSearch: async (
+  collectionSearch: (
     _: any,
     { query }: any,
     { dataSources: { catalog } }: Context
-  ) => {
-    const data = await catalog.collectionSearch(query)
+  ): Promise<Collection[]> => catalog.collectionSearch(query),
 
-    const collections = data.items
-
-    return collections
-  },
-
-  departmentSearch: async (
+  departmentSearch: (
     _: any,
     { query }: any,
     { dataSources: { catalog } }: Context
-  ) => catalog.categorySearch(query),
+  ): Promise<Category[]> => catalog.categorySearch(query),
 
   search: async (_: any, args: any, ctx: Context) => {
     const { map: mapParams, query } = args
@@ -382,9 +376,29 @@ interface Brand {
   metaTagDescription: string
 }
 
+interface Brand {
+  id: string
+  name: string
+  isActive: boolean
+  title: string
+  metaTagDescription: string
+}
+
 interface Category {
   id: string
   name: string
   url: string
   children: Category[]
+  hasChildren: boolean
+  Title: string
+  MetaTagDescription: string
+}
+
+interface Collection {
+  id: number
+  name: string
+  searchable: boolean
+  highlight: boolean
+  dateFrom: string
+  dateTo: string
 }

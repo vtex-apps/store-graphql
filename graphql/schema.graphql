@@ -138,7 +138,7 @@ type Query {
   ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
-  Get a list of categories (of level 1) whose name contains a given 'query' string
+  Get a list of categories (of level 1) whose name contains a given 'query' string (here, children only means next level children)
   """
   categorySearch(
     """
@@ -148,7 +148,7 @@ type Query {
   ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
-  Get a list of departments (level 0 categories) whose name contains a given 'query' string
+  Get a list of departments (level 0 categories) whose name contains a given 'query' string (here, children only means next level children)
   """
   departmentSearch(
     """
