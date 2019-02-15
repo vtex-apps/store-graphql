@@ -1,3 +1,4 @@
+import { Brand } from './../../typedql/catalog/brand';
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import http from 'axios'
 import { forEachObjIndexed } from 'ramda'

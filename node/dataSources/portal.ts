@@ -2,20 +2,17 @@ import { Functions } from '@gocommerce/utils'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 import { withAuthToken } from '../resolvers/headers'
+import { Int } from '../../typedql/primitive';
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
-interface AutocompleteArgs {
-  maxRows: string
-  searchTerm: string
-}
 
 export class PortalDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }
 
-  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
+  public autocomplete = (maxRows: Int, searchTerm: string) => this.get(
     `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
   )
 

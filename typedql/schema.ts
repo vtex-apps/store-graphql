@@ -22,42 +22,42 @@ import { PlaceholderInput } from './payment/placeholderInput'
 
 type IOUpload = any
 
-interface Query {
-  /**
+export interface Query {
+  /** @graphql Description
    * Get a specified product
    *
    * @graphql Directives
    * @cacheControl(scope: SEGMENT, maxAge: SHORT)
    */
-  product(slug: string | null): Product | null
+  product(slug?: string): Product | null
 
-  /**
+  /** @graphql Description
    * Product search filtered and ordered
    *
    * @graphql Directives
    * @cacheControl(scope: SEGMENT, maxAge: SHORT)
    */
   products(
-    /* Terms that is used in search e.g.: eletronics/samsung */
-    query: string | null,
-    /* Defines terms types: Brand, Category, Department e.g.: c,b */
-    map: string | null,
-    /* Filter by category. {a}/{b} - {a} and {b} are categoryIds */
-    category: string | null,
-    /* Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value */
-    specificationFilters: (string | null)[] | null,
-    /* Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" */
-    priceRange: string | null,
-    /* Filter by collection. where collection also know as productClusterId */
-    collection: string | null,
-    /* Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4 */
-    salesChannel: string | null,
-    /* Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC */
-    orderBy: string | null,
-    /* Pagination item start */
-    from: Int | null,
+    /* @graphql Description Terms that is used in search e.g.: eletronics/samsung */
+    query?: string,
+    /* @graphql Description Defines terms types: Brand, Category, Department e.g.: c,b */
+    map?: string,
+    /* @graphql Description Filter by category. {a}/{b} - {a} and {b} are categoryIds */
+    category?: string,
+    /* @graphql Description Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value */
+    specificationFilters?: (string | null)[],
+    /* @graphql Description Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" */
+    priceRange?: string,
+    /* @graphql Description Filter by collection. where collection also know as productClusterId */
+    collection?: string,
+    /* @graphql Description Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4 */
+    salesChannel?: string,
+    /* @graphql Description Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC */
+    orderBy?: string,
+    /* @graphql Description Pagination item start */
+    from?: Int,
     /* Pagination item end */
-    to: Int | null
+    to?: Int
   ): Product[] | null
 
   /**
@@ -79,27 +79,27 @@ interface Query {
    */
   search(
     /* Terms that is used in search e.g.: eletronics/samsung */
-    query: string | null,
+    query?: string,
     /* Defines terms types: Brand, Category, Department e.g.: c,b */
-    map: string | null,
+    map?: string,
     /* Rest terms that is used in search e.g.: samsung,Android7 */
-    rest: string | null,
+    rest?: string,
     /* Filter by category. {a}/{b} - {a} and {b} are categoryIds */
-    category: string | null,
+    category?: string,
     /* Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value */
-    specificationFilters: string[] | null,
+    specificationFilters?: string[],
     /* Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" */
-    priceRange: string | null,
+    priceRange?: string,
     /* Filter by collection. where collection also know as productClusterId */
-    collection: string | null,
+    collection?: string,
     /* Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4 */
-    salesChannel: string | null,
+    salesChannel?: string,
     /* Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC */
-    orderBy: string | null,
+    orderBy?: string,
     /* Pagination item start */
-    from: Int | null,
+    from?: Int,
     /* Pagination item end */
-    to: Int | null
+    to?: Int
   ): Search | null
 
   /**
@@ -110,7 +110,7 @@ interface Query {
    */
   category(
     /* Category id */
-    id: Int | null
+    id?: Int
   ): Category | null
 
   /**
@@ -121,7 +121,7 @@ interface Query {
    */
   categories(
     /* Category tree level. Default: 3 */
-    treeLevel: Int | null
+    treeLevel?: Int
   ): Category[] | null
 
   /**
@@ -130,7 +130,7 @@ interface Query {
    * @graphql Directives
    * @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
    */
-  brand(id: Int | null): Brand | null
+  brand(id?: Int): Brand | null
 
   /**
    * Get a list of brands
@@ -138,16 +138,16 @@ interface Query {
    * @graphql Directive
    * @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
    */
-  brands: Brand[] | null
+  brands(): Brand[] | null
 
   /* OrderForm simulation */
   shipping(
     /* List of SKU products */
-    items: ShippingItem[] | null,
+    items?: ShippingItem[],
     /* Postal code to freight calculator */
-    postalCode: string | null,
+    postalCode?: string,
     /* Country of postal code */
-    country: string | null
+    country?: string
   ): ShippingData | null
 
   /* Get checkout cart details */
@@ -155,7 +155,7 @@ interface Query {
    * @graphql Directive
    * @cacheControl(scope: PRIVATE)
    */
-  orderForm: OrderForm | null
+  orderForm(): OrderForm | null
 
   /**
    * Get user orders details
@@ -163,7 +163,7 @@ interface Query {
    * @graphql Directive
    * @cacheControl(scope: PRIVATE)
    */
-  orders: Order[] | null
+  orders(): Order[] | null
 
   /**
    * Get user profile details
@@ -173,15 +173,15 @@ interface Query {
    */
   profile(
     /* Comma separated fields */
-    customFields: string | null
+    customFields?: string
   ): Profile | null
 
   /* Get auto complete suggestions in search */
   autocomplete(
     /* Number of items that is returned */
-    maxRows: Int | null,
+    maxRows?: Int,
     /* Terms that is used in search e.g.: iphone */
-    searchTerm: string | null
+    searchTerm?: string
   ): Suggestions | null
 
   /* Search documents */
@@ -219,14 +219,14 @@ interface Query {
 
   /* Get the IDs for the provided search context slugs */
   searchContextFromParams(
-    brand: string | null,
-    department: string | null,
-    category: string | null,
-    subcategory: string | null
+    brand?: string,
+    department?: string,
+    category?: string,
+    subcategory?: string
   ): SearchContext | null
 
   /* Get logistics information about the store */
-  logistics: LogisticsData | null
+  logistics(): LogisticsData | null
 
   /**
    * Get profile information to session users
@@ -234,7 +234,7 @@ interface Query {
    * @graphql Directive
    * @cacheControl(scope: PRIVATE)
    */
-  getSession: Session | null
+  getSession(): Session | null
 
   /**
    * Get count of subscriptions by status
@@ -289,7 +289,7 @@ interface Query {
   ) : List[] | null
 }
 
-interface Mutation {
+export interface Mutation {
   /* Cart */
   addItem(orderFormId: string | null, items: OrderFormItemInput[] | null): OrderForm | null
   cancelOrder(orderFormId: string | null, reason: string | null): boolean | null
