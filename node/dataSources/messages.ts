@@ -1,21 +1,27 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { forWorkspace, InstanceOptions, IOContext, IODataSource } from '@vtex/api'
 import {head} from 'ramda'
 
-export class Messages extends RESTDataSource<Context>{
-  constructor() {
-    super()
+export class Messages extends IODataSource {
+  protected httpClientFactory = forWorkspace
+  protected service = 'messages.vtex'
+
+  constructor(ctx?: IOContext, opts?: InstanceOptions) {
+    super(ctx, opts)
   }
 
-  public translate = async (from: string, to: string, content: string): Promise<string> =>  await this.get('/_v/translations', {data: JSON.stringify([{from, content}]), to}).then(head)
-
-  get baseURL() {
-    const {vtex: {region, account, workspace}} = this.context
-    return `http://messages.vtex.${region}.vtex.io/${account}/${workspace}`
-  }
-
-  protected willSendRequest = (request: RequestOptions) => {
-    const {vtex: {authToken}} = this.context
-    request.headers.set('Authorization', authToken)
-    request.params.append('__p', process.env.VTEX_APP_ID)
+  public translate = async (from: string, to: string, content: string): Promise<string> => {
+    try{
+      return await this.http.get('/_v/translations', {
+        params: {
+          __p: process.env.VTEX_APP_ID,
+          data: JSON.stringify([{from, content}]),
+          to,
+        },
+        timeout: 3000,
+      }).then(head)
+    } catch(err) {
+      return content
+    }
   }
 }
+
