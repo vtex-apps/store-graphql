@@ -112,7 +112,7 @@ type Query {
     maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
-  ): Suggestions
+  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: LONG)
 
   """ Search documents """
   documents(

@@ -72,6 +72,14 @@ declare global {
     email: string
     userId: string
   }
+
+  interface Item {
+    thumb: string
+    name: string
+    href: string
+    criteria: string
+    slug: string
+  }
 }
 
 export {}

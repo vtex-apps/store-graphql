@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-server-errors'
 import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 
+import { toIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as facetsResolvers } from './facets'
@@ -59,13 +60,15 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_, args, { dataSources: { portal } }) => {
-    const { itemsReturned } = await portal.autocomplete(args)
+  autocomplete: async (_, args, ctx) => {
+    const { dataSources: { portal } } = ctx
+    const { itemsReturned }: {itemsReturned: Item[]} = await portal.autocomplete(args)
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
         item => ({
           ...item,
+          name: toIOMessage(ctx, item.name),
           slug: extractSlug(item),
         }),
         itemsReturned
