@@ -61,8 +61,12 @@ export const fieldResolvers = {
 
 export const queries = {
   autocomplete: async (_, args, ctx) => {
-    const { dataSources: { portal } } = ctx
-    const { itemsReturned }: {itemsReturned: Item[]} = await portal.autocomplete(args)
+    const { dataSources: { portal, messages, session} } = ctx
+
+    const from = await session.getSegmentData().then(prop('cultureInfo'))
+    const to = await session.getSegmentData(true).then(prop('cultureInfo'))
+    const translatedTerm = await messages.translate(from, to, args.searchTerm)
+    const { itemsReturned }: {itemsReturned: Item[]} = await portal.autocomplete({maxRows: args.maxRows, searchTerm: translatedTerm})
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(

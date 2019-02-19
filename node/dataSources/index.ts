@@ -6,6 +6,7 @@ import { CheckoutDataSource } from './checkout'
 import { DocumentDataSource } from './document'
 import { IdentityDataSource } from './identity'
 import { LicenseManagerDataSource } from './licenseManager'
+import { Messages } from './messages'
 import { OMSDataSource } from './oms'
 import { PaymentsDataSource } from './payments'
 import { PortalDataSource } from './portal'
@@ -23,6 +24,7 @@ export const dataSources = () => ({
   document: new DocumentDataSource(),
   identity: new IdentityDataSource(),
   licenseManager: new LicenseManagerDataSource(),
+  messages: new Messages(),
   oms: new OMSDataSource(),
   payments: new PaymentsDataSource(),
   portal: new PortalDataSource(),
