@@ -12,6 +12,9 @@
   "scripts": {
     "prereleasy": "bash lint.sh"
   },
+  "dependencies": {
+    "vtex.messages": "1.x"
+  },
   "policies": [
     {
       "name": "outbound-access",
@@ -137,6 +140,9 @@
         "host": "licensemanager.vtex.com.br",
         "path": "/api/pvt/accounts/*"
       }
+    },
+    {
+      "name": "vtex.messages:translate-messages"
     }
   ]
 }
