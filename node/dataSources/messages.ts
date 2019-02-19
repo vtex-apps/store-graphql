@@ -10,6 +10,9 @@ export class Messages extends IODataSource {
   }
 
   public translate = async (from: string, to: string, content: string): Promise<string> => {
+    if (from === to) {
+      return content
+    }
     try{
       return await this.http.get('/_v/translations', {
         params: {
