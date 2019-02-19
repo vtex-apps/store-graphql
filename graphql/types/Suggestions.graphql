@@ -6,7 +6,7 @@ type Suggestions {
 
 type Items {
   thumb: String
-  name: String
+  name: IOMessage
   href: String
   criteria: String
   slug: String
