@@ -1,4 +1,4 @@
-import { concat, filter, map, nth, path } from 'ramda'
+import { concat, filter, map, nth, path, groupBy, prop, values, last } from 'ramda'
 import ResolverError from '../../errors/resolverError'
 import { mapKeyValues } from '../../utils/object'
 import { validateItems, validateListItem } from './util'
@@ -37,9 +37,11 @@ const deleteItems = (items, document) => (
 
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
-  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) === 0, items)
-  const itemsToBeAdded = filter(item => !path(['itemId'], item), items)
-  const itemsToBeUpdated = filter(item => path(['itemId'], item) && path(['quantity'], item) > 0, items)
+  const itemsWithoutDuplicated = map(item => last(item),
+    values(groupBy(prop('skuId'), items)))
+  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
+  const itemsToBeAdded = filter(item => !path(['itemId'], item), itemsWithoutDuplicated)
+  const itemsToBeUpdated = filter(item => path(['itemId'], item) && path(['quantity'], item) > 0, itemsWithoutDuplicated)
 
   deleteItems(itemsToBeDeleted, document)
 
@@ -48,15 +50,15 @@ const updateItems = async (items, dataSources) => {
   )
 
   const itemsIdUpdated = map(
-      item => {
-        document.updateDocument(
+    item => {
+      document.updateDocument(
         acronymListProduct,
         path(['itemId'], item),
         mapKeyValues(item))
-        return path(['itemId'], item)
-      },
-      itemsToBeUpdated
-    )
+      return path(['itemId'], item)
+    },
+    itemsToBeUpdated
+  )
 
   return concat(itemsIdAdded, itemsIdUpdated)
 }
