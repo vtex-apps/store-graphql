@@ -43,7 +43,7 @@ input ListInput {
 
 input ListItemInput {
     """ List item id """
-    itemId: ID
+    id: ID
     """ Product id """
     productId: ID!
     """ Sku id """
