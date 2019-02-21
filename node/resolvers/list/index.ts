@@ -14,10 +14,10 @@ const getListItemsWithProductInfo = (items, catalog) => Promise.all(
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(itemId =>
-    document.getDocument(acronymListProduct, itemId, fieldsListProduct), itemsId)) : []
+  const items = itemsId ? await Promise.all(map(id =>
+    document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
-}
+} 
 
 const addListItem = async (item, document) => {
   const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues({ ...item }))
@@ -32,16 +32,16 @@ const addItems = async (items = [], dataSources) => {
 }
 
 const deleteItems = (items, document) => (
-  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)))
+  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['id'], item)))
 )
 
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsWithoutDuplicated = map(item => last(item),
     values(groupBy(prop('skuId'), items)))
-  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
-  const itemsToBeAdded = filter(item => !path(['itemId'], item), itemsWithoutDuplicated)
-  const itemsToBeUpdated = filter(item => path(['itemId'], item) && path(['quantity'], item) > 0, itemsWithoutDuplicated)
+  const itemsToBeDeleted = filter(item => path(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
+  const itemsToBeAdded = filter(item => !path(['id'], item), itemsWithoutDuplicated)
+  const itemsToBeUpdated = filter(item => path(['id'], item) && path(['quantity'], item) > 0, itemsWithoutDuplicated)
 
   deleteItems(itemsToBeDeleted, document)
 
@@ -53,9 +53,9 @@ const updateItems = async (items, dataSources) => {
     item => {
       document.updateDocument(
         acronymListProduct,
-        path(['itemId'], item),
+        path(['id'], item),
         mapKeyValues(item))
-      return path(['itemId'], item)
+      return path(['id'], item)
     },
     itemsToBeUpdated
   )
@@ -101,8 +101,8 @@ export const mutation = {
 
   /**
    * Update the list informations and its items.
-   * If the item given does not have the itemId, add it as a new item in the list
-   * If the item given has got an itemId, but its quantity is 0, remove it from the list
+   * If the item given does not have the id, add it as a new item in the list
+   * If the item given has got an id, but its quantity is 0, remove it from the list
    * Otherwise, update it.
    */
   updateList: async (_, { id, list, list: { items } }, context) => {
