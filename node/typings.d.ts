@@ -1,4 +1,5 @@
 import { IOContext, ServiceContext } from '@vtex/api'
+import { DataSource } from 'apollo-datasource'
 
 import { dataSources } from './dataSources'
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
@@ -25,7 +26,7 @@ declare global {
     currentProfile: CurrentProfile
   }
 
-  interface StoreGraphQLDataSources {
+  interface StoreGraphQLDataSources extends Record<string, DataSource> {
     catalog: CatalogDataSource
     checkout: CheckoutDataSource
     document: DocumentDataSource
