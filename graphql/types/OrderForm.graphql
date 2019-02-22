@@ -55,6 +55,12 @@ type OrderFormItem {
   isGift: Boolean
   parentItemIndex: Int
   parentAssemblyBinding: String
+  assemblyOptions: AssemblyOptionItem
+}
+
+type AssemblyOptionItem {
+  added: [AddedOptionItem]!
+  removed: [RemovedOptionItem]!
 }
 
 type Totalizer {
@@ -139,4 +145,18 @@ input OrderFormPaymentTokenInput {
 input OrderFormCheckinInput {
   isCheckedIn: Boolean
   pickupPointId: String
+}
+
+type RemovedOptionItem {
+  initialQuantity: Int
+  removedQuantity: Int
+  name: String
+}
+
+type AddedOptionItem {
+  item: OrderFormItem
+  compositionItem: CompositionItem
+  normalizedQuantity: Int
+  choiceType: String
+  extraQuantity: Int
 }

@@ -58,6 +58,8 @@ declare global {
     sellingPrice: number
     rewardValue: number
     isGift: boolean
+    parentItemIndex: number
+    parentAssemblyBinding: string
   }
 
   interface UserAddress {
