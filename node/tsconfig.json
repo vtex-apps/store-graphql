@@ -15,7 +15,8 @@
     "module": "commonjs",
     "sourceMap": false,
     "outDir": "service",
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true
   },
   "typeAcquisition": {
     "enable": false
