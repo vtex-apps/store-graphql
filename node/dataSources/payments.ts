@@ -1,27 +1,21 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed } from 'ramda'
+import { HttpClient, HttpClientFactory, IOContext, IODataSource } from '@vtex/api'
 
-export class PaymentsDataSource extends RESTDataSource<Context> {
-  public getUserPayments = (userId: string) => {
-    return this.get(`${userId}/vcs-checkout`)
-  }
+const withHeadersFromContext = ({account, authToken}: IOContext) => ({
+  'Proxy-Authorization': authToken,
+  'VtexIdClientAutCookie': authToken,
+  'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
+})
 
-  get baseURL() {
-    const { vtex: { account } } = this.context
+const forLegacy: HttpClientFactory = ({options, context}) => {
+  const {account = ''} = context || {}
+  const baseURL = `http://${account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles`
+  return HttpClient.forLegacy(baseURL, options || {} as any)
+}
 
-    return `http://${account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles`
-  }
+export class PaymentsDataSource extends IODataSource {
+  protected httpClientFactory = forLegacy
 
-  protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken, account } } = this.context
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        'Proxy-Authorization': authToken,
-        'VtexIdClientAutCookie': authToken,
-        'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
-      }
-    )
-  }
+  public getUserPayments = (userId: string) => this.http.get(`/${userId}/vcs-checkout`, {
+    headers: withHeadersFromContext(this.context)
+  })
 }
