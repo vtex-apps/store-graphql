@@ -184,10 +184,10 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
-"@vtex/api@1.8.2-beta":
-  version "1.8.2-beta"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-1.8.2-beta.tgz#e6c384f997b35355cc869b9e467092df95ff53dd"
-  integrity sha512-4YzBrfRRwVZZPu3ssUvcicrIx0Nc7ZmC5JywAO2o/GBzvX/gzNTjEQIIRTDfPPMI/eaKDSMfgXPs/ncJL3zEAg==
+"@vtex/api@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-1.8.2.tgz#cff82603c7aaf0dbbdfc421d9f458da60aff44f2"
+  integrity sha512-K6abemfSU2QJ1ZTN0atjYSkciaDsa3R8AV0RhoTh3CoYy6sY/euXmI2OtEx9WWubZHSENTSPEennoaxn4r+GVA==
   dependencies:
     "@types/graphql" "^14.0.4"
     "@types/lru-cache" "^4.1.1"
