@@ -61,6 +61,7 @@ type OrderFormItem {
 type AssemblyOptionItem {
   added: [AddedOptionItem]!
   removed: [RemovedOptionItem]!
+  parentPrice: Float
 }
 
 type Totalizer {

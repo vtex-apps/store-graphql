@@ -124,7 +124,7 @@ const getItemComposition = (childItem: OrderFormItem, parentAssemblyOptions) => 
   return find(propEq('id', childItem.id))(parentAssemblyOptions.composition.items) || {}
 }
 
-const isSonOfItem = (parentIndex: number) => propEq('parentItemIndex', parentIndex)
+export const isSonOfItem = (parentIndex: number) => propEq('parentItemIndex', parentIndex)
 
 export const isParentItem = ({ parentItemIndex, parentAssemblyBinding }: OrderFormItem) => 
   parentItemIndex == null && parentAssemblyBinding == null
