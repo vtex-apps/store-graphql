@@ -1,23 +1,18 @@
-import { pathOr } from 'ramda'
+import { buildAddedOptionsForItem, buildRemovedOptions, isSonOfItem } from './attachmentsHelper'
 
-import { buildAddedOptionsForItem, buildRemovedOptions } from './attachmentsHelper'
-
-const hasAttachments = (orderForm) => {
-  const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as any[]
-  if (metadataItems.length === 0) { return false }
-  return metadataItems.some(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
-}
+const itemTotalPrice = ({ sellingPrice, quantity }) => sellingPrice / 100 * quantity
 
 export const resolvers = {
   AssemblyOptionItem: {
-    added: ({ item, childs, index, orderForm }) => {
-      if (childs.length === 0 || !hasAttachments(orderForm)) {
+    added: ({ item, childs, index, orderForm, hasAttachments }) => {
+      if (childs.length === 0 || !hasAttachments) {
         return []
       }
       return buildAddedOptionsForItem(orderForm, item, index, childs)
     },
-    removed: ({ item, orderForm }) => {
-      if (!hasAttachments(orderForm)) {
+    parentPrice: ({ item }) => item.sellingPrice * 0.01,
+    removed: ({ item, orderForm, hasAttachments }) => {
+      if (!hasAttachments) {
         return []
       }
       return buildRemovedOptions(item, orderForm)

@@ -1,4 +1,4 @@
-import { addIndex, map, reject } from 'ramda'
+import { addIndex, map, pathOr, reject } from 'ramda'
 import { SimulationData } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
@@ -6,6 +6,7 @@ import httpResolver from '../httpResolver'
 import paths from '../paths'
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
 import { addOptionsForItems, isParentItem } from './attachmentsHelper'
+import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 
 import { queries as sessionQueries } from '../session'
@@ -42,6 +43,12 @@ type Resolver<TArgs=any, TRoot=any> =
 
 const mapIndexed = addIndex(map)
 
+const hasAttachments = (orderForm) => {
+  const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as any[]
+  if (metadataItems.length === 0) { return false }
+  return metadataItems.some(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
+}
+
 export const fieldResolvers = {
   OrderForm: {
     cacheId: (orderForm) => {
@@ -49,12 +56,14 @@ export const fieldResolvers = {
     },
     items: (orderForm) => {
       const childs = reject(isParentItem, orderForm.items)
-      return mapIndexed((item: OrderFormItem, index: number) => ({
+      return mapIndexed((item: OrderFormItem, index: number) => ({ 
         ...item,
-        assemblyOptions: { item, childs, index, orderForm },
-        listPrice: convertIntToFloat(item.listPrice),
-        price: convertIntToFloat(item.price),
-        sellingPrice: convertIntToFloat(item.sellingPrice)
+        assemblyOptionsData: { 
+          childs,
+          hasAttachments,
+          index,
+          orderForm
+         }
       }), orderForm.items)
     },
     value: (orderForm) => {
@@ -62,6 +71,7 @@ export const fieldResolvers = {
     },
   },
   ...assemblyOptionsItemResolvers,
+  ...orderFormItemResolvers,
 }
 
 export const queries: Record<string, Resolver> = {
