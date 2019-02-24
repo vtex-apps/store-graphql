@@ -43,10 +43,11 @@ type Resolver<TArgs=any, TRoot=any> =
 
 const mapIndexed = addIndex(map)
 
-const hasAttachments = (orderForm) => {
+const buildAssemblyOptionsMap = (orderForm) => {
   const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as any[]
-  if (metadataItems.length === 0) { return false }
-  return metadataItems.some(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
+  return metadataItems
+         .filter(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
+         .reduce((prev, curr) => ({ ...prev, [curr.id]: curr.assemblyOptions }) , {})
 }
 
 export const fieldResolvers = {
@@ -56,14 +57,15 @@ export const fieldResolvers = {
     },
     items: (orderForm) => {
       const childs = reject(isParentItem, orderForm.items)
+      const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
       return mapIndexed((item: OrderFormItem, index: number) => ({ 
         ...item,
         assemblyOptionsData: { 
+          assemblyOptionsMap,
           childs,
-          hasAttachments,
           index,
-          orderForm
-         }
+          orderForm,
+        }
       }), orderForm.items)
     },
     value: (orderForm) => {
