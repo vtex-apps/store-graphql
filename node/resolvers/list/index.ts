@@ -1,21 +1,22 @@
-import { difference, filter, map, nth, path } from 'ramda'
+import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
+
 import ResolverError from '../../errors/resolverError'
 import { mapKeyValues } from '../../utils/object'
-import { validateItems, validateListItem } from './util'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
+import { validateItems } from './util'
 
 const getListItemsWithProductInfo = (items, catalog) => Promise.all(
-    map(async item => {
-      const productsResponse = await catalog.productBySku([path(['skuId'], item)])
-      const product = nth(0, productsResponse)
-      return { ...item, product }
-    }, items)
-  )
+  map(async item => {
+    const productsResponse = await catalog.productBySku([path(['skuId'], item)])
+    const product = nth(0, productsResponse)
+    return { ...item, product }
+  }, items)
+)
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(itemId => 
-    document.getDocument(acronymListProduct, itemId, fieldsListProduct), itemsId)) : []
+  const items = itemsId ? await Promise.all(map(id =>
+    document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
 
@@ -32,24 +33,35 @@ const addItems = async (items = [], dataSources) => {
 }
 
 const deleteItems = (items, document) => (
-  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['itemId'], item)))
+  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['id'], item)))
 )
 
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
-  const itemsToBeDeleted = filter(item => path(['itemId'], item) && path(['quantity'], item) === 0, items)
-  const otherItems = difference(items, itemsToBeDeleted)
-  const itemsUpdated = await map(async item => {
-    const itemId = path(['itemId'], item)
-    validateListItem(items, item, dataSources)
-    if (itemId) {
-      await document.updateDocument(acronymListProduct, itemId, mapKeyValues(item))
-      return itemId
-    }
-    return await addListItem(item, document)
-  }, otherItems)
+  const itemsWithoutDuplicated = map(item => last(item),
+    values(groupBy(prop('skuId'), items)))
+  const itemsToBeDeleted = filter(item => path(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
+  const itemsToBeAdded = filter(item => !path(['id'], item), itemsWithoutDuplicated)
+  const itemsToBeUpdated = filter(item => path(['id'], item) && path(['quantity'], item) > 0, itemsWithoutDuplicated)
+
   deleteItems(itemsToBeDeleted, document)
-  return itemsUpdated
+
+  const itemsIdAdded = await Promise.all(
+    map(async item => await addListItem(item, document), itemsToBeAdded)
+  )
+
+  const itemsIdUpdated = map(
+    item => {
+      document.updateDocument(
+        acronymListProduct,
+        path(['id'], item),
+        mapKeyValues(item))
+      return path(['id'], item)
+    },
+    itemsToBeUpdated
+  )
+
+  return concat(itemsIdAdded, itemsIdUpdated)
 }
 
 export const queries = {
@@ -61,7 +73,7 @@ export const queries = {
 
   listsByOwner: async (_, { owner, page, pageSize }, context) => {
     const { dataSources, dataSources: { document } } = context
-    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize})
+    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
     const listsWithProducts = map(async list => {
       const items = await getListItems(path(['items'], list), dataSources)
       return { ...list, items }
@@ -90,8 +102,8 @@ export const mutation = {
 
   /**
    * Update the list informations and its items.
-   * If the item given does not have the itemId, add it as a new item in the list
-   * If the item given has got an itemId, but its quantity is 0, remove it from the list
+   * If the item given does not have the id, add it as a new item in the list
+   * If the item given has got an id, but its quantity is 0, remove it from the list
    * Otherwise, update it.
    */
   updateList: async (_, { id, list, list: { items } }, context) => {
