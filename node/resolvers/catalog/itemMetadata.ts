@@ -4,6 +4,10 @@ import { both, find, isEmpty, pickBy, prop, propEq } from 'ramda'
 import { renameKeysWith } from '../../utils'
 import paths from '../paths'
 
+import { MetadataItem } from '../checkout/types'
+
+import { SessionDataSource } from '../../dataSources/session'
+
 const headersWithToken = (authToken) => ({
   Accept: 'application/json',
   Authorization: `bearer ${authToken}`,
@@ -13,35 +17,6 @@ const headersWithToken = (authToken) => ({
 const isTruthy = val => !!val
 const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
-
-interface ItemMetadata {
-  id: string,
-  name: string,
-  skuName: string,
-  productId: string,
-  refId: string,
-  ean: string | null,
-  imageUrl: string,
-  detailUrl: string,
-  assemblyOptions: Array<{
-    id: string,
-    name: string,
-    required: boolean,
-    inputValues: any,
-    composition: {
-      minQuantity: number,
-      maxQuantity: number,
-      items: Array<{
-        id: string,
-        initialQuantity: number,
-        minQuantity: number,
-        maxQuantity: number,
-        priceTable: string,
-        seller: string,
-      }>,
-    }
-  }>,
-}
 
 interface FetchPriceInput {
   id: string,
@@ -54,7 +29,7 @@ interface FetchPriceInput {
 }
 
 interface Parent {
-  items: ItemMetadata[],
+  items: MetadataItem[],
 }
 
 interface PriceType {
@@ -87,7 +62,7 @@ const fetchPrice = async ({
   }
 }
 
-const getSimulationPayload = async (session: any, account: string, authToken: string) => {
+const getSimulationPayload = async (session: SessionDataSource, account: string, authToken: string) => {
   const segmentData = await session.getSegmentData().catch(() => null)
   if (!segmentData) { return null }
 
@@ -112,7 +87,7 @@ const getSimulationPayload = async (session: any, account: string, authToken: st
 
 export const resolvers = {
   ItemMetadata: {
-    priceTable: async ({items}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }) => {
+    priceTable: async ({items}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }: Context) => {
       const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
