@@ -1,8 +1,9 @@
-import { concat, filter, map, nth, path, groupBy, prop, values, last } from 'ramda'
+import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
+
 import ResolverError from '../../errors/resolverError'
 import { mapKeyValues } from '../../utils/object'
-import { validateItems, validateListItem } from './util'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
+import { validateItems } from './util'
 
 const getListItemsWithProductInfo = (items, catalog) => Promise.all(
   map(async item => {
@@ -17,7 +18,7 @@ const getListItems = async (itemsId, dataSources) => {
   const items = itemsId ? await Promise.all(map(id =>
     document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
-} 
+}
 
 const addListItem = async (item, document) => {
   const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues({ ...item }))

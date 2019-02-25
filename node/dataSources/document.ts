@@ -4,7 +4,6 @@ import { forEachObjIndexed } from 'ramda'
 
 import { withMDPagination } from '../resolvers/headers'
 import { parseFieldsToJson } from '../utils'
-import { Headers } from 'apollo-server-env'
 
 interface PaginationArgs {
   page: string,
