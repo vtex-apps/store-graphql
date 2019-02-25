@@ -1,6 +1,6 @@
-import { all, filter, find, partition, path, prop, propEq } from 'ramda'
+import { all, filter, find, partition, path, pathOr, prop, propEq } from 'ramda'
 
-import { AssemblyOption, CompositionItem, RemovedItem } from './types'
+import { AssemblyOption, CompositionItem, MetadataItem, RemovedItem } from './types'
 
 import { CheckoutDataSource } from '../../dataSources/checkout'
 
@@ -104,6 +104,13 @@ export const addOptionsForItems = async (
       orderFormId: orderForm.orderFormId,
     })
   }
+}
+
+export const buildAssemblyOptionsMap = (orderForm: any) => {
+  const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as MetadataItem[]
+  return metadataItems
+         .filter(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
+         .reduce((prev, curr) => ({ ...prev, [curr.id]: curr.assemblyOptions }) , {})
 }
 
 const isParentOptionSingleChoice = ({composition: { minQuantity, maxQuantity }}: AssemblyOption) =>
