@@ -26,6 +26,14 @@ interface OptionRequestAddParam extends OptionRequestParam {
   quantity: number
 }
 
+interface ItemsToAdd {
+  id: string
+  quantity: number
+  seller: string
+  index?: number
+  options?: OptionsType[]
+}
+
 interface AddOptionsLogicInput {
   checkout: CheckoutDataSource,
   orderFormId: string,
@@ -81,7 +89,10 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
  * @param orderForm order form object with current items and ID
  */
 
-export const addOptionsForItems = async (items, checkout, orderForm) => {
+export const addOptionsForItems = async (
+  items: ItemsToAdd[],
+  checkout: CheckoutDataSource,
+  orderForm: any) => {
   for (const item of items) {
     if (!item.options || item.options.length === 0) { continue }
     const parentIndex = orderForm.items.findIndex(cartItem => cartItem.id.toString() === item.id.toString())
