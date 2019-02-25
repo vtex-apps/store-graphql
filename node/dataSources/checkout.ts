@@ -78,6 +78,12 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
     `/pub/orderForm/${orderFormId}/attachments/marketingData`,
     marketingData,
   )
+  
+  public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) => 
+    this.post(
+      `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`, 
+      body
+    )
 
   public orderForm = () => this.post(
     `/pub/orderForm`,
