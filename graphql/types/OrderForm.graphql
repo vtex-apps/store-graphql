@@ -89,6 +89,7 @@ input OrderFormItemInput {
   index: Int
   quantity: Int
   seller: ID
+  options: [AssemblyOptionInput]
 }
 
 input OrderFormAddressInput {
