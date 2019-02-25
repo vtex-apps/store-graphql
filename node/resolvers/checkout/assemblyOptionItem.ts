@@ -4,8 +4,6 @@ import { buildAddedOptionsForItem, buildRemovedOptions } from './attachmentsHelp
 
 import { AssemblyOption } from './types'
 
-const itemTotalPrice = ({ sellingPrice, quantity }) => sellingPrice / 100 * quantity
-
 interface Params {
   item: OrderFormItem
   childs: OrderFormItem[]
