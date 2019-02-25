@@ -2,7 +2,7 @@
   "name": "vtex.store-graphql",
   "dependencies": {
     "@gocommerce/utils": "^0.5.26",
-    "@vtex/api": "^1.8.2",
+    "@vtex/api": "^1.9.0",
     "apollo-datasource-rest": "^0.1.5",
     "apollo-server-errors": "^2.0.2",
     "axios": "0.16.2",
@@ -14,7 +14,7 @@
     "graphql-tools": "^4.0.2",
     "jwt-decode": "^2.2.0",
     "node-fetch": "^2.1.2",
-    "qs": "^6.5.2",
+    "qs": "^6.6.0",
     "ramda": "^0.24.1",
     "slugify": "^1.2.6",
     "typescript": "^2.5.2",
