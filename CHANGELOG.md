@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.50.1] - 2019-02-25
+### Fixed
+- Headers' error in the `Document` dataSource.
+
 ## [2.50.0] - 2019-02-25
 ### Added
 - Add logic to call addAssemblyOption to append assembly options to cart items
