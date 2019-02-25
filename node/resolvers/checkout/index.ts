@@ -5,7 +5,7 @@ import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
-import { addOptionsForItems, isParentItem } from './attachmentsHelper'
+import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 
@@ -42,13 +42,6 @@ type Resolver<TArgs=any, TRoot=any> =
   (root: TRoot, args: TArgs, context: Context) => Promise<any>
 
 const mapIndexed = addIndex(map)
-
-const buildAssemblyOptionsMap = (orderForm) => {
-  const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as any[]
-  return metadataItems
-         .filter(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
-         .reduce((prev, curr) => ({ ...prev, [curr.id]: curr.assemblyOptions }) , {})
-}
 
 export const fieldResolvers = {
   OrderForm: {
