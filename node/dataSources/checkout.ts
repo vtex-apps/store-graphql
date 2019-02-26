@@ -84,6 +84,14 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`, 
       body
     )
+  
+  public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
+    this.fetch({
+      body,
+      method: 'DELETE',
+      path: `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
+    })
+
 
   public orderForm = () => this.post(
     `/pub/orderForm`,
