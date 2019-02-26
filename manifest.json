@@ -1,7 +1,11 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
+<<<<<<< HEAD
   "version": "2.52.0",
+=======
+  "version": "2.1001.0",
+>>>>>>> beta
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -33,6 +37,13 @@
     {
       "name": "outbound-access",
       "attrs": {
+        "host": "{{account}}.vtexcommercebeta.com.br",
+        "path": "/api/catalog_system/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/checkout/pub/orderForm/*"
       }
@@ -40,7 +51,21 @@
     {
       "name": "outbound-access",
       "attrs": {
+        "host": "{{account}}.vtexcommercebeta.com.br",
+        "path": "/api/checkout/pub/orderForm/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
+        "path": "/api/checkout/pub/orders/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "{{account}}.vtexcommercebeta.com.br",
         "path": "/api/checkout/pub/orders/*"
       }
     },
