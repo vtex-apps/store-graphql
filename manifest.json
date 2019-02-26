@@ -1,11 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-<<<<<<< HEAD
-  "version": "2.52.0",
-=======
-  "version": "2.1001.0",
->>>>>>> beta
+  "version": "2.1001.1-beta",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
