@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.50.3] - 2019-02-26
+
+## [2.50.2] - 2019-02-26
+### Changed
+- Implement call to removeAssemblyOption on checkout data source
+- Call it if passed assembly option with quantity 0
+
 ## [2.50.1] - 2019-02-25
 ### Fixed
 - Headers' error in the `Document` dataSource.

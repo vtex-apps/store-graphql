@@ -1,40 +1,66 @@
+import { partition } from 'ramda'
+
+import { CheckoutDataSource } from '../../dataSources/checkout'
 interface OptionsType {
-  id: string,
-  quantity: number,
-  assemblyId: string,
+  id: string
+  quantity: number
+  assemblyId: string
+  seller: string
+}
+
+interface OptionRequestParam {
+  id: string
+  seller: string
+}
+
+interface OptionRequestAddParam extends OptionRequestParam {
+  quantity: number
 }
 
 interface AddOptionsLogicInput {
-  checkout: any,
+  checkout: CheckoutDataSource,
   orderFormId: string,
   itemIndex: string,
   options?: OptionsType[],
 }
 
-const addOptionsLogic = async (input: AddOptionsLogicInput) => {
-  const { checkout, orderFormId, itemIndex, options } = input
-  if (!options || options.length === 0) { return }
+const addAssemblyBody = (items: OptionRequestAddParam[]) => ({
+  composition: {
+    items,
+  },
+  noSplitItem: true,
+})
 
-  const types = options.reduce<{ [key: string]: Array<{ quantity: number, id: string }>}>((prev, curr) => {
+const removeAssemblyBody = (items: OptionRequestAddParam[]) => ({
+  composition: {
+    items: removeQuantity(items),
+  },
+})
+
+const removeQuantity = (options: OptionRequestAddParam[]): OptionRequestParam[] => options.map(({ seller, id }) => ({ seller, id }))
+
+const joinOptionsWithType = (options: OptionsType[]) => {
+  return options.reduce<{ [key: string]: OptionRequestAddParam[]}>((prev, curr) => {
     const { assemblyId, ...rest } = curr
     return {
       ...prev,
       [assemblyId]: [...(prev[assemblyId] || []), rest]
     }
   }, {})
-  const body = (items) => ({
-    composition: {
-      items,
-    },
-    noSplitItem: true,
-  })
-  const entries = Object.entries(types)
-  for (const [assemblyId, parsedOptions] of entries) {
-    try {
-      await checkout.addAssemblyOptions(orderFormId, itemIndex, assemblyId, body(parsedOptions))
-    } catch (err) {
-      // go on to next api call if one fails
-    }
+}
+
+const addOptionsLogic = async (input: AddOptionsLogicInput) => {
+  const { checkout, orderFormId, itemIndex, options } = input
+  if (!options || options.length === 0) { return }
+  const isRemove = (option) => option.quantity === 0
+  const [toRemove, toAdd] = partition<OptionsType>(isRemove, options)
+  const joinedToAdd = joinOptionsWithType(toAdd)
+  const joinedToRemove = joinOptionsWithType(toRemove)
+  for (const [assemblyId, parsedOptions] of Object.entries(joinedToAdd)) {
+    await checkout.addAssemblyOptions(orderFormId, itemIndex, assemblyId, addAssemblyBody(parsedOptions)).catch(() => null)
+  }
+  for (const [assemblyId, parsedOptions] of Object.entries(joinedToRemove)) {
+    await checkout.removeAssemblyOptions(orderFormId, itemIndex, assemblyId, removeAssemblyBody(parsedOptions)).catch(() => null)
   }
 }
 
