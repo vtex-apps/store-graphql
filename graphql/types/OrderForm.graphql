@@ -55,12 +55,16 @@ type OrderFormItem {
   isGift: Boolean
   parentItemIndex: Int
   parentAssemblyBinding: String
+  """ Informations related to assembly options children of this item """
   assemblyOptions: AssemblyOptionItem
 }
 
 type AssemblyOptionItem {
+  """ Assembly options added to parent OrderFormItem """
   added: [AddedOptionItem]!
+  """ Assembly options removed from parent OrderFormItem """
   removed: [RemovedOptionItem]!
+  """ Selling price of parent item """
   parentPrice: Float
 }
 
@@ -149,15 +153,23 @@ input OrderFormCheckinInput {
 }
 
 type RemovedOptionItem {
+  """ The initialQuantity of the assembly option CompositionItem """
   initialQuantity: Int
+  """ The amount that the user removed of this assembly option """
   removedQuantity: Int
+  """ The name of this assembly option """
   name: String
 }
 
 type AddedOptionItem {
+  """ The OrderFormItem of this assembly options, as appering on cart """
   item: OrderFormItem
+  """ Composition item of assembly option, as it appears on ItemMetadata of OrderForm """
   compositionItem: CompositionItem
+  """ The quantity of this assembly option per parent unit, so childQuantity / parentQuantity """
   normalizedQuantity: Int
+  """ The choice type of this assembly option (MULTIPLE, SINGLE or TOGGLE) """
   choiceType: String
+  """ The real quantity added by user, so quantity in cart minus the item's initialQuantity """
   extraQuantity: Int
 }
