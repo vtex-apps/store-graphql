@@ -240,7 +240,7 @@ type Mutation {
     """ File being uploaded """
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
-    field: String
+    field: String @deprecated
   ): Profile @withCurrentProfile
   """ Uploads the Profile Picture by appending to the existing ones DEPRECATED"""
   uploadProfilePicture(
