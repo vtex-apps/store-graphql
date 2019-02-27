@@ -1,5 +1,6 @@
 import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
+import { SegmentData } from './session';
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
@@ -78,13 +79,13 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
     `/pub/orderForm/${orderFormId}/attachments/marketingData`,
     marketingData,
   )
-  
-  public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) => 
+
+  public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
     this.post(
-      `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`, 
+      `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       body
     )
-  
+
   public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
     this.delete(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
@@ -129,10 +130,23 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
 
   protected willSendRequest (request: RequestOptions) {
     const {vtex: {account, authToken}, headers} = this.context
+    const segmentData: SegmentData = (this.context.vtex as any).segment
+    const { channel: salesChannel = '' } = segmentData || {}
+
+    if (!salesChannel) {
+      throw new Error(`sales channel was empty for ${request.path}`)
+    }
 
     if (!request.timeout) {
       request.timeout = DEFAULT_TIMEOUT_MS
     }
+
+    forEachObjIndexed(
+      (value: string, param: string) => request.params.set(param, value),
+      {
+        ...!!salesChannel && {sc: salesChannel}
+      }
+    )
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),

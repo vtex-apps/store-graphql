@@ -5,7 +5,7 @@ type Query {
   product(
     """ Product slug """
     slug: String
-  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT)
+  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Product search filtered and ordered """
   products(
@@ -29,13 +29,13 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT)
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets @cacheControl(scope: SEGMENT)
+  ): Facets @cacheControl(scope: SEGMENT) @withSegment
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -61,28 +61,28 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT)
+  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get category details """
   category(
     """ Category id """
     id: Int
-  ): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM) @withSegment
 
   """ Get categories tree """
   categories(
     """ Category tree level. Default: 3"""
     treeLevel: Int = 3
-  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM) @withSegment
 
   """ Get brand details """
   brand(
     """ Brand id """
     id: Int
-  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM) @withSegment
 
   """ Get a list of brands """
-  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM) @withSegment
 
   """ OrderForm simulation """
   shipping(
@@ -92,7 +92,7 @@ type Query {
     postalCode: String,
     """ Country of postal code """
     country: String
-  ): ShippingData
+  ): ShippingData @withSegment
 
   """ Get checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
@@ -142,7 +142,7 @@ type Query {
   benefits(
     """ List of Products """
     items: [ShippingItem]
-  ): [Benefit]
+  ): [Benefit] @withSegment
 
   """ Get the options available to authenticate users """
   loginOptions: LoginOptions
@@ -153,10 +153,10 @@ type Query {
     department: String,
     category: String,
     subcategory: String
-  ): SearchContext
+  ): SearchContext @withSegment
 
   """ Get logistics information about the store """
-  logistics: LogisticsData
+  logistics: LogisticsData @withSegment
 
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
@@ -209,9 +209,9 @@ type Query {
 
 type Mutation {
   """ Cart """
-  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
+  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
   cancelOrder(orderFormId: String, reason: String): Boolean
-  updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
+  updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
 
   """ Profile """
   updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile @withCurrentProfile
