@@ -8,6 +8,7 @@ import { CheckoutDataSource } from './dataSources/checkout'
 import { DocumentDataSource } from './dataSources/document'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
+import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
 import { PaymentsDataSource } from './dataSources/payments'
 import { PortalDataSource } from './dataSources/portal'
@@ -32,6 +33,7 @@ declare global {
     document: DocumentDataSource
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
+    logistics: LogisticsDataSource
     payments: PaymentsDataSource
     portal: PortalDataSource
     profile: ProfileDataSource
