@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.51.0] - 2019-02-27
+### Added
+- Create assembly options resolvers to `OrderFormItem`
+
 ## [2.50.3] - 2019-02-26
 
 ## [2.50.2] - 2019-02-26

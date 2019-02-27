@@ -1,10 +1,12 @@
-import { map } from 'ramda'
+import { addIndex, map, pathOr, reject } from 'ramda'
 import { SimulationData } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
-import { addOptionsForItems } from './attachmentsHelper'
+import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
+import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
+import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 
 import { queries as sessionQueries } from '../session'
@@ -39,23 +41,32 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
 type Resolver<TArgs=any, TRoot=any> =
   (root: TRoot, args: TArgs, context: Context) => Promise<any>
 
+const mapIndexed = addIndex(map)
+
 export const fieldResolvers = {
   OrderForm: {
     cacheId: (orderForm) => {
       return orderForm.orderFormId
     },
     items: (orderForm) => {
-      return map((item: OrderFormItem) => ({
+      const childs = reject(isParentItem, orderForm.items)
+      const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
+      return mapIndexed((item: OrderFormItem, index: number) => ({ 
         ...item,
-        listPrice: convertIntToFloat(item.listPrice),
-        price: convertIntToFloat(item.price),
-        sellingPrice: convertIntToFloat(item.sellingPrice)
+        assemblyOptionsData: { 
+          assemblyOptionsMap,
+          childs,
+          index,
+          orderForm,
+        }
       }), orderForm.items)
     },
     value: (orderForm) => {
       return convertIntToFloat(orderForm.value)
     },
-  }
+  },
+  ...assemblyOptionsItemResolvers,
+  ...orderFormItemResolvers,
 }
 
 export const queries: Record<string, Resolver> = {
