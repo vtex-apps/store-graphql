@@ -2,7 +2,7 @@ import fieldR from './fieldResolvers'
 import { createAddress, deleteAddress, getProfile, updateAddress, updateProfile, updateProfilePicture } from './services'
 
 export const mutations = {
-  createAddress: async (_, args, context) => { 
+  createAddress: async (_, args, context) => {
     await createAddress(context, args)
 
     return getProfile(context, args)
@@ -16,15 +16,15 @@ export const mutations = {
 
   updateAddress: (_, args, context) => updateAddress(context, args),
 
-  updateProfile: (_, { fields }, context) => updateProfile(context,fields),
+  updateProfile: (_, { fields, customFields }, context) => updateProfile(context, fields, customFields),
 
-  updateProfilePicture: (_, args, context) => updateProfilePicture(context, args, true),
+  updateProfilePicture: (_, { file }, context) => updateProfilePicture(context, file),
 
-  uploadProfilePicture: (_, args, context) => updateProfilePicture(context, args, false)
+  uploadProfilePicture: (_, { file }, context) => updateProfilePicture(context, file)
 }
 
 export const queries = {
-  profile: (_, args, context) => getProfile(context, args),
+  profile: (_, { customFields }, context) => getProfile(context, customFields),
 }
 
 export const fieldResolvers = fieldR
