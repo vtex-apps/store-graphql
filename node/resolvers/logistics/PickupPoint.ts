@@ -1,4 +1,4 @@
-import { LogisticPickupPoint } from './index'
+import { LogisticPickupPoint } from './types'
 
 export const resolvers = {
   PickupPoint: {
