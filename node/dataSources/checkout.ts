@@ -1,6 +1,7 @@
 import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
-import { SegmentData } from './session';
+
+import { SegmentData } from './session'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
