@@ -62,7 +62,7 @@ export const fieldResolvers = {
         }
       }), orderForm.items)
     },
-    pickupPoint: (orderForm, _, ctx) => {
+    pickupPointCheckedIn: (orderForm, _, ctx) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
       if (!isCheckedIn || !checkedInPickupPointId) {
         return null

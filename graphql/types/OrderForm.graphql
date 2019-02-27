@@ -19,7 +19,7 @@ type OrderForm {
   storePreferencesData: StorePreferencesData
   itemMetadata: ItemMetadata
   checkedInPickupPointId: String
-  pickupPoint: PickupPoint
+  pickupPointCheckedIn: PickupPoint
 }
 
 type StorePreferencesData {
