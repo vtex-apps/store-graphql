@@ -1,22 +1,22 @@
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
+import { generateRandomAddressName } from '../../utils'
 import { uploadAttachment } from '../document/attachment'
 
-interface GetProfileArgs {
-  customFields: string
-}
-
-export function getProfile(context: Context, args: GetProfileArgs) {
-  const { customFields } = args
+export function getProfile(context: Context, customFields?: string) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },
   } = context
 
+  const extraFields = customFields
+    ? `${customFields},profilePicture`
+    : `profilePicture`
+
   return profile
-    .getProfileInfo(currentProfile.email, customFields)
+    .getProfileInfo(currentProfile.email, extraFields)
     .then(profileData =>
-      profileData ? profileData : { id: '', email: currentProfile.email }
+      profileData ? profileData : { email: currentProfile.email }
     )
 }
 
@@ -79,37 +79,25 @@ export async function updateProfile(
       newData,
       extraFields.customFieldsStr
     )
-    .then(() =>
-      getProfile(context, { customFields: extraFields.customFieldsStr })
-    )
+    .then(() => getProfile(context, extraFields.customFieldsStr))
 }
 
-export const updateProfilePicture = async (
-  context: Context,
-  args,
-  shouldDelete: boolean
-) => {
+export async function updateProfilePicture(context: Context, file: string) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },
   } = context
 
-  const file = args.file
-  const field = args.field || 'profilePicture'
+  const field = 'profilePicture'
 
-  const { id } = await profile.getProfileInfo(currentProfile.email)
-
-  // Should delete the field before uploading new profilePicture
-  // if (shouldDelete) {
-  //   await profile.updateProfileInfo({ id, [field]: '' })
-  // }
+  const { id } = await profile.getProfileInfo(currentProfile.email, 'id')
 
   await uploadAttachment(
     { acronym: 'CL', documentId: id, field, file },
     context
   )
 
-  return getProfile(context, args)
+  return getProfile(context)
 }
 
 // CRUD Address
@@ -120,35 +108,48 @@ export function createAddress(context: Context, address: Address) {
     vtex: { currentProfile },
   } = context
 
-  // return profile.updateAddress({
-  //   ...address,
-  //   id: '',
-  //   userId: currentProfile.userId,
-  // })
+  const addressesData = {}
+  const addressName = generateRandomAddressName()
+  addressesData[addressName] = {
+    ...address,
+    addressName,
+    userId: currentProfile.userId,
+  }
+
+  return profile
+    .updateAddress(currentProfile.email, addressesData)
+    .then(() => profile.getProfileInfo(currentProfile.email))
 }
 
-export function deleteAddress(context: Context, addressId: string) {
+export function deleteAddress(context: Context, addressName: string) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },
   } = context
 
   const addressesData = {}
-  addressesData[addressId] = null
+  addressesData[addressName] = null
 
-  return profile.updateAddress(currentProfile.email, addressesData)
+  return profile
+    .updateAddress(currentProfile.email, addressesData)
+    .then(() => getProfile(context))
 }
 
-export const updateAddress = async (context: Context, address: Address) => {
+export function updateAddress(context: Context, address: Address) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },
   } = context
 
-  // return profile.updateAddress({
-  //   ...address,
-  //   userId: currentProfile.userId,
-  // })
+  const addressesData = {}
+  addressesData[address.addressName] = {
+    ...address,
+    userId: currentProfile.userId,
+  }
+
+  return profile
+    .updateAddress(currentProfile.email, addressesData)
+    .then(() => getProfile(context))
 }
 
 export function pickCustomFieldsFromData(customFields: string, data) {
