@@ -158,6 +158,19 @@ type Query {
   """ Get logistics information about the store """
   logistics: LogisticsData
 
+  """ Get a list of pickup points near specified lat and long """
+  nearPickupPoints(
+    """ Desired latitude coordinate, for example: -22.4321 """
+    lat: String!,
+    """ Desired longitude coordinate, for example: 44.10101 """
+    long: String!,
+    """ max distance of pickup points from given coordinates, in kilometers, default value 50  """
+    maxDistance: Int = 50,
+  ): NearPickupPointQueryResponse
+
+  """ Get pickup point by its id  """
+  pickupPoint(id: String!): PickupPoint
+
   """ Get profile information to session users """
   getSession: Session @cacheControl(scope: PRIVATE)
 
@@ -242,6 +255,7 @@ type Mutation {
   addOrderFormPaymentToken(orderFormId: String, paymentToken: OrderFormPaymentTokenInput): OrderForm
   setOrderFormCustomData(orderFormId: String, appId: String, field: String, value: String): OrderForm
   addAssemblyOptions(orderFormId: String, itemId: String, assemblyOptionsId: String, options: [AssemblyOptionInput]): OrderForm
+  updateOrderFormCheckin(orderFormId: String, checkin: OrderFormCheckinInput): OrderForm
 
   """ Payment """
   createPaymentSession: PaymentSession
