@@ -1,6 +1,6 @@
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
-import { generateRandomAddressName } from '../../utils'
+import { generateRandomName } from '../../utils'
 import { uploadAttachment } from '../document/attachment'
 
 export function getProfile(context: Context, customFields?: string) {
@@ -9,9 +9,13 @@ export function getProfile(context: Context, customFields?: string) {
     vtex: { currentProfile },
   } = context
 
+<<<<<<< HEAD
   const extraFields = customFields
     ? `${customFields},profilePicture`
     : `profilePicture`
+=======
+  const extraFields = customFields ? `${customFields},profilePicture,id` : `profilePicture,id`
+>>>>>>> Fix upload profileImage
 
   return profile
     .getProfileInfo(currentProfile.email, extraFields)
@@ -97,6 +101,8 @@ export async function updateProfilePicture(context: Context, file: string) {
 
   const { id } = await profile.getProfileInfo(currentProfile.email, 'id')
 
+  await profile.updateProfileInfo(currentProfile.email, { profilePicture: '' }, 'profilePicture')
+
   await uploadAttachment(
     { acronym: 'CL', documentId: id, field, file },
     context
@@ -114,7 +120,7 @@ export function createAddress(context: Context, address: Address) {
   } = context
 
   const addressesData = {}
-  const addressName = generateRandomAddressName()
+  const addressName = generateRandomName()
   addressesData[addressName] = JSON.stringify({
     ...address,
     addressName,

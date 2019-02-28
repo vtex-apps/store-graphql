@@ -1,28 +1,48 @@
 import FormData from 'form-data'
+
 import ResolverError from '../../errors/resolverError'
+import { generateRandomName } from '../../utils'
 
 export const uploadAttachment = async (args, ctx) => {
-  const { dataSources: { document } } = ctx
+  const {
+    dataSources: { document },
+  } = ctx
   const { acronym, documentId, field, file } = args
-  const { stream, filename, mimetype } = await file
-  const buffer = await new Promise((resolve, reject) => {
-    const bufs: any = []
+  const { createReadStream, filename, mimetype } = await file
+  const buffer = (await new Promise((resolve, reject) => {
+    const bufs = []
+    const stream = createReadStream()
     stream.on('data', d => bufs.push(d))
     stream.on('end', () => {
       resolve(Buffer.concat(bufs))
     })
     stream.on('error', reject)
-  }) as Buffer
+  })) as Buffer
 
   const formData = new FormData()
 
-  formData.append(field, buffer, { filename, contentType: mimetype, knownLength: buffer.byteLength })
+  const randomName = generateRandomName() + getFileExtension(filename)
 
-  const response = await document.uploadAttachment(acronym, documentId, field, formData)
+  formData.append(field, buffer, {
+    contentType: mimetype,
+    filename: randomName,
+    knownLength: buffer.byteLength,
+  })
+
+  const response = await document.uploadAttachment(
+    acronym,
+    documentId,
+    field,
+    formData
+  )
 
   if (response) {
     throw new ResolverError(response, 500)
   }
 
-  return { filename, mimetype }
+  return { filename: randomName, mimetype }
+}
+
+function getFileExtension(fileName) {
+  return fileName.match(/\.[0-9a-z]+$/i)[0]
 }
