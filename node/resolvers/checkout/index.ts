@@ -1,16 +1,19 @@
-import { addIndex, map, pathOr, reject } from 'ramda'
-import { SimulationData } from '../../dataSources/checkout'
+import { addIndex, map, reject } from 'ramda'
+import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
+
+
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
+import { queries as logisticsQueries } from '../logistics/index'
 import paths from '../paths'
+import { queries as sessionQueries } from '../session'
+import { SessionFields } from '../session/sessionResolver'
+
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
 import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
-
-import { queries as sessionQueries } from '../session'
-import { SessionFields } from '../session/sessionResolver'
 import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
 
 /**
@@ -60,6 +63,13 @@ export const fieldResolvers = {
           orderForm,
         }
       }), orderForm.items)
+    },
+    pickupPointCheckedIn: (orderForm, _, ctx) => {
+      const { isCheckedIn, checkedInPickupPointId } = orderForm
+      if (!isCheckedIn || !checkedInPickupPointId) {
+        return null
+      }
+      return logisticsQueries.pickupPoint({}, { id: checkedInPickupPointId }, ctx)
     },
     value: (orderForm) => {
       return convertIntToFloat(orderForm.value)
@@ -182,5 +192,9 @@ export const mutations: Record<string, Resolver> = {
       noSplitItem: true,
     }
     return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
-  }
+  },
+  
+  updateOrderFormCheckin: (root, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
+    return checkout.updateOrderFormCheckin(orderFormId, checkin)
+  },
 }
