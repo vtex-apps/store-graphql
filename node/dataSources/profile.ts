@@ -28,7 +28,7 @@ export class ProfileDataSource extends IODataSource {
     })
   }
 
-  public updateProfileInfo = (userEmail: string, profile: Profile, customFields?: string) => {
+  public updateProfileInfo = (userEmail: string, profile: Profile | { profilePicture: string }, customFields?: string) => {
     const queryString = queryStringBuilder.stringify({
       extraFields: customFields,
     })

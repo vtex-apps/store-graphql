@@ -21,7 +21,7 @@ export default {
     payments: (_, __, context) => getPayments(context),
     profilePicture: (obj, _, context) =>
       obj.profilePicture &&
-      `//api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${
+      `http://api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${
       obj.id
       }/profilePicture/attachments/${obj.profilePicture}`,
   },
