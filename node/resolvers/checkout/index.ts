@@ -1,17 +1,19 @@
 import { addIndex, map, reject } from 'ramda'
 import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
-import { queries as logisticsQueries } from '../logistics/index'
 import { SegmentData } from '../../dataSources/session'
+
+
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
+import { queries as logisticsQueries } from '../logistics/index'
 import paths from '../paths'
+import { queries as sessionQueries } from '../session'
+import { SessionFields } from '../session/sessionResolver'
+
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
 import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
-
-import { queries as sessionQueries } from '../session'
-import { SessionFields } from '../session/sessionResolver'
 import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
 
 /**
