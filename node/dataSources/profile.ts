@@ -43,6 +43,12 @@ export class ProfileDataSource extends IODataSource {
       headers: withHeadersFromContext(this.context)
     })
   }
+
+  public deleteAddress = (userEmail: string, addressName: string) => {
+    return this.http.delete(`${userEmail}/addresses/${addressName}`, {
+      headers: withHeadersFromContext(this.context)
+    })
+  }
 }
 
 
