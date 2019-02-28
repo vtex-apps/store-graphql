@@ -115,15 +115,15 @@ export function createAddress(context: Context, address: Address) {
 
   const addressesData = {}
   const addressName = generateRandomAddressName()
-  addressesData[addressName] = {
+  addressesData[addressName] = JSON.stringify({
     ...address,
     addressName,
     userId: currentProfile.userId,
-  }
+  })
 
   return profile
     .updateAddress(currentProfile.email, addressesData)
-    .then(() => profile.getProfileInfo(currentProfile.email))
+    .then(() => getProfile(context))
 }
 
 export function deleteAddress(context: Context, addressName: string) {
@@ -140,7 +140,10 @@ export function deleteAddress(context: Context, addressName: string) {
     .then(() => getProfile(context))
 }
 
-export function updateAddress(context: Context, { id, fields }: UpdateAddressArgs) {
+export function updateAddress(
+  context: Context,
+  { id, fields }: UpdateAddressArgs
+) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },

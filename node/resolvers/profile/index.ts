@@ -2,11 +2,7 @@ import fieldR from './fieldResolvers'
 import { createAddress, deleteAddress, getProfile, updateAddress, updateProfile, updateProfilePicture } from './services'
 
 export const mutations = {
-  createAddress: async (_, args, context) => {
-    await createAddress(context, args)
-
-    return getProfile(context, args)
-  },
+  createAddress: async (_, { fields }, context) => createAddress(context, fields),
 
   deleteAddress: async (_, args, context) => {
     await deleteAddress(args, args.id)
