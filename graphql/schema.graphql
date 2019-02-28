@@ -230,7 +230,7 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
 
   """ Profile """
-  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile @withCurrentProfile
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput]): Profile @withCurrentProfile
   updateAddress(id: String, fields: AddressInput): Profile @withCurrentProfile
   createAddress(fields: AddressInput): Profile @withCurrentProfile
   deleteAddress(id: String): Profile @withCurrentProfile

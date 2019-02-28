@@ -15,9 +15,14 @@ export function getProfile(context: Context, customFields?: string) {
 
   return profile
     .getProfileInfo(currentProfile.email, extraFields)
-    .then(profileData =>
-      profileData ? profileData : { email: currentProfile.email }
-    )
+    .then(profileData => {
+      if (profileData) {
+        profileData.customFields = customFields
+        return profileData
+      } else {
+        return { email: currentProfile.email }
+      }
+    })
 }
 
 export function getAddresses(context: Context) {
@@ -135,15 +140,15 @@ export function deleteAddress(context: Context, addressName: string) {
     .then(() => getProfile(context))
 }
 
-export function updateAddress(context: Context, address: Address) {
+export function updateAddress(context: Context, { id, fields }: UpdateAddressArgs) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },
   } = context
 
   const addressesData = {}
-  addressesData[address.addressName] = {
-    ...address,
+  addressesData[id] = {
+    ...fields,
     userId: currentProfile.userId,
   }
 
@@ -172,6 +177,7 @@ function mapCustomFieldsToObjNStr(customFields = []) {
       customFieldsStr += `${currentValue.key},`
     } else {
       customFields += currentValue.key
+      customFieldsStr += currentValue.key
     }
 
     acc[currentValue.key] = currentValue.value
@@ -189,4 +195,9 @@ function mapAddressesObjToList(addressesObj) {
   return Object.values<string>(addressesObj).map(stringifiedObj =>
     JSON.parse(stringifiedObj)
   )
+}
+
+interface UpdateAddressArgs {
+  id: string
+  fields: Address
 }
