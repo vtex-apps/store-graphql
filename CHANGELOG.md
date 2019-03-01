@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.52.1] - 2019-03-01
+
 ## [2.52.0] - 2019-02-28
 ### Added
 - added pickupPoints query
