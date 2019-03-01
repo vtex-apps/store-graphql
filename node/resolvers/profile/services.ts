@@ -10,22 +10,30 @@ export function getProfile(context: Context, customFields?: string) {
   } = context
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const extraFields = customFields
     ? `${customFields},profilePicture`
     : `profilePicture`
 =======
   const extraFields = customFields ? `${customFields},profilePicture,id` : `profilePicture,id`
 >>>>>>> Fix upload profileImage
+=======
+  const extraFields = customFields
+    ? `${customFields},profilePicture,id`
+    : `profilePicture,id`
+>>>>>>> Improve getProfile function
 
   return profile
     .getProfileInfo(currentProfile.email, extraFields)
     .then(profileData => {
       if (profileData) {
-        profileData.customFields = customFields
-        return profileData
-      } else {
-        return { email: currentProfile.email }
+        return {
+          ...profileData,
+          customFields,
+        }
       }
+
+      return { email: currentProfile.email }
     })
 }
 
@@ -101,7 +109,11 @@ export async function updateProfilePicture(context: Context, file: string) {
 
   const { id } = await profile.getProfileInfo(currentProfile.email, 'id')
 
-  await profile.updateProfileInfo(currentProfile.email, { profilePicture: '' }, 'profilePicture')
+  await profile.updateProfileInfo(
+    currentProfile.email,
+    { profilePicture: '' },
+    'profilePicture'
+  )
 
   await uploadAttachment(
     { acronym: 'CL', documentId: id, field, file },
