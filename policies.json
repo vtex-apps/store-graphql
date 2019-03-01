@@ -1,0 +1,14 @@
+[
+  {
+    "name": "resolve-graphql",
+    "description": "Allows access to resolve a graphql request",
+    "statements": [
+      {
+        "actions": ["post", "get"],
+        "effect": "allow",
+        "resource":
+          "vrn:vtex.store-graphql:{{region}}:{{account}}:{{workspace}}:/_v/graphql"
+      }
+    ]
+  }
+]
