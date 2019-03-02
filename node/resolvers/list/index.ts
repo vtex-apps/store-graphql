@@ -39,10 +39,10 @@ const deleteItems = (items, document) => (
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
   const itemsWithoutDuplicated = map(item => last(item),
-    values(groupBy(prop('skuId'), items)))
-  const itemsToBeDeleted = filter(item => path(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
+    values(groupBy(prop('skuId') as any, items)))
+  const itemsToBeDeleted = filter(item => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
   const itemsToBeAdded = filter(item => !path(['id'], item), itemsWithoutDuplicated)
-  const itemsToBeUpdated = filter(item => path(['id'], item) && path(['quantity'], item) > 0, itemsWithoutDuplicated)
+  const itemsToBeUpdated = filter(item => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
 
   deleteItems(itemsToBeDeleted, document)
 

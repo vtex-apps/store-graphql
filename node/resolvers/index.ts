@@ -1,3 +1,5 @@
+import { GraphQLUpload } from 'apollo-upload-server'
+
 import { mutations as authMutations, queries as authQueries } from './auth'
 import { fieldResolvers as benefitsFieldResolvers, queries as benefitsQueries } from './benefits'
 import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } from './catalog'
@@ -21,7 +23,6 @@ import {
   mutations as subscriptionsMutations,
   queries as subscriptionsQueries,
 } from './subscriptions'
-
 
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
@@ -55,4 +56,5 @@ export const resolvers = {
     ...listQueries,
     ...omsQueries,
   },
+  Upload: GraphQLUpload
 }

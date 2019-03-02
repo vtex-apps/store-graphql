@@ -1,31 +1,29 @@
 {
   "compilerOptions": {
-    "types": [
-      "bluebird-global",
-      "node"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "esnext.asynciterable",
-      "es2017"
-    ],
-    "target": "es2017",
-    "module": "commonjs",
-    "sourceMap": false,
-    "outDir": "service",
     "allowJs": true,
-    "skipLibCheck": true
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "lib": ["es2017", "esnext.asynciterable"],
+    "listEmittedFiles": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "target": "es2017",
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "bluebird-global"]
   },
+  "include": ["typings", "typings.d.ts", "**/*.ts"],
+  "exclude": ["node_modules"],
   "typeAcquisition": {
     "enable": false
-  },
-  "include": [
-    "./**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "compileOnSave": true
+  }
 }
+

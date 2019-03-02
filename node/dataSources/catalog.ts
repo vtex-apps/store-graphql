@@ -53,7 +53,7 @@ export class CatalogDataSource extends RESTDataSource<Context> {
   }
 
   public productsQuantity = async (args: ProductsArgs) => {
-    const { vtex: ioContext, vtex: { account } } = this.context
+    const { vtex: ioContext } = this.context
 
     const { headers: { resources } } = await http.head(
       `${this.baseURL}${this.productSearchUrl(args)}`,
@@ -62,7 +62,7 @@ export class CatalogDataSource extends RESTDataSource<Context> {
       }
     )
 
-    const [_, quantity] = resources.split('/')
+    const quantity = resources.split('/')[1]
 
     return parseInt(quantity, 10)
   }
@@ -100,7 +100,7 @@ export class CatalogDataSource extends RESTDataSource<Context> {
     const segmentData: SegmentData | null = (this.context.vtex as any).segment
     const { channel: salesChannel = '' } = segmentData || {}
     const segment = cookies.get('vtex_segment')
-    const [appMajorNumber] = process.env.VTEX_APP_VERSION.split('.')
+    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
     const appMajor = `${appMajorNumber}.x`
 
     if (!request.timeout) {

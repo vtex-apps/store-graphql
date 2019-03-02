@@ -52,7 +52,7 @@ export const queries = {
    * Request to the VTEX ID API the list of available login
    * options to the user authentication.
    */
-  loginOptions: async (_, args, { vtex: ioContext, response }) => {
+  loginOptions: async (_: any, __: any, { vtex: ioContext}) => {
     const { data: {
         oauthProviders,
         showClassicAuthentication,
@@ -73,7 +73,7 @@ export const mutations = {
    * Get email and access code in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
    */
-  accessKeySignIn: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+  accessKeySignIn: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
       throw new ResolverError('ERROR VtexSessionToken is null', 400)
@@ -86,7 +86,7 @@ export const mutations = {
    * Get email and password in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
    */
-  classicSignIn: async (_, args, { vtex: ioContext, response }) => {
+  classicSignIn: async (_: any, args: any, { vtex: ioContext, response }) => {
     if (!checkPasswordFormat(args.password)) {
       throw new ResolverError('Password does not follow specific format', 400)
     }
@@ -98,14 +98,14 @@ export const mutations = {
   /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation.
    * 13-06-2018 - @brunojdo
    */
-  logout: async (_, args, { vtex: ioContext, response }) => {
+  logout: async (_: any, __: any, { vtex: ioContext, response }) => {
     response.set('Set-Cookie',
     serialize(`VtexIdclientAutCookie_${ioContext.account}`, '', { path: '/', maxAge: 0, })
     )
     return true
   },
 
-  oAuth: async (_, args, { vtex: ioContext, response }) => {
+  oAuth: async (_: any, args: any, { vtex: ioContext }) => {
     const {provider, redirectUrl} = args
     const VtexSessionToken = await getSessionToken(ioContext, redirectUrl)
     return paths.oAuth(VtexSessionToken, provider)
@@ -114,7 +114,7 @@ export const mutations = {
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
    */
-  recoveryPassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+  recoveryPassword: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
       throw new ResolverError('ERROR VtexSessionToken is null', 400)
@@ -129,7 +129,7 @@ export const mutations = {
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
    */
-  redefinePassword: async (_, args, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+  redefinePassword: async (_: any, args: any, { vtex: ioContext, response }) => {
     if (!checkPasswordFormat(args.newPassword) || !checkPasswordFormat(args.currentPassword)) {
       throw new ResolverError('Password does not follow specific format', 400)
     }

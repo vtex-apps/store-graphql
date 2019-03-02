@@ -7,7 +7,7 @@
   "credentialType": "absolute",
   "builders": {
     "graphql": "1.x",
-    "node": "3.x"
+    "node": "4.x"
   },
   "scripts": {
     "prereleasy": "bash lint.sh"

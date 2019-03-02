@@ -2,15 +2,15 @@ import { find, head, map, replace, slice } from 'ramda'
 
 export const resolvers = {
   SKU: {
-    attachments: ({attachments = []}) => map(
-      attachment => ({
+    attachments: ({attachments = []}: any) => map(
+      (attachment: any) => ({
         ...attachment,
         domainValues: JSON.parse(attachment.domainValues),
       }),
       attachments
     ),
-    images: ({images = []}, {quantity}) => map(
-      image => ({
+    images: ({images = []}: any, {quantity}: any) => map(
+      (image: any) => ({
         cacheId: image.imageId,
         ...image,
         imageUrl: replace('http://', 'https://', image.imageUrl),
@@ -23,7 +23,7 @@ export const resolvers = {
           kitItems.map(async kitItem => {
             const products = await catalog.productBySku([kitItem.itemId])
             const { items: skus = [], ...product } = head(products) || {}
-            const sku = find(({ itemId }) => itemId === kitItem.itemId, skus)
+            const sku = find(({ itemId }: any) => itemId === kitItem.itemId, skus)
             return { ...kitItem, product, sku }
           })
     ),
