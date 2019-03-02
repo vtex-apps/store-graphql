@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.52.0-beta.3] - 2019-03-02
 ### Added
 - Adds `?sc` parameter to checkout and catalog dataSources when sales channel is available. Note that sales channel availability depends if the root field resolver has a `@cacheControl(scope: SEGMENT)` AND `@withSegment` directives
 
