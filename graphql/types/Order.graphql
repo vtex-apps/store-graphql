@@ -43,6 +43,7 @@ type OrderItem {
   unitMultiplier: Int
   parentItemIndex: Int
   parentAssemblyBinding: String
+  bundleItems: [OrderItem]
 }
 
 type OrderItemAdditionalInfo {
