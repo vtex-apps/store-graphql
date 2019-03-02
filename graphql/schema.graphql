@@ -5,7 +5,7 @@ type Query {
   product(
     """ Product slug """
     slug: String
-  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT)
+  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Product search filtered and ordered """
   products(
@@ -29,13 +29,13 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT)
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets @cacheControl(scope: SEGMENT)
+  ): Facets @cacheControl(scope: SEGMENT) @withSegment
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -61,7 +61,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT)
+  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get category details """
   category(
@@ -92,7 +92,7 @@ type Query {
     postalCode: String,
     """ Country of postal code """
     country: String
-  ): ShippingData
+  ): ShippingData @cacheControl(scope: SEGMENT) @withSegment
 
   """ Get checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
@@ -112,7 +112,7 @@ type Query {
     maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
-  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: LONG)
+  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: LONG) @withSegment
 
   """ Search documents """
   documents(
@@ -142,7 +142,7 @@ type Query {
   benefits(
     """ List of Products """
     items: [ShippingItem]
-  ): [Benefit]
+  ): [Benefit] @cacheControl(scope: SEGMENT) @withSegment
 
   """ Get the options available to authenticate users """
   loginOptions: LoginOptions
@@ -209,9 +209,9 @@ type Query {
 
 type Mutation {
   """ Cart """
-  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
+  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
   cancelOrder(orderFormId: String, reason: String): Boolean
-  updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
+  updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
 
   """ Profile """
   updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile @withCurrentProfile
