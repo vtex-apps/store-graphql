@@ -27,7 +27,7 @@ export const fieldResolvers = {
             const products = await catalog.productBySku(skuIds)
 
             return products.map(product => {
-              const benefitSKUIds = []
+              const benefitSKUIds: any = []
 
               product.items.map(item => {
                 if (indexOf(item.itemId, skuIds) > -1) {
@@ -46,6 +46,7 @@ export const fieldResolvers = {
         )
         return flatten(items)
       }
+      return
     }
   }
 }

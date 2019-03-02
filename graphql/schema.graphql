@@ -1,5 +1,7 @@
 scalar IOMessage
 
+scalar Upload
+
 type Query {
     """ Get a specified product """
   product(

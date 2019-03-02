@@ -19,7 +19,7 @@ const makeRequest = async (_, args, config, url, data?, method?) => {
       ...headers.json,
       'Proxy-Authorization': `${ctx.authToken}`
     }),
-    merge: (bodyData, responseData, res) => {
+    merge: (__: any, ___: any, res) => {
       return { ...res }
     },
     method,

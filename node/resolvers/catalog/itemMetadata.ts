@@ -37,13 +37,13 @@ interface PriceType {
   price: number,
   priceTable: string
 }
-const fetchPrice = async ({ 
-  id, 
-  priceTable, 
-  countryCode, 
-  seller, 
-  marketingData, 
-  headers, 
+const fetchPrice = async ({
+  id,
+  priceTable,
+  countryCode,
+  seller,
+  marketingData,
+  headers,
   url,
 }: FetchPriceInput):Promise<PriceType> => {
   // TODO: optimize this call sending multiple ids and/or priceTable...
@@ -57,7 +57,7 @@ const fetchPrice = async ({
   const orderForm = await http.post(url, payload, { headers }).catch(() => null)
   return {
     id,
-    price: orderForm ? prop('value', find(propEq('id', 'Items'))(orderForm.data.totals)) : 0,
+    price: orderForm ? prop('value', find<any>(propEq('id', 'Items'))(orderForm.data.totals)) : 0,
     priceTable,
   }
 }
@@ -91,7 +91,7 @@ export const resolvers = {
       const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
-        assemblyOptions.map(({ composition: { items: compItems } }) => { 
+        assemblyOptions.map(({ composition: { items: compItems } }) => {
           compItems.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
         })
       })
@@ -102,9 +102,9 @@ export const resolvers = {
         if (!fetchPayload) { return { id, priceTable, price: 0 } }
         return fetchPrice({ ...fetchPayload, id, priceTable, seller })
       })
-        
+
       const priceData = await Promise.all(itemsPromises)
-      
+
       const prices = priceData.reduce<{ [key: string]: Array<{ price: number, id: string }>}>((prev, curr) => {
         const { id, priceTable, price } = curr
         const currentArray = prev[priceTable] || []
@@ -113,7 +113,7 @@ export const resolvers = {
           [priceTable]: [...currentArray, { id, price }]
         }
       }, {})
-  
+
       return Object.entries(prices).map(([priceTableName, priceArray]) => ({ type: priceTableName, values: priceArray }))
     },
   }

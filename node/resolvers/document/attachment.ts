@@ -6,7 +6,7 @@ export const uploadAttachment = async (args, ctx) => {
   const { acronym, documentId, field, file } = args
   const { stream, filename, mimetype } = await file
   const buffer = await new Promise((resolve, reject) => {
-    const bufs = []
+    const bufs: any = []
     stream.on('data', d => bufs.push(d))
     stream.on('end', () => {
       resolve(Buffer.concat(bufs))
@@ -19,7 +19,7 @@ export const uploadAttachment = async (args, ctx) => {
   formData.append(field, buffer, { filename, contentType: mimetype, knownLength: buffer.byteLength })
 
   const response = await document.uploadAttachment(acronym, documentId, field, formData)
-  
+
   if (response) {
     throw new ResolverError(response, 500)
   }

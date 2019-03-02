@@ -16,6 +16,6 @@ export class PaymentsDataSource extends IODataSource {
   protected httpClientFactory = forLegacy
 
   public getUserPayments = (userId: string) => this.http.get(`/${userId}/vcs-checkout`, {
-    headers: withHeadersFromContext(this.context)
+    headers: withHeadersFromContext(this.context as any)
   })
 }
