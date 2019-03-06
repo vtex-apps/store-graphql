@@ -100,6 +100,9 @@ type Query {
   """ Get user orders details """
   orders: [Order] @cacheControl(scope: PRIVATE)
 
+    """ Get user order by id """
+  order(id: String!): Order @cacheControl(scope: PRIVATE)
+
   """ Get user profile details """
   profile(
     """ Comma separated fields """
