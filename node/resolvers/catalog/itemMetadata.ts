@@ -1,5 +1,5 @@
 import http from 'axios'
-import * as camelCase from 'camelcase'
+import camelCase from 'camelcase'
 import { both, find, isEmpty, pickBy, prop, propEq } from 'ramda'
 import { renameKeysWith } from '../../utils'
 import paths from '../paths'

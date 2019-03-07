@@ -1,4 +1,4 @@
-import * as cookies from 'cookie'
+import cookies from 'cookie'
 
 const appendToCookie = (ctx: Context, extraValue: string) => {
   const {request: { headers: { cookie } }} = ctx
