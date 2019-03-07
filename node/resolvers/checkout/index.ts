@@ -44,7 +44,7 @@ const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentD
 type Resolver<TArgs=any, TRoot=any> =
   (root: TRoot, args: TArgs, context: Context) => Promise<any>
 
-const mapIndexed = addIndex(map)
+const mapIndexed = addIndex<any, any, any, any>(map)
 
 export const fieldResolvers = {
   OrderForm: {
@@ -54,9 +54,9 @@ export const fieldResolvers = {
     items: (orderForm) => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
-      return mapIndexed((item: OrderFormItem, index: number) => ({ 
+      return mapIndexed((item: OrderFormItem, index: number) => ({
         ...item,
-        assemblyOptionsData: { 
+        assemblyOptionsData: {
           assemblyOptionsMap,
           childs,
           index,
@@ -92,17 +92,17 @@ export const queries: Record<string, Resolver> = {
     return syncedOrderForm
   },
 
-  orders: (root, args, {dataSources: {checkout}}) => {
+  orders: (_, __, {dataSources: {checkout}}) => {
     return checkout.orders()
   },
 
-  shipping: (root, args: SimulationData, {dataSources: {checkout}}) => {
+  shipping: (_, args: SimulationData, {dataSources: {checkout}}) => {
     return checkout.shipping(args)
   },
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (root, {orderFormId, items}, {dataSources: {checkout, session}}) => {
+  addItem: async (_, {orderFormId, items}, {dataSources: {checkout, session}}) => {
     const [{marketingData}, segmentData] = await Promise.all([
       checkout.orderForm(),
       session.getSegmentData().catch((err) => {
@@ -123,7 +123,7 @@ export const mutations: Record<string, Resolver> = {
     }
 
     const cleanItems = items.map(({ options, ...rest }) => rest)
-  
+
     const addItem = await checkout.addItem(orderFormId, cleanItems)
 
     await addOptionsForItems(items, checkout, addItem)
@@ -132,7 +132,7 @@ export const mutations: Record<string, Resolver> = {
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: async (root, {orderFormId, reason}, {dataSources: {checkout}}) => {
+  cancelOrder: async (_, {orderFormId, reason}, {dataSources: {checkout}}) => {
     await checkout.cancelOrder(orderFormId, reason)
     return true
   },
@@ -153,23 +153,23 @@ export const mutations: Record<string, Resolver> = {
     url: paths.gatewayTokenizePayment,
   }),
 
-  setOrderFormCustomData: (root, {orderFormId, appId, field, value}, {dataSources: {checkout}}) => {
+  setOrderFormCustomData: (_, {orderFormId, appId, field, value}, {dataSources: {checkout}}) => {
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (root, {orderFormId, items}, {dataSources: {checkout}}) => {
+  updateItems: (_, {orderFormId, items}, {dataSources: {checkout}}) => {
     return checkout.updateItems(orderFormId, items)
   },
 
-  updateOrderFormIgnoreProfile: (root, {orderFormId, ignoreProfileData}, {dataSources: {checkout}}) => {
+  updateOrderFormIgnoreProfile: (_, {orderFormId, ignoreProfileData}, {dataSources: {checkout}}) => {
     return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
   },
 
-  updateOrderFormPayment: (root, {orderFormId, payments}, {dataSources: {checkout}}) => {
+  updateOrderFormPayment: (_, {orderFormId, payments}, {dataSources: {checkout}}) => {
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
-  updateOrderFormProfile: (root, {orderFormId, fields}, {dataSources: {checkout}}) => {
+  updateOrderFormProfile: (_, {orderFormId, fields}, {dataSources: {checkout}}) => {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
@@ -184,7 +184,7 @@ export const mutations: Record<string, Resolver> = {
     return syncedOrderForm
   },
 
-  addAssemblyOptions: (root, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
+  addAssemblyOptions: (_, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
     const body = {
       composition: {
         items: options,
@@ -193,8 +193,8 @@ export const mutations: Record<string, Resolver> = {
     }
     return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
   },
-  
-  updateOrderFormCheckin: (root, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
+
+  updateOrderFormCheckin: (_, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 }

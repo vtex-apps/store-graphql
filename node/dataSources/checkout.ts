@@ -17,7 +17,7 @@ export interface UpdateCheckinArgs {
 }
 
 interface CheckinArgs {
-  isCheckedIn: boolean, 
+  isCheckedIn: boolean,
   pickupPointId?: string,
 }
 
@@ -100,7 +100,7 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
   public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
     this.delete(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
-      null,
+      null as any,
       {
         body
       }
@@ -108,7 +108,7 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
 
 
   public updateOrderFormCheckin = (orderFormId: string, checkinPayload: CheckinArgs) => this.post(
-    `pub/orderForm/${orderFormId}/checkIn`, 
+    `pub/orderForm/${orderFormId}/checkIn`,
     checkinPayload,
   )
 

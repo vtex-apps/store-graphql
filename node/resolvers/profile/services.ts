@@ -58,7 +58,7 @@ export const getPayments = async (context: Context, profileId: string) => {
     return null
   }
 
-  const addresses = await getAddresses(context, profileId)
+  const addresses: any = await getAddresses(context, profileId)
   const availableAccounts = JSON.parse(paymentsRawData.paymentData).availableAccounts
 
   return availableAccounts.map((account) => {
@@ -125,7 +125,7 @@ const returnOldOnNotChanged = (oldData) => (error) => {
   }
 }
 
-const customFieldsFromGraphQLInput = (customFieldsInput) => compose(
+const customFieldsFromGraphQLInput = (customFieldsInput) => compose<any, any, any>(
   join(','),
   pluck('key')
 )(customFieldsInput)
