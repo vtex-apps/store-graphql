@@ -25,7 +25,7 @@ export const catalogProxy = async (ctx: Context) => {
     params: query,
     paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
     timeout: TIMEOUT_MS,
-    url: encodeURI(path.trim()),
+    url: encodeURI((path as any).trim()),
   })
 
   keys(headers).forEach(headerKey => {
