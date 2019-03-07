@@ -21,16 +21,16 @@ const getOrderFormIdFromCookie = (cookie): string | null => {
  */
 
 export const syncCheckoutAndSessionPostChanges = async (sessionData: SessionFields, orderForm: GenericObject, ctx: Context): Promise<GenericObject> => {
-  const orderFormAddress = path(['shippingData', 'selectedAddresses', '0'], orderForm)
+  const orderFormAddress: any = path(['shippingData', 'selectedAddresses', '0'], orderForm)
   const newOrderForm = await syncOrderFormAndSessionAddress(orderFormAddress, orderForm.orderFormId, sessionData.address, ctx)
-  await syncOrderFormAndSessionOrderFormId(orderForm.orderFormId, sessionData.orderFormId, ctx)
+  await syncOrderFormAndSessionOrderFormId(orderForm.orderFormId, (sessionData as any).orderFormId, ctx)
   return newOrderForm || orderForm
 }
 
 const syncOrderFormAndSessionAddress = async (
-  orderFormAddress: GenericObject | null, 
-  orderFormId: string, 
-  sessionAddress: GenericObject | null, 
+  orderFormAddress: GenericObject | null,
+  orderFormId: string,
+  sessionAddress: GenericObject | null,
   ctx: Context,
   ): Promise<object | null> => {
   const {dataSources: {session, checkout}} = ctx

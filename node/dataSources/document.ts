@@ -54,7 +54,7 @@ export class DocumentDataSource extends RESTDataSource<Context> {
 
     let headers = {}
     if (page && pageSize) {
-      headers = withMDPagination()(vtex, cookie)(+page, +pageSize)
+      headers = withMDPagination()(vtex, cookie as any)(+page, +pageSize)
     } else if (formDataHeaders) {
       headers = {
         'Proxy-Authorization': this.context.vtex.authToken,

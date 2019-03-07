@@ -1,6 +1,6 @@
-import { path, reduce, sort, zip } from 'ramda'
+import { reduce, sort, zip } from 'ramda'
 
-import { queries } from './index'
+import { queries } from '.'
 
 /**
  * This sorting exists because the catalog API returns inconsistent
@@ -22,7 +22,7 @@ const sortMapAndQuery = (map: string[], query: string[]) => {
   }, zipped)
 
   return reduce(
-    (acc, [m, q]) => ({ map: acc.map.concat(m), query: acc.query.concat(q) }),
+    (acc, [m, q]: any) => ({ map: acc.map.concat(m), query: acc.query.concat(q) }),
     { map: [], query: [] },
     sorted
   )
@@ -66,7 +66,7 @@ export const resolvers = {
 
       return queries.products(root, { ...args, query, map }, ctx)
     },
-    recordsFiltered: async (root, args, ctx) => {
+    recordsFiltered: async (root, _, ctx) => {
       const { dataSources: { catalog } } = ctx
 
       try {

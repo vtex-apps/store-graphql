@@ -115,7 +115,7 @@ export const queries = {
 
   brand: async (_, args, { dataSources: { catalog } }) => {
     const brands = await catalog.brands()
-    const brand = find(compose(equals(args.id), prop('id')), brands)
+    const brand = find(compose(equals(args.id), prop('id') as any), brands)
     if (!brand) {
       throw new ResolverError(`Brand with id ${args.id} not found`, 404)
     }
@@ -129,7 +129,7 @@ export const queries = {
   categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
 
   search: async (_, args, ctx: Context) => {
-    const { map: mapParams, query, rest } = args
+    const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {
       throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
@@ -149,11 +149,11 @@ export const queries = {
     const brandMetaData = async () => {
       const brands = await queries.brands(_, { ...args }, ctx)
       const brand = find(
-        compose(equals(query.split('/').pop(-1)), Slugify, prop('name')), brands
+        compose(equals(query.split('/').pop(-1)), Slugify, prop('name') as any), brands
       )
       return {
-        metaTagDescription: path(['metaTagDescription'], brand),
-        titleTag: path(['title'], brand),
+        metaTagDescription: path(['metaTagDescription'], brand as any),
+        titleTag: path(['title'], brand as any),
       }
     }
 
@@ -164,7 +164,7 @@ export const queries = {
       return meta
     }
 
-    const { titleTag, metaTagDescription } = await searchMetaData()
+    const { titleTag, metaTagDescription }: any = await searchMetaData()
 
     return {
       metaTagDescription,
@@ -203,26 +203,20 @@ export const queries = {
       if (args.category && found) {
         found = found.children.find(category =>
           category.url.endsWith(`/${args.category.toLowerCase()}`)
-        )
+        ) as any
       }
 
       if (args.subcategory && found) {
         found = found.children.find(subcategory =>
           subcategory.url.endsWith(`/${args.subcategory.toLowerCase()}`)
-        )
+        ) as any
       }
 
-      response.category = found && found.id
+      response.category = found && found.id as any
     }
 
     return response
   },
-}
-
-interface Brand {
-  id: string
-  name: string
-  isActive: boolean
 }
 
 interface Category {

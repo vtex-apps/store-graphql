@@ -22,7 +22,6 @@ import {
   queries as subscriptionsQueries,
 } from './subscriptions'
 
-
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
 
@@ -54,5 +53,5 @@ export const resolvers = {
     ...subscriptionsQueries,
     ...listQueries,
     ...omsQueries,
-  },
+  }
 }

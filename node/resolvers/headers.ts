@@ -1,4 +1,4 @@
-import * as cookies from 'cookie'
+import cookies from 'cookie'
 
 const DEFAULT_PAGE_SIZE = 15
 

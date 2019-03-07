@@ -1,13 +1,13 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.53.0",
+  "version": "2.54.0",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
   "builders": {
     "graphql": "1.x",
-    "node": "3.x"
+    "node": "4.x"
   },
   "scripts": {
     "prereleasy": "bash lint.sh"

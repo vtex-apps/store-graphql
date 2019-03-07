@@ -98,8 +98,8 @@ export const addOptionsForItems = async (
     const parentIndex = orderForm.items.findIndex(cartItem => cartItem.id.toString() === item.id.toString())
     if (parentIndex < 0) { continue }
     await addOptionsLogic({
-      checkout, 
-      itemIndex: parentIndex, 
+      checkout,
+      itemIndex: parentIndex,
       options: item.options,
       orderFormId: orderForm.orderFormId,
     })
@@ -130,23 +130,23 @@ const getItemChoiceType = (childAssemblyData: AssemblyOption) => {
 
 const getItemComposition = (childItem: OrderFormItem, childAssemblyData: AssemblyOption): CompositionItem | null => {
   if (!childAssemblyData) { return null }
-  return find<CompositionItem>(propEq('id', childItem.id))(childAssemblyData.composition.items)
+  return find<CompositionItem>(propEq('id', childItem.id))(childAssemblyData.composition.items) as any
 }
 
 const isSonOfItem = (parentIndex: number) => propEq('parentItemIndex', parentIndex)
 
-export const isParentItem = ({ parentItemIndex, parentAssemblyBinding }: OrderFormItem) => 
+export const isParentItem = ({ parentItemIndex, parentAssemblyBinding }: OrderFormItem) =>
   parentItemIndex == null && parentAssemblyBinding == null
 
 export const buildAddedOptionsForItem = (
   item: OrderFormItem,
   index: number,
-  childs: OrderFormItem[], 
+  childs: OrderFormItem[],
   assemblyOptionsMap: Record<string, AssemblyOption[]>) => {
   const children = filter<OrderFormItem>(isSonOfItem(index), childs)
   return children.map(childItem => {
     const parentAssemblyOptions = assemblyOptionsMap[item.id]
-    const childAssemblyData = find<AssemblyOption>(propEq('id', childItem.parentAssemblyBinding))(parentAssemblyOptions)
+    const childAssemblyData: any = find<AssemblyOption>(propEq('id', childItem.parentAssemblyBinding))(parentAssemblyOptions)
     const compositionItem = getItemComposition(childItem, childAssemblyData) || { initialQuantity: 0 }
     return {
       choiceType: getItemChoiceType(childAssemblyData),
@@ -158,12 +158,12 @@ export const buildAddedOptionsForItem = (
   })
 }
 
-const findInitialItemOnCart = (initialItem: InitialItem) => 
-                              (cartItem: OrderFormItem) => 
+const findInitialItemOnCart = (initialItem: InitialItem) =>
+                              (cartItem: OrderFormItem) =>
                                 cartItem.parentAssemblyBinding === initialItem.parentAssemblyBinding &&
                                 initialItem.id === cartItem.id
 
-const isInitialItemMissing = (parentCartItem: OrderFormItem, orderForm: any) => 
+const isInitialItemMissing = (parentCartItem: OrderFormItem, orderForm: any) =>
                              (initialItem: InitialItem): RemovedItem | null => {
   const orderFormItem = find(findInitialItemOnCart(initialItem), orderForm.items)
   const selectedQuantity = orderFormItem && orderFormItem.quantity / parentCartItem.quantity
@@ -175,7 +175,7 @@ const isInitialItemMissing = (parentCartItem: OrderFormItem, orderForm: any) =>
 
   return {
     initialQuantity: initialItem.initialQuantity,
-    name: prop('name', find(propEq('id', initialItem.id), path(['itemMetadata', 'items'], orderForm))),
+    name: prop('name', find<any>(propEq('id', initialItem.id), path(['itemMetadata', 'items'], orderForm))),
     removedQuantity: initialItem.initialQuantity - (selectedQuantity || 0),
   }
 }
@@ -199,6 +199,6 @@ export const buildRemovedOptions = (
     })
   })
 
-  const removed = itemsWithInitials.map(isInitialItemMissing(item, orderForm)).filter(Boolean)
+  const removed: any = itemsWithInitials.map(isInitialItemMissing(item, orderForm)).filter(Boolean)
   return removed
 }

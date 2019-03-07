@@ -9,7 +9,7 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition (field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
     field.resolve = async (root, args, context, info) => {
-      let currentProfile = null
+      let currentProfile: any = null
       await getCurrentProfileFromSession(context).then(( profile ) => {
         currentProfile = profile
       }).catch(async (_) => {
@@ -73,7 +73,7 @@ const getCurrentProfileFromCookies = async (context: Context) : Promise<CurrentP
     return profile.getProfileInfo(customerEmail).then(({ email, userId }) => ({ email, userId }))
   }
 
-  return null
+  return null as any
 }
 
 const isValidCallcenterOperator = (context: Context, email: string) => {
