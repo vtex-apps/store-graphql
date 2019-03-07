@@ -1,5 +1,12 @@
 import fieldR from './fieldResolvers'
-import { createAddress, deleteAddress, getProfile, updateAddress, updateProfile, updateProfilePicture } from './services'
+import {
+  createAddress,
+  deleteAddress,
+  getProfile,
+  updateAddress,
+  updateProfile,
+  updateProfilePicture,
+} from './services'
 
 export const mutations = {
   createAddress: (_, { fields }, context) => createAddress(context, fields),
@@ -8,11 +15,14 @@ export const mutations = {
 
   updateAddress: (_, args, context) => updateAddress(context, args),
 
-  updateProfile: (_, { fields, customFields }, context) => updateProfile(context, fields, customFields),
+  updateProfile: (_, { fields, customFields }, context) =>
+    updateProfile(context, fields, customFields),
 
-  updateProfilePicture: (_, { file }, context) => updateProfilePicture(context, file),
+  updateProfilePicture: (_, { file }, context) =>
+    updateProfilePicture(context, file),
 
-  uploadProfilePicture: (_, { file }, context) => updateProfilePicture(context, file)
+  uploadProfilePicture: (_, { file }, context) =>
+    updateProfilePicture(context, file),
 }
 
 export const queries = {

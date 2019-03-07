@@ -10,7 +10,7 @@ export const uploadAttachment = async (args, ctx) => {
   const { acronym, documentId, field, file } = args
   const { createReadStream, filename, mimetype } = await file
   const buffer = (await new Promise((resolve, reject) => {
-    const bufs = []
+    const bufs: any[] = []
     const stream = createReadStream()
     stream.on('data', d => bufs.push(d))
     stream.on('end', () => {

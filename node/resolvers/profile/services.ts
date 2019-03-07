@@ -9,19 +9,9 @@ export function getProfile(context: Context, customFields?: string) {
     vtex: { currentProfile },
   } = context
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const extraFields = customFields
-    ? `${customFields},profilePicture`
-    : `profilePicture`
-=======
-  const extraFields = customFields ? `${customFields},profilePicture,id` : `profilePicture,id`
->>>>>>> Fix upload profileImage
-=======
   const extraFields = customFields
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
->>>>>>> Improve getProfile function
 
   return profile
     .getProfileInfo(currentProfile.email, extraFields)
@@ -150,11 +140,8 @@ export function deleteAddress(context: Context, addressName: string) {
     vtex: { currentProfile },
   } = context
 
-  const addressesData = {}
-  addressesData[addressName] = null
-
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .deleteAddress(currentProfile.email, addressName)
     .then(() => getProfile(context))
 }
 
@@ -191,15 +178,11 @@ export function pickCustomFieldsFromData(customFields: string, data) {
 
 // Aux
 
-function mapCustomFieldsToObjNStr(customFields = []) {
+function mapCustomFieldsToObjNStr(customFields: CustomField[] = []) {
   let customFieldsStr = ''
   const customFieldsObj = customFields.reduce((acc, currentValue, i) => {
-    if (i < customFields.length - 1) {
-      customFieldsStr += `${currentValue.key},`
-    } else {
-      customFields += currentValue.key
-      customFieldsStr += currentValue.key
-    }
+    customFieldsStr +=
+      i < customFields.length - 1 ? `${currentValue.key},` : currentValue.key
 
     acc[currentValue.key] = currentValue.value
 
@@ -221,4 +204,9 @@ function mapAddressesObjToList(addressesObj) {
 interface UpdateAddressArgs {
   id: string
   fields: Address
+}
+
+interface CustomField {
+  key: string
+  value: string
 }
