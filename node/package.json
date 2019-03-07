@@ -7,7 +7,6 @@
     "apollo-server-errors": "^2.0.2",
     "axios": "0.16.2",
     "bluebird": "^3.5.0",
-    "bluebird-global": "^1.0.1",
     "camelcase": "^5.0.0",
     "cookie": "^0.3.1",
     "form-data": "^2.3.2",
@@ -23,7 +22,6 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.0",
-    "@types/bluebird-global": "^3.5.11",
     "@types/camelcase": "^4.1.0",
     "@types/es6-shim": "^0.31.32",
     "@types/graphql": "^14.0.5",
