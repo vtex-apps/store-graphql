@@ -1,5 +1,3 @@
-import 'bluebird-global'
-
 import { Logger, MetricsAccumulator } from '@vtex/api'
 import { map } from 'ramda'
 import { cache, dataSources } from './dataSources'
