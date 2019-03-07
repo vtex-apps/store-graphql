@@ -1,5 +1,3 @@
-import { GraphQLUpload } from 'apollo-upload-server'
-
 import { mutations as authMutations, queries as authQueries } from './auth'
 import { fieldResolvers as benefitsFieldResolvers, queries as benefitsQueries } from './benefits'
 import { fieldResolvers as catalogFieldResolvers, queries as catalogQueries } from './catalog'
@@ -55,6 +53,5 @@ export const resolvers = {
     ...subscriptionsQueries,
     ...listQueries,
     ...omsQueries,
-  },
-  Upload: GraphQLUpload
+  }
 }

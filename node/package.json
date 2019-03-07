@@ -5,7 +5,6 @@
     "@vtex/api": "^1.8.2",
     "apollo-datasource-rest": "^0.1.5",
     "apollo-server-errors": "^2.0.2",
-    "apollo-upload-server": "^7.1.0",
     "axios": "0.16.2",
     "bluebird": "^3.5.0",
     "camelcase": "^5.0.0",
