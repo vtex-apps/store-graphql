@@ -1,4 +1,5 @@
 import http from 'axios'
+import { mapSeries } from 'bluebird'
 import { last, merge, propEq, reject } from 'ramda'
 import paths from '../paths'
 
@@ -38,6 +39,6 @@ export default async (body, ioContext) => {
     return { data: merge(body.data, response.data) }
   }
 
-  const lastDeleteResponse = await Promise.mapSeries(tokensToRemove, ({ tokenId }: any) => checkout.removeToken(tokenId)).then<any>(last)
+  const lastDeleteResponse = await mapSeries(tokensToRemove, ({ tokenId }: any) => checkout.removeToken(tokenId)).then<any>(last)
   return { data: merge(body.data, lastDeleteResponse.data) }
 }

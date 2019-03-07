@@ -22,12 +22,11 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.0",
-    "@types/bluebird-global": "^3.5.0",
     "@types/camelcase": "^4.1.0",
     "@types/es6-shim": "^0.31.32",
     "@types/graphql": "^14.0.5",
     "@types/koa": "^2.0.46",
-    "@types/node": "^7.0.8",
+    "@types/node": "10.x",
     "@types/qs": "^6.5.1",
     "@types/ramda": "types/npm-ramda#dist",
     "http2": "^3.3.7",
