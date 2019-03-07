@@ -1,7 +1,7 @@
-import { Response } from './response'
 import { WithCurrentProfile } from './withCurrentProfile'
+import { WithSegment } from './withSegment'
 
 export const schemaDirectives = {
-  response: Response,
-  withCurrentProfile: WithCurrentProfile
+  withCurrentProfile: WithCurrentProfile,
+  withSegment: WithSegment,
 }

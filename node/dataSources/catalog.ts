@@ -3,6 +3,7 @@ import http from 'axios'
 import { forEachObjIndexed } from 'ramda'
 
 import { withAuthToken } from '../resolvers/headers'
+import { SegmentData } from './session'
 
 const DEFAULT_TIMEOUT_MS = 8 * 1000
 
@@ -96,6 +97,8 @@ export class CatalogDataSource extends RESTDataSource<Context> {
 
   protected willSendRequest (request: RequestOptions) {
     const {vtex: {authToken, production}, cookies} = this.context
+    const segmentData: SegmentData | null = (this.context.vtex as any).segment
+    const { channel: salesChannel = '' } = segmentData || {}
     const segment = cookies.get('vtex_segment')
     const [appMajorNumber] = process.env.VTEX_APP_VERSION.split('.')
     const appMajor = `${appMajorNumber}.x`
@@ -110,6 +113,7 @@ export class CatalogDataSource extends RESTDataSource<Context> {
         '__v': appMajor,
         'production': production ? 'true' : 'false',
         ...segment && {'vtex_segment': segment},
+        ...!!salesChannel && {sc: salesChannel}
       }
     )
 

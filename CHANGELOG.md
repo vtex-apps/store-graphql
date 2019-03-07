@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.53.0] - 2019-03-07
+### Added
+- Adds `?sc` parameter to checkout and catalog dataSources when sales channel is available. Note that sales channel availability depends if the root field resolver has a `@cacheControl(scope: SEGMENT)` AND `@withSegment` directives
+- get order by id query
+
 ## [2.52.1] - 2019-03-01
 
 ## [2.52.0] - 2019-02-28

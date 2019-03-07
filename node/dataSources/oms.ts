@@ -6,6 +6,8 @@ const DEFAULT_TIMEOUT_MS = 4 * 1000
 export class OMSDataSource extends RESTDataSource<Context> {
   public userLastOrder = () => this.get('user/orders/last')
 
+  public order = (id: string) => this.get(`/pvt/orders/${id}`)
+
   get baseURL() {
     const { vtex: { account } } = this.context
     return `http://${account}.vtexcommercestable.com.br/api/oms`
