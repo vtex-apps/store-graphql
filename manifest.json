@@ -13,6 +13,7 @@
     "prereleasy": "bash lint.sh"
   },
   "dependencies": {
+    "infra:service-node": "4.2.4-beta",
     "vtex.messages": "1.x"
   },
   "policies": [
