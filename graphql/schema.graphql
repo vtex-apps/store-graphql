@@ -183,7 +183,7 @@ type Query {
     initialDate: String!,
     """ End date. e.g.: 2018-10-13T00:00:00"""
     endDate: String!
-  ): SubscriptionsStatusCount  @cacheControl(scope: PRIVATE)
+  ): SubscriptionsStatusCount  @cacheControl(scope: PRIVATE) @deprecated
 
   """ Get count of subscriptions by status """
   subscriptionsOrdersCountByStatus(
@@ -191,7 +191,7 @@ type Query {
     initialDate: String!,
     """ End date. e.g.: 2018-10-13T00:00:00"""
     endDate: String!
-  ): SubscriptionsOrdersStatusCount  @cacheControl(scope: PRIVATE)
+  ): SubscriptionsOrdersStatusCount  @cacheControl(scope: PRIVATE) @deprecated
 
   """ Get a list of SubscriptionsOrders """
   listSubscriptionsOrdersByStatus(
@@ -230,7 +230,7 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
 
   """ Profile """
-  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile @withCurrentProfile
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput]): Profile @withCurrentProfile
   updateAddress(id: String, fields: AddressInput): Profile @withCurrentProfile
   createAddress(fields: AddressInput): Profile @withCurrentProfile
   deleteAddress(id: String): Profile @withCurrentProfile
@@ -240,15 +240,15 @@ type Mutation {
     """ File being uploaded """
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
-    field: String
+    field: String @deprecated
   ): Profile @withCurrentProfile
-  """ Uploads the Profile Picture by appending to the existing ones """
+  """ Uploads the Profile Picture by appending to the existing ones DEPRECATED"""
   uploadProfilePicture(
     """ File being uploaded """
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
     field: String
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @deprecated
 
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
@@ -335,8 +335,8 @@ type Mutation {
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
 
-  """ Subscriptions"""
-  subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean
+  """ Subscriptions DEPRECATED"""
+  subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean @deprecated
 
   """ List """
   createList(list: ListInput): List
