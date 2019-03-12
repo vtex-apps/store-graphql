@@ -38,11 +38,10 @@ export class SessionDataSource extends RESTDataSource<Context> {
   protected willSendRequest(request: RequestOptions) {
     const defaultSegment = request.params.get('defaultSegment') === 'true'
     const {
-      cookies,
-      vtex: { authToken },
+      vtex: { authToken, segmentToken, sessionToken },
     } = this.context
-    const segment = !defaultSegment ? cookies.get('vtex_segment') : undefined
-    const sessionCookie = cookies.get('vtex_session')
+    const segment = !defaultSegment ? segmentToken : undefined
+    const sessionCookie = sessionToken
 
     if (!request.timeout) {
       request.timeout = DEFAULT_TIMEOUT_MS
