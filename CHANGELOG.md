@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.54.2] - 2019-03-12
 
+### Fixed
+- Fix `payments` to `transactions` in Order graphql.
+
 ## [2.54.1] - 2019-03-07
 # Fixed
 - Bluebird-global related issues
