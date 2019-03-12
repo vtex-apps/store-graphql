@@ -8,7 +8,7 @@ const MAX_AGE_S = 30
 const STALE_IF_ERROR_S = 20 * 60
 
 export const catalogProxy = async (ctx: Context) => {
-  const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query} = ctx
+  const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query, method} = ctx
 
   const [host, basePath] = Functions.isGoCommerceAcc(ctx)
     ? ['api.gocommerce.com', `${account}/search`]
@@ -22,6 +22,7 @@ export const catalogProxy = async (ctx: Context) => {
       'X-VTEX-Proxy-To': `https://${host}`,
       ...cookie && {cookie},
     },
+    method,
     params: query,
     paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
     timeout: TIMEOUT_MS,
