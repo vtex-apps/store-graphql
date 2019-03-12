@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.55.0] - 2019-03-12
+### Fixed
+- Using correct catalog method for proxy
+
 ## [2.54.2] - 2019-03-12
 
 ## [2.54.1] - 2019-03-07
