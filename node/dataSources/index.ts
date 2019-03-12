@@ -9,7 +9,6 @@ import { LicenseManagerDataSource } from './licenseManager'
 import { LogisticsDataSource } from './logistics'
 import { Messages } from './messages'
 import { OMSDataSource } from './oms'
-import { PaymentsDataSource } from './payments'
 import { PortalDataSource } from './portal'
 import { ProfileDataSource } from './profile'
 import { SessionDataSource } from './session'
@@ -28,7 +27,6 @@ export const dataSources = () => ({
   logistics: new LogisticsDataSource(),
   messages: new Messages(),
   oms: new OMSDataSource(),
-  payments: new PaymentsDataSource(),
   portal: new PortalDataSource(),
   profile: new ProfileDataSource(),
   session: new SessionDataSource(),

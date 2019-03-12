@@ -22,21 +22,26 @@ export class SessionDataSource extends RESTDataSource<Context> {
     super()
   }
 
-  public getSegmentData = (defaultSegment: boolean = false) => this.get<SegmentData>('/segments', {defaultSegment})
+  public getSegmentData = (defaultSegment: boolean = false) =>
+    this.get<SegmentData>('/segments', { defaultSegment })
 
-  public getSession = () => this.get('/sessions/?items=*')
-  public updateSession = (key: string, value: any) => this.post('/sessions', { public: { [key]: { value } } })
+  public updateSession = (key: string, value: any) =>
+    this.post('/sessions', { public: { [key]: { value } } })
 
   get baseURL() {
-    const {vtex: {account}} = this.context
+    const {
+      vtex: { account },
+    } = this.context
     return `http://${account}.vtexcommercestable.com.br/api`
   }
 
-  protected willSendRequest (request: RequestOptions) {
+  protected willSendRequest(request: RequestOptions) {
     const defaultSegment = request.params.get('defaultSegment') === 'true'
-    const {cookies, vtex: {authToken}} = this.context
-    const segment = !defaultSegment ? cookies.get('vtex_segment') : undefined
-    const sessionCookie = cookies.get('vtex_session')
+    const {
+      vtex: { authToken, segmentToken, sessionToken },
+    } = this.context
+    const segment = !defaultSegment ? segmentToken : undefined
+    const sessionCookie = sessionToken
 
     if (!request.timeout) {
       request.timeout = DEFAULT_TIMEOUT_MS
@@ -45,7 +50,9 @@ export class SessionDataSource extends RESTDataSource<Context> {
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
-        ...segment && {Cookie: `vtex_segment=${segment};vtex_session=${sessionCookie}`},
+        ...(segment && {
+          Cookie: `vtex_segment=${segment};vtex_session=${sessionCookie}`,
+        }),
         'Content-Type': 'application/json',
         'Proxy-Authorization': authToken,
       }
