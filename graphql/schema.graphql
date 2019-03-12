@@ -35,7 +35,7 @@ type Query {
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets @cacheControl(scope: SEGMENT) @withSegment
+  ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -92,7 +92,7 @@ type Query {
     postalCode: String,
     """ Country of postal code """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT) @withSegment
+  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Get checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
@@ -115,7 +115,7 @@ type Query {
     maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
-  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: LONG) @withSegment
+  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Search documents """
   documents(
@@ -145,10 +145,10 @@ type Query {
   benefits(
     """ List of Products """
     items: [ShippingItem]
-  ): [Benefit] @cacheControl(scope: SEGMENT) @withSegment
+  ): [Benefit] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get the options available to authenticate users """
-  loginOptions: LoginOptions
+  loginOptions: LoginOptions @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get the IDs for the provided search context slugs """
   searchContextFromParams(
@@ -159,7 +159,7 @@ type Query {
   ): SearchContext
 
   """ Get logistics information about the store """
-  logistics: LogisticsData
+  logistics: LogisticsData @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get a list of pickup points near specified lat and long """
   nearPickupPoints(
