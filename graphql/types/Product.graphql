@@ -26,6 +26,7 @@ type Product {
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties group  """
+  generalProperties: [Property]
   propertyGroups: [PropertyGroup]
   """ Product reference """
   productReference: String

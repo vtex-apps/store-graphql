@@ -58,5 +58,7 @@ export const resolvers = {
     recommendations: product => product,
 
     titleTag: ({productTitle}) => productTitle,
+
+    generalProperties:  product => map((name: string) => ({ name, values: product[name] }), product.General || []),
   },
 }
