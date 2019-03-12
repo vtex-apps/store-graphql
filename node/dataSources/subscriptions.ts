@@ -15,11 +15,17 @@ interface SubscriptionsOrdersArgs {
   fields: string
 }
 
-export class SubscriptionsDataSource extends RESTDataSource<Context> {
+export class SubscriptionsDataSource extends OutboundDataSource<Context> {
+  protected modifiers = [
+    withOutboundAuth,
+    withLegacyAppAuth,
+    withHeader('X-Vtex-Proxy-To', 'https://api.vtex.com'),
+  ]
+  
   public subscriptionsAggregations = ({ schema, where, field, type, interval }: AggregationsArgs) => {
     const { vtex: { account } } = this.context
 
-    return this.get(
+    return this.http.get(
       `subscriptions/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`
     )
   }
@@ -27,14 +33,14 @@ export class SubscriptionsDataSource extends RESTDataSource<Context> {
   public getSubscriptionsOrders = ({ where, schema, fields }: SubscriptionsOrdersArgs) => {
     const { vtex: { account } } = this.context
 
-    return this.get(
+    return this.http.get(
       `subscription_orders/search/?an=${account}&_fields=${fields}&_schema=${schema}${where ? `&_where=${where}` : ''}`)
   }
 
   public getSubscriptionsOrdersAggregations = ({ schema, where, field, type, interval }: AggregationsArgs) => {
     const { vtex: { account } } = this.context
 
-    return this.get(
+    return this.http.get(
       `subscription_orders/aggregations?an=${account}&_schema=${schema}&_where=${where}&_field=${field}&_type=${type}&_interval=${interval}`)
   }
 
@@ -42,16 +48,16 @@ export class SubscriptionsDataSource extends RESTDataSource<Context> {
     return `http://api.vtex.com/api/dataentities`
   }
 
-  protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken } } = this.context
+  // protected willSendRequest(request: RequestOptions) {
+  //   const { vtex: { authToken } } = this.context
 
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        'Proxy-Authorization': authToken,
-        'VtexIdclientAutCookie': authToken,
-        'X-Vtex-Proxy-To': `https://api.vtex.com`,
-      }
-    )
-  }
+  //   forEachObjIndexed(
+  //     (value: string, header) => request.headers.set(header, value),
+  //     {
+  //       'Proxy-Authorization': authToken,
+  //       'VtexIdclientAutCookie': authToken,
+  //       'X-Vtex-Proxy-To': `https://api.vtex.com`,
+  //     }
+  //   )
+  // }
 }

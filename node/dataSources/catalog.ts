@@ -23,33 +23,41 @@ interface ProductsArgs {
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<Context> {
+export class CatalogDataSource extends OutboundDataSource<Context> {
   constructor() {
     super()
   }
 
-  public product = (slug: string) => this.get(
+  protected modifiers = [
+    withTimeout(DEFAULT_TIMEOUT_MS),
+    withHeader('Accept-Encoding', 'gzip'),
+    withAuth,
+    withSegment,
+  ]
+    
+
+  public product = (slug: string) => this.http.get(
     `/pub/products/search/${slug && slug.toLowerCase()}/p`
   )
 
-  public productByEan = (id: string) => this.get(
+  public productByEan = (id: string) => this.http.get(
     `/pub/products/search?fq=alternateIds_Ean=${id}`
   )
 
-  public productById = (id: string) => this.get(
+  public productById = (id: string) => this.http.get(
     `/pub/products/search?fq=productId:${id}`
   )
 
-  public productByReference = (id: string) => this.get(
+  public productByReference = (id: string) => this.http.get(
     `/pub/products/search?fq=alternateIds_RefId=${id}`
   )
 
-  public productBySku = (skuIds: string[]) => this.get(
+  public productBySku = (skuIds: string[]) => this.http.get(
     `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`
   )
 
   public products = (args: ProductsArgs) => {
-    return this.get(this.productSearchUrl(args))
+    return this.http.get(this.productSearchUrl(args))
   }
 
   public productsQuantity = async (args: ProductsArgs) => {
@@ -67,26 +75,26 @@ export class CatalogDataSource extends RESTDataSource<Context> {
     return parseInt(quantity, 10)
   }
 
-  public brands = () => this.get(
+  public brands = () => this.http.get(
     `/pub/brand/list`
   )
 
-  public categories = (treeLevel: string) => this.get(
+  public categories = (treeLevel: string) => this.http.get(
     `/pub/category/tree/${treeLevel}/`
   )
 
   public facets = (facets: string = '') => {
     const [path, options] = decodeURI(facets).split('?')
-    return this.get(
+    return this.http.get(
       `/pub/facets/search/${encodeURI(`${path.trim()}${options ? '?' + options : ''}`)}`
     )
   }
 
-  public category = (id: string) => this.get(
+  public category = (id: string) => this.http.get(
     `/pub/category/${id}`
   )
 
-  public crossSelling = (id: string, type: string) => this.get(
+  public crossSelling = (id: string, type: string) => this.http.get(
     `/pub/products/crossselling/${type}/${id}`
   )
 
@@ -103,9 +111,9 @@ export class CatalogDataSource extends RESTDataSource<Context> {
     const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
     const appMajor = `${appMajorNumber}.x`
 
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
+    // if (!request.timeout) {
+    //   request.timeout = DEFAULT_TIMEOUT_MS
+    // }
 
     forEachObjIndexed(
       (value: string, param: string) => request.params.set(param, value),
@@ -117,14 +125,14 @@ export class CatalogDataSource extends RESTDataSource<Context> {
       }
     )
 
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        'Accept-Encoding': 'gzip',
-        Authorization: authToken,
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-      }
-    )
+    // forEachObjIndexed(
+    //   (value: string, header) => request.headers.set(header, value),
+    //   {
+    //     'Accept-Encoding': 'gzip',
+    //     Authorization: authToken,
+    //     ...segment && {Cookie: `vtex_segment=${segment}`},
+    //   }
+    // )
   }
 
   private productSearchUrl = ({

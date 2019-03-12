@@ -31,74 +31,97 @@ const isWhitelistedSetCookie = (cookie: string) => {
   return SetCookieWhitelist.includes(key)
 }
 
-export class CheckoutDataSource extends RESTDataSource<Context> {
+const withHost: Modifier = (opts: ModOptions, ctx: Context) => {
+  const {headers} = opts
+  headers.set('Host', ctx.headers['x-forwarded-host'])
+  return opts
+}
+
+const withVtexProxyTo: Modifier = (opts: ModOpts, {vtex: {account}}: Context) => {
+  const {headers} = opts
+  headers.set('X-Vtex-Proxy-To', `http://${account}.vtexcommercestable.com.br`)
+  return opts
+}
+  
+export class CheckoutDataSource extends OutboundDataSource<Context> {
   constructor() {
     super()
   }
 
-  public addItem = (orderFormId: string, items: any) => this.post(
+  protected modifiers = [
+    withTimeout(DEFAULT_TIMEOUT_MS),
+    withHeader('Accept', 'application/json'),
+    withAuth,
+    withHeader('Content-Type', 'application/json'),
+    withCookies,
+    withHost,
+    withOutboundAuth,
+    withVtexProxyTo,
+  ]
+
+  public addItem = (orderFormId: string, items: any) => this.http.post(
     `/pub/orderForm/${orderFormId}/items`,
     {
       orderItems: items,
     }
   )
 
-  public cancelOrder = (orderFormId: string, reason: string) => this.post(
+  public cancelOrder = (orderFormId: string, reason: string) => this.http.post(
     `/pub/orders/${orderFormId}/user-cancel-request`,
     {reason},
   )
 
-  public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.put(
+  public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.http.put(
     `/pub/orderForm/${orderFormId}/customData/${appId}/${field}`,
     {
       value,
     }
   )
 
-  public updateItems = (orderFormId: string, orderItems: any) => this.post(
+  public updateItems = (orderFormId: string, orderItems: any) => this.http.post(
     `/pub/orderForm/${orderFormId}/items/update`,
     {
       orderItems,
     }
   )
 
-  public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
+  public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.http.patch(
     `/pub/orderForm/${orderFormId}/profile`,
     {
       ignoreProfileData,
     }
   )
 
-  public updateOrderFormPayment = (orderFormId: string, payments: any) => this.post(
+  public updateOrderFormPayment = (orderFormId: string, payments: any) => this.http.post(
     `/pub/orderForm/${orderFormId}/attachments/paymentData`,
     {
       payments,
     }
   )
 
-  public updateOrderFormProfile = (orderFormId: string, fields: any) => this.post(
+  public updateOrderFormProfile = (orderFormId: string, fields: any) => this.http.post(
     `/pub/orderForm/${orderFormId}/attachments/clientProfileData`,
     fields,
   )
 
-  public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.post(
+  public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.http.post(
     `/pub/orderForm/${orderFormId}/attachments/shippingData`,
     shipping,
   )
 
-  public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.post(
+  public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.http.post(
     `/pub/orderForm/${orderFormId}/attachments/marketingData`,
     marketingData,
   )
 
   public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
-    this.post(
+    this.http.post(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       body
     )
 
   public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
-    this.delete(
+    this.http.delete(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       null as any,
       {
@@ -107,21 +130,21 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
     )
 
 
-  public updateOrderFormCheckin = (orderFormId: string, checkinPayload: CheckinArgs) => this.post(
+  public updateOrderFormCheckin = (orderFormId: string, checkinPayload: CheckinArgs) => this.http.post(
     `pub/orderForm/${orderFormId}/checkIn`,
     checkinPayload,
   )
 
-  public orderForm = () => this.post(
+  public orderForm = () => this.http.post(
     `/pub/orderForm`,
     {expectedOrderFormSections: ['items']},
   )
 
-  public orders = () => this.get(
+  public orders = () => this.http.get(
     '/pub/orders'
   )
 
-  public shipping = (simulation: SimulationData) => this.post(
+  public shipping = (simulation: SimulationData) => this.http.post(
     '/pub/orderForms/simulation',
     simulation,
   )
@@ -149,25 +172,25 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
     const segmentData: SegmentData | null = (this.context.vtex as any).segment
     const { channel: salesChannel = '' } = segmentData || {}
 
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
+    // if (!request.timeout) {
+    //   request.timeout = DEFAULT_TIMEOUT_MS
+    // }
 
     if (!!salesChannel) {
       request.params.set('sc', salesChannel)
     }
 
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        Accept: 'application/json',
-        Authorization: authToken,
-        'Content-Type': 'application/json',
-        'Cookie': headers.cookie,
-        Host: headers['x-forwarded-host'],
-        'Proxy-Authorization': authToken,
-        'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
-      }
-    )
+    // forEachObjIndexed(
+    //   (value: string, header) => request.headers.set(header, value),
+    //   {
+    //     Accept: 'application/json',
+    //     Authorization: authToken,
+    //     'Content-Type': 'application/json',
+    //     'Cookie': headers.cookie,
+    //     Host: headers['x-forwarded-host'],
+    //     'Proxy-Authorization': authToken,
+    //     'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
+    //   }
+    // )
   }
 }

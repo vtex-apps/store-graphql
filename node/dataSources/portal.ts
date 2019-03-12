@@ -10,12 +10,23 @@ interface AutocompleteArgs {
   searchTerm: string
 }
 
-export class PortalDataSource extends RESTDataSource<Context> {
+const withPortalHeaders: Modifier = (opts: ModOpts, {vtex}: Context) => {
+  const {headers} = opts
+  forEachObjIndexed((value, key) => headers.set(key, value), withAuthToken(headers)(vtex))
+  return opts
+}
+
+export class PortalDataSource extends OutboundDataSource<Context> {
   constructor() {
     super()
   }
 
-  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
+  protected modifiers = [
+    withTimeout(DEFAULT_TIMEOUT_MS),
+    withPortalHeaders,
+  ]
+
+  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.http.get(
     `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
   )
 
@@ -27,14 +38,14 @@ export class PortalDataSource extends RESTDataSource<Context> {
       : `http://${account}.vtexcommercestable.com.br/buscaautocomplete`
   }
 
-  protected willSendRequest (request: RequestOptions) {
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
-    }
+  // protected willSendRequest (request: RequestOptions) {
+  //   if (!request.timeout) {
+  //     request.timeout = DEFAULT_TIMEOUT_MS
+  //   }
 
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      withAuthToken(request.headers)(this.context.vtex)
-    )
-  }
+  //   forEachObjIndexed(
+  //     (value: string, header) => request.headers.set(header, value),
+  //     withAuthToken(request.headers)(this.context.vtex)
+  //   )
+  // }
 }
