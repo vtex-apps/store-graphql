@@ -1,9 +1,15 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
-export class IdentityDataSource extends RESTDataSource<Context> {
+import { RESTDataSource } from './RESTDataSource'
+
+export class IdentityDataSource extends RESTDataSource {
   public getUserWithToken = (token: string) => {
-    return this.get(`authenticated/user?authToken=${encodeURIComponent(token)}`)
+    return this.get(
+      `authenticated/user?authToken=${encodeURIComponent(token)}`,
+      undefined,
+      {metric: 'vtexid-getUserWithToken'}
+    )
   }
 
   get baseURL() {

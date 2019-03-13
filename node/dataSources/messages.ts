@@ -15,6 +15,7 @@ export class Messages extends IODataSource {
     }
     try{
       return await this.http.get('/_v/translations', {
+        metric: 'messages-tranlations',
         params: {
           __p: process.env.VTEX_APP_ID,
           data: JSON.stringify([{from, content}]),
