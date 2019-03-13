@@ -1,12 +1,22 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
+
+import { RESTDataSource } from './RESTDataSource'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
-export class OMSDataSource extends RESTDataSource<Context> {
-  public userLastOrder = () => this.get('user/orders/last')
+export class OMSDataSource extends RESTDataSource {
+  public userLastOrder = () => this.get(
+    'user/orders/last',
+    undefined,
+    {metric: 'oms-userLastOrder'}
+  )
 
-  public order = (id: string) => this.get(`/pvt/orders/${id}`)
+  public order = (id: string) => this.get(
+    `/pvt/orders/${id}`,
+    undefined,
+    {metric: 'oms-order'}
+  )
 
   get baseURL() {
     const { vtex: { account } } = this.context

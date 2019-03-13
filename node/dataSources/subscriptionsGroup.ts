@@ -1,5 +1,7 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
+
+import { RESTDataSource } from './RESTDataSource'
 
 interface RetryArgs {
   orderGroup: string
@@ -7,9 +9,13 @@ interface RetryArgs {
   workflowId: string
 }
 
-export class SubscriptionsGroupDataSource extends RESTDataSource<Context> {
+export class SubscriptionsGroupDataSource extends RESTDataSource {
   public retry = ({ orderGroup, instanceId, workflowId }: RetryArgs) => {
-    return this.post(`${orderGroup}/instances/${instanceId}/workflow/${workflowId}/retry`)
+    return this.post(
+      `${orderGroup}/instances/${instanceId}/workflow/${workflowId}/retry`,
+      undefined,
+      {metric: 'SubscriptionsGroup-retry'}
+    )
   }
 
   get baseURL() {

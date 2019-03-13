@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.57.0] - 2019-03-13
+### Added
+- A/B test between using proxy catalog or not
+- Use new datasource exposing metrics
+
 ## [2.56.3] - 2019-03-13
 ### Fixed
 - GoCommerce catalog does not accept HEAD. So every request should be switched back to a GET request

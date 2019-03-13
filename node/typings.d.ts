@@ -1,4 +1,4 @@
-import { IOContext, ServiceContext } from '@vtex/api'
+import { IOContext, MetricsAccumulator, ServiceContext } from '@vtex/api'
 import { DataSource } from 'apollo-datasource'
 
 import { dataSources } from './dataSources'
@@ -15,6 +15,8 @@ import { ProfileDataSource } from './dataSources/profile'
 import { SessionDataSource } from './dataSources/session'
 
 declare global {
+  const metrics: MetricsAccumulator
+
   interface Context extends ServiceContext {
     dataSources: StoreGraphQLDataSources
     originalPath: string

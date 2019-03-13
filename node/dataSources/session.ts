@@ -1,5 +1,7 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
+
+import { RESTDataSource } from './RESTDataSource'
 
 const DEFAULT_TIMEOUT_MS = 5 * 1000
 
@@ -17,16 +19,16 @@ export interface SegmentData {
   cultureInfo: string
 }
 
-export class SessionDataSource extends RESTDataSource<Context> {
+export class SessionDataSource extends RESTDataSource {
   constructor() {
     super()
   }
 
   public getSegmentData = (defaultSegment: boolean = false) =>
-    this.get<SegmentData>('/segments', { defaultSegment })
+    this.get<SegmentData>('/segments', { defaultSegment }, {metric: 'sessions-getSegmentData'})
 
   public updateSession = (key: string, value: any) =>
-    this.post('/sessions', { public: { [key]: { value } } })
+    this.post('/sessions', { public: { [key]: { value } } }, {metric: 'sessions-updateSession'})
 
   get baseURL() {
     const {
