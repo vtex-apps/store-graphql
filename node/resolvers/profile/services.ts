@@ -66,27 +66,27 @@ export async function getPayments(context: Context) {
 export async function updateProfile(
   context: Context,
   profile: Profile,
-  customFields
+  customFields: CustomField[] | undefined
 ) {
   const {
     dataSources,
     vtex: { currentProfile },
   } = context
 
-  const extraFields = mapCustomFieldsToObjNStr(customFields)
+  const extraFields = customFields && mapCustomFieldsToObjNStr(customFields)
 
   const newData = {
     ...profile,
-    ...extraFields.customFieldsObj,
+    ...extraFields && extraFields.customFieldsObj,
   }
 
   return dataSources.profile
     .updateProfileInfo(
       currentProfile.email,
       newData,
-      extraFields.customFieldsStr
+      extraFields && extraFields.customFieldsStr
     )
-    .then(() => getProfile(context, extraFields.customFieldsStr))
+    .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
 }
 
 export async function updateProfilePicture(context: Context, file: string) {
