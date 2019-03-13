@@ -1,11 +1,17 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { Functions } from '@gocommerce/utils'
+import { RequestOptions } from 'apollo-datasource-rest'
 import http from 'axios'
 import { forEachObjIndexed } from 'ramda'
 
 import { withAuthToken } from '../resolvers/headers'
+import { RESTDataSource } from './RESTDataSource'
 import { SegmentData } from './session'
 
 const DEFAULT_TIMEOUT_MS = 8 * 1000
+
+// 0 - 1 number with catalog proxy weight. A higher value means
+// more queries will be routed to catalog proxy
+const CATALOG_PROXY_AB_TEST_WEIGHT = 0.5
 
 interface ProductsArgs {
   query: string
@@ -23,42 +29,63 @@ interface ProductsArgs {
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<Context> {
+export class CatalogDataSource extends RESTDataSource {
+  private mode: 'proxy' | 'direct'
+
   constructor() {
     super()
+
+    this.mode = Math.random() < CATALOG_PROXY_AB_TEST_WEIGHT
+      ? 'proxy'
+      : 'direct'
   }
 
   public product = (slug: string) => this.get(
-    `/pub/products/search/${slug && slug.toLowerCase()}/p`
+    `/pub/products/search/${slug && slug.toLowerCase()}/p`,
+    undefined,
+    {metric: `catalog-product-${this.mode}`}
   )
 
   public productByEan = (id: string) => this.get(
-    `/pub/products/search?fq=alternateIds_Ean=${id}`
+    `/pub/products/search?fq=alternateIds_Ean=${id}`,
+    undefined,
+    {metric: `catalog-productByEan-${this.mode}`}
   )
 
   public productById = (id: string) => this.get(
-    `/pub/products/search?fq=productId:${id}`
+    `/pub/products/search?fq=productId:${id}`,
+    undefined,
+    {metric: `catalog-productById-${this.mode}`}
   )
 
   public productByReference = (id: string) => this.get(
-    `/pub/products/search?fq=alternateIds_RefId=${id}`
+    `/pub/products/search?fq=alternateIds_RefId=${id}`,
+    undefined,
+    {metric: `catalog-productByReference-${this.mode}`}
   )
 
   public productBySku = (skuIds: string[]) => this.get(
-    `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`
+    `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
+    undefined,
+    {metric: `catalog-productBySku-${this.mode}`}
   )
 
-  public products = (args: ProductsArgs) => {
-    return this.get(this.productSearchUrl(args))
-  }
+  public products = (args: ProductsArgs) => this.get(
+    this.productSearchUrl(args),
+    undefined,
+    {metric: `catalog-products-${this.mode}`}
+  )
 
   public productsQuantity = async (args: ProductsArgs) => {
-    const { vtex: ioContext } = this.context
+    const { vtex: ioContext, vtex: {account} } = this.context
 
     const { headers: { resources } } = await http.head(
       `${this.baseURL}${this.productSearchUrl(args)}`,
       {
         headers: withAuthToken()(ioContext),
+        params: {
+          an: account,
+        },
       }
     )
 
@@ -68,35 +95,50 @@ export class CatalogDataSource extends RESTDataSource<Context> {
   }
 
   public brands = () => this.get(
-    `/pub/brand/list`
+    `/pub/brand/list`,
+    undefined,
+    {metric: `catalog-brands-${this.mode}`}
   )
 
   public categories = (treeLevel: string) => this.get(
-    `/pub/category/tree/${treeLevel}/`
+    `/pub/category/tree/${treeLevel}/`,
+    undefined,
+    {metric: `catalog-categories-${this.mode}`}
   )
 
   public facets = (facets: string = '') => {
     const [path, options] = decodeURI(facets).split('?')
     return this.get(
-      `/pub/facets/search/${encodeURI(`${path.trim()}${options ? '?' + options : ''}`)}`
+      `/pub/facets/search/${encodeURI(`${path.trim()}${options ? '?' + options : ''}`)}`,
+      undefined,
+      {metric: `catalog-${this.mode}`}
     )
   }
 
   public category = (id: string) => this.get(
-    `/pub/category/${id}`
+    `/pub/category/${id}`,
+    undefined,
+    {metric: `catalog-category-${this.mode}`}
   )
 
   public crossSelling = (id: string, type: string) => this.get(
-    `/pub/products/crossselling/${type}/${id}`
+    `/pub/products/crossselling/${type}/${id}`,
+    undefined,
+    {metric: `catalog-crossSelling-${this.mode}`}
   )
 
   get baseURL() {
     const {vtex: {account, workspace, region}} = this.context
-    return `http://store-graphql.vtex.${region}.vtex.io/${account}/${workspace}/proxy/catalog`
+    const directUrl = Functions.isGoCommerceAcc(this.context)
+      ? `http://api.gocommerce.com/${account}/search`
+      : `http://portal.vtexcommercestable.com.br/api/catalog_system`
+    return this.mode === 'direct'
+      ? directUrl
+      : `http://store-graphql.vtex.${region}.vtex.io/${account}/${workspace}/proxy/catalog`
   }
 
   protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken, production}, cookies} = this.context
+    const {vtex: {authToken, production, account}, cookies} = this.context
     const segmentData: SegmentData | null = (this.context.vtex as any).segment
     const { channel: salesChannel = '' } = segmentData || {}
     const segment = cookies.get('vtex_segment')
@@ -107,21 +149,25 @@ export class CatalogDataSource extends RESTDataSource<Context> {
       request.timeout = DEFAULT_TIMEOUT_MS
     }
 
-    forEachObjIndexed(
-      (value: string, param: string) => request.params.set(param, value),
-      {
+    const params = this.mode === 'proxy'
+      ? {
         '__v': appMajor,
         'production': production ? 'true' : 'false',
         ...segment && {'vtex_segment': segment},
         ...!!salesChannel && {sc: salesChannel}
+      } : {
+        an: account,
+        ...!!salesChannel && {sc: salesChannel}
       }
-    )
+
+    forEachObjIndexed((value: string, param: string) => request.params.set(param, value), params)
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
         'Accept-Encoding': 'gzip',
         Authorization: authToken,
+        'Proxy-authorization': authToken,
         ...segment && {Cookie: `vtex_segment=${segment}`},
       }
     )

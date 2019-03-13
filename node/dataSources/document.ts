@@ -1,53 +1,58 @@
-import { RESTDataSource } from 'apollo-datasource-rest'
 import FormData from 'form-data'
 import { forEachObjIndexed } from 'ramda'
 
 import { withMDPagination } from '../resolvers/headers'
 import { parseFieldsToJson } from '../utils'
+import { RESTDataSource } from './RESTDataSource'
 
 interface PaginationArgs {
   page: string,
   pageSize: string
 }
 
-export class DocumentDataSource extends RESTDataSource<Context> {
+export class DocumentDataSource extends RESTDataSource {
   constructor() {
     super()
   }
 
   public getDocument = (acronym: string, id: string, fields: string[]) => this.get(
     `${acronym}/documents/${id}`,
-    { _fields: fields }
+    { _fields: fields },
+    {metric: 'masterdata-getDocument'}
   )
 
   public searchDocuments = (acronym: string, fields: string[], where: string, pagination: PaginationArgs) => this.get(
     `${acronym}/search`,
     { _fields: fields, _where: where },
-    { headers: { ...pagination } }
+    { headers: { ...pagination } , metric: 'masterdata-searchDocuments'}
   )
 
   public createDocument = (acronym: string, fields: string[]) => this.post(
     `${acronym}/documents`,
-    parseFieldsToJson(fields)
+    parseFieldsToJson(fields),
+    {metric: 'masterdata-createDocument'}
   )
 
   public updateDocument = (acronym: string, id: string, fields: string[]) => this.patch(
     `${acronym}/documents/${id}`,
-    parseFieldsToJson(fields)
+    parseFieldsToJson(fields),
+    {metric: 'masterdata-updateDocument'}
   )
 
   public deleteDocument = (acronym: string, documentId: string) => this.delete(
-    `${acronym}/documents/${documentId}`
+    `${acronym}/documents/${documentId}`,
+    undefined,
+    {metric: 'masterdata-deleteDocument'}
   )
 
   public uploadAttachment = (acronym: string, documentId: string, fields: string, formData: FormData) => this.post(
     `${acronym}/documents/${documentId}/${fields}/attachments`,
     formData,
-    { headers: { formDataHeaders: { ...formData.getHeaders() } } }
+    { headers: { formDataHeaders: { ...formData.getHeaders() } } , metric: 'masterdata-uploadAttachment'}
   )
 
   public willSendRequest(request) {
-    const { vtex, cookie } = this.context
+    const { vtex, cookie } = this.context as any
     const page = request.headers.get('page')
     const pageSize = request.headers.get('pageSize')
     const formDataHeaders = request.headers.get('formDataHeaders')

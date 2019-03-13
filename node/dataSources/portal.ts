@@ -1,7 +1,9 @@
 import { Functions } from '@gocommerce/utils'
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
+
 import { withAuthToken } from '../resolvers/headers'
+import { RESTDataSource } from './RESTDataSource'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
 
@@ -10,13 +12,15 @@ interface AutocompleteArgs {
   searchTerm: string
 }
 
-export class PortalDataSource extends RESTDataSource<Context> {
+export class PortalDataSource extends RESTDataSource {
   constructor() {
     super()
   }
 
   public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
-    `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`
+    `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+    undefined,
+    {metric: 'portal-autocomplete'}
   )
 
   get baseURL() {

@@ -1,8 +1,12 @@
-import { HttpClient, IOContext, IODataSource } from '@vtex/api'
+import { HttpClient, InstanceOptions, IOContext, IODataSource } from '@vtex/api'
 import * as queryStringBuilder from 'qs'
 
 export class ProfileDataSource extends IODataSource {
   protected httpClientFactory = forLegacy
+
+  constructor(ctx?: IOContext, opts?: InstanceOptions) {
+    super(ctx, opts)
+  }
 
   public getProfileInfo = (userEmail: string, customFields?: string) => {
     const queryString = queryStringBuilder.stringify({
@@ -13,6 +17,7 @@ export class ProfileDataSource extends IODataSource {
       `${userEmail}/personalData${queryString ? `?${queryString}` : ''}`,
       {
         headers: withHeadersFromContext(this.context),
+        metric: 'profile-system-getProfileInfo'
       }
     )
   }
@@ -20,12 +25,14 @@ export class ProfileDataSource extends IODataSource {
   public getUserAddresses = (userEmail: string) => {
     return this.http.get(`${userEmail}/addresses`, {
       headers: withHeadersFromContext(this.context),
+      metric: 'profile-system-getUserAddresses'
     })
   }
 
   public getUserPayments = (userEmail: string) => {
     return this.http.get(`${userEmail}/vcs-checkout`, {
       headers: withHeadersFromContext(this.context),
+      metric: 'profile-system-getUserPayments'
     })
   }
 
@@ -43,6 +50,7 @@ export class ProfileDataSource extends IODataSource {
       profile,
       {
         headers: withHeadersFromContext(this.context),
+        metric: 'profile-system-updateProfileInfo'
       }
     )
   }
@@ -50,12 +58,14 @@ export class ProfileDataSource extends IODataSource {
   public updateAddress = (userEmail: string, addressesData) => {
     return this.http.post(`${userEmail}/addresses`, addressesData, {
       headers: withHeadersFromContext(this.context),
+      metric: 'profile-system-updateAddress'
     })
   }
 
   public deleteAddress = (userEmail: string, addressName: string) => {
     return this.http.delete(`${userEmail}/addresses/${addressName}`, {
       headers: withHeadersFromContext(this.context),
+      metric: 'profile-system-deleteAddress'
     })
   }
 }

@@ -1,9 +1,15 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
-export class LicenseManagerDataSource extends RESTDataSource<Context> {
+import { RESTDataSource } from './RESTDataSource'
+
+export class LicenseManagerDataSource extends RESTDataSource {
   public getAccountId = () => {
-    return this.get(`account`).then(data => data.id)
+    return this.get(
+      `account`,
+      undefined,
+      {metric: 'license-manager-getAccountId'}
+    ).then(data => data.id)
   }
 
   get baseURL() {
