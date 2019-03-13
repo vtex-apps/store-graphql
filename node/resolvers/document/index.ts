@@ -1,4 +1,5 @@
-import { compose, fromPairs, map, union } from 'ramda'
+import { prop, union } from 'ramda'
+import {parseFieldsToJson }  from '../../utils'
 import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
@@ -29,10 +30,7 @@ export const mutations = {
 
   updateDocument: async (_, args, { dataSources: { document } }) => {
     const { acronym, document: { fields } } = args
-    const id = compose<any[], any[], any>(
-      fromPairs,
-      map(({key, value}) => [key, value]),
-    )(fields).id
+    const id = prop('id', parseFieldsToJson(fields))
     const { Id, Href, DocumentId } = await document.updateDocument(acronym, id, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
