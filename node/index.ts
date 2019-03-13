@@ -1,11 +1,12 @@
-import { Logger, MetricsAccumulator } from '@vtex/api'
+import './globals'
+
+import { Logger } from '@vtex/api'
 import { map } from 'ramda'
+
 import { cache, dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { catalogProxy } from './routes/catalogProxy'
-
-const metrics = new MetricsAccumulator()
 
 const prepare = (handler) => async (ctx: Context) => {
   try {

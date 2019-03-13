@@ -1,6 +1,7 @@
-import { Request, RequestOptions, Response, RESTDataSource } from 'apollo-datasource-rest'
+import { Request, RequestOptions, Response } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
+import { RESTDataSource } from './RESTDataSource'
 import { SegmentData } from './session'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
@@ -31,7 +32,7 @@ const isWhitelistedSetCookie = (cookie: string) => {
   return SetCookieWhitelist.includes(key)
 }
 
-export class CheckoutDataSource extends RESTDataSource<Context> {
+export class CheckoutDataSource extends RESTDataSource {
   constructor() {
     super()
   }
@@ -40,61 +41,71 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
     `/pub/orderForm/${orderFormId}/items`,
     {
       orderItems: items,
-    }
+    },
+    {metric: 'checkout-addItem'}
   )
 
   public cancelOrder = (orderFormId: string, reason: string) => this.post(
     `/pub/orders/${orderFormId}/user-cancel-request`,
     {reason},
+    {metric: 'checkout-cancelOrder'}
   )
 
   public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.put(
     `/pub/orderForm/${orderFormId}/customData/${appId}/${field}`,
     {
       value,
-    }
+    },
+    {metric: 'checkout-setOrderFormCustomData'}
   )
 
   public updateItems = (orderFormId: string, orderItems: any) => this.post(
     `/pub/orderForm/${orderFormId}/items/update`,
     {
       orderItems,
-    }
+    },
+    {metric: 'checkout-updateItems'}
   )
 
   public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
     `/pub/orderForm/${orderFormId}/profile`,
     {
       ignoreProfileData,
-    }
+    },
+    {metric: 'checkout-updateOrderFormIgnoreProfile'}
   )
 
   public updateOrderFormPayment = (orderFormId: string, payments: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/paymentData`,
     {
       payments,
-    }
+    },
+    {metric: 'checkout-updateOrderFormPayment'}
   )
 
   public updateOrderFormProfile = (orderFormId: string, fields: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/clientProfileData`,
     fields,
+    {metric: 'checkout-updateOrderFormPayment'}
   )
 
   public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/shippingData`,
     shipping,
+    {metric: 'checkout-updateOrderFormShipping'}
   )
 
   public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.post(
     `/pub/orderForm/${orderFormId}/attachments/marketingData`,
     marketingData,
+    {metric: 'checkout-updateOrderFormMarketingData'}
   )
 
   public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
     this.post(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
-      body
+      body,
+      {metric: 'checkout-addAssemblyOptions'}
     )
 
   public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
@@ -102,7 +113,8 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       null as any,
       {
-        body
+        body,
+        metric: 'checkout-removeAssemblyOptions'
       }
     )
 
@@ -110,20 +122,25 @@ export class CheckoutDataSource extends RESTDataSource<Context> {
   public updateOrderFormCheckin = (orderFormId: string, checkinPayload: CheckinArgs) => this.post(
     `pub/orderForm/${orderFormId}/checkIn`,
     checkinPayload,
+    {metric: 'checkout-updateOrderFormCheckin'}
   )
 
   public orderForm = () => this.post(
     `/pub/orderForm`,
     {expectedOrderFormSections: ['items']},
+    {metric: 'checkout-orderForm'}
   )
 
   public orders = () => this.get(
-    '/pub/orders'
+    '/pub/orders',
+    undefined,
+    {metric: 'checkout-orders'}
   )
 
   public shipping = (simulation: SimulationData) => this.post(
     '/pub/orderForms/simulation',
     simulation,
+    {metric: 'checkout-shipping'}
   )
 
   get baseURL() {
