@@ -1,4 +1,4 @@
-import { IOContext, ServiceContext, MetricsAccumulator } from '@vtex/api'
+import { IOContext, MetricsAccumulator, ServiceContext } from '@vtex/api'
 import { DataSource } from 'apollo-datasource'
 
 import { dataSources } from './dataSources'
