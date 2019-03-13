@@ -31,6 +31,7 @@ interface ProductsArgs {
  */
 export class CatalogDataSource extends RESTDataSource {
   private mode: 'proxy' | 'direct'
+  private backend: 'vtex' | 'gocommerce'
 
   constructor() {
     super()
@@ -38,6 +39,8 @@ export class CatalogDataSource extends RESTDataSource {
     this.mode = Math.random() < CATALOG_PROXY_AB_TEST_WEIGHT
       ? 'proxy'
       : 'direct'
+
+    this.backend = 'vtex'
   }
 
   public product = (slug: string) => this.get(
@@ -79,13 +82,20 @@ export class CatalogDataSource extends RESTDataSource {
   public productsQuantity = async (args: ProductsArgs) => {
     const { vtex: ioContext, vtex: {account} } = this.context
 
-    const { headers: { resources } } = await http.head(
-      `${this.baseURL}${this.productSearchUrl(args)}`,
+    const headers = this.mode === 'direct'
+      ? {'X-Vtex-Use-Https': 'true'}
+      : {}
+
+    const params = this.mode === 'direct' && this.backend !== 'gocommerce'
+      ? {an: account}
+      : {}
+
+    const { headers: { resources } } = await http.request(
       {
-        headers: withAuthToken()(ioContext),
-        params: {
-          an: account,
-        },
+        headers: withAuthToken(headers)(ioContext),
+        method: this.backend === 'gocommerce' ? 'GET' : 'HEAD',
+        params,
+        url: `${this.baseURL}${this.productSearchUrl(args)}`,
       }
     )
 
@@ -129,7 +139,8 @@ export class CatalogDataSource extends RESTDataSource {
 
   get baseURL() {
     const {vtex: {account, workspace, region}} = this.context
-    const directUrl = Functions.isGoCommerceAcc(this.context)
+    this.backend = Functions.isGoCommerceAcc(this.context) ? 'gocommerce' : 'vtex'
+    const directUrl = this.backend === 'gocommerce'
       ? `http://api.gocommerce.com/${account}/search`
       : `http://portal.vtexcommercestable.com.br/api/catalog_system`
     return this.mode === 'direct'
@@ -162,15 +173,19 @@ export class CatalogDataSource extends RESTDataSource {
 
     forEachObjIndexed((value: string, param: string) => request.params.set(param, value), params)
 
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
+    const headers = this.mode === 'proxy'
+      ? {
         'Accept-Encoding': 'gzip',
         Authorization: authToken,
-        'Proxy-authorization': authToken,
+        ...segment && {Cookie: `vtex_segment=${segment}`},
+      } : {
+        'Accept-Encoding': 'gzip',
+        'Proxy-Authorization': authToken,
+        'X-Vtex-Use-Https': 'true',
         ...segment && {Cookie: `vtex_segment=${segment}`},
       }
-    )
+
+    forEachObjIndexed((value: string, header) => request.headers.set(header, value), headers)
   }
 
   private productSearchUrl = ({

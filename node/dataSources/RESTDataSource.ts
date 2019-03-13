@@ -50,9 +50,8 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
   }
 
   private withMetrics = async <TResult = any> (handler: () => Promise<TResult>, metric?: string) => {
-    const {vtex: {production}} = this.context
     const start = metric && process.hrtime()
-    let status
+    let status = 'APOLLO_NOT_ASSIGNED'
 
     try {
       status = 'APOLLO_REST_OK'
@@ -63,7 +62,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     } finally {
       if (metric) {
         const label = `http-client-${status}-${metric}`
-        metrics.batchHrTimeMetric(label, start as [number, number], production)
+        metrics.batchHrTimeMetric(label, start as [number, number])
       }
     }
   }
