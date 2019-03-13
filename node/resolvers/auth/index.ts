@@ -140,7 +140,7 @@ export const mutations = {
     const escapedNewPass = encodeURIComponent(args.newPassword)
     const passPath = paths.redefinePassword(VtexSessionToken, escapedEmail, escapedPass, escapedNewPass)
 
-    const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, args.vtexIdVersion)
+    const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, 'POST', args.vtexIdVersion)
 
     if(authStatus === 'WrongCredentials') {
       throw new ResolverError('Wrong credentials.', 400)
