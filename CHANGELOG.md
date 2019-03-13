@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.56.1] - 2019-03-13
+- Fix the Document.updateDocument call the in updateDocument resolver.
+
 ## [2.56.0] - 2019-03-12
 ### Changed
 - Using `profileSystem` on `profile` related queries and mutations.
