@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.57.2] - 2019-03-13
+
+### Fixed
+- MakeRequest call in `redefinePassword` resolver
+
 ## [2.57.1] - 2019-03-13
 
 ## [2.57.0] - 2019-03-13
