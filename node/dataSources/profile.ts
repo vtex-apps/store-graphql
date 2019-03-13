@@ -69,4 +69,13 @@ export class ProfileDataSource extends IODataSource {
       metric: 'profile-system-deleteAddress'
     })
   }
+
+  public updatePersonalPreferences = (
+    userEmail: string,
+    personalPreferences: PersonalPreferences,
+  ) => {
+    return this.http.post(`${userEmail}/personalPreferences/`, personalPreferences, {
+      metric: 'profile-system-subscribeNewsletter'
+    })
+  }
 }

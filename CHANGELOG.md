@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added 
 - Add `specificationGroups` in `product`'s resolvers. 
+- New mutation `subscribeNewsletter`.
 
 ## [2.61.1] - 2019-03-27
 
