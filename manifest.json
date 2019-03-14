@@ -13,6 +13,7 @@
     "prereleasy": "bash lint.sh"
   },
   "dependencies": {
+    "infra:service-node": "4.2.5-beta.0",
     "vtex.messages": "1.x"
   },
   "policies": [
@@ -117,14 +118,14 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercestable.com.br",
+        "host": "{{account}}.vtexcommercebeta.com.br",
         "path": "/api/sessions/*"
       }
     },
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercestable.com.br",
+        "host": "{{account}}.vtexcommercebeta.com.br",
         "path": "/api/segments/*"
       }
     },
