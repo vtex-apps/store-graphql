@@ -3,7 +3,7 @@ import './globals'
 import { Logger } from '@vtex/api'
 import { map } from 'ramda'
 
-import { cache, dataSources } from './dataSources'
+import { dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { catalogProxy } from './routes/catalogProxy'
@@ -50,7 +50,6 @@ const prepare = (handler) => async (ctx: Context) => {
 
 export default {
   graphql: {
-    cache,
     dataSources,
     resolvers,
     schemaDirectives,
