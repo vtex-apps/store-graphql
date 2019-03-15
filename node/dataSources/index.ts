@@ -1,5 +1,3 @@
-import { LRUCache } from '@vtex/api'
-
 import { CallcenterOperatorDataSource } from './callcenterOperator'
 import { CatalogDataSource } from './catalog'
 import { CheckoutDataSource } from './checkout'
@@ -14,8 +12,6 @@ import { ProfileDataSource } from './profile'
 import { SessionDataSource } from './session'
 import { SubscriptionsDataSource } from './subscriptions'
 import { SubscriptionsGroupDataSource } from './subscriptionsGroup'
-
-const TEN_SECONDS_MS = 10 * 1000
 
 export const dataSources = () => ({
   callcenterOperator: new CallcenterOperatorDataSource(),
@@ -33,10 +29,3 @@ export const dataSources = () => ({
   subscriptions: new SubscriptionsDataSource(),
   subscriptionsGroup: new SubscriptionsGroupDataSource(),
 })
-
-const cacheStorage = new LRUCache<string, any>({
-  max: 200,
-  maxAge: TEN_SECONDS_MS,
-})
-
-export const cache = () => cacheStorage
