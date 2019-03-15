@@ -62,7 +62,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     } finally {
       if (metric) {
         const label = `http-client-${status}-${metric}`
-        metrics.batchHrTimeMetric(label, start as [number, number])
+        metrics.batch(label, process.hrtime(start as [number, number]))
       }
     }
   }

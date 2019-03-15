@@ -180,10 +180,10 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
-"@vtex/api@2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-2.3.2.tgz#f1bc99ef4db4d3c3d1c682fdb5d5793a753a0acc"
-  integrity sha512-MQNZifU4EjEKTBKeWG+eiOdnKMwe62luT6780EdiV+NU3n4xOrSYmeisGe8B+1rJ5xYom3fEbRMe5QDYhtoCEQ==
+"@vtex/api@^2.3.5":
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-2.3.5.tgz#21a0f5448058c502dc01a1fb51589967abf0c019"
+  integrity sha512-hkbh5metl29dLM6k4KSNP6UsfZyUvMfczBNRzpl6nxgq5Pya7UFr1nnPZ0ixqj+6aVwqdIjdSJP9YNVPLhbuvg==
   dependencies:
     "@types/graphql" "^14.0.4"
     "@types/lru-cache" "^4.1.1"
@@ -2759,7 +2759,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-stats-lite@vtex/node-stats-lite#dist:
+"stats-lite@github:vtex/node-stats-lite#dist":
   version "2.2.0"
   resolved "https://codeload.github.com/vtex/node-stats-lite/tar.gz/1b0d39cc41ef7aaecfd541191f877887a2044797"
   dependencies:
