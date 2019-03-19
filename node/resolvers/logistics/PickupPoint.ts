@@ -14,5 +14,5 @@ export const resolvers = {
       }
     },
     friendlyName: ({ name }: LogisticPickupPoint) => name,
-  }
+  },
 }

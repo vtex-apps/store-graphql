@@ -17,7 +17,7 @@ const makeRequest = async (_, args, config, url, data?, method?) => {
     enableCookies: true,
     headers: (ctx: any) => ({
       ...headers.json,
-      'Proxy-Authorization': `${ctx.authToken}`
+      'Proxy-Authorization': `${ctx.authToken}`,
     }),
     merge: (__: any, ___: any, res) => {
       return { ...res }
@@ -36,9 +36,9 @@ const impersonateData = email => {
   return {
     public: {
       'vtex-impersonated-customer-email': {
-        value: email
-      }
-    }
+        value: email,
+      },
+    },
   }
 }
 
@@ -51,7 +51,7 @@ export const queries = {
   getSession: async (_, args, config) => {
     const { data } = await makeRequest(_, args, config, paths.getSession)
     return sessionFields(data)
-  }
+  },
 }
 
 export const mutations = {
@@ -61,13 +61,23 @@ export const mutations = {
    * @return Session
    */
   impersonate: async (_, args, config) => {
-    await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
+    await makeRequest(
+      _,
+      args,
+      config,
+      paths.session,
+      impersonateData(args.email),
+      'PATCH'
+    )
 
-    config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, args.email, {
-      encode: identity,
-      maxAge: VTEXID_EXPIRES,
-      path: '/',
-    }))
+    config.response.set(
+      'Set-Cookie',
+      serialize(IMPERSONATED_EMAIL, args.email, {
+        encode: identity,
+        maxAge: VTEXID_EXPIRES,
+        path: '/',
+      })
+    )
     const { data } = await makeRequest(_, args, config, paths.getSession)
     return sessionFields(data)
   },
@@ -77,12 +87,22 @@ export const mutations = {
    * @param args this mutation receives orderFormId
    */
   depersonify: async (_, args, config) => {
-    await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
+    await makeRequest(
+      _,
+      args,
+      config,
+      paths.session,
+      impersonateData(''),
+      'PATCH'
+    )
 
-    config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, '', {
-      maxAge: 0,
-      path: '/',
-    }))
+    config.response.set(
+      'Set-Cookie',
+      serialize(IMPERSONATED_EMAIL, '', {
+        maxAge: 0,
+        path: '/',
+      })
+    )
     return true
-  }
+  },
 }

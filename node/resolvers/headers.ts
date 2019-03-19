@@ -13,7 +13,10 @@ export const headers = {
   },
 }
 
-export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null) => {
+export const withAuthToken = (currentHeaders = {}) => (
+  ioContext,
+  cookie = null
+) => {
   const ans: any = { ...currentHeaders }
   if (cookie) {
     const parsedCookie = cookies.parse(cookie)
@@ -24,11 +27,11 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
   return {
     ...ans,
     Authorization: `${ioContext.authToken}`,
-    'Proxy-Authorization': `${ioContext.authToken}`
+    'Proxy-Authorization': `${ioContext.authToken}`,
   }
 }
 
-export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext) => {
+export const withAuthAsVTEXID = (currentHeaders = {}) => ioContext => {
   return {
     ...currentHeaders,
     'Proxy-Authorization': ioContext.authToken,
@@ -36,14 +39,17 @@ export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext) => {
   }
 }
 
-export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (page = 1, pageSize = DEFAULT_PAGE_SIZE) => {
+export const withMDPagination = (currentHeaders = {}) => (
+  ioContext,
+  cookie = null
+) => (page = 1, pageSize = DEFAULT_PAGE_SIZE) => {
   if (page < 1) {
     throw new Error('Smallest page value is 1')
   }
   const startIndex = (page - 1) * pageSize
   const endIndex = startIndex + pageSize
   return {
-    ...(withAuthToken(currentHeaders)(ioContext, cookie)),
-    'REST-Range': `resources=${startIndex}-${endIndex}`
+    ...withAuthToken(currentHeaders)(ioContext, cookie),
+    'REST-Range': `resources=${startIndex}-${endIndex}`,
   }
 }

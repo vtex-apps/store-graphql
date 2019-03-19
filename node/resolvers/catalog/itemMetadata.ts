@@ -8,7 +8,7 @@ import { MetadataItem } from '../checkout/types'
 
 import { SessionDataSource } from '../../dataSources/session'
 
-const headersWithToken = (authToken) => ({
+const headersWithToken = authToken => ({
   Accept: 'application/json',
   Authorization: `bearer ${authToken}`,
   'Content-Type': 'application/json',
@@ -19,22 +19,22 @@ const isUtm = (_, key) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
 
 interface FetchPriceInput {
-  id: string,
-  priceTable: string,
-  marketingData: any,
-  countryCode: string,
-  seller: string,
-  headers: any,
-  url: string,
+  id: string
+  priceTable: string
+  marketingData: any
+  countryCode: string
+  seller: string
+  headers: any
+  url: string
 }
 
 interface Parent {
-  items: MetadataItem[],
+  items: MetadataItem[]
 }
 
 interface PriceType {
-  id: string,
-  price: number,
+  id: string
+  price: number
   priceTable: string
 }
 const fetchPrice = async ({
@@ -45,7 +45,7 @@ const fetchPrice = async ({
   marketingData,
   headers,
   url,
-}: FetchPriceInput):Promise<PriceType> => {
+}: FetchPriceInput): Promise<PriceType> => {
   // TODO: optimize this call sending multiple ids and/or priceTable...
   const payload = {
     country: countryCode,
@@ -57,14 +57,22 @@ const fetchPrice = async ({
   const orderForm = await http.post(url, payload, { headers }).catch(() => null)
   return {
     id,
-    price: orderForm ? prop('value', find<any>(propEq('id', 'Items'))(orderForm.data.totals)) : 0,
+    price: orderForm
+      ? prop('value', find<any>(propEq('id', 'Items'))(orderForm.data.totals))
+      : 0,
     priceTable,
   }
 }
 
-const getSimulationPayload = async (session: SessionDataSource, account: string, authToken: string) => {
+const getSimulationPayload = async (
+  session: SessionDataSource,
+  account: string,
+  authToken: string
+) => {
   const segmentData = await session.getSegmentData().catch(() => null)
-  if (!segmentData) { return null }
+  if (!segmentData) {
+    return null
+  }
 
   let marketingData = {}
   try {
@@ -87,34 +95,57 @@ const getSimulationPayload = async (session: SessionDataSource, account: string,
 
 export const resolvers = {
   ItemMetadata: {
-    priceTable: async ({items}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }: Context) => {
-      const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
-      items.filter(item => item.assemblyOptions.length > 0).map(item => {
-        const { assemblyOptions } = item
-        assemblyOptions.map(({ composition: { items: compItems } }) => {
-          compItems.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
+    priceTable: async (
+      { items }: Parent,
+      _,
+      { vtex: { account, authToken }, dataSources: { session } }: Context
+    ) => {
+      const itemsToFetch = [] as Array<{
+        id: string
+        priceTable: string
+        seller: string
+      }>
+      items
+        .filter(item => item.assemblyOptions.length > 0)
+        .map(item => {
+          const { assemblyOptions } = item
+          assemblyOptions.map(({ composition: { items: compItems } }) => {
+            compItems.map(({ id, priceTable, seller }) =>
+              itemsToFetch.push({ id, priceTable, seller })
+            )
+          })
         })
-      })
 
-      const fetchPayload = await getSimulationPayload(session, account, authToken)
+      const fetchPayload = await getSimulationPayload(
+        session,
+        account,
+        authToken
+      )
 
       const itemsPromises = itemsToFetch.map(({ id, priceTable, seller }) => {
-        if (!fetchPayload) { return { id, priceTable, price: 0 } }
+        if (!fetchPayload) {
+          return { id, priceTable, price: 0 }
+        }
         return fetchPrice({ ...fetchPayload, id, priceTable, seller })
       })
 
       const priceData = await Promise.all(itemsPromises)
 
-      const prices = priceData.reduce<{ [key: string]: Array<{ price: number, id: string }>}>((prev, curr) => {
+      const prices = priceData.reduce<{
+        [key: string]: Array<{ price: number; id: string }>
+      }>((prev, curr) => {
         const { id, priceTable, price } = curr
         const currentArray = prev[priceTable] || []
         return {
           ...prev,
-          [priceTable]: [...currentArray, { id, price }]
+          [priceTable]: [...currentArray, { id, price }],
         }
       }, {})
 
-      return Object.entries(prices).map(([priceTableName, priceArray]) => ({ type: priceTableName, values: priceArray }))
+      return Object.entries(prices).map(([priceTableName, priceArray]) => ({
+        type: priceTableName,
+        values: priceArray,
+      }))
     },
-  }
+  },
 }

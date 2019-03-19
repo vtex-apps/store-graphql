@@ -25,10 +25,18 @@ export class SessionDataSource extends RESTDataSource {
   }
 
   public getSegmentData = (defaultSegment: boolean = false) =>
-    this.get<SegmentData>('/segments', { defaultSegment }, {metric: 'sessions-getSegmentData'})
+    this.get<SegmentData>(
+      '/segments',
+      { defaultSegment },
+      { metric: 'sessions-getSegmentData' }
+    )
 
   public updateSession = (key: string, value: any) =>
-    this.post('/sessions', { public: { [key]: { value } } }, {metric: 'sessions-updateSession'})
+    this.post(
+      '/sessions',
+      { public: { [key]: { value } } },
+      { metric: 'sessions-updateSession' }
+    )
 
   get baseURL() {
     const {

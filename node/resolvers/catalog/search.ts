@@ -22,13 +22,20 @@ const sortMapAndQuery = (map: string[], query: string[]) => {
   }, zipped)
 
   return reduce(
-    (acc, [m, q]: any) => ({ map: acc.map.concat(m), query: acc.query.concat(q) }),
+    (acc, [m, q]: any) => ({
+      map: acc.map.concat(m),
+      query: acc.query.concat(q),
+    }),
     { map: [], query: [] },
     sorted
   )
 }
 
-const getQueryAndFacets = ({ map: unsortedMap = '', query: queryParam = '', rest = '' }) => {
+const getQueryAndFacets = ({
+  map: unsortedMap = '',
+  query: queryParam = '',
+  rest = '',
+}) => {
   let unsortedQuery = queryParam
 
   if (rest) {
@@ -67,10 +74,14 @@ export const resolvers = {
       return queries.products(root, { ...args, query, map }, ctx)
     },
     recordsFiltered: async (root, _, ctx) => {
-      const { dataSources: { catalog } } = ctx
+      const {
+        dataSources: { catalog },
+      } = ctx
 
       try {
-        return catalog.productsQuantity(Object.assign({}, root.queryArgs, getQueryAndFacets(root.queryArgs)))
+        return catalog.productsQuantity(
+          Object.assign({}, root.queryArgs, getQueryAndFacets(root.queryArgs))
+        )
       } catch (e) {
         return 0
       }

@@ -1,5 +1,16 @@
 import { ApolloError } from 'apollo-server-errors'
-import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
+import {
+  compose,
+  equals,
+  find,
+  head,
+  last,
+  map,
+  path,
+  prop,
+  split,
+  test,
+} from 'ramda'
 import ResolverError from '../../errors/resolverError'
 
 import { toIOMessage } from '../../utils/ioMessage'
@@ -33,7 +44,10 @@ const extractSlug = item => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-const lastSegment = compose<string, string[], string>(last, split('/'))
+const lastSegment = compose<string, string[], string>(
+  last,
+  split('/')
+)
 
 function findInTree(tree, values, index = 0) {
   for (const node of tree) {
@@ -63,12 +77,19 @@ export const fieldResolvers = {
 
 export const queries = {
   autocomplete: async (_, args, ctx) => {
-    const { dataSources: { portal, messages, session} } = ctx
+    const {
+      dataSources: { portal, messages, session },
+    } = ctx
 
     const from = await session.getSegmentData().then(prop('cultureInfo'))
     const to = await session.getSegmentData(true).then(prop('cultureInfo'))
     const translatedTerm = await messages.translate(from, to, args.searchTerm)
-    const { itemsReturned }: {itemsReturned: Item[]} = await portal.autocomplete({maxRows: args.maxRows, searchTerm: translatedTerm})
+    const {
+      itemsReturned,
+    }: { itemsReturned: Item[] } = await portal.autocomplete({
+      maxRows: args.maxRows,
+      searchTerm: translatedTerm,
+    })
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
@@ -83,12 +104,16 @@ export const queries = {
   },
 
   facets: (_, { facets }, ctx) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     return catalog.facets(facets)
   },
 
   product: async (_, { slug }, ctx) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     const products = await catalog.product(slug)
 
     if (products.length > 0) {
@@ -102,7 +127,9 @@ export const queries = {
   },
 
   products: async (_, args, ctx) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
       throw new ResolverError(
@@ -115,7 +142,13 @@ export const queries = {
 
   brand: async (_, args, { dataSources: { catalog } }) => {
     const brands = await catalog.brands()
-    const brand = find(compose(equals(args.id), prop('id') as any), brands)
+    const brand = find(
+      compose(
+        equals(args.id),
+        prop('id') as any
+      ),
+      brands
+    )
     if (!brand) {
       throw new ResolverError(`Brand with id ${args.id} not found`, 404)
     }
@@ -124,20 +157,29 @@ export const queries = {
 
   brands: async (_, __, { dataSources: { catalog } }) => catalog.brands(),
 
-  category: async (_, { id }, { dataSources: { catalog } }) => catalog.category(id),
+  category: async (_, { id }, { dataSources: { catalog } }) =>
+    catalog.category(id),
 
-  categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
+  categories: async (_, { treeLevel }, { dataSources: { catalog } }) =>
+    catalog.categories(treeLevel),
 
   search: async (_, args, ctx: Context) => {
     const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {
-      throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
+      throw new ApolloError(
+        'Search query/map cannot be null',
+        'ERR_EMPTY_QUERY'
+      )
     }
 
     const categoryMetaData = async () => {
       const category = findInTree(
-        await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
+        await queries.categories(
+          _,
+          { treeLevel: query.split('/').length },
+          ctx
+        ),
         query.split('/')
       )
       return {
@@ -149,7 +191,12 @@ export const queries = {
     const brandMetaData = async () => {
       const brands = await queries.brands(_, { ...args }, ctx)
       const brand = find(
-        compose(equals(query.split('/').pop(-1)), Slugify, prop('name') as any), brands
+        compose(
+          equals(query.split('/').pop(-1)),
+          Slugify,
+          prop('name') as any
+        ),
+        brands
       )
       return {
         metaTagDescription: path(['metaTagDescription'], brand as any),
@@ -159,8 +206,10 @@ export const queries = {
 
     const searchMetaData = async () => {
       const lastMap = mapParams.split(',').pop(-1)
-      const meta = lastMap === 'c' ? await categoryMetaData()
-        : lastMap === 'b' && await brandMetaData()
+      const meta =
+        lastMap === 'c'
+          ? await categoryMetaData()
+          : lastMap === 'b' && (await brandMetaData())
       return meta
     }
 
@@ -173,11 +222,7 @@ export const queries = {
     }
   },
 
-  searchContextFromParams: async (
-    _,
-    args,
-    { dataSources: { catalog } }
-  ) => {
+  searchContextFromParams: async (_, args, { dataSources: { catalog } }) => {
     const response = {
       brand: null,
       category: null,
@@ -187,8 +232,7 @@ export const queries = {
     if (args.brand) {
       const brands = await catalog.brands()
       const found = brands.find(
-        brand =>
-          brand.isActive && Slugify(brand.name) === args.brand
+        brand => brand.isActive && Slugify(brand.name) === args.brand
       )
       response.brand = found && found.id
     }
@@ -212,7 +256,7 @@ export const queries = {
         ) as any
       }
 
-      response.category = found && found.id as any
+      response.category = found && (found.id as any)
     }
 
     return response

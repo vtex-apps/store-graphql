@@ -77,7 +77,7 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
-    ...extraFields && extraFields.customFieldsObj,
+    ...(extraFields && extraFields.customFieldsObj),
   }
 
   return dataSources.profile

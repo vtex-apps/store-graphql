@@ -8,7 +8,7 @@ import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { catalogProxy } from './routes/catalogProxy'
 
-const prepare = (handler) => async (ctx: Context) => {
+const prepare = handler => async (ctx: Context) => {
   try {
     await handler(ctx)
   } catch (err) {
@@ -36,10 +36,13 @@ const prepare = (handler) => async (ctx: Context) => {
       ctx.status = err.response.status || 500
       ctx.body = ctx.status === 404 ? 'Not Found' : err.response.data
       console.log(
-        `Error from HTTP request. ${err.response.config
-          ? `method=${err.response.config.method} url=${
-            err.response.config.url} `
-          : ''} status=${err.response.status} data=${err.response.data}`
+        `Error from HTTP request. ${
+          err.response.config
+            ? `method=${err.response.config.method} url=${
+                err.response.config.url
+              } `
+            : ''
+        } status=${err.response.status} data=${err.response.data}`
       )
       return
     }

@@ -10,7 +10,7 @@
     "node": "4.x"
   },
   "scripts": {
-    "prereleasy": "bash lint.sh"
+    "prereleasy": "bash pre.sh"
   },
   "dependencies": {
     "vtex.messages": "1.x"

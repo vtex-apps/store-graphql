@@ -17,7 +17,7 @@ export class ProfileDataSource extends IODataSource {
       `${userEmail}/personalData${queryString ? `?${queryString}` : ''}`,
       {
         headers: withHeadersFromContext(this.context),
-        metric: 'profile-system-getProfileInfo'
+        metric: 'profile-system-getProfileInfo',
       }
     )
   }
@@ -25,14 +25,14 @@ export class ProfileDataSource extends IODataSource {
   public getUserAddresses = (userEmail: string) => {
     return this.http.get(`${userEmail}/addresses`, {
       headers: withHeadersFromContext(this.context),
-      metric: 'profile-system-getUserAddresses'
+      metric: 'profile-system-getUserAddresses',
     })
   }
 
   public getUserPayments = (userEmail: string) => {
     return this.http.get(`${userEmail}/vcs-checkout`, {
       headers: withHeadersFromContext(this.context),
-      metric: 'profile-system-getUserPayments'
+      metric: 'profile-system-getUserPayments',
     })
   }
 
@@ -50,7 +50,7 @@ export class ProfileDataSource extends IODataSource {
       profile,
       {
         headers: withHeadersFromContext(this.context),
-        metric: 'profile-system-updateProfileInfo'
+        metric: 'profile-system-updateProfileInfo',
       }
     )
   }
@@ -58,14 +58,14 @@ export class ProfileDataSource extends IODataSource {
   public updateAddress = (userEmail: string, addressesData) => {
     return this.http.post(`${userEmail}/addresses`, addressesData, {
       headers: withHeadersFromContext(this.context),
-      metric: 'profile-system-updateAddress'
+      metric: 'profile-system-updateAddress',
     })
   }
 
   public deleteAddress = (userEmail: string, addressName: string) => {
     return this.http.delete(`${userEmail}/addresses/${addressName}`, {
       headers: withHeadersFromContext(this.context),
-      metric: 'profile-system-deleteAddress'
+      metric: 'profile-system-deleteAddress',
     })
   }
 }

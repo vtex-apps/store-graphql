@@ -17,21 +17,26 @@ export class PortalDataSource extends RESTDataSource {
     super()
   }
 
-  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
-    `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
-    undefined,
-    {metric: 'portal-autocomplete'}
-  )
+  public autocomplete = ({ maxRows, searchTerm }: AutocompleteArgs) =>
+    this.get(
+      `/?maxRows=${maxRows}&productNameContains=${encodeURIComponent(
+        searchTerm
+      )}`,
+      undefined,
+      { metric: 'portal-autocomplete' }
+    )
 
   get baseURL() {
-    const {vtex: {account}} = this.context
+    const {
+      vtex: { account },
+    } = this.context
 
     return Functions.isGoCommerceAcc(this.context)
       ? `http://api.gocommerce.com/${account}/search/buscaautocomplete`
       : `http://${account}.vtexcommercestable.com.br/buscaautocomplete`
   }
 
-  protected willSendRequest (request: RequestOptions) {
+  protected willSendRequest(request: RequestOptions) {
     if (!request.timeout) {
       request.timeout = DEFAULT_TIMEOUT_MS
     }

@@ -1,4 +1,4 @@
-/**  
+/**
  * Assembly options related types
  */
 

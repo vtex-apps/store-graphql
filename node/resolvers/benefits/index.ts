@@ -9,7 +9,7 @@ const DEFAULT_QUANTITY = '1'
 
 export const fieldResolvers = {
   Benefit: {
-    items: async (benefit, _, {dataSources: {catalog}}) => {
+    items: async (benefit, _, { dataSources: { catalog } }) => {
       const { teaserType, conditions, effects } = benefit
 
       if (teaserType === CATALOG) {
@@ -22,7 +22,9 @@ export const fieldResolvers = {
 
         const items = await Promise.all(
           conditionsParameters.map(async (conditionsParameter, index) => {
-            const skuIds: string[] = conditionsParameter.value.split(SKU_SEPARATOR)
+            const skuIds: string[] = conditionsParameter.value.split(
+              SKU_SEPARATOR
+            )
             const discount = effectsParameters[index].value
             const products = await catalog.productBySku(skuIds)
 
@@ -47,8 +49,8 @@ export const fieldResolvers = {
         return flatten(items)
       }
       return
-    }
-  }
+    },
+  },
 }
 
 export const queries = {

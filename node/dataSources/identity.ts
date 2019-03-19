@@ -8,7 +8,7 @@ export class IdentityDataSource extends RESTDataSource {
     return this.get(
       `authenticated/user?authToken=${encodeURIComponent(token)}`,
       undefined,
-      {metric: 'vtexid-getUserWithToken'}
+      { metric: 'vtexid-getUserWithToken' }
     )
   }
 
@@ -17,13 +17,15 @@ export class IdentityDataSource extends RESTDataSource {
   }
 
   protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken } } = this.context
+    const {
+      vtex: { authToken },
+    } = this.context
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
         'Proxy-Authorization': authToken,
-        'VtexIdClientAutCookie': authToken,
+        VtexIdClientAutCookie: authToken,
         'X-Vtex-Proxy-To': `http://vtexid.vtex.com.br`,
       }
     )

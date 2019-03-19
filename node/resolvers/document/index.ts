@@ -1,12 +1,15 @@
 import { prop, union } from 'ramda'
-import {parseFieldsToJson }  from '../../utils'
+import { parseFieldsToJson } from '../../utils'
 import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
   documents: async (_, args, { dataSources: { document } }) => {
     const { acronym, fields, page, pageSize, where } = args
     const fieldsWithId = union(fields, ['id'])
-    const data = await document.searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
+    const data = await document.searchDocuments(acronym, fieldsWithId, where, {
+      page,
+      pageSize,
+    })
     return data.map(doc => ({
       cacheId: doc.id,
       fields: mapKeyValues(doc),
@@ -23,15 +26,28 @@ export const queries = {
 
 export const mutations = {
   createDocument: async (_, args, { dataSources: { document } }) => {
-    const { acronym, document: { fields } } = args
-    const { Id, Href, DocumentId } = await document.createDocument(acronym, fields)
+    const {
+      acronym,
+      document: { fields },
+    } = args
+    const { Id, Href, DocumentId } = await document.createDocument(
+      acronym,
+      fields
+    )
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
   updateDocument: async (_, args, { dataSources: { document } }) => {
-    const { acronym, document: { fields } } = args
+    const {
+      acronym,
+      document: { fields },
+    } = args
     const id = prop('id', parseFieldsToJson(fields))
-    const { Id, Href, DocumentId } = await document.updateDocument(acronym, id, fields)
+    const { Id, Href, DocumentId } = await document.updateDocument(
+      acronym,
+      id,
+      fields
+    )
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
@@ -39,5 +55,5 @@ export const mutations = {
     const { acronym, documentId } = args
     await document.deleteDocument(acronym, documentId)
     return { id: documentId }
-  }
+  },
 }

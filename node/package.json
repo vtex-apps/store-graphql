@@ -30,10 +30,11 @@
     "@types/qs": "^6.5.1",
     "@types/ramda": "types/npm-ramda#dist",
     "http2": "^3.3.7",
+    "prettier": "^1.16.4",
     "tslint": "^5.8.0",
     "tslint-config-vtex": "^2.0.0"
   },
   "scripts": {
-    "lint": "tsc --noEmit && tslint -c tslint.json './**/*.ts'"
+    "check": "tsc --noEmit && tslint -c tslint.json './**/*.ts'"
   }
 }

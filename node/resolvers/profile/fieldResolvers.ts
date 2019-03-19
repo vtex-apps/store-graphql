@@ -22,7 +22,7 @@ export default {
     profilePicture: (obj, _, context) =>
       obj.profilePicture &&
       `http://api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${
-      obj.id
+        obj.id
       }/profilePicture/attachments/${obj.profilePicture}`,
   },
   ProfileCustomField: {

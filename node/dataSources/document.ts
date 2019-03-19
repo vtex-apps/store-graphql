@@ -6,7 +6,7 @@ import { parseFieldsToJson } from '../utils'
 import { RESTDataSource } from './RESTDataSource'
 
 interface PaginationArgs {
-  page: string,
+  page: string
   pageSize: string
 }
 
@@ -15,41 +15,54 @@ export class DocumentDataSource extends RESTDataSource {
     super()
   }
 
-  public getDocument = (acronym: string, id: string, fields: string[]) => this.get(
-    `${acronym}/documents/${id}`,
-    { _fields: fields },
-    {metric: 'masterdata-getDocument'}
-  )
+  public getDocument = (acronym: string, id: string, fields: string[]) =>
+    this.get(
+      `${acronym}/documents/${id}`,
+      { _fields: fields },
+      { metric: 'masterdata-getDocument' }
+    )
 
-  public searchDocuments = (acronym: string, fields: string[], where: string, pagination: PaginationArgs) => this.get(
-    `${acronym}/search`,
-    { _fields: fields, _where: where },
-    { headers: { ...pagination } , metric: 'masterdata-searchDocuments'}
-  )
+  public searchDocuments = (
+    acronym: string,
+    fields: string[],
+    where: string,
+    pagination: PaginationArgs
+  ) =>
+    this.get(
+      `${acronym}/search`,
+      { _fields: fields, _where: where },
+      { headers: { ...pagination }, metric: 'masterdata-searchDocuments' }
+    )
 
-  public createDocument = (acronym: string, fields: string[]) => this.post(
-    `${acronym}/documents`,
-    parseFieldsToJson(fields),
-    {metric: 'masterdata-createDocument'}
-  )
+  public createDocument = (acronym: string, fields: string[]) =>
+    this.post(`${acronym}/documents`, parseFieldsToJson(fields), {
+      metric: 'masterdata-createDocument',
+    })
 
-  public updateDocument = (acronym: string, id: string, fields: string[]) => this.patch(
-    `${acronym}/documents/${id}`,
-    parseFieldsToJson(fields),
-    {metric: 'masterdata-updateDocument'}
-  )
+  public updateDocument = (acronym: string, id: string, fields: string[]) =>
+    this.patch(`${acronym}/documents/${id}`, parseFieldsToJson(fields), {
+      metric: 'masterdata-updateDocument',
+    })
 
-  public deleteDocument = (acronym: string, documentId: string) => this.delete(
-    `${acronym}/documents/${documentId}`,
-    undefined,
-    {metric: 'masterdata-deleteDocument'}
-  )
+  public deleteDocument = (acronym: string, documentId: string) =>
+    this.delete(`${acronym}/documents/${documentId}`, undefined, {
+      metric: 'masterdata-deleteDocument',
+    })
 
-  public uploadAttachment = (acronym: string, documentId: string, fields: string, formData: FormData) => this.post(
-    `${acronym}/documents/${documentId}/${fields}/attachments`,
-    formData,
-    { headers: { formDataHeaders: { ...formData.getHeaders() } } , metric: 'masterdata-uploadAttachment'}
-  )
+  public uploadAttachment = (
+    acronym: string,
+    documentId: string,
+    fields: string,
+    formData: FormData
+  ) =>
+    this.post(
+      `${acronym}/documents/${documentId}/${fields}/attachments`,
+      formData,
+      {
+        headers: { formDataHeaders: { ...formData.getHeaders() } },
+        metric: 'masterdata-uploadAttachment',
+      }
+    )
 
   public willSendRequest(request) {
     const { vtex, cookie } = this.context as any
@@ -63,13 +76,13 @@ export class DocumentDataSource extends RESTDataSource {
     } else if (formDataHeaders) {
       headers = {
         'Proxy-Authorization': this.context.vtex.authToken,
-        'VtexIdclientAutCookie': this.context.vtex.authToken,
-        ...formDataHeaders
+        VtexIdclientAutCookie: this.context.vtex.authToken,
+        ...formDataHeaders,
       }
     } else {
       headers = {
         Accept: 'application/vnd.vtex.ds.v10+json',
-        Authorization: this.context.vtex.authToken
+        Authorization: this.context.vtex.authToken,
       }
     }
 
@@ -77,7 +90,9 @@ export class DocumentDataSource extends RESTDataSource {
   }
 
   get baseURL() {
-    const { vtex: { account } } = this.context
+    const {
+      vtex: { account },
+    } = this.context
     return `http://api.vtex.com/${account}/dataentities/`
   }
 }

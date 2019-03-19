@@ -13,19 +13,16 @@ export interface SimulationData {
 }
 
 export interface UpdateCheckinArgs {
-  orderFormId: string,
-  checkin: CheckinArgs,
+  orderFormId: string
+  checkin: CheckinArgs
 }
 
 interface CheckinArgs {
-  isCheckedIn: boolean,
-  pickupPointId?: string,
+  isCheckedIn: boolean
+  pickupPointId?: string
 }
 
-const SetCookieWhitelist = [
-  'checkout.vtex.com',
-  '.ASPXAUTH',
-]
+const SetCookieWhitelist = ['checkout.vtex.com', '.ASPXAUTH']
 
 const isWhitelistedSetCookie = (cookie: string) => {
   const [key] = cookie.split('=')
@@ -37,123 +34,157 @@ export class CheckoutDataSource extends RESTDataSource {
     super()
   }
 
-  public addItem = (orderFormId: string, items: any) => this.post(
-    `/pub/orderForm/${orderFormId}/items`,
-    {
-      orderItems: items,
-    },
-    {metric: 'checkout-addItem'}
-  )
+  public addItem = (orderFormId: string, items: any) =>
+    this.post(
+      `/pub/orderForm/${orderFormId}/items`,
+      {
+        orderItems: items,
+      },
+      { metric: 'checkout-addItem' }
+    )
 
-  public cancelOrder = (orderFormId: string, reason: string) => this.post(
-    `/pub/orders/${orderFormId}/user-cancel-request`,
-    {reason},
-    {metric: 'checkout-cancelOrder'}
-  )
+  public cancelOrder = (orderFormId: string, reason: string) =>
+    this.post(
+      `/pub/orders/${orderFormId}/user-cancel-request`,
+      { reason },
+      { metric: 'checkout-cancelOrder' }
+    )
 
-  public setOrderFormCustomData = (orderFormId: string, appId: string, field: string, value: any) => this.put(
-    `/pub/orderForm/${orderFormId}/customData/${appId}/${field}`,
-    {
-      value,
-    },
-    {metric: 'checkout-setOrderFormCustomData'}
-  )
+  public setOrderFormCustomData = (
+    orderFormId: string,
+    appId: string,
+    field: string,
+    value: any
+  ) =>
+    this.put(
+      `/pub/orderForm/${orderFormId}/customData/${appId}/${field}`,
+      {
+        value,
+      },
+      { metric: 'checkout-setOrderFormCustomData' }
+    )
 
-  public updateItems = (orderFormId: string, orderItems: any) => this.post(
-    `/pub/orderForm/${orderFormId}/items/update`,
-    {
-      orderItems,
-    },
-    {metric: 'checkout-updateItems'}
-  )
+  public updateItems = (orderFormId: string, orderItems: any) =>
+    this.post(
+      `/pub/orderForm/${orderFormId}/items/update`,
+      {
+        orderItems,
+      },
+      { metric: 'checkout-updateItems' }
+    )
 
-  public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
-    `/pub/orderForm/${orderFormId}/profile`,
-    {
-      ignoreProfileData,
-    },
-    {metric: 'checkout-updateOrderFormIgnoreProfile'}
-  )
+  public updateOrderFormIgnoreProfile = (
+    orderFormId: string,
+    ignoreProfileData: boolean
+  ) =>
+    this.patch(
+      `/pub/orderForm/${orderFormId}/profile`,
+      {
+        ignoreProfileData,
+      },
+      { metric: 'checkout-updateOrderFormIgnoreProfile' }
+    )
 
-  public updateOrderFormPayment = (orderFormId: string, payments: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/paymentData`,
-    {
-      payments,
-    },
-    {metric: 'checkout-updateOrderFormPayment'}
-  )
+  public updateOrderFormPayment = (orderFormId: string, payments: any) =>
+    this.post(
+      `/pub/orderForm/${orderFormId}/attachments/paymentData`,
+      {
+        payments,
+      },
+      { metric: 'checkout-updateOrderFormPayment' }
+    )
 
-  public updateOrderFormProfile = (orderFormId: string, fields: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/clientProfileData`,
-    fields,
-    {metric: 'checkout-updateOrderFormPayment'}
-  )
+  public updateOrderFormProfile = (orderFormId: string, fields: any) =>
+    this.post(
+      `/pub/orderForm/${orderFormId}/attachments/clientProfileData`,
+      fields,
+      { metric: 'checkout-updateOrderFormPayment' }
+    )
 
-  public updateOrderFormShipping = (orderFormId: string, shipping: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/shippingData`,
-    shipping,
-    {metric: 'checkout-updateOrderFormShipping'}
-  )
+  public updateOrderFormShipping = (orderFormId: string, shipping: any) =>
+    this.post(
+      `/pub/orderForm/${orderFormId}/attachments/shippingData`,
+      shipping,
+      { metric: 'checkout-updateOrderFormShipping' }
+    )
 
-  public updateOrderFormMarketingData = (orderFormId: string, marketingData: any) => this.post(
-    `/pub/orderForm/${orderFormId}/attachments/marketingData`,
-    marketingData,
-    {metric: 'checkout-updateOrderFormMarketingData'}
-  )
+  public updateOrderFormMarketingData = (
+    orderFormId: string,
+    marketingData: any
+  ) =>
+    this.post(
+      `/pub/orderForm/${orderFormId}/attachments/marketingData`,
+      marketingData,
+      { metric: 'checkout-updateOrderFormMarketingData' }
+    )
 
-  public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
+  public addAssemblyOptions = async (
+    orderFormId: string,
+    itemId: string,
+    assemblyOptionsId: string,
+    body
+  ) =>
     this.post(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       body,
-      {metric: 'checkout-addAssemblyOptions'}
+      { metric: 'checkout-addAssemblyOptions' }
     )
 
-  public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
+  public removeAssemblyOptions = async (
+    orderFormId: string,
+    itemId: string,
+    assemblyOptionsId: string,
+    body
+  ) =>
     this.delete(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       null as any,
       {
         body,
-        metric: 'checkout-removeAssemblyOptions'
+        metric: 'checkout-removeAssemblyOptions',
       }
     )
 
+  public updateOrderFormCheckin = (
+    orderFormId: string,
+    checkinPayload: CheckinArgs
+  ) =>
+    this.post(`pub/orderForm/${orderFormId}/checkIn`, checkinPayload, {
+      metric: 'checkout-updateOrderFormCheckin',
+    })
 
-  public updateOrderFormCheckin = (orderFormId: string, checkinPayload: CheckinArgs) => this.post(
-    `pub/orderForm/${orderFormId}/checkIn`,
-    checkinPayload,
-    {metric: 'checkout-updateOrderFormCheckin'}
-  )
+  public orderForm = () =>
+    this.post(
+      `/pub/orderForm`,
+      { expectedOrderFormSections: ['items'] },
+      { metric: 'checkout-orderForm' }
+    )
 
-  public orderForm = () => this.post(
-    `/pub/orderForm`,
-    {expectedOrderFormSections: ['items']},
-    {metric: 'checkout-orderForm'}
-  )
+  public orders = () =>
+    this.get('/pub/orders', undefined, { metric: 'checkout-orders' })
 
-  public orders = () => this.get(
-    '/pub/orders',
-    undefined,
-    {metric: 'checkout-orders'}
-  )
-
-  public shipping = (simulation: SimulationData) => this.post(
-    '/pub/orderForms/simulation',
-    simulation,
-    {metric: 'checkout-shipping'}
-  )
+  public shipping = (simulation: SimulationData) =>
+    this.post('/pub/orderForms/simulation', simulation, {
+      metric: 'checkout-shipping',
+    })
 
   get baseURL() {
-    const {vtex: {account}} = this.context
+    const {
+      vtex: { account },
+    } = this.context
     return `http://${account}.vtexcommercestable.com.br/api/checkout`
   }
 
-  protected async didReceiveResponse (response: Response, request: Request) {
+  protected async didReceiveResponse(response: Response, request: Request) {
     const result = await super.didReceiveResponse(response, request)
 
     const rawHeaders = (response.headers as any).raw() as Record<string, any>
-    const responseSetCookies: string[] = rawHeaders ? rawHeaders['set-cookie'] : []
-    const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+    const responseSetCookies: string[] = rawHeaders
+      ? rawHeaders['set-cookie']
+      : []
+    const forwardedSetCookies = responseSetCookies.filter(
+      isWhitelistedSetCookie
+    )
     if (forwardedSetCookies.length > 0) {
       this.context.set('set-cookie', forwardedSetCookies)
     }
@@ -161,8 +192,11 @@ export class CheckoutDataSource extends RESTDataSource {
     return result
   }
 
-  protected willSendRequest (request: RequestOptions) {
-    const {vtex: {account, authToken}, headers} = this.context
+  protected willSendRequest(request: RequestOptions) {
+    const {
+      vtex: { account, authToken },
+      headers,
+    } = this.context
     const segmentData: SegmentData | null = (this.context.vtex as any).segment
     const { channel: salesChannel = '' } = segmentData || {}
 
@@ -180,7 +214,7 @@ export class CheckoutDataSource extends RESTDataSource {
         Accept: 'application/json',
         Authorization: authToken,
         'Content-Type': 'application/json',
-        'Cookie': headers.cookie,
+        Cookie: headers.cookie,
         Host: headers['x-forwarded-host'],
         'Proxy-Authorization': authToken,
         'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,

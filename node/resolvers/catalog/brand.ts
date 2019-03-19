@@ -7,5 +7,5 @@ export const resolvers = {
     cacheId: brand => Slugify(brand.name),
     slug: brand => Slugify(brand.name),
     titleTag: prop('title'),
-  }
+  },
 }

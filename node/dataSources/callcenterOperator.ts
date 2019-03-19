@@ -9,11 +9,14 @@ interface IsValidCallcenterOperatorArgs {
 }
 
 export class CallcenterOperatorDataSource extends RESTDataSource {
-  public isValidCallcenterOperator = ({ email, accountId }: IsValidCallcenterOperatorArgs) => {
+  public isValidCallcenterOperator = ({
+    email,
+    accountId,
+  }: IsValidCallcenterOperatorArgs) => {
     return this.get(
       `${accountId}/products/2/logins/${email}/resources/Televendas/granted?ignoreIsAdmin=False`,
       undefined,
-      {metric: 'callcenterOperator-isValidCallcenterOperator'}
+      { metric: 'callcenterOperator-isValidCallcenterOperator' }
     )
   }
 
@@ -22,13 +25,15 @@ export class CallcenterOperatorDataSource extends RESTDataSource {
   }
 
   protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken } } = this.context
+    const {
+      vtex: { authToken },
+    } = this.context
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
         'Proxy-Authorization': authToken,
-        'VtexIdClientAutCookie': authToken,
+        VtexIdClientAutCookie: authToken,
         'X-Vtex-Proxy-To': `http://licensemanager.vtex.com.br`,
       }
     )

@@ -1,6 +1,9 @@
 import { values } from 'ramda'
 
-import { buildAddedOptionsForItem, buildRemovedOptions } from './attachmentsHelper'
+import {
+  buildAddedOptionsForItem,
+  buildRemovedOptions,
+} from './attachmentsHelper'
 
 import { AssemblyOption } from './types'
 
@@ -27,5 +30,5 @@ export const resolvers = {
       }
       return buildRemovedOptions(item, orderForm, assemblyOptionsMap)
     },
-  }
+  },
 }

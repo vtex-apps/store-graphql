@@ -1,27 +1,54 @@
-import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
+import {
+  concat,
+  filter,
+  groupBy,
+  last,
+  map,
+  nth,
+  path,
+  prop,
+  values,
+} from 'ramda'
 
 import ResolverError from '../../errors/resolverError'
 import { mapKeyValues } from '../../utils/object'
-import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
+import {
+  acronymList,
+  acronymListProduct,
+  fields,
+  fieldsListProduct,
+} from './util'
 import { validateItems } from './util'
 
-const getListItemsWithProductInfo = (items, catalog) => Promise.all(
-  map(async item => {
-    const productsResponse = await catalog.productBySku([path(['skuId'], item)])
-    const product = nth(0, productsResponse)
-    return { ...item, product }
-  }, items)
-)
+const getListItemsWithProductInfo = (items, catalog) =>
+  Promise.all(
+    map(async item => {
+      const productsResponse = await catalog.productBySku([
+        path(['skuId'], item),
+      ])
+      const product = nth(0, productsResponse)
+      return { ...item, product }
+    }, items)
+  )
 
 const getListItems = async (itemsId, dataSources) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(id =>
-    document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
+  const items = itemsId
+    ? await Promise.all(
+        map(
+          id => document.getDocument(acronymListProduct, id, fieldsListProduct),
+          itemsId
+        )
+      )
+    : []
   return getListItemsWithProductInfo(items, catalog)
 }
 
 const addListItem = async (item, document) => {
-  const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues({ ...item }))
+  const { DocumentId } = await document.createDocument(
+    acronymListProduct,
+    mapKeyValues({ ...item })
+  )
   return DocumentId
 }
 
@@ -32,17 +59,30 @@ const addItems = async (items = [], dataSources) => {
   return Promise.all(promises)
 }
 
-const deleteItems = (items, document) => (
-  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['id'], item)))
-)
+const deleteItems = (items, document) =>
+  items &&
+  items.forEach(item =>
+    document.deleteDocument(acronymListProduct, path(['id'], item))
+  )
 
 const updateItems = async (items, dataSources) => {
   const { document } = dataSources
-  const itemsWithoutDuplicated = map(item => last(item),
-    values(groupBy(prop('skuId') as any, items)))
-  const itemsToBeDeleted = filter(item => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
-  const itemsToBeAdded = filter(item => !path(['id'], item), itemsWithoutDuplicated)
-  const itemsToBeUpdated = filter(item => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
+  const itemsWithoutDuplicated = map(
+    item => last(item),
+    values(groupBy(prop('skuId') as any, items))
+  )
+  const itemsToBeDeleted = filter(
+    item => path<any>(['id'], item) && path(['quantity'], item) === 0,
+    itemsWithoutDuplicated
+  )
+  const itemsToBeAdded = filter(
+    item => !path(['id'], item),
+    itemsWithoutDuplicated
+  )
+  const itemsToBeUpdated = filter(
+    item => path<any>(['id'], item) && path<any>(['quantity'], item) > 0,
+    itemsWithoutDuplicated
+  )
 
   deleteItems(itemsToBeDeleted, document)
 
@@ -50,16 +90,14 @@ const updateItems = async (items, dataSources) => {
     map(async item => await addListItem(item, document), itemsToBeAdded)
   )
 
-  const itemsIdUpdated = map(
-    item => {
-      document.updateDocument(
-        acronymListProduct,
-        path(['id'], item),
-        mapKeyValues(item))
-      return path(['id'], item)
-    },
-    itemsToBeUpdated
-  )
+  const itemsIdUpdated = map(item => {
+    document.updateDocument(
+      acronymListProduct,
+      path(['id'], item),
+      mapKeyValues(item)
+    )
+    return path(['id'], item)
+  }, itemsToBeUpdated)
 
   return concat(itemsIdAdded, itemsIdUpdated)
 }
@@ -72,22 +110,36 @@ export const queries = {
   },
 
   listsByOwner: async (_, { owner, page, pageSize }, context) => {
-    const { dataSources, dataSources: { document } } = context
-    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
+    const {
+      dataSources,
+      dataSources: { document },
+    } = context
+    const lists = await document.searchDocuments(
+      acronymList,
+      fields,
+      `owner=${owner}`,
+      { page, pageSize }
+    )
     const listsWithProducts = map(async list => {
       const items = await getListItems(path(['items'], list), dataSources)
       return { ...list, items }
     }, lists)
     return Promise.all(listsWithProducts)
-  }
+  },
 }
 
 export const mutation = {
   createList: async (_, { list, list: { items } }, context) => {
-    const { dataSources, dataSources: { document } } = context
+    const {
+      dataSources,
+      dataSources: { document },
+    } = context
     try {
       const itemsId = await addItems(items, dataSources)
-      const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
+      const { DocumentId } = await document.createDocument(
+        acronymList,
+        mapKeyValues({ ...list, items: itemsId })
+      )
       return queries.list(_, { id: DocumentId }, context)
     } catch (error) {
       throw new ResolverError(`Cannot create list: ${error}`, 406)
@@ -107,10 +159,17 @@ export const mutation = {
    * Otherwise, update it.
    */
   updateList: async (_, { id, list, list: { items } }, context) => {
-    const { dataSources, dataSources: { document } } = context
+    const {
+      dataSources,
+      dataSources: { document },
+    } = context
     try {
       const itemsUpdatedId = await updateItems(items, dataSources)
-      await document.updateDocument(acronymList, id, mapKeyValues({ ...list, items: itemsUpdatedId }))
+      await document.updateDocument(
+        acronymList,
+        id,
+        mapKeyValues({ ...list, items: itemsUpdatedId })
+      )
       return queries.list(_, { id }, context)
     } catch (error) {
       throw new ResolverError(`Cannot update the list: ${error}`, 406)

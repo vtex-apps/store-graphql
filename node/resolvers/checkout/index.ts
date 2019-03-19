@@ -2,7 +2,6 @@ import { addIndex, map, reject } from 'ramda'
 import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
 import { SegmentData } from '../../dataSources/session'
 
-
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import { queries as logisticsQueries } from '../logistics/index'
@@ -11,10 +10,17 @@ import { queries as sessionQueries } from '../session'
 import { SessionFields } from '../session/sessionResolver'
 
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
-import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
+import {
+  addOptionsForItems,
+  buildAssemblyOptionsMap,
+  isParentItem,
+} from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
-import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
+import {
+  syncCheckoutAndSessionPostChanges,
+  syncCheckoutAndSessionPreCheckout,
+} from './sessionManager'
 
 /**
  * It will convert an integer to float moving the
@@ -31,47 +37,63 @@ import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } 
  */
 const convertIntToFloat = int => int * 0.01
 
-const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentData) => {
-  const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
-  const {utm_source, utm_campaign, utmi_campaign} = segmentData
+const shouldUpdateMarketingData = (
+  orderFormMarketingTags,
+  segmentData: SegmentData
+) => {
+  const { utmSource = null, utmCampaign = null, utmiCampaign = null } =
+    orderFormMarketingTags || {}
+  const { utm_source, utm_campaign, utmi_campaign } = segmentData
 
-  return (utm_source || utm_campaign || utmi_campaign)
-    && (utmSource !== utm_source
-    || utmCampaign !== utm_campaign
-    || utmiCampaign !== utmi_campaign)
+  return (
+    (utm_source || utm_campaign || utmi_campaign) &&
+    (utmSource !== utm_source ||
+      utmCampaign !== utm_campaign ||
+      utmiCampaign !== utmi_campaign)
+  )
 }
 
-type Resolver<TArgs=any, TRoot=any> =
-  (root: TRoot, args: TArgs, context: Context) => Promise<any>
+type Resolver<TArgs = any, TRoot = any> = (
+  root: TRoot,
+  args: TArgs,
+  context: Context
+) => Promise<any>
 
 const mapIndexed = addIndex<any, any, any, any>(map)
 
 export const fieldResolvers = {
   OrderForm: {
-    cacheId: (orderForm) => {
+    cacheId: orderForm => {
       return orderForm.orderFormId
     },
-    items: (orderForm) => {
+    items: orderForm => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
-      return mapIndexed((item: OrderFormItem, index: number) => ({
-        ...item,
-        assemblyOptionsData: {
-          assemblyOptionsMap,
-          childs,
-          index,
-          orderForm,
-        }
-      }), orderForm.items)
+      return mapIndexed(
+        (item: OrderFormItem, index: number) => ({
+          ...item,
+          assemblyOptionsData: {
+            assemblyOptionsMap,
+            childs,
+            index,
+            orderForm,
+          },
+        }),
+        orderForm.items
+      )
     },
     pickupPointCheckedIn: (orderForm, _, ctx) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
       if (!isCheckedIn || !checkedInPickupPointId) {
         return null
       }
-      return logisticsQueries.pickupPoint({}, { id: checkedInPickupPointId }, ctx)
+      return logisticsQueries.pickupPoint(
+        {},
+        { id: checkedInPickupPointId },
+        ctx
+      )
     },
-    value: (orderForm) => {
+    value: orderForm => {
       return convertIntToFloat(orderForm.value)
     },
   },
@@ -81,40 +103,54 @@ export const fieldResolvers = {
 
 export const queries: Record<string, Resolver> = {
   orderForm: async (root, args, ctx) => {
-    const {dataSources: {checkout}} = ctx
+    const {
+      dataSources: { checkout },
+    } = ctx
 
-    const sessionData = await sessionQueries.getSession(root, args, ctx) as SessionFields
+    const sessionData = (await sessionQueries.getSession(
+      root,
+      args,
+      ctx
+    )) as SessionFields
     await syncCheckoutAndSessionPreCheckout(sessionData, ctx)
 
     const orderForm = await checkout.orderForm()
 
-    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(
+      sessionData,
+      orderForm,
+      ctx
+    )
     return syncedOrderForm
   },
 
-  orders: (_, __, {dataSources: {checkout}}) => {
+  orders: (_, __, { dataSources: { checkout } }) => {
     return checkout.orders()
   },
 
-  shipping: (_, args: SimulationData, {dataSources: {checkout}}) => {
+  shipping: (_, args: SimulationData, { dataSources: { checkout } }) => {
     return checkout.shipping(args)
   },
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, {orderFormId, items}, {dataSources: {checkout, session}}) => {
-    const [{marketingData}, segmentData] = await Promise.all([
+  addItem: async (
+    _,
+    { orderFormId, items },
+    { dataSources: { checkout, session } }
+  ) => {
+    const [{ marketingData }, segmentData] = await Promise.all([
       checkout.orderForm(),
-      session.getSegmentData().catch((err) => {
+      session.getSegmentData().catch(err => {
         // todo: log error using colossus
         console.error(err)
         return {} as SegmentData
-      })
+      }),
     ])
 
     if (shouldUpdateMarketingData(marketingData, segmentData)) {
       const newMarketingData = {
-        ...marketingData || {},
+        ...(marketingData || {}),
         utmCampaign: segmentData.utm_campaign,
         utmSource: segmentData.utm_source,
         utmiCampaign: segmentData.utmi_campaign,
@@ -132,7 +168,11 @@ export const mutations: Record<string, Resolver> = {
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: async (_, {orderFormId, reason}, {dataSources: {checkout}}) => {
+  cancelOrder: async (
+    _,
+    { orderFormId, reason },
+    { dataSources: { checkout } }
+  ) => {
     await checkout.cancelOrder(orderFormId, reason)
     return true
   },
@@ -153,48 +193,86 @@ export const mutations: Record<string, Resolver> = {
     url: paths.gatewayTokenizePayment,
   }),
 
-  setOrderFormCustomData: (_, {orderFormId, appId, field, value}, {dataSources: {checkout}}) => {
+  setOrderFormCustomData: (
+    _,
+    { orderFormId, appId, field, value },
+    { dataSources: { checkout } }
+  ) => {
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, {orderFormId, items}, {dataSources: {checkout}}) => {
+  updateItems: (_, { orderFormId, items }, { dataSources: { checkout } }) => {
     return checkout.updateItems(orderFormId, items)
   },
 
-  updateOrderFormIgnoreProfile: (_, {orderFormId, ignoreProfileData}, {dataSources: {checkout}}) => {
+  updateOrderFormIgnoreProfile: (
+    _,
+    { orderFormId, ignoreProfileData },
+    { dataSources: { checkout } }
+  ) => {
     return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
   },
 
-  updateOrderFormPayment: (_, {orderFormId, payments}, {dataSources: {checkout}}) => {
+  updateOrderFormPayment: (
+    _,
+    { orderFormId, payments },
+    { dataSources: { checkout } }
+  ) => {
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
-  updateOrderFormProfile: (_, {orderFormId, fields}, {dataSources: {checkout}}) => {
+  updateOrderFormProfile: (
+    _,
+    { orderFormId, fields },
+    { dataSources: { checkout } }
+  ) => {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
-  updateOrderFormShipping: async (root, {orderFormId, address}, ctx) => {
-    const {dataSources: {checkout}} = ctx
+  updateOrderFormShipping: async (root, { orderFormId, address }, ctx) => {
+    const {
+      dataSources: { checkout },
+    } = ctx
     const [sessionData, orderForm] = await Promise.all([
       sessionQueries.getSession(root, {}, ctx) as SessionFields,
-      checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] }),
+      checkout.updateOrderFormShipping(orderFormId, {
+        clearAddressIfPostalCodeNotFound: false,
+        selectedAddresses: [address],
+      }),
     ])
 
-    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(
+      sessionData,
+      orderForm,
+      ctx
+    )
     return syncedOrderForm
   },
 
-  addAssemblyOptions: (_, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
+  addAssemblyOptions: (
+    _,
+    { orderFormId, itemId, assemblyOptionsId, options },
+    { dataSources: { checkout } }
+  ) => {
     const body = {
       composition: {
         items: options,
       },
       noSplitItem: true,
     }
-    return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
+    return checkout.addAssemblyOptions(
+      orderFormId,
+      itemId,
+      assemblyOptionsId,
+      body
+    )
   },
 
-  updateOrderFormCheckin: (_, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
+  updateOrderFormCheckin: (
+    _,
+    { orderFormId, checkin }: UpdateCheckinArgs,
+    { dataSources: { checkout } }
+  ) => {
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 }
