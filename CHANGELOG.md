@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.59.1] - 2019-03-19
+
 ## [2.59.0] - 2019-03-19
 ### Fixed
 - Using `application/x-www-form-urlencoded` for logging-in instead of raw querystring with plain text credentials
