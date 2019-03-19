@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.59.0] - 2019-03-19
-### Removed
+## [2.59.0] - 2019-03-19 [YANKED]
+### Removed	
 - `Subscriptions`, moving the queries to the other `my-subscriptions-graphql`.
 
 ## [2.58.0] - 2019-03-15
