@@ -23,5 +23,5 @@ export const dataSources = () => ({
   oms: new OMSDataSource(),
   portal: new PortalDataSource(),
   profile: new ProfileDataSource(undefined, { metrics }),
-  session: new SessionDataSource()
+  session: new SessionDataSource(),
 })
