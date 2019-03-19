@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Using `application/x-www-form-urlencoded` for logging-in instead of raw querystring with plain text credentials
 
 ## [2.59.0] - 2019-03-19 [YANKED]
 ### Removed	
