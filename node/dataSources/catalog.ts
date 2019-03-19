@@ -215,11 +215,18 @@ export class CatalogDataSource extends RESTDataSource {
     orderBy = '',
     from = 0,
     to = 9,
-    map = ''
+    map = '',
   }: ProductsArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
-    return (
-      `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
-    )
+    return `/pub/products/search/${sanitizedQuery}?${category &&
+      !query &&
+      `&fq=C:/${category}/`}${(specificationFilters &&
+      specificationFilters.length > 0 &&
+      specificationFilters.map(filter => `&fq=${filter}`)) ||
+      ''}${priceRange && `&fq=P:[${priceRange}]`}${collection &&
+      `&fq=productClusterIds:${collection}`}${salesChannel &&
+      `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy &&
+      `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 &&
+      `&_from=${from}`}${to > -1 && `&_to=${to}`}`
   }
 }
