@@ -96,11 +96,13 @@ export class CatalogDataSource extends IODataSource {
   private get = <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
+    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
+    const appMajor = `${appMajorNumber}.x`
 
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __p: process.env.VTEX_APP_ID,
+      __v: appMajor,
     }
     return this.http.get<T>(`/proxy/catalog${url}`, config)
   }
@@ -108,11 +110,13 @@ export class CatalogDataSource extends IODataSource {
   private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
+    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
+    const appMajor = `${appMajorNumber}.x`
 
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __p: process.env.VTEX_APP_ID,
+      __v: appMajor,
     }
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
