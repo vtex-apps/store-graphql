@@ -16,7 +16,7 @@ export const catalogProxy = async (ctx: Context) => {
     ? ['api.gocommerce.com', `${account}/search`]
     : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
-  const {data, headers} = await axios.request({
+  const {data, headers, status} = await axios.request({
     baseURL: `http://${host}/${basePath}`,
     headers: {
       'Authorization': authToken,
@@ -35,6 +35,7 @@ export const catalogProxy = async (ctx: Context) => {
     ctx.set(headerKey, headers[headerKey])
   })
 
+  ctx.status = status
   ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
   ctx.body = data
 }
