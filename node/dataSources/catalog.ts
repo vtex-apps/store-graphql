@@ -20,7 +20,7 @@ metrics.trackCache('catalog', memoryCache)
 
 const forProxy: HttpClientFactory = ({context, options}) => context &&
   HttpClient.forWorkspace('store-graphql.vtex', context, {...options, headers: {
-    'x-vtex-segment': context.segmentToken!,
+    ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
   }, memoryCache, metrics})
 
 /** Catalog API
