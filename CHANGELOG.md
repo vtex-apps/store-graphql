@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.59.2] - 2019-03-20
+### Changed
+- Return new order form if added assembly options at end of addItem mutation.
+
 ## [2.59.1] - 2019-03-19
 
 ## [2.59.0] - 2019-03-19

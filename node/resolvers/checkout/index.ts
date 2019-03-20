@@ -123,11 +123,11 @@ export const mutations: Record<string, Resolver> = {
     }
 
     const cleanItems = items.map(({ options, ...rest }) => rest)
-
     const addItem = await checkout.addItem(orderFormId, cleanItems)
-
-    await addOptionsForItems(items, checkout, addItem)
-    return addItem
+    const withOptions = items.filter(({ options }) => !!options && options.length > 0)
+    await addOptionsForItems(withOptions, checkout, addItem)
+    
+    return withOptions.length === 0 ? addItem : (await checkout.orderForm())
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
