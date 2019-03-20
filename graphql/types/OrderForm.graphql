@@ -59,6 +59,8 @@ type OrderFormItem {
   parentAssemblyBinding: String
   """ Informations related to assembly options children of this item """
   assemblyOptions: AssemblyOptionItem
+  """ ID of item's seller """
+  seller: String
 }
 
 type AssemblyOptionItem {
