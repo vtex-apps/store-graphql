@@ -12,7 +12,7 @@ import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
-import { SessionDataSource, SegmentData } from './dataSources/session'
+import { SegmentData, SessionDataSource } from './dataSources/session'
 
 declare global {
   const metrics: MetricsAccumulator
