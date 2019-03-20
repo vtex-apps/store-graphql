@@ -1,4 +1,4 @@
-import { IOContext, MetricsAccumulator, ServiceContext } from '@vtex/api'
+import { IOClients, IOContext, MetricsAccumulator, ServiceContext } from '@vtex/api'
 import { DataSource } from 'apollo-datasource'
 
 import { dataSources } from './dataSources'
@@ -12,20 +12,24 @@ import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
-import { SessionDataSource } from './dataSources/session'
+import { SegmentData, SessionDataSource } from './dataSources/session'
 
 declare global {
   const metrics: MetricsAccumulator
 
-  interface Context extends ServiceContext {
+  interface Context extends ServiceContext<IOClients, void, CustomContext> {
+    vtex: CustomIOContext
+  }
+
+  interface CustomContext {
+    cookie: string
     dataSources: StoreGraphQLDataSources
     originalPath: string
-    cookie: string
-    vtex: CustomIOContext
   }
 
   interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
+    segment: SegmentData
   }
 
   interface StoreGraphQLDataSources extends Record<string, DataSource> {
