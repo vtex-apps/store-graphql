@@ -182,10 +182,10 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
-"@vtex/api@^3.0.0-beta.16":
-  version "3.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.0.0-beta.16.tgz#a4dad71001d6a3937c140cf1d279d3990a1efc7f"
-  integrity sha512-I9tYe74hunmKSzJ8l44zWLbDICY9NWRnLdksnTc1sWsoFM/iTz4ssrYmBavyrTukpO07S+ag1z86CNlq42zmIA==
+"@vtex/api@^3.0.0-beta.18":
+  version "3.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.0.0-beta.18.tgz#f4b7e00cbc79d7b503b59ab1991fb9ee6d02608e"
+  integrity sha512-4/77zy0mWSYlaDdoeN/Plo+mggcaeHZBDzqwKA3MVJCjjFLJ2+5LJOUUQyiB9a4F+O9QN8O7dmsz22hW4sQu3Q==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
@@ -2797,7 +2797,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-stats-lite@vtex/node-stats-lite#dist:
+"stats-lite@github:vtex/node-stats-lite#dist":
   version "2.2.0"
   resolved "https://codeload.github.com/vtex/node-stats-lite/tar.gz/1b0d39cc41ef7aaecfd541191f877887a2044797"
   dependencies:
