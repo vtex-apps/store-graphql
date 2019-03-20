@@ -1,17 +1,5 @@
-import { Functions } from '@gocommerce/utils'
-import { RequestOptions } from 'apollo-datasource-rest'
-import http from 'axios'
-import { forEachObjIndexed } from 'ramda'
-
-import { withAuthToken } from '../resolvers/headers'
-import { RESTDataSource } from './RESTDataSource'
+import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } from '@vtex/api'
 import { SegmentData } from './session'
-
-const DEFAULT_TIMEOUT_MS = 8 * 1000
-
-// 0 - 1 number with catalog proxy weight. A higher value means
-// more queries will be routed to catalog proxy
-const CATALOG_PROXY_AB_TEST_WEIGHT = 0.5
 
 interface ProductsArgs {
   query: string
@@ -26,166 +14,107 @@ interface ProductsArgs {
   map: string
 }
 
+const memoryCache = new LRUCache<string, any>({max: 2000})
+
+metrics.trackCache('catalog', memoryCache)
+
+const forProxy: HttpClientFactory = ({context, options}) => context &&
+  HttpClient.forWorkspace('store-graphql.vtex', context, {...options, headers: {
+    'x-vtex-segment': context.segmentToken!,
+  }, memoryCache, metrics})
+
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource {
-  private mode: 'proxy' | 'direct'
-  private backend: 'vtex' | 'gocommerce'
-
-  constructor() {
-    super()
-
-    this.mode = Math.random() < CATALOG_PROXY_AB_TEST_WEIGHT
-      ? 'proxy'
-      : 'direct'
-
-    this.backend = 'vtex'
-  }
+export class CatalogDataSource extends IODataSource {
+  protected httpClientFactory = forProxy
 
   public product = (slug: string) => this.get(
     `/pub/products/search/${slug && slug.toLowerCase()}/p`,
-    undefined,
-    {metric: `catalog-product-${this.mode}`}
+    {metric: 'catalog-product'}
   )
 
   public productByEan = (id: string) => this.get(
     `/pub/products/search?fq=alternateIds_Ean=${id}`,
-    undefined,
-    {metric: `catalog-productByEan-${this.mode}`}
+    {metric: 'catalog-productByEan'}
   )
 
   public productById = (id: string) => this.get(
     `/pub/products/search?fq=productId:${id}`,
-    undefined,
-    {metric: `catalog-productById-${this.mode}`}
+    {metric: 'catalog-productById'}
   )
 
   public productByReference = (id: string) => this.get(
     `/pub/products/search?fq=alternateIds_RefId=${id}`,
-    undefined,
-    {metric: `catalog-productByReference-${this.mode}`}
+    {metric: 'catalog-productByReference'}
   )
 
   public productBySku = (skuIds: string[]) => this.get(
     `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
-    undefined,
-    {metric: `catalog-productBySku-${this.mode}`}
+    {metric: 'catalog-productBySku'}
   )
 
   public products = (args: ProductsArgs) => this.get(
     this.productSearchUrl(args),
-    undefined,
-    {metric: `catalog-products-${this.mode}`}
+    {metric: 'catalog-products'}
   )
 
   public productsQuantity = async (args: ProductsArgs) => {
-    const { vtex: ioContext, vtex: {account} } = this.context
-
-    const headers = this.mode === 'direct'
-      ? {'X-Vtex-Use-Https': 'true'}
-      : {}
-
-    const params = this.mode === 'direct' && this.backend !== 'gocommerce'
-      ? {an: account}
-      : {}
-
-    const { headers: { resources } } = await http.request(
-      {
-        headers: withAuthToken(headers)(ioContext),
-        method: this.backend === 'gocommerce' ? 'GET' : 'HEAD',
-        params,
-        url: `${this.baseURL}${this.productSearchUrl(args)}`,
-      }
-    )
-
+    const {headers: {resources}} = await this.getRaw(this.productSearchUrl(args))
     const quantity = resources.split('/')[1]
-
     return parseInt(quantity, 10)
   }
 
   public brands = () => this.get(
-    `/pub/brand/list`,
-    undefined,
-    {metric: `catalog-brands-${this.mode}`}
+    '/pub/brand/list',
+    {metric: 'catalog-brands'}
   )
 
   public categories = (treeLevel: string) => this.get(
     `/pub/category/tree/${treeLevel}/`,
-    undefined,
-    {metric: `catalog-categories-${this.mode}`}
+    {metric: 'catalog-categories'}
   )
 
   public facets = (facets: string = '') => {
     const [path, options] = decodeURI(facets).split('?')
     return this.get(
       `/pub/facets/search/${encodeURI(`${path.trim()}${options ? '?' + options : ''}`)}`,
-      undefined,
-      {metric: `catalog-${this.mode}`}
+      {metric: 'catalog-facets'}
     )
   }
 
   public category = (id: string) => this.get(
     `/pub/category/${id}`,
-    undefined,
-    {metric: `catalog-category-${this.mode}`}
+    {metric: 'catalog-category'}
   )
 
   public crossSelling = (id: string, type: string) => this.get(
     `/pub/products/crossselling/${type}/${id}`,
-    undefined,
-    {metric: `catalog-crossSelling-${this.mode}`}
+    {metric: 'catalog-crossSelling'}
   )
 
-  get baseURL() {
-    const {vtex: {account, workspace, region}} = this.context
-    this.backend = Functions.isGoCommerceAcc(this.context) ? 'gocommerce' : 'vtex'
-    const directUrl = this.backend === 'gocommerce'
-      ? `http://api.gocommerce.com/${account}/search`
-      : `http://portal.vtexcommercestable.com.br/api/catalog_system`
-    return this.mode === 'direct'
-      ? directUrl
-      : `http://store-graphql.vtex.${region}.vtex.io/${account}/${workspace}/proxy/catalog`
+  private get = <T = any>(url: string, config: RequestConfig = {}) => {
+    const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
+    const { channel: salesChannel = '' } = segmentData || {}
+
+    config.params = {
+      ...config.params,
+      ...!!salesChannel && {sc: salesChannel},
+      __p: process.env.VTEX_APP_ID,
+    }
+    return this.http.get<T>(`/proxy/catalog${url}`, config)
   }
 
-  protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken, production, account}, cookies} = this.context
-    const segmentData: SegmentData | null = (this.context.vtex as any).segment
+  private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
+    const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
-    const segment = cookies.get('vtex_segment')
-    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
-    const appMajor = `${appMajorNumber}.x`
 
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
+    config.params = {
+      ...config.params,
+      ...!!salesChannel && {sc: salesChannel},
+      __p: process.env.VTEX_APP_ID,
     }
-
-    const params = this.mode === 'proxy'
-      ? {
-        '__v': appMajor,
-        'production': production ? 'true' : 'false',
-        ...segment && {'vtex_segment': segment},
-        ...!!salesChannel && {sc: salesChannel}
-      } : {
-        an: account,
-        ...!!salesChannel && {sc: salesChannel}
-      }
-
-    forEachObjIndexed((value: string, param: string) => request.params.set(param, value), params)
-
-    const headers = this.mode === 'proxy'
-      ? {
-        'Accept-Encoding': 'gzip',
-        Authorization: authToken,
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-      } : {
-        'Accept-Encoding': 'gzip',
-        'Proxy-Authorization': authToken,
-        'X-Vtex-Use-Https': 'true',
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-      }
-
-    forEachObjIndexed((value: string, header) => request.headers.set(header, value), headers)
+    return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
 
   private productSearchUrl = ({
