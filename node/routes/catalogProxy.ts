@@ -4,11 +4,11 @@ import qs from 'qs'
 import { keys } from 'ramda'
 
 const TIMEOUT_MS = 7 * 1000
-const MAX_AGE_S = 30
+const MAX_AGE_S = 2 * 60
 const STALE_IF_ERROR_S = 20 * 60
 
 export const catalogProxy = async (ctx: Context) => {
-  const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query, method} = ctx
+  const {vtex: {account, authToken, production, route: {params: {path}}, segmentToken}, query, method} = ctx
 
   const isGoCommerce = Functions.isGoCommerceAcc(ctx)
 
@@ -16,7 +16,9 @@ export const catalogProxy = async (ctx: Context) => {
     ? ['api.gocommerce.com', `${account}/search`]
     : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
-  const {data, headers} = await axios.request({
+  const cookie = segmentToken && {Cookie: `vtex_segment=${segmentToken}`}
+
+  const {data, headers, status} = await axios.request({
     baseURL: `http://${host}/${basePath}`,
     headers: {
       'Authorization': authToken,
@@ -35,6 +37,7 @@ export const catalogProxy = async (ctx: Context) => {
     ctx.set(headerKey, headers[headerKey])
   })
 
+  ctx.status = status
   ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
   ctx.body = data
 }

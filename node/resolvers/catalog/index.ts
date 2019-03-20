@@ -87,7 +87,7 @@ export const queries = {
     return catalog.facets(facets)
   },
 
-  product: async (_, { slug }, ctx) => {
+  product: async (_, { slug }, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
 
