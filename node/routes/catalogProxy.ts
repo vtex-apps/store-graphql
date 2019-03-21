@@ -17,6 +17,10 @@ export const catalogProxy = async (ctx: Context) => {
     : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
   const cookie = segmentToken && {Cookie: `vtex_segment=${segmentToken}`}
+  const params = {
+    ...query,
+    segment: segmentToken,
+  }
 
   const {data, headers, status} = await axios.request({
     baseURL: `http://${host}/${basePath}`,
@@ -27,8 +31,8 @@ export const catalogProxy = async (ctx: Context) => {
       ...cookie && {cookie},
     },
     method: isGoCommerce ? 'GET' : method,
-    params: query,
-    paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
+    params,
+    paramsSerializer: (p) => qs.stringify(p, {arrayFormat: 'repeat'}),
     timeout: TIMEOUT_MS,
     url: encodeURI((path as any).trim()),
   })
@@ -37,6 +41,7 @@ export const catalogProxy = async (ctx: Context) => {
     ctx.set(headerKey, headers[headerKey])
   })
 
+  ctx.vary('x-vtex-segment')
   ctx.status = status
   ctx.set('cache-control', production ? `public, max-age=${MAX_AGE_S}, stale-if-error=${STALE_IF_ERROR_S}` : 'no-store, no-cache')
   ctx.body = data
