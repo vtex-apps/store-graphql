@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.60.3] - 2019-03-21
+### Added
+- Add `seller` field to `OrderFormItem`.
+
 ## [2.60.2] - 2019-03-20
 
 ## [2.60.1] - 2019-03-20
