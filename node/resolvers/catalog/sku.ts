@@ -1,5 +1,47 @@
 import { find, head, map, replace, slice } from 'ramda'
 
+interface fixedPriceInputs {
+  itemId: String, 
+  sellerId: String, 
+  measurementUnit: String, 
+  unitMultiplier: String
+}
+
+const fetchFixedPrices = async (
+  {itemId, sellerId, measurementUnit, unitMultiplier}: fixedPriceInputs, 
+  { dataSources: { fixedPrice, ratesAndBenefits } }) => {
+
+  try {
+    var fixedPrices = await fixedPrice.fixedPrices(itemId)
+    
+    if (!fixedPrices || !fixedPrices.length) {
+      return []
+    }
+    
+    let ratesAndBenefitsItems = await ratesAndBenefits.calculateDiscountsAndTaxes(
+      {
+        isShoppingCart: false,
+        origin: 'Marketplace',
+        items: fixedPrices.map(fixedPrice => ({
+          id: itemId,
+          measurementUnit: measurementUnit,
+          unitMultiplier: unitMultiplier,
+          sellerId: sellerId,
+          quantity: fixedPrice.minQuantity,
+        }))
+      }
+    )
+
+    return ratesAndBenefitsItems && ratesAndBenefitsItems.items
+    ? ratesAndBenefitsItems.items
+    : []
+
+  }catch(e) {
+    // TODO: Log the error
+    console.log(e)
+  }
+}
+
 export const resolvers = {
   SKU: {
     attachments: ({attachments = []}: any) => map(
@@ -31,5 +73,11 @@ export const resolvers = {
       (name: string) => ({ name, values: sku[name] }),
       sku.variations || []
     ),
+    sellers: ({ itemId, sellers, measurementUnit, unitMultiplier }, _, { dataSources: { fixedPrice, ratesAndBenefits } }) => {
+      return sellers.map(async seller => ({
+        ...seller, 
+        ...{ fixedPrices: await fetchFixedPrices({ itemId: itemId, sellerId: seller.sellerId, measurementUnit: measurementUnit, unitMultiplier: unitMultiplier }, { dataSources: { fixedPrice, ratesAndBenefits }})}
+      }))
+    }
   }
 }

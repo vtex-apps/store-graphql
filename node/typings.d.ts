@@ -13,7 +13,8 @@ import { OMSDataSource } from './dataSources/oms'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SegmentData, SessionDataSource } from './dataSources/session'
-
+import { FixedPriceDataSource } from './dataSources/fixedPrice'
+import { RatesAndBenefitsDataSource } from './dataSources/ratesAndBenefits'
 declare global {
   const metrics: MetricsAccumulator
 
@@ -44,6 +45,8 @@ declare global {
     session: SessionDataSource
     callcenterOperator: CallcenterOperatorDataSource
     oms: OMSDataSource
+    fixedPrice: FixedPriceDataSource
+    ratesAndBenefits: RatesAndBenefitsDataSource
   }
 
   interface OrderFormItem {

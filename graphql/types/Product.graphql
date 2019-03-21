@@ -77,6 +77,7 @@ type Seller {
   addToCartLink: String
   sellerDefault: Boolean
   commertialOffer: Offer
+  fixedPrices: [FixedPrice]
 }
 
 type Recommendation {
@@ -194,4 +195,11 @@ type Installment {
 type Reference {
   Key: String
   Value: String
+}
+
+type FixedPrice {
+  taggedPrice: Float
+  price: Float
+  listPrice: Float
+  quantity: Float
 }
