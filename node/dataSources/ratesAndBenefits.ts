@@ -10,7 +10,6 @@ export class RatesAndBenefitsDataSource extends RESTDataSource<Context> {
   }
 
   public calculateDiscountsAndTaxes = (data: any) => {
-    console.log('--- Calculate discounts and taxes : ' + JSON.stringify(data))
     return this.post('/rnb/pub/bundles', data)
   }
 
