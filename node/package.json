@@ -17,7 +17,7 @@
     "querystring": "^0.2.0",
     "ramda": "^0.24.1",
     "slugify": "^1.2.6",
-    "typescript": "^2.5.2",
+    "typescript": "^3.3.4000",
     "url-parse": "^1.2.0"
   },
   "devDependencies": {
@@ -34,11 +34,12 @@
     "@types/ramda": "types/npm-ramda#dist",
     "@types/url-parse": "^1.4.3",
     "@vtex/api": "^3.2.1",
+    "eslint": "^5.15.3",
+    "eslint-config-vtex": "^10.1.0",
     "http2": "^3.3.7",
-    "tslint": "^5.8.0",
-    "tslint-config-vtex": "^2.0.0"
+    "prettier": "^1.16.4"
   },
   "scripts": {
-    "lint": "tsc --noEmit && tslint -c tslint.json './**/*.ts'"
+    "lint": "tsc --noEmit && eslint --ext ts ."
   }
 }
