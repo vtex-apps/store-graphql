@@ -140,7 +140,7 @@ export const queries = {
   products: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
-    if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
+    if (queryTerm == null || test(/[?&[\]=,]/, queryTerm)) {
       throw new UserInputError(`The query term contains invalid characters. query=${queryTerm}`)
     }
     return catalog.products(args)

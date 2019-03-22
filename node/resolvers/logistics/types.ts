@@ -21,7 +21,7 @@ export interface LogisticPickupPoint {
   isActive: boolean,
   distance: number,
   seller: string,
-  businessHours: Array<{ closingTime: string, openingTime: string, dayOfWeek: number }>,
+  businessHours: { closingTime: string, openingTime: string, dayOfWeek: number }[],
   tagsLabel: any[],
   pickupHolidays: any[],
 }

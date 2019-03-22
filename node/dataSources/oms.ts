@@ -18,7 +18,7 @@ export class OMSDataSource extends RESTDataSource {
     {metric: 'oms-order'}
   )
 
-  get baseURL() {
+  public get baseURL() {
     const { vtex: { account } } = this.context
     return `http://${account}.vtexcommercestable.com.br/api/oms`
   }
