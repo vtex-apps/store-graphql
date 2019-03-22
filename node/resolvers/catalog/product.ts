@@ -24,17 +24,17 @@ const knownNotPG = [
 
 export const resolvers = {
   Product: {
-    benefits: ({productId}, _, ctx) => benefitsQueries.benefits(_, {id: productId}, ctx),
+    benefits: ({ productId }, _, ctx) => benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({categories}, _, ctx) => Promise.all(map((category: string) => toIOMessage(ctx, category), categories)),
+    categories: ({ categories }, _, ctx) => Promise.all(map((category: string) => toIOMessage(ctx, category), categories)),
 
-    description: ({description}, _, ctx) => toIOMessage(ctx, description),
+    description: ({ description }, _, ctx) => toIOMessage(ctx, description),
 
-    productName: ({productName}, _, ctx) => toIOMessage(ctx, productName),
+    productName: ({ productName }, _, ctx) => toIOMessage(ctx, productName),
 
-    cacheId: ({linkText}) => linkText,
+    cacheId: ({ linkText }) => linkText,
 
-    clusterHighlights: ({clusterHighlights = {}}) => objToNameValue('id', 'name', clusterHighlights),
+    clusterHighlights: ({ clusterHighlights = {} }) => objToNameValue('id', 'name', clusterHighlights),
 
     jsonSpecifications: product => {
       const { Specifications = [] } = product
@@ -45,7 +45,7 @@ export const resolvers = {
       return JSON.stringify(specificationsMap)
     },
 
-    productClusters: ({productClusters = {}}) => objToNameValue('id', 'name', productClusters),
+    productClusters: ({ productClusters = {} }) => objToNameValue('id', 'name', productClusters),
 
     properties: product => map((name: string) => ({ name, values: product[name] }), product.allSpecifications || []),
 
@@ -57,8 +57,17 @@ export const resolvers = {
 
     recommendations: product => product,
 
-    titleTag: ({productTitle}) => productTitle,
+    titleTag: ({ productTitle }) => productTitle,
 
-    generalProperties:  product => map((name: string) => ({ name, values: product[name] }), product.General || []),
+    generalProperties: product => map((name: string) => ({ name, values: product[name] }), product.General || []),
+
+    specificationGroups: product => {
+      const buildPropertie = nameGroup => map((name: string) => ({ name, values: product[name] }), product[nameGroup] || [])
+
+      const specificationGroups = map((name: string) => ({ name, specifications: buildPropertie(name) }), product.allSpecificationsGroups || [])
+      return specificationGroups
+    },
+
+
   },
 }

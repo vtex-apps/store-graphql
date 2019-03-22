@@ -41,6 +41,7 @@ type Product {
   """ List of benefits associated with this product """
   benefits: [Benefit]
   itemMetadata: ItemMetadata
+  specificationGroups: [SpecificationGroup]
 }
 
 type OnlyProduct {
@@ -170,6 +171,11 @@ type Image {
   imageTag: String
   imageUrl: String
   imageText: String
+}
+
+type SpecificationGroup {
+  name: String, 
+  specifications: [Property]
 }
 
 type Property {
