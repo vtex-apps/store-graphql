@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.60.5] - 2019-03-22
+### Fixed
+- Filter assemblyOptions with composition not null for assemblyOptions resolver.
+
 ## [2.60.4] - 2019-03-21
 
 ## [2.60.3] - 2019-03-21
