@@ -147,7 +147,7 @@ export const queries = {
   products: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
-    if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
+    if (queryTerm == null || test(/[?&[\]=,]/, queryTerm)) {
       throw new ResolverError(
         `The query term: '${queryTerm}' contains invalid characters.`,
         500

@@ -17,7 +17,7 @@ import {
 } from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
 
-// tslint:disable-next-line:no-var-requires
+// eslint-disable-next-line no-global-assign
 Promise = require('bluebird')
 
 export const resolvers = {

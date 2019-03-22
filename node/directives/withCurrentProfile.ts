@@ -65,7 +65,7 @@ async function getCurrentProfileFromCookies(
   const userToken = parsedCookies[`VtexIdclientAutCookie_${account}`]
   const adminToken = parsedCookies[`VtexIdclientAutCookie`]
 
-  if (!!userToken) {
+  if (userToken) {
     return identity
       .getUserWithToken(userToken)
       .then(data => ({ userId: data.userId, email: data.user }))

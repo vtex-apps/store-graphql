@@ -33,7 +33,7 @@ const isWhitelistedSetCookie = (cookie: string) => {
 }
 
 export class CheckoutDataSource extends RESTDataSource {
-  constructor() {
+  public constructor() {
     super()
   }
 
@@ -143,7 +143,7 @@ export class CheckoutDataSource extends RESTDataSource {
     {metric: 'checkout-shipping'}
   )
 
-  get baseURL() {
+  public get baseURL() {
     const {vtex: {account}} = this.context
     return `http://${account}.vtexcommercestable.com.br/api/checkout`
   }
@@ -170,7 +170,7 @@ export class CheckoutDataSource extends RESTDataSource {
       request.timeout = DEFAULT_TIMEOUT_MS
     }
 
-    if (!!salesChannel) {
+    if (salesChannel) {
       request.params.set('sc', salesChannel.toString())
     }
 

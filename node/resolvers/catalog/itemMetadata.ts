@@ -88,7 +88,7 @@ const getSimulationPayload = async (segment: Segment, account: string, authToken
 export const resolvers = {
   ItemMetadata: {
     priceTable: async ({items}: Parent, _: any, { vtex: { account, authToken }, clients: { segment } }: Context) => {
-      const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
+      const itemsToFetch = [] as { id: string, priceTable: string, seller: string }[]
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
         assemblyOptions.map(({ composition: { items: compItems } }) => {
@@ -105,7 +105,7 @@ export const resolvers = {
 
       const priceData = await Promise.all(itemsPromises)
 
-      const prices = priceData.reduce<{ [key: string]: Array<{ price: number, id: string }>}>((prev, curr) => {
+      const prices = priceData.reduce<{ [key: string]: { price: number, id: string }[]}>((prev, curr) => {
         const { id, priceTable, price } = curr
         const currentArray = prev[priceTable] || []
         return {
