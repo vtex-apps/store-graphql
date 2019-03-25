@@ -9,7 +9,7 @@ const DEFAULT_QUANTITY = '1'
 
 export const fieldResolvers = {
   Benefit: {
-    items: async (benefit, _, {dataSources: {catalog}}) => {
+    items: async (benefit, _, {dataSources: {catalog}}: Context) => {
       const { teaserType, conditions, effects } = benefit
 
       if (teaserType === CATALOG) {

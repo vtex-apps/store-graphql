@@ -9,19 +9,19 @@ import {
 } from './services'
 
 export const mutations = {
-  createAddress: (_, { fields }, context) => createAddress(context, fields),
+  createAddress: (_, { fields }, context: Context) => createAddress(context, fields),
 
-  deleteAddress: (_, { id }, context) => deleteAddress(context, id),
+  deleteAddress: (_, { id }, context: Context) => deleteAddress(context, id),
 
-  updateAddress: (_, args, context) => updateAddress(context, args),
+  updateAddress: (_, args, context: Context) => updateAddress(context, args),
 
-  updateProfile: (_, { fields, customFields }, context) =>
+  updateProfile: (_, { fields, customFields }, context: Context) =>
     updateProfile(context, fields, customFields),
 
-  updateProfilePicture: (_, { file }, context) =>
+  updateProfilePicture: (_, { file }, context: Context) =>
     updateProfilePicture(context, file),
 
-  uploadProfilePicture: (_, { file }, context) =>
+  uploadProfilePicture: (_, { file }, context: Context) =>
     updateProfilePicture(context, file),
 
   subscribeNewsletter: async (_, { email }, context: Context) => {
