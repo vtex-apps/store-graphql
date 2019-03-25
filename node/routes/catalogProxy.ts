@@ -28,7 +28,7 @@ export const catalogProxy = async (ctx: Context) => {
       'Authorization': authToken,
       'Proxy-Authorization': authToken,
       'X-VTEX-Proxy-To': `https://${host}`,
-      ...cookie && {cookie},
+      ...cookie,
     },
     method: isGoCommerce ? 'GET' : method,
     params,
