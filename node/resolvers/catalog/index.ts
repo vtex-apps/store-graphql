@@ -162,6 +162,10 @@ export const queries = {
   categories: async (_: any, { treeLevel }: any, { dataSources: { catalog } }: Context) => catalog.categories(treeLevel),
 
   search: async (_: any, args: any, ctx: Context) => {
+    return queries.productSearch(_, args, ctx)
+  },
+
+  productSearch: async (_: any, args: any, ctx: Context) => {
     const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {
