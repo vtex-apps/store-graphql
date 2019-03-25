@@ -13,6 +13,7 @@ export default {
   Profile: {
     address: (_, __, context) => getAddresses(context),
     addresses: (_, __, context) => getAddresses(context),
+    birthDate: (obj) => obj.birthDate ? new Date(obj.birthDate).toISOString() : obj.birthDate,
     cacheId: prop('email'),
     customFields: obj =>
       typeof obj.customFields === 'string'
