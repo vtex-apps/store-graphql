@@ -62,7 +62,7 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_, args, ctx) => {
+  autocomplete: async (_, args, ctx: Context) => {
     const { dataSources: { portal, messages, session} } = ctx
 
     const from = await session.getSegmentData().then(prop('cultureInfo'))
@@ -82,7 +82,7 @@ export const queries = {
     }
   },
 
-  facets: (_, { facets }, ctx) => {
+  facets: (_, { facets }, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     return catalog.facets(facets)
   },
@@ -101,7 +101,7 @@ export const queries = {
     )
   },
 
-  products: async (_, args, ctx) => {
+  products: async (_, args, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
@@ -113,7 +113,7 @@ export const queries = {
     return catalog.products(args)
   },
 
-  brand: async (_, args, { dataSources: { catalog } }) => {
+  brand: async (_, args, { dataSources: { catalog } }: Context) => {
     const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id') as any), brands)
     if (!brand) {
@@ -122,11 +122,11 @@ export const queries = {
     return brand
   },
 
-  brands: async (_, __, { dataSources: { catalog } }) => catalog.brands(),
+  brands: async (_, __, { dataSources: { catalog } }: Context) => catalog.brands(),
 
-  category: async (_, { id }, { dataSources: { catalog } }) => catalog.category(id),
+  category: async (_, { id }, { dataSources: { catalog } }: Context) => catalog.category(id),
 
-  categories: async (_, { treeLevel }, { dataSources: { catalog } }) => catalog.categories(treeLevel),
+  categories: async (_, { treeLevel }, { dataSources: { catalog } }: Context) => catalog.categories(treeLevel),
 
   search: async (_, args, ctx: Context) => {
     const { map: mapParams, query } = args
@@ -176,7 +176,7 @@ export const queries = {
   searchContextFromParams: async (
     _,
     args,
-    { dataSources: { catalog } }
+    { dataSources: { catalog } }: Context
   ) => {
     const response = {
       brand: null,
