@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Property `lastPasswordUpdate` to profile
+
 ## [2.66.1] - 2019-04-09
 
 ## [2.66.0] - 2019-04-09
