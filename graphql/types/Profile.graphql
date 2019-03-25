@@ -43,6 +43,8 @@ type Profile {
   payments: [PaymentProfile]
   """ Other fields to query """
   customFields: [ProfileCustomField]
+  """ User's last password update time """
+  passwordLastUpdate: String
 }
 
 """ Custom fields to add to query """

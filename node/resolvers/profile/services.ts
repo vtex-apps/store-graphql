@@ -1,7 +1,13 @@
+import { makeRequest } from './../auth/index'
+
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
 import { uploadAttachment } from '../document/attachment'
+import paths from '../paths'
+
+import { parse } from 'cookie'
+
 
 export function getProfile(context: Context, customFields?: string) {
   const {
@@ -16,6 +22,7 @@ export function getProfile(context: Context, customFields?: string) {
   return profile
     .getProfileInfo(currentProfile.email, extraFields)
     .then(profileData => {
+      console.log(profileData)
       if (profileData) {
         return {
           ...profileData,
@@ -25,6 +32,18 @@ export function getProfile(context: Context, customFields?: string) {
 
       return { email: currentProfile.email }
     })
+}
+
+export function getPasswordLastUpdate(context: Context) {
+  console.log('getPasswordLastUpdate service')
+
+  const url = paths.getUser(context.vtex.account)
+  const parsedCookies = parse(context.cookie)
+  const userToken = parsedCookies[`VtexIdclientAutCookie_${context.vtex.account}`]
+  return makeRequest(context.vtex, url, 'GET', undefined, userToken).then(response => {
+    console.log(response.data.passwordLastUpdate, 'makeRequest .then')
+    return response.data.passwordLastUpdate
+  })
 }
 
 export function getAddresses(context: Context) {
