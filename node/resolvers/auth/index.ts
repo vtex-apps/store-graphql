@@ -8,8 +8,6 @@ import paths from '../paths'
 
 
 export async function makeRequest(ctx, url, method='POST', vtexIdVersion='store-graphql', cookie = null) {
-  console.log('make request')
-
   const composedHeaders = {
     ...authHeaders.profile,
     'Cookie': `VtexIdClientAutCookie=${cookie}`,

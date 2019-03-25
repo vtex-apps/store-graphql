@@ -19,12 +19,9 @@ export default {
       typeof obj.customFields === 'string'
         ? pickCustomFieldsFromData(obj.customFields, obj)
         : obj.customFields,
-    passwordLastUpdate: (_: any, __: any, context: any) => {
-      console.log('passwordLastUpdate fieldResolver')
-      getPasswordLastUpdate(context)
-    },
-    payments: (_: any, __: any, context: any) => getPayments(context),
-    profilePicture: (obj: any, _: any, context: any) =>
+    passwordLastUpdate: (_, __, context) => getPasswordLastUpdate(context),
+    payments: (_, __, context) => getPayments(context),
+    profilePicture: (obj, _, context) =>
       obj.profilePicture &&
       `http://api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${
       obj.id

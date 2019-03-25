@@ -22,7 +22,6 @@ export function getProfile(context: Context, customFields?: string) {
   return profile
     .getProfileInfo(currentProfile.email, extraFields)
     .then(profileData => {
-      console.log(profileData)
       if (profileData) {
         return {
           ...profileData,
@@ -35,13 +34,11 @@ export function getProfile(context: Context, customFields?: string) {
 }
 
 export function getPasswordLastUpdate(context: Context) {
-  console.log('getPasswordLastUpdate service')
-
-  const url = paths.getUser(context.vtex.account)
-  const parsedCookies = parse(context.cookie)
+  const { request: { headers: { cookie } }, vtex: { account } } = context
+  const url = paths.getUser(account)
+  const parsedCookies = parse(cookie)
   const userToken = parsedCookies[`VtexIdclientAutCookie_${context.vtex.account}`]
   return makeRequest(context.vtex, url, 'GET', undefined, userToken).then(response => {
-    console.log(response.data.passwordLastUpdate, 'makeRequest .then')
     return response.data.passwordLastUpdate
   })
 }
