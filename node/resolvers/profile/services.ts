@@ -37,8 +37,8 @@ export function getPasswordLastUpdate(context: Context) {
   const { request: { headers: { cookie } }, vtex: { account } } = context
   const url = paths.getUser(account)
   const parsedCookies = parse(cookie)
-  const userToken = parsedCookies[`VtexIdclientAutCookie_${context.vtex.account}`]
-  return makeRequest(context.vtex, url, 'GET', undefined, userToken).then(response => {
+  const userCookie = parsedCookies[`VtexIdclientAutCookie_${context.vtex.account}`]
+  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then(response => {
     return response.data.passwordLastUpdate
   })
 }
