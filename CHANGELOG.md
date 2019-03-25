@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [2.60.6] - 2019-03-25
+### Fixed
+- Fix cookies not being properly sent to search API.
 
 ## [2.60.5] - 2019-03-22
 ### Fixed
@@ -36,7 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Using `application/x-www-form-urlencoded` for logging-in instead of raw querystring with plain text credentials
 
 ## [2.59.0] - 2019-03-19 [YANKED]
-### Removed	
+### Removed
 - `Subscriptions`, moving the queries to the other `my-subscriptions-graphql`.
 
 ## [2.58.0] - 2019-03-15
