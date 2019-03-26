@@ -32,17 +32,17 @@ const knownNotPG = [
 
 export const resolvers = {
   Product: {
-    benefits: ({ productId }, _, ctx) =>
+    benefits: ({ productId }, _, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({ categories }, _, ctx) =>
+    categories: ({ categories }, _, ctx: Context) =>
       Promise.all(
         map((category: string) => toIOMessage(ctx, category), categories)
       ),
 
-    description: ({ description }, _, ctx) => toIOMessage(ctx, description),
+    description: ({ description }, _, ctx: Context) => toIOMessage(ctx, description),
 
-    productName: ({ productName }, _, ctx) => toIOMessage(ctx, productName),
+    productName: ({ productName }, _, ctx: Context) => toIOMessage(ctx, productName),
 
     cacheId: ({ linkText }) => linkText,
 
