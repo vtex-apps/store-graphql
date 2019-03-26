@@ -13,8 +13,6 @@ import { OMSDataSource } from './dataSources/oms'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SegmentData, SessionDataSource } from './dataSources/session'
-import { SubscriptionsDataSource } from './dataSources/subscriptions'
-import { SubscriptionsGroupDataSource } from './dataSources/subscriptionsGroup'
 
 (global as any).metrics = new MetricsAccumulator()
 
@@ -44,8 +42,6 @@ declare global {
     portal: PortalDataSource
     profile: ProfileDataSource
     session: SessionDataSource
-    subscriptions: SubscriptionsDataSource
-    subscriptionsGroup: SubscriptionsGroupDataSource
     callcenterOperator: CallcenterOperatorDataSource
     oms: OMSDataSource
   }
