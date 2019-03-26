@@ -35,7 +35,7 @@ type Query {
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
-  ): Facets @cacheControl(scope: SEGMENT) @withSegment
+  ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
   search(
@@ -92,7 +92,7 @@ type Query {
     postalCode: String,
     """ Country of postal code """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT) @withSegment
+  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Get checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
@@ -115,7 +115,7 @@ type Query {
     maxRows: Int = 12,
     """ Terms that is used in search e.g.: iphone """
     searchTerm: String
-  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: LONG) @withSegment
+  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Search documents """
   documents(
@@ -145,10 +145,10 @@ type Query {
   benefits(
     """ List of Products """
     items: [ShippingItem]
-  ): [Benefit] @cacheControl(scope: SEGMENT) @withSegment
+  ): [Benefit] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get the options available to authenticate users """
-  loginOptions: LoginOptions
+  loginOptions: LoginOptions @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get the IDs for the provided search context slugs """
   searchContextFromParams(
@@ -159,7 +159,7 @@ type Query {
   ): SearchContext
 
   """ Get logistics information about the store """
-  logistics: LogisticsData
+  logistics: LogisticsData @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """ Get a list of pickup points near specified lat and long """
   nearPickupPoints(
@@ -183,7 +183,7 @@ type Query {
     initialDate: String!,
     """ End date. e.g.: 2018-10-13T00:00:00"""
     endDate: String!
-  ): SubscriptionsStatusCount  @cacheControl(scope: PRIVATE)
+  ): SubscriptionsStatusCount  @cacheControl(scope: PRIVATE) @deprecated
 
   """ Get count of subscriptions by status """
   subscriptionsOrdersCountByStatus(
@@ -191,7 +191,7 @@ type Query {
     initialDate: String!,
     """ End date. e.g.: 2018-10-13T00:00:00"""
     endDate: String!
-  ): SubscriptionsOrdersStatusCount  @cacheControl(scope: PRIVATE)
+  ): SubscriptionsOrdersStatusCount  @cacheControl(scope: PRIVATE) @deprecated
 
   """ Get a list of SubscriptionsOrders """
   listSubscriptionsOrdersByStatus(
@@ -230,7 +230,7 @@ type Mutation {
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm @withSegment
 
   """ Profile """
-  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput!]): Profile @withCurrentProfile
+  updateProfile(fields: ProfileInput, customFields: [ProfileCustomFieldInput]): Profile @withCurrentProfile
   updateAddress(id: String, fields: AddressInput): Profile @withCurrentProfile
   createAddress(fields: AddressInput): Profile @withCurrentProfile
   deleteAddress(id: String): Profile @withCurrentProfile
@@ -240,15 +240,15 @@ type Mutation {
     """ File being uploaded """
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
-    field: String
+    field: String @deprecated
   ): Profile @withCurrentProfile
-  """ Uploads the Profile Picture by appending to the existing ones """
+  """ Uploads the Profile Picture by appending to the existing ones DEPRECATED"""
   uploadProfilePicture(
     """ File being uploaded """
     file: Upload!,
     """ Attachment's field name (default: profilePicture) """
     field: String
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @deprecated
 
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
@@ -335,8 +335,8 @@ type Mutation {
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
 
-  """ Subscriptions"""
-  subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean
+  """ Subscriptions DEPRECATED"""
+  subscriptionsOrderRetry(orderGroup: String!, instanceId: String!, workflowId: String!): Boolean @deprecated
 
   """ List """
   createList(list: ListInput): List

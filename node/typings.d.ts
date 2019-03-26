@@ -1,4 +1,4 @@
-import { IOContext, ServiceContext } from '@vtex/api'
+import { IOClients, IOContext, MetricsAccumulator, ServiceContext } from '@vtex/api'
 import { DataSource } from 'apollo-datasource'
 
 import { dataSources } from './dataSources'
@@ -10,21 +10,26 @@ import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
-import { PaymentsDataSource } from './dataSources/payments'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
-import { SessionDataSource } from './dataSources/session'
+import { SegmentData, SessionDataSource } from './dataSources/session'
 
 declare global {
-  interface Context extends ServiceContext {
+  const metrics: MetricsAccumulator
+
+  interface Context extends ServiceContext<IOClients, void, CustomContext> {
+    vtex: CustomIOContext
+  }
+
+  interface CustomContext {
+    cookie: string
     dataSources: StoreGraphQLDataSources
     originalPath: string
-    cookie: string
-    vtex: CustomIOContext
   }
 
   interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
+    segment: SegmentData
   }
 
   interface StoreGraphQLDataSources extends Record<string, DataSource> {
@@ -34,7 +39,6 @@ declare global {
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
-    payments: PaymentsDataSource
     portal: PortalDataSource
     profile: ProfileDataSource
     session: SessionDataSource
@@ -85,6 +89,57 @@ declare global {
     criteria: string
     slug: string
   }
+
+  interface Address {
+    id: string
+    userId: string
+    receiverName?: string
+    complement?: string
+    neighborhood?: string
+    country?: string
+    state?: string
+    number?: string
+    street?: string
+    postalCode?: string
+    city?: string
+    reference?: string
+    addressName?: string
+    addressType?: string
+    geoCoordinate?: string
+  }
+
+  interface Profile {
+    firstName: string
+    lastName: string
+    profilePicture: string
+    email: string
+    document: string
+    userId: string
+    birthDate: string
+    gender: string
+    homePhone: string
+    businessPhone: string
+    isCorporate: boolean
+    corporateName: string
+    corporateDocument: string
+    stateRegistration: string
+    addresses: Address[]
+    payments: PaymentProfile[]
+    customFields: ProfileCustomField[]
+  }
+
+  interface ProfileCustomField {
+    key: string
+    value: string
+  }
+
+  interface PaymentProfile {
+    id: string
+    paymentSystem: string
+    paymentSystemName: string
+    carNumber: string
+    address: Address
+  }
 }
 
-export {}
+export { }

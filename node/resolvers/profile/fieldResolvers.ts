@@ -4,20 +4,29 @@ import { getAddresses, getPayments, pickCustomFieldsFromData } from './services'
 
 export default {
   Address: {
-    cacheId: prop('id')
+    cacheId: prop('addressName'),
+    id: prop('addressName'),
   },
   PaymentProfile: {
-    cacheId: prop('id')
+    cacheId: prop('id'),
   },
   Profile: {
-    address: (obj, _, context) => getAddresses(context, obj.id),
+    address: (_, __, context) => getAddresses(context),
+    addresses: (_, __, context) => getAddresses(context),
+    birthDate: (obj) => obj.birthDate ? new Date(obj.birthDate).toISOString() : obj.birthDate,
     cacheId: prop('email'),
-    customFields: (obj) => typeof obj.customFields === 'string' ? pickCustomFieldsFromData(obj.customFields, obj) : obj.customFields,
-    payments: (obj, _, context) => getPayments(context, obj.id),
-    profilePicture: (obj, _, context) => obj.profilePicture
-      && `//api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${obj.id}/profilePicture/attachments/${obj.profilePicture}`
+    customFields: obj =>
+      typeof obj.customFields === 'string'
+        ? pickCustomFieldsFromData(obj.customFields, obj)
+        : obj.customFields,
+    payments: (_, __, context) => getPayments(context),
+    profilePicture: (obj, _, context) =>
+      obj.profilePicture &&
+      `http://api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${
+      obj.id
+      }/profilePicture/attachments/${obj.profilePicture}`,
   },
   ProfileCustomField: {
-    cacheId: (root) => root.key
-  }
+    cacheId: root => root.key,
+  },
 }

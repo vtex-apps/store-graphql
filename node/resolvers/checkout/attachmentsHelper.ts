@@ -106,11 +106,13 @@ export const addOptionsForItems = async (
   }
 }
 
+const filterCompositionNull = (assemblyOptions) => assemblyOptions.filter(({ composition }) => !!composition)
+
 export const buildAssemblyOptionsMap = (orderForm: any) => {
   const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as MetadataItem[]
   return metadataItems
          .filter(({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0)
-         .reduce((prev, curr) => ({ ...prev, [curr.id]: curr.assemblyOptions }) , {})
+         .reduce((prev, curr) => ({ ...prev, [curr.id]: filterCompositionNull(curr.assemblyOptions) }) , {})
 }
 
 const isParentOptionSingleChoice = ({composition: { minQuantity, maxQuantity }}: AssemblyOption) =>

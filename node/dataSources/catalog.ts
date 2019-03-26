@@ -1,11 +1,5 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import http from 'axios'
-import { forEachObjIndexed } from 'ramda'
-
-import { withAuthToken } from '../resolvers/headers'
+import { HttpClient, HttpClientFactory, IODataSource, RequestConfig } from '@vtex/api'
 import { SegmentData } from './session'
-
-const DEFAULT_TIMEOUT_MS = 8 * 1000
 
 interface ProductsArgs {
   query: string
@@ -20,111 +14,112 @@ interface ProductsArgs {
   map: string
 }
 
+// TODO: Our cache is mixing up stuff :sob:
+// const memoryCache = new LRUCache<string, any>({max: 2000})
+
+// metrics.trackCache('catalog', memoryCache)
+
+const forProxy: HttpClientFactory = ({context, options}) => context &&
+  HttpClient.forWorkspace('store-graphql.vtex', context, {...options, headers: {
+    ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
+  }, /*memoryCache,*/ metrics})
+
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends RESTDataSource<Context> {
-  constructor() {
-    super()
-  }
+export class CatalogDataSource extends IODataSource {
+  protected httpClientFactory = forProxy
 
   public product = (slug: string) => this.get(
-    `/pub/products/search/${slug && slug.toLowerCase()}/p`
+    `/pub/products/search/${slug && slug.toLowerCase()}/p`,
+    {metric: 'catalog-product'}
   )
 
   public productByEan = (id: string) => this.get(
-    `/pub/products/search?fq=alternateIds_Ean=${id}`
+    `/pub/products/search?fq=alternateIds_Ean=${id}`,
+    {metric: 'catalog-productByEan'}
   )
 
   public productById = (id: string) => this.get(
-    `/pub/products/search?fq=productId:${id}`
+    `/pub/products/search?fq=productId:${id}`,
+    {metric: 'catalog-productById'}
   )
 
   public productByReference = (id: string) => this.get(
-    `/pub/products/search?fq=alternateIds_RefId=${id}`
+    `/pub/products/search?fq=alternateIds_RefId=${id}`,
+    {metric: 'catalog-productByReference'}
   )
 
   public productBySku = (skuIds: string[]) => this.get(
-    `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`
+    `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
+    {metric: 'catalog-productBySku'}
   )
 
-  public products = (args: ProductsArgs) => {
-    return this.get(this.productSearchUrl(args))
-  }
+  public products = (args: ProductsArgs) => this.get(
+    this.productSearchUrl(args),
+    {metric: 'catalog-products'}
+  )
 
   public productsQuantity = async (args: ProductsArgs) => {
-    const { vtex: ioContext } = this.context
-
-    const { headers: { resources } } = await http.head(
-      `${this.baseURL}${this.productSearchUrl(args)}`,
-      {
-        headers: withAuthToken()(ioContext),
-      }
-    )
-
+    const {headers: {resources}} = await this.getRaw(this.productSearchUrl(args))
     const quantity = resources.split('/')[1]
-
     return parseInt(quantity, 10)
   }
 
   public brands = () => this.get(
-    `/pub/brand/list`
+    '/pub/brand/list',
+    {metric: 'catalog-brands'}
   )
 
   public categories = (treeLevel: string) => this.get(
-    `/pub/category/tree/${treeLevel}/`
+    `/pub/category/tree/${treeLevel}/`,
+    {metric: 'catalog-categories'}
   )
 
   public facets = (facets: string = '') => {
     const [path, options] = decodeURI(facets).split('?')
     return this.get(
-      `/pub/facets/search/${encodeURI(`${path.trim()}${options ? '?' + options : ''}`)}`
+      `/pub/facets/search/${encodeURI(`${path.trim()}${options ? '?' + options : ''}`)}`,
+      {metric: 'catalog-facets'}
     )
   }
 
   public category = (id: string) => this.get(
-    `/pub/category/${id}`
+    `/pub/category/${id}`,
+    {metric: 'catalog-category'}
   )
 
   public crossSelling = (id: string, type: string) => this.get(
-    `/pub/products/crossselling/${type}/${id}`
+    `/pub/products/crossselling/${type}/${id}`,
+    {metric: 'catalog-crossSelling'}
   )
 
-  get baseURL() {
-    const {vtex: {account, workspace, region}} = this.context
-    return `http://store-graphql.vtex.${region}.vtex.io/${account}/${workspace}/proxy/catalog`
-  }
-
-  protected willSendRequest (request: RequestOptions) {
-    const {vtex: {authToken, production}, cookies} = this.context
-    const segmentData: SegmentData | null = (this.context.vtex as any).segment
+  private get = <T = any>(url: string, config: RequestConfig = {}) => {
+    const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
-    const segment = cookies.get('vtex_segment')
     const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
     const appMajor = `${appMajorNumber}.x`
 
-    if (!request.timeout) {
-      request.timeout = DEFAULT_TIMEOUT_MS
+    config.params = {
+      ...config.params,
+      ...!!salesChannel && {sc: salesChannel},
+      __v: appMajor,
     }
+    return this.http.get<T>(`/proxy/catalog${url}`, config)
+  }
 
-    forEachObjIndexed(
-      (value: string, param: string) => request.params.set(param, value),
-      {
-        '__v': appMajor,
-        'production': production ? 'true' : 'false',
-        ...segment && {'vtex_segment': segment},
-        ...!!salesChannel && {sc: salesChannel}
-      }
-    )
+  private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
+    const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
+    const { channel: salesChannel = '' } = segmentData || {}
+    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
+    const appMajor = `${appMajorNumber}.x`
 
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
-      {
-        'Accept-Encoding': 'gzip',
-        Authorization: authToken,
-        ...segment && {Cookie: `vtex_segment=${segment}`},
-      }
-    )
+    config.params = {
+      ...config.params,
+      ...!!salesChannel && {sc: salesChannel},
+      __v: appMajor,
+    }
+    return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
 
   private productSearchUrl = ({
