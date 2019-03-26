@@ -17,11 +17,10 @@ export const catalogProxy = async (ctx: Context) => {
 =======
   const { vtex: { account, authToken, production, route: { params: { path } } }, headers: { cookie }, query } = ctx
 
-  //TODO: REMOVER ANTES DE JOGAR NA MASTER
   const [host, basePath] = Functions.isGoCommerceAcc(ctx)
 >>>>>>> Pass all the specificationGroups by graphql
     ? ['api.gocommerce.com', `${account}/search`]
-    : [`${account}.vtexcommercebeta.com.br`, 'api/catalog_system']
+    : [`${account}.vtexcommercestable.com.br`, 'api/catalog_system']
 
 <<<<<<< HEAD
   const cookie = segmentToken && {Cookie: `vtex_segment=${segmentToken}`}
