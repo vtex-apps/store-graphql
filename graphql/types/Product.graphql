@@ -25,6 +25,7 @@ type Product {
   productName: IOMessage
   """ Array of product properties  """
   properties: [Property]
+  """ Array of product properties  """
   propertyGroups: [PropertyGroup]
   """ Product reference """
   productReference: String
