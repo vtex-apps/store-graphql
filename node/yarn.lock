@@ -265,10 +265,10 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@vtex/api@^3.0.1-beta.18":
-  version "3.0.1-beta.18"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.0.1-beta.18.tgz#200a42b76eed2b73cbd5a7bad7776523ccbf5ee5"
-  integrity sha512-jfSqhNV9vfGowkP6JYdrlB6xXR1+yqTCcMXMNPlhyJQwC6bve+prccmQk1N0FyAGb2uFI6rATgkCUBiRjH6ufw==
+"@vtex/api@^3.0.1-beta.20":
+  version "3.0.1-beta.20"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.0.1-beta.20.tgz#95e756cfd0899b42e36ad550f9b88b448a4b10d1"
+  integrity sha512-X6pZ4cJZPpxNRSnJh1wzMMvXm7XqKogn7jdYqWj0eu5bmai4cII8TRFOWg6T4LtH+p8NrFg5QFe78IuB/d+pEA==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
@@ -287,7 +287,6 @@
     koa-compose "^4.1.0"
     lru-cache "^5.1.1"
     mime-types "^2.1.12"
-    multipart-stream "^2.0.1"
     p-limit "^2.2.0"
     qs "^6.5.1"
     querystring "^0.2.0"
@@ -2278,10 +2277,6 @@ is-retry-allowed@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-retry-allowed/-/is-retry-allowed-1.1.0.tgz#11a060568b67339444033d0125a61a20d564fb34"
 
-is-stream@^1.0.1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/is-stream/-/is-stream-1.1.0.tgz#12d4a3dd4e68e0b79ceb8dbc84173ae80d91ca44"
-
 is-symbol@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/is-symbol/-/is-symbol-1.0.2.tgz#a055f6ae57192caee329e7a860118b497a950f38"
@@ -2581,14 +2576,6 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
-
-multipart-stream@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/multipart-stream/-/multipart-stream-2.0.1.tgz#195c9cb4b2c41e78c72a1e8f38c7d0eba1cd0ba0"
-  dependencies:
-    inherits "^2.0.1"
-    is-stream "^1.0.1"
-    sandwich-stream "^1.0.0"
 
 nan@^2.9.2:
   version "2.12.1"
@@ -3058,10 +3045,6 @@ safe-regex@^1.1.0:
 "safer-buffer@>= 2.1.2 < 3":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
-
-sandwich-stream@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/sandwich-stream/-/sandwich-stream-1.0.0.tgz#7830e45797b5933287f1f9b28f871907456262f2"
 
 sax@^1.2.4:
   version "1.2.4"
