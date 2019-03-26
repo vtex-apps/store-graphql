@@ -9,6 +9,92 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added 
 - Add `generalProperties` in `product`'s resolvers. 
 
+## [2.60.7] - 2019-03-25
+
+### Fixed
+- Profile `birthDate` format.
+
+## [2.60.6] - 2019-03-25
+### Fixed
+- Fix cookies not being properly sent to search API.
+
+## [2.60.5] - 2019-03-22
+### Fixed
+- Filter assemblyOptions with composition not null for assemblyOptions resolver.
+
+## [2.60.4] - 2019-03-21
+
+## [2.60.3] - 2019-03-21
+### Added
+- Add `seller` field to `OrderFormItem`.
+
+## [2.60.2] - 2019-03-20
+
+## [2.60.1] - 2019-03-20
+
+## [2.60.0] - 2019-03-20
+
+## [2.59.2] - 2019-03-20
+### Changed
+- Return new order form if added assembly options at end of addItem mutation.
+
+## [2.59.1] - 2019-03-19
+
+## [2.59.0] - 2019-03-19
+### Fixed
+- Using `application/x-www-form-urlencoded` for logging-in instead of raw querystring with plain text credentials
+
+## [2.59.0] - 2019-03-19 [YANKED]
+### Removed
+- `Subscriptions`, moving the queries to the other `my-subscriptions-graphql`.
+
+## [2.58.0] - 2019-03-15
+### Changed
+- Removes datasources cache since it was mostly unnused
+
+## [2.57.4] - 2019-03-13
+
+## [2.57.3] - 2019-03-13
+
+## [2.57.2] - 2019-03-13
+### Fixed
+- Error `argument str must be a string`	in orderForm resolver
+
+## [2.57.2] - 2019-03-13
+
+### Fixed
+- MakeRequest call in `redefinePassword` resolver
+
+## [2.57.1] - 2019-03-13
+
+## [2.57.0] - 2019-03-13
+### Added
+- A/B test between using proxy catalog or not
+- Use new datasource exposing metrics
+
+## [2.56.3] - 2019-03-13
+### Fixed
+- GoCommerce catalog does not accept HEAD. So every request should be switched back to a GET request
+
+## [2.56.2] - 2019-03-13
+- Use the parseFieldsToJson function in the updateDocument resolver.
+
+## [2.56.1] - 2019-03-13
+- Fix the Document.updateDocument call the in updateDocument resolver.
+
+## [2.56.0] - 2019-03-12
+### Changed
+- Using `profileSystem` on `profile` related queries and mutations.
+
+### Fixed
+- Fix `payments` to `transactions` in Order graphql.
+
+## [2.55.0] - 2019-03-12
+### Fixed
+- Using correct catalog method for proxy
+
+## [2.54.2] - 2019-03-12
+
 ## [2.54.1] - 2019-03-07
 # Fixed
 - Bluebird-global related issues

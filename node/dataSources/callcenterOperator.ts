@@ -1,14 +1,20 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
+
+import { RESTDataSource } from './RESTDataSource'
 
 interface IsValidCallcenterOperatorArgs {
   email: string
   accountId: string
 }
 
-export class CallcenterOperatorDataSource extends RESTDataSource<Context> {
+export class CallcenterOperatorDataSource extends RESTDataSource {
   public isValidCallcenterOperator = ({ email, accountId }: IsValidCallcenterOperatorArgs) => {
-    return this.get(`${accountId}/products/2/logins/${email}/resources/Televendas/granted?ignoreIsAdmin=False`)
+    return this.get(
+      `${accountId}/products/2/logins/${email}/resources/Televendas/granted?ignoreIsAdmin=False`,
+      undefined,
+      {metric: 'callcenterOperator-isValidCallcenterOperator'}
+    )
   }
 
   get baseURL() {

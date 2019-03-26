@@ -1,21 +1,16 @@
-import { HttpClient, HttpClientFactory, IOContext, IODataSource } from '@vtex/api'
+import { HttpClient, HttpClientFactory, IODataSource } from '@vtex/api'
 
-const withHeadersFromContext = ({account, authToken}: IOContext) => ({
-  'Proxy-Authorization': authToken,
-  'VtexIdClientAutCookie': authToken,
-  'X-Vtex-Proxy-To': `http://${account}.vtexcommercestable.com.br`,
-})
-
-const forLegacy: HttpClientFactory = ({options, context}) => {
-  const {account = ''} = context || {}
-  const baseURL = `http://${account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles`
-  return HttpClient.forLegacy(baseURL, options || {} as any)
-}
+const forProfile: HttpClientFactory = ({context, options}) => context &&
+  HttpClient.forExternal(`http://${context.account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles`, context, {...options, headers: {
+    'Proxy-Authorization': context.authToken,
+    'VtexIdClientAutCookie': context.authToken,
+    'X-Vtex-Proxy-To': `http://${context.account}.vtexcommercestable.com.br`,
+  }, metrics})
 
 export class PaymentsDataSource extends IODataSource {
-  protected httpClientFactory = forLegacy
+  protected httpClientFactory = forProfile
 
   public getUserPayments = (userId: string) => this.http.get(`/${userId}/vcs-checkout`, {
-    headers: withHeadersFromContext(this.context as any)
+    metric: 'payments-get',
   })
 }

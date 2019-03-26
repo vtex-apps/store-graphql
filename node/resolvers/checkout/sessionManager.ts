@@ -1,7 +1,6 @@
-import { parse } from 'cookie'
 import { equals, path } from 'ramda'
-import { appendToCookie } from '../../utils'
 
+import { appendToCookie } from '../../utils'
 import { SessionFields } from '../session/sessionResolver'
 
 export const CHECKOUT_COOKIE = 'checkout.vtex.com'
@@ -10,9 +9,9 @@ interface GenericObject { [key: string]: any }
 
 const checkoutCookieFormat = (orderFormId: string) => `${CHECKOUT_COOKIE}=__ofid=${orderFormId}`
 
-const getOrderFormIdFromCookie = (cookie): string | null => {
-  const cookieParsed = parse(cookie)
-  return cookieParsed[CHECKOUT_COOKIE] && cookieParsed[CHECKOUT_COOKIE].split('=')[1]
+const getOrderFormIdFromCookie = (cookies: any): string | void => {
+  const cookie: string | void = cookies.get(CHECKOUT_COOKIE)
+  return cookie && cookie.split('=')[1]
 }
 
 /**
@@ -57,8 +56,8 @@ const syncOrderFormAndSessionOrderFormId = async (orderFormId: string, sessionOr
  */
 
 export const syncCheckoutAndSessionPreCheckout = (sessionData: SessionFields, ctx: Context) => {
-  const {request: { headers: { cookie } }} = ctx
-  const checkoutOrderFormId = getOrderFormIdFromCookie(cookie)
+  const { cookies } = ctx
+  const checkoutOrderFormId = getOrderFormIdFromCookie(cookies)
   if (sessionData.orderFormId && !checkoutOrderFormId) {
     appendToCookie(ctx, checkoutCookieFormat(sessionData.orderFormId))
   }

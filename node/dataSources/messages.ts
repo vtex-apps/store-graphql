@@ -6,7 +6,7 @@ export class Messages extends IODataSource {
   protected service = 'messages.vtex'
 
   constructor(ctx?: IOContext, opts?: InstanceOptions) {
-    super(ctx, opts)
+    super(ctx, {...opts, metrics})
   }
 
   public translate = async (from: string, to: string, content: string): Promise<string> => {
@@ -15,6 +15,7 @@ export class Messages extends IODataSource {
     }
     try{
       return await this.http.get('/_v/translations', {
+        metric: 'messages-translations',
         params: {
           __p: process.env.VTEX_APP_ID,
           data: JSON.stringify([{from, content}]),

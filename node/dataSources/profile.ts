@@ -1,66 +1,72 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { forEachObjIndexed, join } from 'ramda'
+import { HttpClient, HttpClientFactory, InstanceOptions, IOContext, IODataSource } from '@vtex/api'
+import * as queryStringBuilder from 'qs'
 
-interface Address {
-  id: string
-  userId: string
-  receiverName?: string
-  complement?: string
-  neighborhood?: string
-  country?: string
-  state?: string
-  number?: string
-  street?: string
-  postalCode?: string
-  city?: string
-  reference?: string
-  addressName?: string
-  addressType?: string
-  geoCoordinate?: string
-}
+const forProfile: HttpClientFactory = ({context, options}) => context &&
+  HttpClient.forExternal(`http://${context.account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles`, context, {...options, headers: {
+    'Proxy-Authorization': context.authToken,
+    'VtexIdClientAutCookie': context.authToken,
+    'X-Vtex-Proxy-To': `http://${context.account}.vtexcommercestable.com.br`,
+  }, metrics})
 
-export class ProfileDataSource extends RESTDataSource<Context> {
-  public getProfileInfo = (userEmail: string, customFields?) => {
-    return this.get(join(',', [`CL/search?email=${userEmail}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,isCorporate,tradeName,corporateName,stateRegistration,corporateDocument,profilePicture`, customFields]))
-    .then((data) => data[0])
+export class ProfileDataSource extends IODataSource {
+  protected httpClientFactory = forProfile
+
+  constructor(ctx?: IOContext, opts?: InstanceOptions) {
+    super(ctx, opts)
   }
 
-  public updateProfileInfo = (profile) => {
-    return this.patch(`CL/documents/${profile.id}`, profile)
-  }
+  public getProfileInfo = (userEmail: string, customFields?: string) => {
+    const queryString = queryStringBuilder.stringify({
+      extraFields: customFields,
+    })
 
-  public getAddress = (addressId: string) => {
-    return this.get(`AD/documents/${addressId}`)
-  }
-
-  public updateAddress = (address: Address) => {
-    return this.patch(`AD/documents/${address.id}`, address)
-  }
-
-  public deleteAddress = (addressId: string) => {
-    return this.delete(`AD/documents/${addressId}`)
-  }
-
-  public getUserAddresses = (userId: string) => {
-    return this.get(`AD/search?userId=${userId}&_fields=userId,id,receiverName,complement,neighborhood,country,state,number,street,postalCode,city,reference,addressName,addressType,geoCoordinate`)
-  }
-
-  get baseURL() {
-    const { vtex: { account } } = this.context
-
-    return `http://api.vtex.com/${account}/dataentities`
-  }
-
-  protected willSendRequest(request: RequestOptions) {
-    const { vtex: { authToken } } = this.context
-
-    forEachObjIndexed(
-      (value: string, header) => request.headers.set(header, value),
+    return this.http.get(
+      `${userEmail}/personalData${queryString ? `?${queryString}` : ''}`,
       {
-        'Proxy-Authorization': authToken,
-        'VtexIdclientAutCookie': authToken,
-        'X-Vtex-Proxy-To': `https://api.vtex.com`,
+        metric: 'profile-system-getProfileInfo'
       }
     )
+  }
+
+  public getUserAddresses = (userEmail: string) => {
+    return this.http.get(`${userEmail}/addresses`, {
+      metric: 'profile-system-getUserAddresses'
+    })
+  }
+
+  public getUserPayments = (userEmail: string) => {
+    return this.http.get(`${userEmail}/vcs-checkout`, {
+      metric: 'profile-system-getUserPayments'
+    })
+  }
+
+  public updateProfileInfo = (
+    userEmail: string,
+    profile: Profile | { profilePicture: string },
+    customFields?: string
+  ) => {
+    const queryString = queryStringBuilder.stringify({
+      extraFields: customFields,
+    })
+
+    return this.http.post(
+      `${userEmail}/personalData${queryString ? `?${queryString}` : ''}`,
+      profile,
+      {
+        metric: 'profile-system-updateProfileInfo'
+      }
+    )
+  }
+
+  public updateAddress = (userEmail: string, addressesData) => {
+    return this.http.post(`${userEmail}/addresses`, addressesData, {
+      metric: 'profile-system-updateAddress'
+    })
+  }
+
+  public deleteAddress = (userEmail: string, addressName: string) => {
+    return this.http.delete(`${userEmail}/addresses/${addressName}`, {
+      metric: 'profile-system-deleteAddress'
+    })
   }
 }

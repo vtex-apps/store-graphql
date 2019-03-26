@@ -1,5 +1,6 @@
 import http from 'axios'
 import { parse, serialize } from 'cookie'
+import { stringify } from 'querystring'
 
 import ResolverError from '../../errors/resolverError'
 import { headers as authHeaders, withAuthToken } from '../headers'
@@ -9,6 +10,18 @@ import paths from '../paths'
 const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql') => http.request({
   headers: withAuthToken({
     ...authHeaders.profile,
+    'vtex-ui-id-version': vtexIdVersion,
+  })(ctx),
+  method,
+  url,
+})
+
+const makeSecureRequest = async (ctx, url, body, method='POST', vtexIdVersion='store-graphql') => http.request({
+  data: stringify(body),
+  headers: withAuthToken({
+    'X-Vtex-Use-Https': 'true',
+    accept: 'application/vnd.vtex.ds.v10+json',
+    'content-type': 'application/x-www-form-urlencoded',
     'vtex-ui-id-version': vtexIdVersion,
   })(ctx),
   method,
@@ -78,7 +91,11 @@ export const mutations = {
     if (!VtexSessionToken) {
       throw new ResolverError('ERROR VtexSessionToken is null', 400)
     }
-    const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.accessKeySignIn(VtexSessionToken, args.email, args.code))
+    const { headers, data: { authStatus } } = await makeSecureRequest(ioContext, paths.accessKeySignIn(), {
+      accesskey: args.code,
+      authenticationToken: VtexSessionToken,
+      email: args.email,
+    })
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
@@ -91,7 +108,11 @@ export const mutations = {
       throw new ResolverError('Password does not follow specific format', 400)
     }
     const VtexSessionToken = await getSessionToken(ioContext)
-    const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.classicSignIn(VtexSessionToken, args.email, args.password))
+    const { headers, data: { authStatus } } = await makeSecureRequest(ioContext, paths.classicSignIn(), {
+      authenticationToken: VtexSessionToken,
+      login: args.email,
+      password: args.password,
+    })
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
 
@@ -140,7 +161,7 @@ export const mutations = {
     const escapedNewPass = encodeURIComponent(args.newPassword)
     const passPath = paths.redefinePassword(VtexSessionToken, escapedEmail, escapedPass, escapedNewPass)
 
-    const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, args.vtexIdVersion)
+    const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, 'POST', args.vtexIdVersion)
 
     if(authStatus === 'WrongCredentials') {
       throw new ResolverError('Wrong credentials.', 400)
