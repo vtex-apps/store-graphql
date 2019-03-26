@@ -59,8 +59,6 @@ export const resolvers = {
 
     titleTag: ({ productTitle }) => productTitle,
 
-    generalProperties: product => map((name: string) => ({ name, values: product[name] }), product.General || []),
-
     specificationGroups: product => {
       const buildPropertie = nameGroup => map((name: string) => ({ name, values: product[name] }), product[nameGroup] || [])
       const allSpecificationsGroups = product.allSpecificationsGroups.concat(["allSpecifications"])
