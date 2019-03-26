@@ -8,8 +8,7 @@ const InstallmentsCriteria = {
 
 export const resolvers = {
   Offer: {
-    Installments: ({Installments}, args, __) => {
-      const {criteria, rates} = args
+    Installments: ({Installments}, {criteria, rates}) => {
       if (criteria === InstallmentsCriteria.ALL) {
         return Installments
       }
