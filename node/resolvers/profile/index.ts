@@ -23,6 +23,16 @@ export const mutations = {
 
   uploadProfilePicture: (_, { file }, context) =>
     updateProfilePicture(context, file),
+
+  subscribeNewsletter: async (_, { email }, context: Context) => {
+    const profile = context.dataSources.profile
+
+    await profile.updatePersonalPreferences(email, {
+      isNewsletterOptIn: 'True',
+    })
+
+    return true
+  }
 }
 
 export const queries = {

@@ -224,6 +224,9 @@ type Mutation {
     field: String
   ): Profile @withCurrentProfile @deprecated
 
+  """ Subscribe to newsletter """
+  subscribeNewsletter(email: String): Boolean
+
   """ Order Form """
   updateOrderFormProfile(orderFormId: String, fields: OrderFormProfileInput): OrderForm
   updateOrderFormShipping(orderFormId: String, address: OrderFormAddressInput): OrderForm
