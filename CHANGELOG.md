@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.61.1] - 2019-03-27
+
+## [2.61.1-beta] - 2019-03-27
+### Fixed
+- `Invalid CEP` messages in checkout API. This was due to updating the order form shipping address with a masked session address. The fix was to check if the address was not masked before sending it to checkout api
+
 ## [2.61.0] - 2019-03-26
 ### Removed
 - Subscription related queries, moved to the `my-subscriptions-graphql`.
