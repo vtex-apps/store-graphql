@@ -25,7 +25,7 @@ type Product {
   productName: IOMessage
   """ Array of product properties  """
   properties: [Property]
-  """ Array of product properties group  """
+  """ Array of product properties  """
   propertyGroups: [PropertyGroup]
   """ Product reference """
   productReference: String
@@ -40,6 +40,8 @@ type Product {
   """ List of benefits associated with this product """
   benefits: [Benefit]
   itemMetadata: ItemMetadata
+   """ Array of product SpecificationGroup """
+  specificationGroups: [SpecificationGroup]
 }
 
 type OnlyProduct {
@@ -169,6 +171,11 @@ type Image {
   imageTag: String
   imageUrl: String
   imageText: String
+}
+
+type SpecificationGroup {
+  name: String, 
+  specifications: [Property]
 }
 
 type Property {
