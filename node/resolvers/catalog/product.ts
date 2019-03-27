@@ -1,4 +1,4 @@
-import { compose, map, omit, reject, toPairs } from 'ramda'
+import { compose, map, omit, reject, toPairs, propOr } from 'ramda'
 import { queries as benefitsQueries } from '../benefits'
 import { toIOMessage } from './../../utils/ioMessage'
 
@@ -78,7 +78,7 @@ export const resolvers = {
     titleTag: ({ productTitle }) => productTitle,
 
     specificationGroups: product => {
-      const allSpecificationsGroups = product.allSpecificationsGroups.concat([
+      const allSpecificationsGroups = propOr([], 'allSpecificationsGroups', product).concat([
         'allSpecifications',
       ])
       const specificationGroups = allSpecificationsGroups.map(
