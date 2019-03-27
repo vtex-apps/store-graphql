@@ -65,7 +65,5 @@ export const resolvers = {
       const specificationGroups = map((name: string) => ({ name, specifications: buildPropertie(name) }), allSpecificationsGroups || [])
       return specificationGroups || []
     },
-
-
   },
 }
