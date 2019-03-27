@@ -61,6 +61,8 @@ type OrderFormItem {
   assemblyOptions: AssemblyOptionItem
   """ ID of item's seller """
   seller: String
+  """ Item index on cart """
+  cartIndex: Int
 }
 
 type AssemblyOptionItem {
