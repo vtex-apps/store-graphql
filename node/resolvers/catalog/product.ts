@@ -1,4 +1,4 @@
-import { compose, map, omit, reject, toPairs, propOr } from 'ramda'
+import { compose, map, omit, propOr, reject, toPairs } from 'ramda'
 import { queries as benefitsQueries } from '../benefits'
 import { toIOMessage } from './../../utils/ioMessage'
 
