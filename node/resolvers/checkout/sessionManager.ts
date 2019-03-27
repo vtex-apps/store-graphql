@@ -26,6 +26,8 @@ export const syncCheckoutAndSessionPostChanges = async (sessionData: SessionFiel
   return newOrderForm || orderForm
 }
 
+const isMasked = (str: string) => /\*+/g.test(str)
+
 const syncOrderFormAndSessionAddress = async (
   orderFormAddress: GenericObject | null,
   orderFormId: string,
@@ -33,8 +35,8 @@ const syncOrderFormAndSessionAddress = async (
   ctx: Context,
   ): Promise<object | null> => {
   const {dataSources: {session, checkout}} = ctx
-  if (!orderFormAddress && sessionAddress) {
-    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
+  if (!orderFormAddress && sessionAddress && !isMasked(sessionAddress.postalCode)) {
+    checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
   }
 
   if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
