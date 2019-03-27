@@ -13,7 +13,7 @@ const retryConfig = {
   retries: 1,
 }
 
-const service = new Service<IOClients, void, CustomContext>({
+export default new Service<IOClients, void, CustomContext>({
   clients: {
     options: {
       default: {
@@ -31,5 +31,3 @@ const service = new Service<IOClients, void, CustomContext>({
     catalogProxy,
   }
 })
-
-export default service
