@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.62.1",
+  "version": "2.63.1",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -13,7 +13,8 @@
     "prereleasy": "bash lint.sh"
   },
   "dependencies": {
-    "vtex.messages": "1.x"
+    "vtex.messages": "1.x",
+    "infra:service-node": "4.3.3-beta.10"
   },
   "policies": [
     {

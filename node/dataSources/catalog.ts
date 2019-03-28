@@ -71,7 +71,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-brands'}
   )
 
-  public categories = (treeLevel: string) => this.get(
+  public categories = (treeLevel: number) => this.get(
     `/pub/category/tree/${treeLevel}/`,
     {metric: 'catalog-categories'}
   )
