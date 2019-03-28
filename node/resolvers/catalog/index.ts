@@ -96,7 +96,7 @@ export const queries = {
     }
 
     throw new ResolverError(
-      `No product was found with the correspondent slug '${slug}'`,
+      'No product was found with requested slug',
       404
     )
   },
