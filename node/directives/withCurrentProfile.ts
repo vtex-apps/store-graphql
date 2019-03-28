@@ -11,8 +11,8 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
     field.resolve = async (root, args, context, info) => {
-      const currentProfile: CurrentProfile | null = await getCurrentProfileFromSession(context)
-        .catch(async _ => getCurrentProfileFromCookies(context))
+      const currentProfile: CurrentProfile | null = await (getCurrentProfileFromSession(context)
+        .catch(() => getCurrentProfileFromCookies(context))).catch(() => null)
 
       if (!isLogged(currentProfile)) {
         return null
