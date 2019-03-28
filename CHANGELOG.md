@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.62.0] - 2019-03-27
+### Added 
+- Add `specificationGroups` in `product`'s resolvers. 
+- New mutation `subscribeNewsletter`.
+
+## [2.61.1] - 2019-03-27
+
+## [2.61.1-beta] - 2019-03-27
+### Fixed
+- `Invalid CEP` messages in checkout API. This was due to updating the order form shipping address with a masked session address. The fix was to check if the address was not masked before sending it to checkout api
+
+## [2.61.0] - 2019-03-26
+### Removed
+- Subscription related queries, moved to the `my-subscriptions-graphql`.
+
+## [2.60.7] - 2019-03-25
+
+### Fixed
+- Profile `birthDate` format.
+
+## [2.60.6] - 2019-03-25
+### Fixed
+- Fix cookies not being properly sent to search API.
+
+## [2.60.5] - 2019-03-22
+### Fixed
+- Filter assemblyOptions with composition not null for assemblyOptions resolver.
+
+## [2.60.4] - 2019-03-21
+
+## [2.60.3] - 2019-03-21
+### Added
+- Add `seller` field to `OrderFormItem`.
+
 ## [2.60.2] - 2019-03-20
 
 ## [2.60.1] - 2019-03-20
@@ -24,7 +58,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Using `application/x-www-form-urlencoded` for logging-in instead of raw querystring with plain text credentials
 
 ## [2.59.0] - 2019-03-19 [YANKED]
-### Removed	
+### Removed
 - `Subscriptions`, moving the queries to the other `my-subscriptions-graphql`.
 
 ## [2.58.0] - 2019-03-15
