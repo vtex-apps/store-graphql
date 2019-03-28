@@ -17,7 +17,7 @@ export const resolvers = {
       }),
       quantity > 0 ? slice(0, quantity, images) : images
     ),
-    kitItems: ({kitItems}, _, {dataSources: {catalog}}) => !kitItems
+    kitItems: ({kitItems}, _, {dataSources: {catalog}}: Context) => !kitItems
       ? []
       : Promise.all(
           kitItems.map(async kitItem => {

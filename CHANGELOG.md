@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.63.1] - 2019-03-28
+
 ## [2.62.1] - 2019-03-28
 ### Added
 - Created `cartIndex` resolver on `OrderFormItem`.
+## [2.63.0] - 2019-03-28
 
 ## [2.62.0] - 2019-03-27
 ### Added 

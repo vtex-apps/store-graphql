@@ -14,7 +14,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     params?: URLSearchParamsInit,
     init?: RequestInit,
   ): Promise<TResult> {
-    return this.withMetrics(() => super.get<TResult>(path, params, init), init && init.metric)
+    return this.withMetrics(() => super.get<TResult>(path, params, init as any), init && init.metric)
   }
 
   protected async post <TResult = any>(
@@ -22,7 +22,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     body?: Body,
     init?: RequestInit,
   ): Promise<TResult> {
-    return this.withMetrics(() => super.post<TResult>(path, body, init), init && init.metric)
+    return this.withMetrics(() => super.post<TResult>(path, body, init as any), init && init.metric)
   }
 
   protected async patch <TResult = any>(
@@ -30,7 +30,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     body?: Body,
     init?: RequestInit,
   ): Promise<TResult> {
-    return this.withMetrics(() => super.patch<TResult>(path, body, init), init && init.metric)
+    return this.withMetrics(() => super.patch<TResult>(path, body, init as any), init && init.metric)
   }
 
   protected async put <TResult = any>(
@@ -38,7 +38,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     body?: Body,
     init?: RequestInit,
   ): Promise<TResult> {
-    return this.withMetrics(() => super.put<TResult>(path, body, init), init && init.metric)
+    return this.withMetrics(() => super.put<TResult>(path, body, init as any), init && init.metric)
   }
 
   protected async delete <TResult = any>(
@@ -46,7 +46,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
     params?: URLSearchParamsInit,
     init?: RequestInit,
   ): Promise<TResult> {
-    return this.withMetrics(() => super.delete<TResult>(path, params, init), init && init.metric)
+    return this.withMetrics(() => super.delete<TResult>(path, params, init as any), init && init.metric)
   }
 
   private withMetrics = async <TResult = any> (handler: () => Promise<TResult>, metric?: string) => {
