@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientFactory, IODataSource, RequestConfig } from '@vtex/api'
+import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } from '@vtex/api'
 import { SegmentData } from './session'
 
 interface ProductsArgs {
@@ -14,15 +14,14 @@ interface ProductsArgs {
   map: string
 }
 
-// TODO: Our cache is mixing up stuff :sob:
-// const memoryCache = new LRUCache<string, any>({max: 2000})
+const memoryCache = new LRUCache<string, any>({max: 10000})
 
-// metrics.trackCache('catalog', memoryCache)
+metrics.trackCache('catalog', memoryCache)
 
 const forProxy: HttpClientFactory = ({context, options}) => context &&
   HttpClient.forWorkspace('store-graphql.vtex', context, {...options, headers: {
     ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
-  }, /*memoryCache,*/ metrics})
+  }, memoryCache, metrics})
 
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
