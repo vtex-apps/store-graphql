@@ -110,7 +110,7 @@ export const queries = {
         500
       )
     }
-    return await catalog.products(args)
+    return catalog.products(args)
   },
 
   brand: async (_, args, { dataSources: { catalog } }) => {

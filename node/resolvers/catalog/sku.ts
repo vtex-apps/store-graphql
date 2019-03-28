@@ -12,13 +12,13 @@ const fetchFixedPrices = async (
   { dataSources: { pricing, ratesAndBenefits } }) => {
 
   try {
-    var fixedPrices = await pricing.fixedPrices(itemId)
+    const fixedPrices = await pricing.fixedPrices(itemId)
     
     if (!fixedPrices || !fixedPrices.length) {
       return []
     }
     
-    let ratesAndBenefitsItems = await ratesAndBenefits.calculateDiscountsAndTaxes(
+    const ratesAndBenefitsItems = await ratesAndBenefits.calculateDiscountsAndTaxes(
       {
         isShoppingCart: false,
         origin: 'Marketplace',
