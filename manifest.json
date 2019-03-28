@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "vtex.messages": "1.x",
-    "infra:service-node": "4.3.3-beta.8"
+    "infra:service-node": "4.3.3-beta.10"
   },
   "policies": [
     {
