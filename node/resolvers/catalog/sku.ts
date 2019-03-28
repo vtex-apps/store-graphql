@@ -9,10 +9,10 @@ interface fixedPriceInputs {
 
 const fetchFixedPrices = async (
   {itemId, sellerId, measurementUnit, unitMultiplier}: fixedPriceInputs, 
-  { dataSources: { fixedPrice, ratesAndBenefits } }) => {
+  { dataSources: { pricing, ratesAndBenefits } }) => {
 
   try {
-    var fixedPrices = await fixedPrice.fixedPrices(itemId)
+    var fixedPrices = await pricing.fixedPrices(itemId)
     
     if (!fixedPrices || !fixedPrices.length) {
       return []
@@ -22,7 +22,7 @@ const fetchFixedPrices = async (
       {
         isShoppingCart: false,
         origin: 'Marketplace',
-        items: fixedPrices.map(fixedPrice => ({
+        items: pricing.map(fixedPrice => ({
           id: itemId,
           measurementUnit: measurementUnit,
           unitMultiplier: unitMultiplier,
@@ -73,10 +73,10 @@ export const resolvers = {
       (name: string) => ({ name, values: sku[name] }),
       sku.variations || []
     ),
-    sellers: ({ itemId, sellers, measurementUnit, unitMultiplier }, _, { dataSources: { fixedPrice, ratesAndBenefits } }) => {
+    sellers: ({ itemId, sellers, measurementUnit, unitMultiplier }, _, { dataSources: { pricing, ratesAndBenefits } }) => {
       return sellers.map(async seller => ({
         ...seller, 
-        ...{ fixedPrices: await fetchFixedPrices({ itemId: itemId, sellerId: seller.sellerId, measurementUnit: measurementUnit, unitMultiplier: unitMultiplier }, { dataSources: { fixedPrice, ratesAndBenefits }})}
+        ...{ fixedPrices: await fetchFixedPrices({ itemId: itemId, sellerId: seller.sellerId, measurementUnit: measurementUnit, unitMultiplier: unitMultiplier }, { dataSources: { pricing, ratesAndBenefits }})}
       }))
     }
   }

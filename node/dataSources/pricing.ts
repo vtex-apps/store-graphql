@@ -4,7 +4,7 @@ import {
 } from 'apollo-datasource-rest'
 import { forEachObjIndexed } from 'ramda'
 
-export class FixedPriceDataSource extends RESTDataSource<Context> {
+export class PricingDataSource extends RESTDataSource<Context> {
   constructor() {
     super()
   }
