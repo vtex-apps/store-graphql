@@ -5,7 +5,7 @@ import { mapKeyValues } from '../../utils/object'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
 import { validateItems } from './util'
 
-const getListItemsWithProductInfo = (items, catalog) => Promise.all(
+const getListItemsWithProductInfo = (items: any, catalog: any) => Promise.all(
   map(async item => {
     const productsResponse = await catalog.productBySku([path(['skuId'], item)])
     const product = nth(0, productsResponse)
@@ -13,30 +13,30 @@ const getListItemsWithProductInfo = (items, catalog) => Promise.all(
   }, items)
 )
 
-const getListItems = async (itemsId, dataSources) => {
+const getListItems = async (itemsId: any, dataSources: any) => {
   const { catalog, document } = dataSources
   const items = itemsId ? await Promise.all(map(id =>
     document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
 
-const addListItem = async (item, document) => {
+const addListItem = async (item: any, document: any) => {
   const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues({ ...item }))
   return DocumentId
 }
 
-const addItems = async (items = [], dataSources) => {
+const addItems = async (items = [], dataSources: any) => {
   const { document } = dataSources
   validateItems(items, dataSources)
   const promises = map(async item => addListItem(item, document), items)
   return Promise.all(promises)
 }
 
-const deleteItems = (items, document) => (
-  items && items.forEach(item => document.deleteDocument(acronymListProduct, path(['id'], item)))
+const deleteItems = (items: any, document: any) => (
+  items && items.forEach((item: any) => document.deleteDocument(acronymListProduct, path(['id'], item)))
 )
 
-const updateItems = async (items, dataSources) => {
+const updateItems = async (items: any, dataSources: any) => {
   const { document } = dataSources
   const itemsWithoutDuplicated = map(item => last(item),
     values(groupBy(prop('skuId') as any, items)))
@@ -65,13 +65,13 @@ const updateItems = async (items, dataSources) => {
 }
 
 export const queries = {
-  list: async (_, { id }, { dataSources, dataSources: { document } }) => {
+  list: async (_: any, { id }: any, { dataSources, dataSources: { document } }: any) => {
     const list = await document.getDocument(acronymList, id, fields)
     const items = await getListItems(list.items, dataSources)
     return { id, ...list, items }
   },
 
-  listsByOwner: async (_, { owner, page, pageSize }, context) => {
+  listsByOwner: async (_: any, { owner, page, pageSize }: any, context: any) => {
     const { dataSources, dataSources: { document } } = context
     const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
     const listsWithProducts = map(async list => {
@@ -83,7 +83,7 @@ export const queries = {
 }
 
 export const mutation = {
-  createList: async (_, { list, list: { items } }, context) => {
+  createList: async (_: any, { list, list: { items } }: any, context: any) => {
     const { dataSources, dataSources: { document } } = context
     try {
       const itemsId = await addItems(items, dataSources)
@@ -94,7 +94,7 @@ export const mutation = {
     }
   },
 
-  deleteList: async (_, { id }, { dataSources: { document } }) => {
+  deleteList: async (_: any, { id }: any, { dataSources: { document } }: any) => {
     const { items } = await document.getDocument(acronymList, id, fields)
     deleteItems(items, document)
     return document.deleteDocument(acronymList, id)
@@ -106,7 +106,7 @@ export const mutation = {
    * If the item given has got an id, but its quantity is 0, remove it from the list
    * Otherwise, update it.
    */
-  updateList: async (_, { id, list, list: { items } }, context) => {
+  updateList: async (_: any, { id, list, list: { items } }: any, context: any) => {
     const { dataSources, dataSources: { document } } = context
     try {
       const itemsUpdatedId = await updateItems(items, dataSources)

@@ -11,9 +11,9 @@ export const resolvers = {
 
     metaTagDescription: prop('MetaTagDescription'),
 
-    name: ({name}, _, ctx: Context) => toIOMessage(ctx, name),
+    name: ({name}: any, _: any, ctx: Context) => toIOMessage(ctx, name),
 
-    slug: ({url}) => url ? lastSegment(url) : null,
+    slug: ({url}: any) => url ? lastSegment(url) : null,
 
     titleTag: prop('Title'),
   }

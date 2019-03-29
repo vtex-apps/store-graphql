@@ -3,7 +3,7 @@ import FormData from 'form-data'
 import ResolverError from '../../errors/resolverError'
 import { generateRandomName } from '../../utils'
 
-export const uploadAttachment = async (args, ctx) => {
+export const uploadAttachment = async (args: any, ctx: any) => {
   const {
     dataSources: { document },
   } = ctx
@@ -12,7 +12,7 @@ export const uploadAttachment = async (args, ctx) => {
   const buffer = (await new Promise((resolve, reject) => {
     const bufs: any[] = []
     const stream = createReadStream()
-    stream.on('data', d => bufs.push(d))
+    stream.on('data', (d: any) => bufs.push(d))
     stream.on('end', () => {
       resolve(Buffer.concat(bufs))
     })
@@ -43,6 +43,6 @@ export const uploadAttachment = async (args, ctx) => {
   return { filename: randomName, mimetype }
 }
 
-function getFileExtension(fileName) {
+function getFileExtension(fileName: any) {
   return fileName.match(/\.[0-9a-z]+$/i)[0]
 }

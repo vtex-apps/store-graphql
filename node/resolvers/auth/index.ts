@@ -7,7 +7,7 @@ import { headers as authHeaders, withAuthToken } from '../headers'
 import paths from '../paths'
 
 
-const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql') => http.request({
+const makeRequest = async (ctx: any, url: any, method='POST', vtexIdVersion='store-graphql') => http.request({
   headers: withAuthToken({
     ...authHeaders.profile,
     'vtex-ui-id-version': vtexIdVersion,
@@ -16,7 +16,7 @@ const makeRequest = async (ctx, url, method='POST', vtexIdVersion='store-graphql
   url,
 })
 
-const makeSecureRequest = async (ctx, url, body, method='POST', vtexIdVersion='store-graphql') => http.request({
+const makeSecureRequest = async (ctx: any, url: any, body: any, method='POST', vtexIdVersion='store-graphql') => http.request({
   data: stringify(body),
   headers: withAuthToken({
     'X-Vtex-Use-Https': 'true',
@@ -28,7 +28,7 @@ const makeSecureRequest = async (ctx, url, body, method='POST', vtexIdVersion='s
   url,
 })
 
-const getSessionToken = async (ioContext, redirectUrl?) => {
+const getSessionToken = async (ioContext: any, redirectUrl?: any) => {
   const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl), 'GET')
   if (!data.authenticationToken) {
     throw new ResolverError(`ERROR ${data}`, status)
@@ -36,10 +36,10 @@ const getSessionToken = async (ioContext, redirectUrl?) => {
   return data.authenticationToken
 }
 
-const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
+const setVtexIdAuthCookie = (ioContext: any, response: any, headers: any, authStatus: any) => {
   if (authStatus === 'Success') {
     const authAccount = `VtexIdclientAutCookie_${ioContext.account}`
-    const authCookie = parse(headers['set-cookie'].find(checkAuth => {
+    const authCookie = parse(headers['set-cookie'].find((checkAuth: any) => {
       return checkAuth.includes(authAccount)
     }))
     const VTEXID_EXPIRES = Math.round((new Date(authCookie.expires).getTime() - Date.now()) / 1000)
@@ -55,7 +55,7 @@ const setVtexIdAuthCookie = (ioContext, response, headers, authStatus) => {
 /** Password must have at least eight characters with at least one number,
  * one lowercase and one uppercase letter
  */
-const checkPasswordFormat = password => {
+const checkPasswordFormat = (password: any) => {
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
   return regex.test(password)
 }
@@ -65,7 +65,7 @@ export const queries = {
    * Request to the VTEX ID API the list of available login
    * options to the user authentication.
    */
-  loginOptions: async (_: any, __: any, { vtex: ioContext}) => {
+  loginOptions: async (_: any, __: any, {vtex: ioContext}: any) => {
     const { data: {
         oauthProviders,
         showClassicAuthentication,
@@ -86,7 +86,7 @@ export const mutations = {
    * Get email and access code in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
    */
-  accessKeySignIn: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+  accessKeySignIn: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }: any) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
       throw new ResolverError('ERROR VtexSessionToken is null', 400)
@@ -103,7 +103,7 @@ export const mutations = {
    * Get email and password in args and set VtexIdAuthCookie in response cookies.
    * @return authStatus that show if user is logged or something wrong happens.
    */
-  classicSignIn: async (_: any, args: any, { vtex: ioContext, response }) => {
+  classicSignIn: async (_: any, args: any, { vtex: ioContext, response }: any) => {
     if (!checkPasswordFormat(args.password)) {
       throw new ResolverError('Password does not follow specific format', 400)
     }
@@ -119,14 +119,14 @@ export const mutations = {
   /** TODO: When VTEX ID have an endpoint that expires the VtexIdclientAutCookie, update this mutation.
    * 13-06-2018 - @brunojdo
    */
-  logout: async (_: any, __: any, { vtex: ioContext, response }) => {
+  logout: async (_: any, __: any, { vtex: ioContext, response }: any) => {
     response.set('Set-Cookie',
     serialize(`VtexIdclientAutCookie_${ioContext.account}`, '', { path: '/', maxAge: 0, })
     )
     return true
   },
 
-  oAuth: async (_: any, args: any, { vtex: ioContext }) => {
+  oAuth: async (_: any, args: any, { vtex: ioContext }: any) => {
     const {provider, redirectUrl} = args
     const VtexSessionToken = await getSessionToken(ioContext, redirectUrl)
     return paths.oAuth(VtexSessionToken, provider)
@@ -135,7 +135,7 @@ export const mutations = {
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
    */
-  recoveryPassword: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }) => {
+  recoveryPassword: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }: any) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
       throw new ResolverError('ERROR VtexSessionToken is null', 400)
@@ -150,7 +150,7 @@ export const mutations = {
   /** Set a new password for an user.
    * @return authStatus that show if password was created and user is logged or something wrong happens.
    */
-  redefinePassword: async (_: any, args: any, { vtex: ioContext, response }) => {
+  redefinePassword: async (_: any, args: any, { vtex: ioContext, response }: any) => {
     if (!checkPasswordFormat(args.newPassword) || !checkPasswordFormat(args.currentPassword)) {
       throw new ResolverError('Password does not follow specific format', 400)
     }
@@ -176,7 +176,7 @@ export const mutations = {
    * Send access key to user email and set VtexSessionToken in response cookies
    * @return Boolean
    */
-  sendEmailVerification: async (_, args, { vtex: ioContext, response }) => {
+  sendEmailVerification: async (_: any, args: any, { vtex: ioContext, response }: any) => {
     // VtexSessionToken is valid for 10 minutes
     const SESSION_TOKEN_EXPIRES = 600
     const VtexSessionToken = await getSessionToken(ioContext)

@@ -28,14 +28,14 @@ import { Slugify } from './slug'
  *
  * @param item The item to extract the information
  */
-const extractSlug = item => {
+const extractSlug = (item: any) => {
   const href = split('/', item.href)
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
 const lastSegment = compose<string, string[], string>(last, split('/'))
 
-function findInTree(tree, values, index = 0) {
+function findInTree(tree: any, values: any, index = 0): any {
   for (const node of tree) {
     const slug = lastSegment(node.url)
     if (slug.toUpperCase() === values[index].toUpperCase()) {
@@ -62,7 +62,7 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_, args, ctx: Context) => {
+  autocomplete: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { portal, messages, session} } = ctx
 
     const from = await session.getSegmentData().then(prop('cultureInfo'))
@@ -82,12 +82,12 @@ export const queries = {
     }
   },
 
-  facets: (_, { facets }, ctx: Context) => {
+  facets: (_: any, { facets }: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     return catalog.facets(facets)
   },
 
-  product: async (_, { slug }, ctx: Context) => {
+  product: async (_: any, { slug }: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
 
@@ -101,7 +101,7 @@ export const queries = {
     )
   },
 
-  products: async (_, args, ctx: Context) => {
+  products: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
@@ -113,7 +113,7 @@ export const queries = {
     return catalog.products(args)
   },
 
-  brand: async (_, args, { dataSources: { catalog } }: Context) => {
+  brand: async (_: any, args: any, { dataSources: { catalog } }: Context) => {
     const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id') as any), brands)
     if (!brand) {
@@ -122,13 +122,13 @@ export const queries = {
     return brand
   },
 
-  brands: async (_, __, { dataSources: { catalog } }: Context) => catalog.brands(),
+  brands: async (_: any, __: any, { dataSources: { catalog } }: Context) => catalog.brands(),
 
-  category: async (_, { id }, { dataSources: { catalog } }: Context) => catalog.category(id),
+  category: async (_: any, { id }: any, { dataSources: { catalog } }: Context) => catalog.category(id),
 
-  categories: async (_, { treeLevel }, { dataSources: { catalog } }: Context) => catalog.categories(treeLevel),
+  categories: async (_: any, { treeLevel }: any, { dataSources: { catalog } }: Context) => catalog.categories(treeLevel),
 
-  search: async (_, args, ctx: Context) => {
+  search: async (_: any, args: any, ctx: Context) => {
     const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {
@@ -174,8 +174,8 @@ export const queries = {
   },
 
   searchContextFromParams: async (
-    _,
-    args,
+    _: any,
+    args: any,
     { dataSources: { catalog } }: Context
   ) => {
     const response = {
@@ -187,7 +187,7 @@ export const queries = {
     if (args.brand) {
       const brands = await catalog.brands()
       const found = brands.find(
-        brand =>
+        (brand: any) =>
           brand.isActive && Slugify(brand.name) === args.brand
       )
       response.brand = found && found.id
@@ -197,7 +197,7 @@ export const queries = {
       const departments = await catalog.categories(2)
       let found: Category
 
-      found = departments.find(department =>
+      found = departments.find((department: any) =>
         department.url.endsWith(`/${args.department.toLowerCase()}`)
       )
       if (args.category && found) {
