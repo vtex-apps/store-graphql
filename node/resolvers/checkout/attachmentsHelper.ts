@@ -69,7 +69,7 @@ const joinOptionsWithType = (options: OptionsType[]) => {
 const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   const { checkout, orderFormId, itemIndex, options } = input
   if (!options || options.length === 0) { return }
-  const isRemove = (option) => option.quantity === 0
+  const isRemove = (option: any) => option.quantity === 0
   const [toRemove, toAdd] = partition<OptionsType>(isRemove, options)
   const joinedToAdd = joinOptionsWithType(toAdd)
   const joinedToRemove = joinOptionsWithType(toRemove)
@@ -95,7 +95,7 @@ export const addOptionsForItems = async (
   orderForm: any) => {
   for (const item of items) {
     if (!item.options || item.options.length === 0) { continue }
-    const parentIndex = orderForm.items.findIndex(cartItem => cartItem.id.toString() === item.id.toString())
+    const parentIndex = orderForm.items.findIndex((cartItem: any) => cartItem.id.toString() === item.id.toString())
     if (parentIndex < 0) { continue }
     await addOptionsLogic({
       checkout,
@@ -106,7 +106,7 @@ export const addOptionsForItems = async (
   }
 }
 
-const filterCompositionNull = (assemblyOptions) => assemblyOptions.filter(({ composition }) => !!composition)
+const filterCompositionNull = (assemblyOptions: any) => assemblyOptions.filter(({ composition }: any) => !!composition)
 
 export const buildAssemblyOptionsMap = (orderForm: any) => {
   const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as MetadataItem[]

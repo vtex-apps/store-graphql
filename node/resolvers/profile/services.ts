@@ -54,7 +54,7 @@ export async function getPayments(context: Context) {
   const availableAccounts = JSON.parse(paymentsRawData.paymentData)
     .availableAccounts
 
-  return availableAccounts.map(account => {
+  return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account
     const accountAddress = addresses.find(
       (addr: UserAddress) => addr.addressName === availableAddresses[0]
@@ -121,7 +121,7 @@ export function createAddress(context: Context, address: Address) {
     vtex: { currentProfile },
   } = context
 
-  const addressesData = {}
+  const addressesData = {} as any
   const addressName = generateRandomName()
   addressesData[addressName] = JSON.stringify({
     ...address,
@@ -154,7 +154,7 @@ export function updateAddress(
     vtex: { currentProfile },
   } = context
 
-  const addressesData = {}
+  const addressesData = {} as any
   addressesData[id] = {
     ...fields,
     userId: currentProfile.userId,
@@ -165,7 +165,7 @@ export function updateAddress(
     .then(() => getProfile(context))
 }
 
-export function pickCustomFieldsFromData(customFields: string, data) {
+export function pickCustomFieldsFromData(customFields: string, data: any) {
   return (
     customFields &&
     compose(
@@ -180,7 +180,7 @@ export function pickCustomFieldsFromData(customFields: string, data) {
 
 function mapCustomFieldsToObjNStr(customFields: CustomField[] = []) {
   let customFieldsStr = ''
-  const customFieldsObj = customFields.reduce((acc, currentValue, i) => {
+  const customFieldsObj = customFields.reduce((acc: any, currentValue, i) => {
     customFieldsStr +=
       i < customFields.length - 1 ? `${currentValue.key},` : currentValue.key
 
@@ -195,7 +195,7 @@ function mapCustomFieldsToObjNStr(customFields: CustomField[] = []) {
   }
 }
 
-function mapAddressesObjToList(addressesObj) {
+function mapAddressesObjToList(addressesObj: any) {
   return Object.values<string>(addressesObj).map(stringifiedObj =>
     JSON.parse(stringifiedObj)
   )

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { prop } from 'ramda'
 import parse from 'url-parse'
 
-const defaultMerge = (_, resData, __) => resData
+const defaultMerge = (_: any, resData: any, __: any) => resData
 
 export type URLBuilder = (account: string, data: any, root: any) => string
 

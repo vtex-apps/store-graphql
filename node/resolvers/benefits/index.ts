@@ -9,7 +9,7 @@ const DEFAULT_QUANTITY = '1'
 
 export const fieldResolvers = {
   Benefit: {
-    items: async (benefit, _, {dataSources: {catalog}}: Context) => {
+    items: async (benefit: any, _: any, {dataSources: {catalog}}: Context) => {
       const { teaserType, conditions, effects } = benefit
 
       if (teaserType === CATALOG) {
@@ -21,15 +21,15 @@ export const fieldResolvers = {
         const { parameters: effectsParameters } = effects
 
         const items = await Promise.all(
-          conditionsParameters.map(async (conditionsParameter, index) => {
+          conditionsParameters.map(async (conditionsParameter: any, index: any) => {
             const skuIds: string[] = conditionsParameter.value.split(SKU_SEPARATOR)
             const discount = effectsParameters[index].value
             const products = await catalog.productBySku(skuIds)
 
-            return products.map(product => {
+            return products.map((product: any) => {
               const benefitSKUIds: any = []
 
-              product.items.map(item => {
+              product.items.map((item: any) => {
                 if (indexOf(item.itemId, skuIds) > -1) {
                   benefitSKUIds.push(item.itemId)
                 }
@@ -57,7 +57,7 @@ export const queries = {
    * First of them is passing the graphql args with the items property which is an array of Shipping Items.
    * Second is passing just the id of the product itself as a graphql argument.
    */
-  benefits: async (_, args, config) => {
+  benefits: async (_: any, args: any, config: any) => {
     const requestBody = {
       items: args.items
         ? args.items

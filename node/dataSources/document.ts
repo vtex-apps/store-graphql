@@ -48,10 +48,10 @@ export class DocumentDataSource extends RESTDataSource {
   public uploadAttachment = (acronym: string, documentId: string, fields: string, formData: FormData) => this.post(
     `${acronym}/documents/${documentId}/${fields}/attachments`,
     formData,
-    { headers: { formDataHeaders: { ...formData.getHeaders() } } , metric: 'masterdata-uploadAttachment'}
+    { headers: { formDataHeaders: { ...formData.getHeaders() } } as any, metric: 'masterdata-uploadAttachment'}
   )
 
-  public willSendRequest(request) {
+  public willSendRequest(request: any) {
     const { vtex, cookie } = this.context as any
     const page = request.headers.get('page')
     const pageSize = request.headers.get('pageSize')

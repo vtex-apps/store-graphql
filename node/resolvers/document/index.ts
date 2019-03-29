@@ -3,18 +3,18 @@ import {parseFieldsToJson }  from '../../utils'
 import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
-  documents: async (_, args, { dataSources: { document } }) => {
+  documents: async (_: any, args: any, { dataSources: { document } }: any) => {
     const { acronym, fields, page, pageSize, where } = args
     const fieldsWithId = union(fields, ['id'])
     const data = await document.searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
-    return data.map(doc => ({
+    return data.map((doc: any) => ({
       cacheId: doc.id,
       fields: mapKeyValues(doc),
       id: doc.id,
     }))
   },
 
-  document: async (_, args, { dataSources: { document } }) => {
+  document: async (_: any, args: any, { dataSources: { document } }: any) => {
     const { acronym, fields, id } = args
     const data = await document.getDocument(acronym, id, fields)
     return { id, cacheId: id, fields: mapKeyValues(data) }
@@ -22,20 +22,20 @@ export const queries = {
 }
 
 export const mutations = {
-  createDocument: async (_, args, { dataSources: { document } }) => {
+  createDocument: async (_: any, args: any, { dataSources: { document } }: any) => {
     const { acronym, document: { fields } } = args
     const { Id, Href, DocumentId } = await document.createDocument(acronym, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  updateDocument: async (_, args, { dataSources: { document } }) => {
+  updateDocument: async (_: any, args: any, { dataSources: { document } }: any) => {
     const { acronym, document: { fields } } = args
     const id = prop('id', parseFieldsToJson(fields))
     const { Id, Href, DocumentId } = await document.updateDocument(acronym, id, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  deleteDocument: async (_, args, { dataSources: { document } }) => {
+  deleteDocument: async (_: any, args: any, { dataSources: { document } }: any) => {
     const { acronym, documentId } = args
     await document.deleteDocument(acronym, documentId)
     return { id: documentId }

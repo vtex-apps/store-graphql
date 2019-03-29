@@ -21,9 +21,9 @@ export interface SessionFields {
   profile?: ProfileFields
 }
 
-const convertToBool = str => !!str && toLower(str) === 'true'
+const convertToBool = (str: any) => !!str && toLower(str) === 'true'
 
-const profileFields = (profile, user): ProfileFields => ({
+const profileFields = (profile: any, user: any): ProfileFields => ({
   document: path(['document', 'value'], profile),
   email:
     path(['email', 'value'], profile) ||
@@ -37,14 +37,14 @@ const profileFields = (profile, user): ProfileFields => ({
   phone: path(['phone', 'value'], profile),
 })
 
-const setProfileData = (profile, user) =>
+const setProfileData = (profile: any, user: any) =>
   path(['storeUserId', 'value'], user) && {
     profile: {
       ...profileFields(profile, user),
     },
   }
 
-export const sessionFields = (session): SessionFields | {} => {
+export const sessionFields = (session: any): SessionFields | {} => {
   const { namespaces } = session
   return namespaces
     ? {

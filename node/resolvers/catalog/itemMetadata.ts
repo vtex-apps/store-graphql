@@ -8,14 +8,14 @@ import { MetadataItem } from '../checkout/types'
 
 import { SessionDataSource } from '../../dataSources/session'
 
-const headersWithToken = (authToken) => ({
+const headersWithToken = (authToken: any) => ({
   Accept: 'application/json',
   Authorization: `bearer ${authToken}`,
   'Content-Type': 'application/json',
 })
 
-const isTruthy = val => !!val
-const isUtm = (_, key) => key.startsWith('utm')
+const isTruthy = (val: any) => !!val
+const isUtm = (_: any, key: any) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
 
 interface FetchPriceInput {
@@ -87,7 +87,7 @@ const getSimulationPayload = async (session: SessionDataSource, account: string,
 
 export const resolvers = {
   ItemMetadata: {
-    priceTable: async ({items}: Parent, _, { vtex: { account, authToken }, dataSources: { session } }: Context) => {
+    priceTable: async ({items}: Parent, _: any, { vtex: { account, authToken }, dataSources: { session } }: Context) => {
       const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item

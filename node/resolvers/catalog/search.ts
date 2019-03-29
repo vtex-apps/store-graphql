@@ -52,21 +52,21 @@ const getQueryAndFacets = ({ map: unsortedMap = '', query: queryParam = '', rest
 
 export const resolvers = {
   Search: {
-    facets: (root, _, ctx: Context) => {
+    facets: (root: any, _: any, ctx: Context) => {
       const args = root.queryArgs || {}
 
       const { facets } = getQueryAndFacets(args)
 
       return queries.facets(root, { ...args, facets }, ctx)
     },
-    products: (root, _, ctx: Context) => {
+    products: (root: any, _: any, ctx: Context) => {
       const args = root.queryArgs || {}
 
       const { map, query } = getQueryAndFacets(args)
 
       return queries.products(root, { ...args, query, map }, ctx)
     },
-    recordsFiltered: async (root, _, ctx: Context) => {
+    recordsFiltered: async (root: any, _: any, ctx: Context) => {
       const { dataSources: { catalog } } = ctx
 
       try {

@@ -12,7 +12,7 @@ interface Params extends OrderFormItem{
 export const resolvers = {
   OrderFormItem: {
     assemblyOptions: ({ assemblyOptionsData: { childs, index, orderForm, assemblyOptionsMap }, ...item }: Params) => ({ item, childs, index, orderForm, assemblyOptionsMap }),
-    cartIndex: ({ assemblyOptionsData: { index }}) => index,
+    cartIndex: ({ assemblyOptionsData: { index }}: any) => index,
     listPrice: ({ listPrice }: Params) => listPrice / 100,
     price: ({ price }: Params) => price / 100,
     sellingPrice: ({ sellingPrice }: Params) => sellingPrice / 100,

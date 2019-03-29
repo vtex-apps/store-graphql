@@ -11,7 +11,7 @@ const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
 const VTEXID_EXPIRES = 86400
 
-const makeRequest = async (_, args, config, url, data?, method?) => {
+const makeRequest = async (_: any, args: any, config: any, url: any, data?: any, method?: any) => {
   const response = await httpResolver({
     data,
     enableCookies: true,
@@ -32,7 +32,7 @@ const makeRequest = async (_, args, config, url, data?, method?) => {
 }
 
 // Object that will be passed in data of impersonate and depersonify requests
-const impersonateData = email => {
+const impersonateData = (email: any) => {
   return {
     public: {
       'vtex-impersonated-customer-email': {
@@ -48,7 +48,7 @@ export const queries = {
    * Get user session
    * @return Session
    */
-  getSession: async (_, args, config) => {
+  getSession: async (_: any, args: any, config: any) => {
     const { data } = await makeRequest(_, args, config, paths.getSession)
     return sessionFields(data)
   }
@@ -60,7 +60,7 @@ export const mutations = {
    * @param args this mutation receives email and orderFormId
    * @return Session
    */
-  impersonate: async (_, args, config) => {
+  impersonate: async (_: any, args: any, config: any) => {
     await makeRequest(_, args, config, paths.session, impersonateData(args.email), 'PATCH')
 
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, args.email, {
@@ -76,7 +76,7 @@ export const mutations = {
    * Depersonify a customer and set clientProfileData to anonymous user.
    * @param args this mutation receives orderFormId
    */
-  depersonify: async (_, args, config) => {
+  depersonify: async (_: any, args: any, config: any) => {
     await makeRequest(_, args, config, paths.session, impersonateData(''), 'PATCH')
 
     config.response.set('Set-Cookie', serialize(IMPERSONATED_EMAIL, '', {
