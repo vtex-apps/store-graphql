@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `noImplicitAny` flag to `tsconfig.json`.
 
 ## [2.63.4] - 2019-03-28
 
@@ -21,8 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.63.0] - 2019-03-28
 
 ## [2.62.0] - 2019-03-27
-### Added 
-- Add `specificationGroups` in `product`'s resolvers. 
+### Added
+- Add `specificationGroups` in `product`'s resolvers.
 - New mutation `subscribeNewsletter`.
 
 ## [2.61.1] - 2019-03-27
