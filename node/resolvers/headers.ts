@@ -13,10 +13,10 @@ export const headers = {
   },
 }
 
-export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null) => {
+export const withAuthToken = (currentHeaders = {}) => (ioContext: any, cookie = null) => {
   const ans: any = { ...currentHeaders }
   if (cookie) {
-    const parsedCookie = cookies.parse(cookie)
+    const parsedCookie = cookies.parse(cookie!)
     if (parsedCookie.VtexIdclientAutCookie) {
       ans.VtexIdclientAutCookie = parsedCookie.VtexIdclientAutCookie
     }
@@ -28,7 +28,7 @@ export const withAuthToken = (currentHeaders = {}) => (ioContext, cookie = null)
   }
 }
 
-export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext) => {
+export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext: any) => {
   return {
     ...currentHeaders,
     'Proxy-Authorization': ioContext.authToken,
@@ -36,7 +36,7 @@ export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext) => {
   }
 }
 
-export const withMDPagination = (currentHeaders = {}) => (ioContext, cookie = null) => (page = 1, pageSize = DEFAULT_PAGE_SIZE) => {
+export const withMDPagination = (currentHeaders = {}) => (ioContext: any, cookie = null) => (page = 1, pageSize = DEFAULT_PAGE_SIZE) => {
   if (page < 1) {
     throw new Error('Smallest page value is 1')
   }

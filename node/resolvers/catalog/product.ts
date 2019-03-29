@@ -32,26 +32,26 @@ const knownNotPG = [
 
 export const resolvers = {
   Product: {
-    benefits: ({ productId }, _, ctx: Context) =>
+    benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({ categories }, _, ctx: Context) =>
+    categories: ({ categories }: any, _: any, ctx: Context) =>
       Promise.all(
         map((category: string) => toIOMessage(ctx, category), categories)
       ),
 
-    description: ({ description }, _, ctx: Context) => toIOMessage(ctx, description),
+    description: ({ description }: any, _: any, ctx: Context) => toIOMessage(ctx, description),
 
-    productName: ({ productName }, _, ctx: Context) => toIOMessage(ctx, productName),
+    productName: ({ productName }: any, _: any, ctx: Context) => toIOMessage(ctx, productName),
 
-    cacheId: ({ linkText }) => linkText,
+    cacheId: ({ linkText }: any) => linkText,
 
     clusterHighlights: ({ clusterHighlights = {} }) =>
       objToNameValue('id', 'name', clusterHighlights),
 
-    jsonSpecifications: product => {
+    jsonSpecifications: (product: any) => {
       const { Specifications = [] } = product
-      const specificationsMap = Specifications.reduce((acc, key) => {
+      const specificationsMap = Specifications.reduce((acc: any, key: any) => {
         acc[key] = product[key]
         return acc
       }, {})
@@ -61,23 +61,23 @@ export const resolvers = {
     productClusters: ({ productClusters = {} }) =>
       objToNameValue('id', 'name', productClusters),
 
-    properties: product =>
+    properties: (product: any) =>
       map(
         (name: string) => ({ name, values: product[name] }),
         product.allSpecifications || []
       ),
 
-    propertyGroups: product => {
+    propertyGroups: (product: any) => {
       const { allSpecifications = [] } = product
       const notPG = knownNotPG.concat(allSpecifications)
       return objToNameValue('name', 'values', omit(notPG, product))
     },
 
-    recommendations: product => product,
+    recommendations: (product: any) => product,
 
-    titleTag: ({ productTitle }) => productTitle,
+    titleTag: ({ productTitle }: any) => productTitle,
 
-    specificationGroups: product => {
+    specificationGroups: (product: any) => {
       const allSpecificationsGroups = propOr([], 'allSpecificationsGroups', product).concat([
         'allSpecifications',
       ])

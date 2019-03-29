@@ -6,8 +6,8 @@
 
 export const resolvers = {
   ItemMetadataUnit: {
-    imageUrl: ({ imageUrl, MainImage }) => imageUrl || MainImage,
-    name: ({ name, Name }) => name || Name,
-    productId: ({ productId, ProductId }) => productId || ProductId
+    imageUrl: ({ imageUrl, MainImage }: any) => imageUrl || MainImage,
+    name: ({ name, Name }: any) => name || Name,
+    productId: ({ productId, ProductId }: any) => productId || ProductId
   },
 } 

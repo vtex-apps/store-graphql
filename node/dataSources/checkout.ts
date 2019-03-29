@@ -101,14 +101,14 @@ export class CheckoutDataSource extends RESTDataSource {
     {metric: 'checkout-updateOrderFormMarketingData'}
   )
 
-  public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
+  public addAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body: any) =>
     this.post(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       body,
       {metric: 'checkout-addAssemblyOptions'}
     )
 
-  public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body) =>
+  public removeAssemblyOptions = async (orderFormId: string, itemId: string, assemblyOptionsId: string, body: any) =>
     this.delete(
       `pub/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       null as any,

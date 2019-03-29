@@ -17,7 +17,7 @@ import { adjust, curry, fromPairs, map, mergeAll, pipe, toPairs, zipObj } from '
  *
  * renameKeysWith(concat('a'), { A: 1, B: 2, C: 3 }) //=> { aA: 1, aB: 2, aC: 3 }
  */
-const renameKeysWith = curry((func, object) =>
+const renameKeysWith = curry((func: any, object: any) =>
   pipe(
     toPairs,
     map(adjust(func, 0) as any),
@@ -28,7 +28,7 @@ const renameKeysWith = curry((func, object) =>
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
  */
-const mapKeyValues = document => Object.keys(document).map(key => ({
+const mapKeyValues = (document: any) => Object.keys(document).map(key => ({
   key,
   value: document[key],
 }))
@@ -37,8 +37,8 @@ const mapKeyValues = document => Object.keys(document).map(key => ({
  * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
  * to a JSON format.
  */
-const parseFieldsToJson = fields => mergeAll(
-  fields.map(field => zipObj([field.key], [field.value])),
+const parseFieldsToJson = (fields: any) => mergeAll(
+  fields.map((field: any) => zipObj([field.key], [field.value])),
 )
 
 export { renameKeysWith, mapKeyValues, parseFieldsToJson }

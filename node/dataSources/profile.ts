@@ -58,7 +58,7 @@ export class ProfileDataSource extends IODataSource {
     )
   }
 
-  public updateAddress = (userEmail: string, addressesData) => {
+  public updateAddress = (userEmail: string, addressesData: any) => {
     return this.http.post(`${userEmail}/addresses`, addressesData, {
       metric: 'profile-system-updateAddress'
     })
