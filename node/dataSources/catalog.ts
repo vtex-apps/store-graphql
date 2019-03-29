@@ -14,7 +14,7 @@ interface ProductsArgs {
   map: string
 }
 
-const memoryCache = new LRUCache<string, any>({max: 10000})
+const memoryCache = new LRUCache<string, any>({max: 4000})
 
 metrics.trackCache('catalog', memoryCache)
 
