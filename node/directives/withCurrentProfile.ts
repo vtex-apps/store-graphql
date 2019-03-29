@@ -79,7 +79,7 @@ const getCurrentProfileFromCookies = async (
       .getUserWithToken(userToken)
       .then(data => ({ userId: data.userId, email: data.user }))
   } else if (!userToken && !!adminToken) {
-    const adminInfo = jwtDecode(adminToken)
+    const adminInfo = jwtDecode(adminToken) as any
 
     const callOpUserEmail = adminInfo && adminInfo.sub
     const isValidCallOp =

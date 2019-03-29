@@ -11,22 +11,22 @@ export default {
     cacheId: prop('id'),
   },
   Profile: {
-    address: (_, __, context) => getAddresses(context),
-    addresses: (_, __, context) => getAddresses(context),
-    birthDate: (obj) => obj.birthDate ? new Date(obj.birthDate).toISOString() : obj.birthDate,
+    address: (_: any, __: any, context: any) => getAddresses(context),
+    addresses: (_: any, __: any, context: any) => getAddresses(context),
+    birthDate: (obj: any) => obj.birthDate ? new Date(obj.birthDate).toISOString() : obj.birthDate,
     cacheId: prop('email'),
-    customFields: obj =>
+    customFields: (obj: any) =>
       typeof obj.customFields === 'string'
         ? pickCustomFieldsFromData(obj.customFields, obj)
         : obj.customFields,
-    payments: (_, __, context) => getPayments(context),
-    profilePicture: (obj, _, context) =>
+    payments: (_: any, __: any, context: any) => getPayments(context),
+    profilePicture: (obj: any, _: any, context: any) =>
       obj.profilePicture &&
       `http://api.vtex.com/${context.vtex.account}/dataentities/CL/documents/${
       obj.id
       }/profilePicture/attachments/${obj.profilePicture}`,
   },
   ProfileCustomField: {
-    cacheId: root => root.key,
+    cacheId: (root: any) => root.key,
   },
 }

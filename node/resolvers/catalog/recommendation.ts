@@ -1,9 +1,9 @@
 export const resolvers = {
   Recommendation: {
-    buy: ({productId}, _, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, 'whoboughtalsobought'),
+    buy: ({productId}: any, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, 'whoboughtalsobought'),
 
-    similars: ({productId}, _, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, 'similars'),
+    similars: ({productId}: any, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, 'similars'),
 
-    view: ({productId}, _, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, 'whosawalsosaw'),
+    view: ({productId}: any, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, 'whosawalsosaw'),
   }
 }

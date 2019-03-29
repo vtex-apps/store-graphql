@@ -3,7 +3,7 @@ import { mapSeries } from 'bluebird'
 import { last, merge, propEq, reject } from 'ramda'
 import paths from '../paths'
 
-const createClient = (account, orderFormId, authToken) => {
+const createClient = (account: any, orderFormId: any, authToken: any) => {
 
   const headers = {
     Accept: 'application/json',
@@ -12,21 +12,21 @@ const createClient = (account, orderFormId, authToken) => {
   }
 
   return {
-    addToken: (paymentToken) => {
+    addToken: (paymentToken: any) => {
       const payload = { paymentToken, expectedOrderFormSections: ['items', 'paymentData'] }
       const url = paths.orderFormPaymentToken(account, { orderFormId })
 
       return http.put(url, payload, { headers })
     },
 
-    removeToken: (tokenId) => {
+    removeToken: (tokenId: any) => {
       const url = paths.orderFormPaymentTokenId(account, { orderFormId, tokenId })
       return http.delete(url, { headers, data: { expectedOrderFormSections: ['items'] } })
     },
   }
 }
 
-export default async (body, ioContext) => {
+export default async (body: any, ioContext: any) => {
   const { data: { orderFormId, paymentToken } } = body
   const checkout = createClient(ioContext.account, orderFormId, ioContext.authToken)
 

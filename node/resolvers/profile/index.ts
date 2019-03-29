@@ -9,22 +9,22 @@ import {
 } from './services'
 
 export const mutations = {
-  createAddress: (_, { fields }, context: Context) => createAddress(context, fields),
+  createAddress: (_: any, { fields }: any, context: Context) => createAddress(context, fields),
 
-  deleteAddress: (_, { id }, context: Context) => deleteAddress(context, id),
+  deleteAddress: (_: any, { id }: any, context: Context) => deleteAddress(context, id),
 
-  updateAddress: (_, args, context: Context) => updateAddress(context, args),
+  updateAddress: (_: any, args: any, context: Context) => updateAddress(context, args),
 
-  updateProfile: (_, { fields, customFields }, context: Context) =>
+  updateProfile: (_: any, { fields, customFields }: any, context: Context) =>
     updateProfile(context, fields, customFields),
 
-  updateProfilePicture: (_, { file }, context: Context) =>
+  updateProfilePicture: (_: any, { file }: any, context: Context) =>
     updateProfilePicture(context, file),
 
-  uploadProfilePicture: (_, { file }, context: Context) =>
+  uploadProfilePicture: (_: any, { file }: any, context: Context) =>
     updateProfilePicture(context, file),
 
-  subscribeNewsletter: async (_, { email }, context: Context) => {
+  subscribeNewsletter: async (_: any, { email }: any, context: Context) => {
     const profile = context.dataSources.profile
 
     await profile.updatePersonalPreferences(email, {
@@ -36,7 +36,7 @@ export const mutations = {
 }
 
 export const queries = {
-  profile: (_, { customFields }, context) => getProfile(context, customFields),
+  profile: (_: any, { customFields }: any, context: any) => getProfile(context, customFields),
 }
 
 export const fieldResolvers = fieldR

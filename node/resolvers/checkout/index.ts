@@ -29,9 +29,9 @@ import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } 
  *
  * @param int An integer number
  */
-const convertIntToFloat = int => int * 0.01
+const convertIntToFloat = (int: any) => int * 0.01
 
-const shouldUpdateMarketingData = (orderFormMarketingTags, segmentData: SegmentData) => {
+const shouldUpdateMarketingData = (orderFormMarketingTags: any, segmentData: SegmentData) => {
   const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
   const {utm_source, utm_campaign, utmi_campaign} = segmentData
 
@@ -48,10 +48,10 @@ const mapIndexed = addIndex<any, any, any, any>(map)
 
 export const fieldResolvers = {
   OrderForm: {
-    cacheId: (orderForm) => {
+    cacheId: (orderForm: any) => {
       return orderForm.orderFormId
     },
-    items: (orderForm) => {
+    items: (orderForm: any) => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
       return mapIndexed((item: OrderFormItem, index: number) => ({
@@ -64,14 +64,14 @@ export const fieldResolvers = {
         }
       }), orderForm.items)
     },
-    pickupPointCheckedIn: (orderForm, _, ctx) => {
+    pickupPointCheckedIn: (orderForm: any, _: any, ctx: any) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
       if (!isCheckedIn || !checkedInPickupPointId) {
         return null
       }
       return logisticsQueries.pickupPoint({}, { id: checkedInPickupPointId }, ctx)
     },
-    value: (orderForm) => {
+    value: (orderForm: any) => {
       return convertIntToFloat(orderForm.value)
     },
   },
@@ -122,9 +122,9 @@ export const mutations: Record<string, Resolver> = {
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
     }
 
-    const cleanItems = items.map(({ options, ...rest }) => rest)
+    const cleanItems = items.map(({ options, ...rest }: any) => rest)
     const addItem = await checkout.addItem(orderFormId, cleanItems)
-    const withOptions = items.filter(({ options }) => !!options && options.length > 0)
+    const withOptions = items.filter(({ options }: any) => !!options && options.length > 0)
     await addOptionsForItems(withOptions, checkout, addItem)
     
     return withOptions.length === 0 ? addItem : (await checkout.orderForm())
@@ -146,7 +146,7 @@ export const mutations: Record<string, Resolver> = {
   }),
 
   createPaymentTokens: httpResolver({
-    data: ({ payments }) => payments,
+    data: ({ payments }: any) => payments,
     enableCookies: true,
     headers: withAuthToken(headers.json),
     method: 'POST',

@@ -17,17 +17,17 @@ export const resolvers = {
       }),
       quantity > 0 ? slice(0, quantity, images) : images
     ),
-    kitItems: ({kitItems}, _, {dataSources: {catalog}}: Context) => !kitItems
+    kitItems: ({kitItems}: any, _: any, {dataSources: {catalog}}: Context) => !kitItems
       ? []
       : Promise.all(
-          kitItems.map(async kitItem => {
+          kitItems.map(async (kitItem: any) => {
             const products = await catalog.productBySku([kitItem.itemId])
             const { items: skus = [], ...product } = head(products) || {}
             const sku = find(({ itemId }: any) => itemId === kitItem.itemId, skus)
             return { ...kitItem, product, sku }
           })
     ),
-    variations: sku => sku && map(
+    variations: (sku: any) => sku && map(
       (name: string) => ({ name, values: sku[name] }),
       sku.variations || []
     ),
