@@ -7,7 +7,7 @@ import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { catalogProxy } from './routes/catalogProxy'
 
-const TWO_SECONDS_MS =  2 * 1000
+const FOUR_SECONDS_MS =  4 * 1000
 
 const retryConfig = {
   retries: 1,
@@ -18,7 +18,7 @@ export default new Service<IOClients, void, CustomContext>({
     options: {
       default: {
         retryConfig,
-        timeout: TWO_SECONDS_MS,
+        timeout: FOUR_SECONDS_MS,
       },
     }
   },

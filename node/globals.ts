@@ -14,7 +14,10 @@ import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SegmentData, SessionDataSource } from './dataSources/session'
 
-(global as any).metrics = new MetricsAccumulator()
+if (!global.metrics) {
+  console.error('No global.metrics at require time')
+  global.metrics = new MetricsAccumulator()
+}
 
 declare global {
   type Context = ServiceContext<IOClients, void, CustomContext>
