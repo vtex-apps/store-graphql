@@ -5,6 +5,7 @@ import ResolverError from '../../errors/resolverError'
 import { toIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
+import { resolvers as discountResolvers } from './discount'
 import { resolvers as facetsResolvers } from './facets'
 import { resolvers as itemMetadataResolvers } from './itemMetadata'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
@@ -55,6 +56,7 @@ export const fieldResolvers = {
   ...itemMetadataResolvers,
   ...itemMetadataUnitResolvers,
   ...offerResolvers,
+  ...discountResolvers,
   ...productResolvers,
   ...recommendationResolvers,
   ...searchResolvers,
@@ -63,12 +65,12 @@ export const fieldResolvers = {
 
 export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context) => {
-    const { dataSources: { portal, messages, session} } = ctx
+    const { dataSources: { portal, messages, session } } = ctx
 
     const from = await session.getSegmentData().then(prop('cultureInfo'))
     const to = await session.getSegmentData(true).then(prop('cultureInfo'))
     const translatedTerm = await messages.translate(from, to, args.searchTerm)
-    const { itemsReturned }: {itemsReturned: Item[]} = await portal.autocomplete({maxRows: args.maxRows, searchTerm: translatedTerm})
+    const { itemsReturned }: { itemsReturned: Item[] } = await portal.autocomplete({ maxRows: args.maxRows, searchTerm: translatedTerm })
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
@@ -90,7 +92,6 @@ export const queries = {
   product: async (_: any, { slug }: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
-
     if (products.length > 0) {
       return head(products)
     }
