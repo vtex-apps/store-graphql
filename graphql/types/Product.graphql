@@ -142,7 +142,7 @@ type Offer {
   CacheVersionUsedToCallCheckout: String
   DeliverySlaSamples: [DeliverySlaSamples]
   """List of discount highlights"""
-  discountHighLights: [Discount]
+  discountHighLights: [Discount!]
 }
 
 """ Discount object """
