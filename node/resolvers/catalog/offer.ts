@@ -20,6 +20,6 @@ export const resolvers = {
       const byNumberOfInstallments = comparator((previous: any, next) => compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments))
       return [head(sort(byNumberOfInstallments, filteredInstallments))]
     },
-    discountHighLights: prop('DiscountHighLight')
+    discountHighlights: prop('DiscountHighLight')
   }
 }
