@@ -25,7 +25,6 @@ const renameKeysWith = curry((func: any, object: any) =>
   )(object)
 )
 
-
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
  */
