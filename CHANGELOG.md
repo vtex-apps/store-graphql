@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.64.0] - 2019-03-31
+### Added
+- Add `discountHighlights` field in `product` query. 
+
 ## [2.63.5] - 2019-03-29
 ### Added
 - `noImplicitAny` flag to `tsconfig.json`.
