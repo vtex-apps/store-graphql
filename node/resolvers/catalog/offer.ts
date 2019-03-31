@@ -1,5 +1,4 @@
-import { comparator, filter, gte, head, lte, sort, map } from 'ramda'
-import { renameKeys } from '../../utils'
+import { comparator, filter, gte, head, lte, sort, prop } from 'ramda'
 
 const InstallmentsCriteria = {
   ALL: 'ALL',
@@ -21,8 +20,6 @@ export const resolvers = {
       const byNumberOfInstallments = comparator((previous: any, next) => compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments))
       return [head(sort(byNumberOfInstallments, filteredInstallments))]
     },
-    discountHighLights: ({ DiscountHighLight }: any) => {
-      return map(renameKeys({ '<Name>k__BackingField': 'name' }), DiscountHighLight)
-    }
+    discountHighLights: prop('DiscountHighLight')
   }
 }

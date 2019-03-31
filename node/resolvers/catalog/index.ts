@@ -9,6 +9,7 @@ import { resolvers as facetsResolvers } from './facets'
 import { resolvers as itemMetadataResolvers } from './itemMetadata'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as offerResolvers } from './offer'
+import { resolvers as discountResolvers } from './discount'
 import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
@@ -55,6 +56,7 @@ export const fieldResolvers = {
   ...itemMetadataResolvers,
   ...itemMetadataUnitResolvers,
   ...offerResolvers,
+  ...discountResolvers,
   ...productResolvers,
   ...recommendationResolvers,
   ...searchResolvers,
