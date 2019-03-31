@@ -1,4 +1,4 @@
-import { comparator, filter, gte, head, lte, sort, prop } from 'ramda'
+import { comparator, filter, gte, head, lte, prop, sort } from 'ramda'
 
 const InstallmentsCriteria = {
   ALL: 'ALL',
