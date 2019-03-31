@@ -91,7 +91,6 @@ export const queries = {
     const { dataSources: { catalog } } = ctx
     const products = await catalog.product(slug)
     if (products.length > 0) {
-      // console.log(products[0].items[0].sellers[0].commertialOffer.DiscountHighLight)
       return head(products)
     }
 

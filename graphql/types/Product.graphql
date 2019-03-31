@@ -141,11 +141,14 @@ type Offer {
   Tax: Float
   CacheVersionUsedToCallCheckout: String
   DeliverySlaSamples: [DeliverySlaSamples]
-  DiscountHighLight: [Discount]
+  """List of discount highlights"""
+  discountHighLights: [Discount]
 }
 
+""" Discount object """
 type Discount {
-  Name: String
+  """ Discount name """
+  name: String
 }
 
 type DeliverySlaSamples {
