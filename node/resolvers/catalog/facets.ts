@@ -14,6 +14,7 @@ const objToNameValue = (
     toPairs(record)
   )
 
+// @ts-ignore
 const formatCategoriesTree = (root: any) => {
   const format = (tree: any[] = [], parentPath = '', level = 0): any => {
     if (tree.length === 0) {

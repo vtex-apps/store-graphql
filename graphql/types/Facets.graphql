@@ -6,13 +6,6 @@ type Facets {
   PriceRanges: [Facet]
 }
 
-type Category {
-  Id: Int!
-  Slug: String
-  Quantity: Int!
-  Link: String!
-}
-
 type Facet {
   Id: Int
   Name: IOMessage!
