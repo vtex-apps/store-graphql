@@ -89,15 +89,35 @@ export const queries = {
     return catalog.facets(facets)
   },
 
-  product: async (_: any, { slug }: any, ctx: Context) => {
+  product: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
-    const products = await catalog.product(slug)
+    const { field, value } = args.identifier
+    let products = []
+
+    switch (field){
+      case 'id':
+        products = await catalog.productById(value)
+        break
+      case 'slug':
+        products = await catalog.product(value)
+        break
+      case 'ean':
+        products = await catalog.productByEan(value)
+        break
+      case 'reference':
+        products = await catalog.productByReference(value)
+        break
+      case 'sku':
+        products = await catalog.productBySku([value])
+        break
+    }
+
     if (products.length > 0) {
       return head(products)
     }
 
     throw new ResolverError(
-      'No product was found with requested slug',
+      `No product was found with requested ${field}`,
       404
     )
   },
