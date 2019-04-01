@@ -34,7 +34,7 @@ export class SessionDataSource extends RESTDataSource {
     const {
       vtex: { account },
     } = this.context
-    return `http://${account}.vtexcommercestable.com.br/api`
+    return `http://${account}.vtexcommercebeta.com.br/api`
   }
 
   protected willSendRequest(request: RequestOptions) {
