@@ -6,6 +6,13 @@ type Facets {
   PriceRanges: [Facet]
 }
 
+type Category {
+  Id: Int!
+  Slug: String
+  Quantity: Int!
+  Link: String!
+}
+
 type Facet {
   Id: Int
   Name: IOMessage!
@@ -13,6 +20,7 @@ type Facet {
   Link: String!
   Slug: String
   Children: [Facet]
+  selected: Boolean
 }
 
 type Filter {
