@@ -104,6 +104,19 @@ type SKU {
   calculatedAttachments: String
 }
 
+input ProductUniqueIdentifier {
+  field: ProductUniqueIdentifierField!
+  value: ID!
+}
+
+enum ProductUniqueIdentifierField {
+  id
+  slug
+  ean
+  reference
+  sku
+}
+
 type KitItem {
   itemId: ID
   amount: Int

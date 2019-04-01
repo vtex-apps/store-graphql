@@ -3,8 +3,8 @@ scalar IOMessage
 type Query {
     """ Get a specified product """
   product(
-    """ Product slug """
-    slug: String
+    """ Product identifier """
+    identifier: ProductUniqueIdentifier
   ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Product search filtered and ordered """
