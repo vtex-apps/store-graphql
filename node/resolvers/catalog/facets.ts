@@ -15,18 +15,18 @@ const objToNameValue = (
     toPairs(record)
   )
 
-const removeAccents = (name: string): string => {
-  const normalizedName = unorm.nfd(name).replace(/[\u0300-\u036f]/g, '')
+const removeAccents = (name: string): string =>
+  unorm.nfd(name).replace(/[\u0300-\u036f]/g, '')
 
-  return normalizedName
-}
+const transformSlug = (name: string): string =>
+  slugify(removeAccents(name)).replace('.', '-')
 
 const formatCategoriesTree = (root: any) => {
   const format = (tree: any[] = []): any => {
     return tree.map(node => {
       return {
         ...node,
-        Slug: slugify(removeAccents(node.Name)).replace('.', '-'),
+        Slug: transformSlug(node.Name),
         Children: format(node.Children),
       }
     })
@@ -37,7 +37,7 @@ const formatCategoriesTree = (root: any) => {
 
 const addSlugFromName = map((facet: any) => ({
   ...facet,
-  Slug: removeAccents(facet.Name),
+  Slug: transformSlug(facet.Name),
 }))
 
 const addSelected = (facets: any[], { query }: { query: string }): any => {
@@ -68,16 +68,7 @@ export const resolvers = {
       return addSelected(addSlugFromName(Departments), queryArgs)
     },
     Brands: ({ Brands = [], queryArgs = {} }: any) => {
-      return addSelected(
-        map(
-          (brand: any) => ({
-            ...brand,
-            Slug: slugify(brand.Name),
-          }),
-          Brands
-        ),
-        queryArgs
-      )
+      return addSelected(addSlugFromName(Brands), queryArgs)
     },
     SpecificationFilters: ({
       SpecificationFilters = {},
@@ -86,7 +77,10 @@ export const resolvers = {
       const specificationFilters = map(
         specificationFilter => ({
           ...specificationFilter,
-          facets: addSlugFromName(specificationFilter.facets),
+          facets: specificationFilter.facets.map((facet: any) => ({
+            ...facet,
+            Slug: facet.Name,
+          })),
         }),
         objToNameValue('name', 'facets', SpecificationFilters)
       )
