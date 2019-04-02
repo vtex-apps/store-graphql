@@ -49,6 +49,17 @@ function findInTree(tree: any, values: any, index = 0): any {
   return {}
 }
 
+async function getProductBySlug(slug: string, catalog: any){
+  const products = await catalog.product(slug)
+  if (products.length > 0) {
+    return head(products)
+  }
+  throw new ResolverError(
+    `No product was found with requested sku`,
+    404
+  )
+}
+
 export const fieldResolvers = {
   ...brandResolvers,
   ...categoryResolvers,
@@ -91,6 +102,9 @@ export const queries = {
 
   product: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
+    if (args.slug) {
+      return getProductBySlug(args.slug, catalog)
+    }
     const { field, value } = args.identifier
     let products = []
 
