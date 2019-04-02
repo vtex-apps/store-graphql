@@ -42,9 +42,9 @@ export const resolvers = {
       category => toIOMessage(ctx, category, category)
     ),
 
-    description: ({ description, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, description, `description-${productId}`),
+    description: ({ description, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, description, `product-description-${productId}`),
 
-    productName: ({ productName, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, productName, `name-${productId}`),
+    productName: ({ productName, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, productName, `product-name-${productId}`),
 
     cacheId: ({ linkText }: any) => linkText,
 
