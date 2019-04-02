@@ -112,23 +112,23 @@ declare global {
   }
 
   interface Profile {
-    firstName: string
-    lastName: string
-    profilePicture: string
+    firstName?: string
+    lastName?: string
+    profilePicture?: string
     email: string
-    document: string
+    document?: string
     userId: string
-    birthDate: string
-    gender: string
-    homePhone: string
-    businessPhone: string
-    isCorporate: boolean
-    corporateName: string
-    corporateDocument: string
-    stateRegistration: string
-    addresses: Address[]
-    payments: PaymentProfile[]
-    customFields: ProfileCustomField[]
+    birthDate?: string
+    gender?: string
+    homePhone?: string
+    businessPhone?: string
+    isCorporate?: boolean
+    corporateName?: string
+    corporateDocument?: string
+    stateRegistration?: string
+    addresses?: Address[]
+    payments?: PaymentProfile[]
+    customFields?: ProfileCustomField[]
   }
 
   interface PersonalPreferences {

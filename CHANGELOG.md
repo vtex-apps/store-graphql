@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.64.1] - 2019-04-02
+### Fixed
+- `withCurrentProfile` directive, create a profile for the user if he is logged but hasn't one yet.
+
 ## [2.64.0] - 2019-03-31
 ### Added
 - Add `discountHighlights` field in `product` query. 
@@ -34,8 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New mutation `subscribeNewsletter`.
 
 ## [2.61.1] - 2019-03-27
-
-## [2.61.1-beta] - 2019-03-27
 ### Fixed
 - `Invalid CEP` messages in checkout API. This was due to updating the order form shipping address with a masked session address. The fix was to check if the address was not masked before sending it to checkout api
 
