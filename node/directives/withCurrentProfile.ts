@@ -11,32 +11,23 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
     field.resolve = async (root, args, context, info) => {
-      let currentProfile: any = null
-      await getCurrentProfileFromSession(context)
-        .then(profile => {
-          currentProfile = profile
-        })
-        .catch(async _ => {
-          currentProfile = await getCurrentProfileFromCookies(context)
-        })
-        .catch(_ => {
-          currentProfile = null
-        })
+      const currentProfile: CurrentProfile | null = await (getCurrentProfileFromSession(context)
+        .catch(() => getCurrentProfileFromCookies(context))).catch(() => null)
 
-      if (!currentProfile || !currentProfile.email) {
+      if (!isLogged(currentProfile)) {
         return null
       }
 
-      context.vtex.currentProfile = currentProfile
+      context.vtex.currentProfile = await validatedProfile(context, currentProfile as CurrentProfile)
 
       return resolve(root, args, context, info)
     }
   }
 }
 
-const getCurrentProfileFromSession = (
+function getCurrentProfileFromSession(
   context: Context
-): Promise<CurrentProfile | null> => {
+): Promise<CurrentProfile | null> {
   return sessionQueries.getSession(null, null, context).then(currentSession => {
     const session = currentSession as SessionFields
 
@@ -51,16 +42,16 @@ const getCurrentProfileFromSession = (
 
     return profile
       ? ({
-          email: profile && profile.email,
-          userId: profile && profile.id,
-        } as CurrentProfile)
+        email: profile && profile.email,
+        userId: profile && profile.id,
+      } as CurrentProfile)
       : null
   })
 }
 
-const getCurrentProfileFromCookies = async (
+async function getCurrentProfileFromCookies(
   context: Context
-): Promise<CurrentProfile> => {
+): Promise<CurrentProfile | null> {
   const {
     dataSources: { profile, identity },
     vtex: { account },
@@ -97,10 +88,25 @@ const getCurrentProfileFromCookies = async (
       .then(({ email, userId }) => ({ email, userId }))
   }
 
-  return null as any
+  return null
 }
 
-const isValidCallcenterOperator = (context: Context, email: string) => {
+async function validatedProfile(context: Context, currentProfile: CurrentProfile): Promise<CurrentProfile> {
+  const {
+    dataSources: { profile },
+  } = context
+
+  const { id, userId } = await profile.getProfileInfo(currentProfile.email, 'id')
+
+  if (!id) {
+    // doesn't have a profile, create one
+    await profile.updateProfileInfo(currentProfile.email, { email: currentProfile.email, userId })
+  }
+
+  return { userId, email: currentProfile.email }
+}
+
+function isValidCallcenterOperator(context: Context, email: string) {
   const {
     dataSources: { callcenterOperator, licenseManager },
   } = context
@@ -110,4 +116,8 @@ const isValidCallcenterOperator = (context: Context, email: string) => {
     .then(id =>
       callcenterOperator.isValidCallcenterOperator({ email, accountId: id })
     )
+}
+
+function isLogged(currentProfile: CurrentProfile | null) {
+  return currentProfile && currentProfile.email
 }
