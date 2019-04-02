@@ -11,7 +11,7 @@ type Facet {
   Name: IOMessage!
   Quantity: Int!
   Link: String!
-  Slug: String
+  Slug: String!
   Children: [Facet]
   selected: Boolean
 }
