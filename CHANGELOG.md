@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.64.1] - 2019-04-02
 ### Fixed
 - `withCurrentProfile` directive, create a profile for the user if he is logged but hasn't one yet.
 
