@@ -1,7 +1,8 @@
 import { ApolloError } from 'apollo-server-errors'
+import { GraphQLResolveInfo } from 'graphql'
 import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
-import ResolverError from '../../errors/resolverError'
 
+import ResolverError from '../../errors/resolverError'
 import { toIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
@@ -64,7 +65,7 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_: any, args: any, ctx: Context) => {
+  autocomplete: async (_: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
     const { dataSources: { portal, messages, session } } = ctx
 
     const from = await session.getSegmentData().then(prop('cultureInfo'))
@@ -76,7 +77,7 @@ export const queries = {
       itemsReturned: map(
         item => ({
           ...item,
-          name: toIOMessage(ctx, item.name, `item-${extractSlug(item)}`),
+          name: toIOMessage(ctx, item.name, `${info.parentType}-${info.fieldName}-${extractSlug(item)}`),
           slug: extractSlug(item),
         }),
         itemsReturned
