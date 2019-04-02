@@ -88,7 +88,7 @@ export const queries = {
       itemsReturned: map(
         item => ({
           ...item,
-          name: toIOMessage(ctx, item.name),
+          name: toIOMessage(ctx, item.name, `${extractSlug(item)}`),
           slug: extractSlug(item),
         }),
         itemsReturned
