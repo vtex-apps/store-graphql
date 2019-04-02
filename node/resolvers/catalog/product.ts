@@ -1,4 +1,5 @@
 import { map as mapP } from 'bluebird'
+import { GraphQLResolveInfo } from 'graphql'
 import { compose, map, omit, propOr, reject, toPairs } from 'ramda'
 
 import { queries as benefitsQueries } from '../benefits'
@@ -39,12 +40,12 @@ export const resolvers = {
 
     categories: ({ categories }: {categories: string[]}, _: any, ctx: Context) => mapP(
       categories,
-      category => toIOMessage(ctx, category, category)
+      category => toIOMessage(ctx, category, `category-${category}`)
     ),
 
-    description: ({ description, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, description, `product-description-${productId}`),
+    description: ({ description, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, description, `${info.parentType}-${info.fieldName}-${productId}`),
 
-    productName: ({ productName, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, productName, `product-name-${productId}`),
+    productName: ({ productName, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, productName, `${info.parentType}-${info.fieldName}-${productId}`),
 
     cacheId: ({ linkText }: any) => linkText,
 
