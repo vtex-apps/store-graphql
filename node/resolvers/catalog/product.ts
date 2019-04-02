@@ -40,11 +40,11 @@ export const resolvers = {
     categories: ({ categories }: {categories: string[]}, _: any, ctx: Context) => mapP(
       categories,
       category => toIOMessage(ctx, category, category)
-      ),
+    ),
 
-    description: ({ description }: any, _: any, ctx: Context) => toIOMessage(ctx, description),
+    description: ({ description, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, description, `description-${productId}`),
 
-    productName: ({ productName }: any, _: any, ctx: Context) => toIOMessage(ctx, productName),
+    productName: ({ productName, productId }: any, _: any, ctx: Context) => toIOMessage(ctx, productName, `name-${productId}`),
 
     cacheId: ({ linkText }: any) => linkText,
 
