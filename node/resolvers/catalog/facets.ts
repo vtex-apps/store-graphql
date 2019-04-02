@@ -8,7 +8,7 @@ const objToNameValue = (keyName: string, valueName: string, record: Record<strin
 
 export const resolvers = {
   Facet: {
-    Name: ({Name}: any, _: any, ctx: Context) => toIOMessage(ctx, Name),
+    Name: ({Name, Id}: any, _: any, ctx: Context) => toIOMessage(ctx, Name, Id),
   },
   Facets: {
     SpecificationFilters: ({SpecificationFilters = {}}) => objToNameValue('name', 'facets', SpecificationFilters),
