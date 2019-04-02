@@ -1,4 +1,6 @@
+import { map as mapP } from 'bluebird'
 import { compose, map, omit, propOr, reject, toPairs } from 'ramda'
+
 import { queries as benefitsQueries } from '../benefits'
 import { toIOMessage } from './../../utils/ioMessage'
 
@@ -35,9 +37,9 @@ export const resolvers = {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({ categories }: any, _: any, ctx: Context) =>
-      Promise.all(
-        map((category: string) => toIOMessage(ctx, category), categories)
+    categories: ({ categories }: {categories: string[]}, _: any, ctx: Context) => mapP(
+      categories,
+      category => toIOMessage(ctx, category, category)
       ),
 
     description: ({ description }: any, _: any, ctx: Context) => toIOMessage(ctx, description),
