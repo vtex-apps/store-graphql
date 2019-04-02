@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql'
 import { map, toPairs } from 'ramda'
 import unorm from 'unorm'
+import slugify from 'slugify'
 
 import { toIOMessage } from '../../utils/ioMessage'
 
@@ -14,47 +15,89 @@ const objToNameValue = (
     toPairs(record)
   )
 
-// @ts-ignore
-const formatCategoriesTree = (root: any) => {
-  const format = (tree: any[] = [], parentPath = '', level = 0): any => {
-    if (tree.length === 0) {
-      return []
-    }
+const removeAccents = (name: string): string => {
+  const normalizedName = unorm.nfd(name).replace(/[\u0300-\u036f]/g, '')
 
-    return tree.reduce((categories, node) => {
-      // Remove the accents and diacritics of the string
-      const normalizedName = unorm
-        .nfd(node.Name)
-        .replace(/[\u0300-\u036f]/g, '')
-      const nodePath = parentPath
-        ? `${parentPath}/${normalizedName}`
-        : normalizedName
-      return [
-        ...categories,
-        {
-          Id: node.Id,
-          Slug: node.Slug && node.Slug.replace(',', ''),
-          Quantity: node.Quantity,
-          Name: node.Name,
-          Link: node.Link,
-          path: nodePath,
-          level,
-        },
-        ...format(node.Children, nodePath, level + 1),
-      ]
-    }, [])
+  return normalizedName
+}
+
+const formatCategoriesTree = (root: any) => {
+  const format = (tree: any[] = []): any => {
+    return tree.map(node => {
+      return {
+        ...node,
+        Slug: slugify(removeAccents(node.Name)).replace('.', '-'),
+        Children: format(node.Children),
+      }
+    })
   }
 
   return format(root)
 }
 
+const addSlugFromName = map((facet: any) => ({
+  ...facet,
+  Slug: removeAccents(facet.Name),
+}))
+
+const addSelected = (facets: any[], { query }: { query: string }): any => {
+  return facets.map((facet: any) => {
+    let children = facet.Children
+
+    if (children) {
+      children = addSelected(children, { query })
+    }
+
+    return {
+      ...facet,
+      Children: children,
+      selected: query
+        .toLowerCase()
+        .split('/')
+        .includes(facet.Slug.toLowerCase()),
+    }
+  })
+}
+
 export const resolvers = {
   Facet: {
     Name: ({Name, Link}: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
-    selected: () => false,
   },
   Facets: {
-    SpecificationFilters: ({ SpecificationFilters = {} }) =>
-      objToNameValue('name', 'facets', SpecificationFilters),
+    Departments: ({ Departments = [], queryArgs = {} }: any) => {
+      return addSelected(addSlugFromName(Departments), queryArgs)
+    },
+    Brands: ({ Brands = [], queryArgs = {} }: any) => {
+      return addSelected(
+        map(
+          (brand: any) => ({
+            ...brand,
+            Slug: slugify(brand.Name),
+          }),
+          Brands
+        ),
+        queryArgs
+      )
+    },
+    SpecificationFilters: ({
+      SpecificationFilters = {},
+      queryArgs = {},
+    }: any) => {
+      const specificationFilters = map(
+        specificationFilter => ({
+          ...specificationFilter,
+          facets: addSlugFromName(specificationFilter.facets),
+        }),
+        objToNameValue('name', 'facets', SpecificationFilters)
+      )
+
+      return specificationFilters.map((specificationFilter: any) => ({
+        ...specificationFilter,
+        facets: addSelected(specificationFilter.facets, queryArgs),
+      }))
+    },
+    CategoriesTrees: ({ CategoriesTrees = [], queryArgs = {} }: any) => {
+      return addSelected(formatCategoriesTree(CategoriesTrees), queryArgs)
+    },
   },
 }
