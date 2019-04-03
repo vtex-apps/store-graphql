@@ -49,7 +49,7 @@ function findInTree(tree: any, values: any, index = 0): any {
   return {}
 }
 
-//TODO: This method should be removed in the next major.
+// TODO: This method should be removed in the next major.
 async function getProductBySlug(slug: string, catalog: any){
   const products = await catalog.product(slug)
   if (products.length > 0) {
@@ -103,7 +103,7 @@ export const queries = {
 
   product: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
-    //TODO this is only for backwards compatibility. Should be removed in the next major.
+    // TODO this is only for backwards compatibility. Should be removed in the next major.
     if (args.slug) {
       return getProductBySlug(args.slug, catalog)
     }
