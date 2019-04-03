@@ -101,9 +101,21 @@ export const queries = {
     }
   },
 
-  facets: (_: any, { facets }: any, ctx: Context) => {
+  facets: async (_: any, { facets, query, map }: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
-    return catalog.facets(facets)
+    const queryArgs = { query, map }
+
+    let result
+
+    if (facets) {
+      result = await catalog.facets(facets)
+    } else {
+      result = await catalog.facets(`${query}?map=${map}`)
+    }
+
+    result.queryArgs = queryArgs
+
+    return result
   },
 
   product: async (_: any, args: any, ctx: Context) => {
@@ -172,10 +184,6 @@ export const queries = {
   categories: async (_: any, { treeLevel }: any, { dataSources: { catalog } }: Context) => catalog.categories(treeLevel),
 
   search: async (_: any, args: any, ctx: Context) => {
-    return queries.productSearch(_, args, ctx)
-  },
-
-  productSearch: async (_: any, args: any, ctx: Context) => {
     const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {

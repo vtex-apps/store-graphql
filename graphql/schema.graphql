@@ -31,12 +31,16 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment @deprecated(reason: "Use 'productSearch' query instead")
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Get facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
-    facets: String = ""
+    facets: String = "" @deprecated(reason: "Use 'query' and 'map' field instead"),
+    """ Terms that is used in search e.g.: eletronics/samsung """
+    query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
+    map: String = ""
   ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
@@ -63,31 +67,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment @deprecated(reason: "Use 'productSearch' query instead")
-
-  """ Search for products. e.g.: search(query: 'eletronics,lg', map: 'c,b') """
-  productSearch(
-    """ Terms that is used in search e.g.: eletronics/samsung """
-    query: String = "",
-    """ Defines terms types: Brand, Category, Department e.g.: c,b """
-    map: String = "",
-    """ Filter by category. {a}/{b} - {a} and {b} are categoryIds """
-    category: String = "",
-    """ Array of product specification. specificationFilter_{a}:{b} - {a} is the specificationId, {b} = specification value """
-    specificationFilters: [String],
-    """ Filter by price range. e.g.: {a} TO {b} - {a} is the minimum price "from" and {b} is the highest price "to" """
-    priceRange: String = "",
-    """ Filter by collection. where collection also know as productClusterId"""
-    collection: String = "",
-    """ Filter by availability at a specific sales channel. e.g.: salesChannel:4 if want filter by available products for the sales channel 4"""
-    salesChannel: String = "",
-    """ Order by a criteria. OrderByPriceDESC/OrderByPriceASC, OrderByTopSaleDESC, OrderByReviewRateDESC, OrderByNameASC/OrderByNameDESC, OrderByReleaseDateDESC, OrderByBestDiscountDESC """
-    orderBy: String = "OrderByPriceDESC",
-    """ Pagination item start """
-    from: Int = 0,
-    """ Pagination item end """
-    to: Int = 9
-  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment @deprecated(reason: "Use the 'products' and 'facets' queries separately")
 
   """ Get category details """
   category(
