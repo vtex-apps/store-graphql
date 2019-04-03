@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Add `ProductUniqueIdentifier` parameter in `product` query. 
+
 ## [2.64.1] - 2019-04-02
 ### Fixed
 - `withCurrentProfile` directive, create a profile for the user if he is logged but hasn't one yet.
