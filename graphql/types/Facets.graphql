@@ -13,6 +13,7 @@ type Facet {
   Link: String!
   Slug: String!
   Children: [Facet]
+  Map: String
   selected: Boolean
 }
 
