@@ -3,8 +3,8 @@
   "memory": 1024,
   "ttl": 60,
   "timeout": 9,
-  "minReplicas": 6,
-  "maxReplicas": 20,
+  "minReplicas": 20,
+  "maxReplicas": 40,
   "routes": {
     "catalogProxy": {
       "path": "/proxy/catalog/*path",
