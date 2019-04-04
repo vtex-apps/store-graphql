@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.64.3] - 2019-04-04
+### Changed
+- Increase min replicas.
+
 ## [2.64.2] - 2019-04-03
 
 ### Added
-- Add `ProductUniqueIdentifier` parameter in `product` query. 
+- Add `ProductUniqueIdentifier` parameter in `product` query.
 
 ## [2.64.1] - 2019-04-02
 ### Fixed
@@ -18,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.64.0] - 2019-03-31
 ### Added
-- Add `discountHighlights` field in `product` query. 
+- Add `discountHighlights` field in `product` query.
 
 ## [2.63.5] - 2019-03-29
 ### Added
