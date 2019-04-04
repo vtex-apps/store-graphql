@@ -120,5 +120,17 @@ export const resolvers = {
     },
 
     priceRanges: prop('PriceRanges'),
+
+    recordsFiltered: async (root: any, _: any, ctx: Context) => {
+      const {
+        dataSources: { catalog },
+      } = ctx
+
+      try {
+        return catalog.productsQuantity(root.queryArgs)
+      } catch (e) {
+        return 0
+      }
+    },
   },
 }

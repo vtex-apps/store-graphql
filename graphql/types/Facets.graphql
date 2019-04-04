@@ -9,6 +9,7 @@ type Facets {
   specificationFilters: [Filter]
   categoriesTrees: [Facet]
   priceRanges: [Facet]
+  recordsFiltered: Int
 }
 
 type Facet {
