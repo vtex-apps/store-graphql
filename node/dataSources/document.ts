@@ -27,6 +27,12 @@ export class DocumentDataSource extends RESTDataSource {
     { headers: { ...pagination } , metric: 'masterdata-searchDocuments'}
   )
 
+  public searchDocumentsWithSchema = (acronym: string, fields: string[], where: string, schema: string, pagination: PaginationArgs) => this.get(
+    `${acronym}/search`,
+    { _fields: fields, _where: where, _schema: schema },
+    { headers: { ...pagination } , metric: 'masterdata-searchDocumentsWithSchema'}
+  )
+
   public createDocument = (acronym: string, fields: string[]) => this.post(
     `${acronym}/documents`,
     parseFieldsToJson(fields),

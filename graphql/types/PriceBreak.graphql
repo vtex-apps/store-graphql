@@ -1,0 +1,6 @@
+type PriceBreak {
+  itemId: String
+  minQuantity: Float
+  maxQuantity: Float
+  price: Float
+}

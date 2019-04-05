@@ -16,6 +16,7 @@ import {
   queries as profileQueries,
 } from './profile'
 import { mutations as sessionMutations, queries as sessionQueries } from './session'
+import { fieldResolvers as priceBreaksFieldResolvers, queries as priceBreaksQueries } from './prices'
 
 // tslint:disable-next-line:no-var-requires
 Promise = require('bluebird')
@@ -26,6 +27,7 @@ export const resolvers = {
   ...profileFieldResolvers,
   ...checkoutFieldResolvers,
   ...logisticsResolvers,
+  ...priceBreaksFieldResolvers,
   Mutation: {
     ...profileMutations,
     ...checkoutMutations,
@@ -45,5 +47,6 @@ export const resolvers = {
     ...sessionQueries,
     ...listQueries,
     ...omsQueries,
+    ...priceBreaksQueries,
   }
 }

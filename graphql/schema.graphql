@@ -197,6 +197,13 @@ type Query {
 
   """ Get logged in user's last order """
   userLastOrder: Order @cacheControl(scope: PRIVATE)
+
+  priceBreaks(
+    """ the sku id """
+    itemId: String
+    """ seller id """
+    sellerId: String
+  ): [PriceBreak] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 }
 
 type Mutation {
