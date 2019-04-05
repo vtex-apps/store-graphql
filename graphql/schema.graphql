@@ -197,6 +197,34 @@ type Query {
 
   """ Get logged in user's last order """
   userLastOrder: Order @cacheControl(scope: PRIVATE)
+
+  """
+  Get facet images
+  """
+  facetImages(
+    """
+    Facet type
+    """
+    facetType: String!
+    """ The page that will be fetched """
+    page: Int = 1
+    """ The page size """
+    pageSize: Int = 15
+  ): [FacetImage] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  
+  """
+  Get a facet image
+  """
+  facetImage(
+    """
+    Facet type
+    """
+    facetType: String!
+    """
+    Facet ID
+    """
+    facetId: String!
+  ): FacetImage @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 }
 
 type Mutation {

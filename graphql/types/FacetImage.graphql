@@ -1,0 +1,18 @@
+type FacetImage {
+  """
+  ID
+  """
+  id: String
+  """
+  Facet ID
+  """
+  facetId: String
+  """
+  Facet type
+  """
+  facetType: String
+  """
+  Facet image URL
+  """
+  imageUrl: String
+}

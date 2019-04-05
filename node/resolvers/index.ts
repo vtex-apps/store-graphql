@@ -7,6 +7,7 @@ import {
   queries as checkoutQueries,
 } from './checkout'
 import { mutations as documentMutations, queries as documentQueries } from './document'
+import { queries as facetImageQueries } from './facetImage'
 import { mutation as listMutations, queries as listQueries } from './list'
 import { fieldResolvers as logisticsResolvers, queries as logisticsQueries } from './logistics'
 import { queries as omsQueries } from './oms'
@@ -45,5 +46,6 @@ export const resolvers = {
     ...sessionQueries,
     ...listQueries,
     ...omsQueries,
+    ...facetImageQueries,
   }
 }
