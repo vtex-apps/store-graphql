@@ -1,6 +1,6 @@
 import http from 'axios'
 import camelCase from 'camelcase'
-import { both, find, isEmpty, pickBy, prop, propEq } from 'ramda'
+import { both, find, isEmpty, path, pickBy, prop, propEq } from 'ramda'
 import { renameKeysWith } from '../../utils'
 import paths from '../paths'
 
@@ -55,9 +55,10 @@ const fetchPrice = async ({
     ...(isEmpty(marketingData) ? {} : { marketingData }),
   }
   const orderForm = await http.post(url, payload, { headers }).catch(() => null)
+  const shouldCheckTotals = orderForm && path(['data', 'totals', 'length'], orderForm)
   return {
     id,
-    price: orderForm ? prop('value', find<any>(propEq('id', 'Items'))(orderForm.data.totals)) : 0,
+    price: shouldCheckTotals? prop('value', find<any>(propEq('id', 'Items'))((orderForm as any).data.totals)) : 0,
     priceTable,
   }
 }

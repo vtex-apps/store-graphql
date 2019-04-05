@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.64.4] - 2019-04-05
+### Fixed
+- `ItemMetadata` will not return null when there is no priceTable for some item.
+
 ## [2.64.3] - 2019-04-04
 ### Changed
 - Increase min replicas.
