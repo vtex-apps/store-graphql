@@ -13,6 +13,8 @@ const retryConfig = {
   retries: 1,
 }
 
+export { Runtime } from '@vtex/api'
+
 export default new Service<IOClients, void, CustomContext>({
   clients: {
     options: {

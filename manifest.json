@@ -124,7 +124,7 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercestable.com.br",
+        "host": "portal.vtexcommercestable.com.br",
         "path": "/api/segments/*"
       }
     },

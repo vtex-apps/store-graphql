@@ -287,10 +287,10 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@vtex/api@^3.0.10":
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.0.10.tgz#7b454fa8776f4e6417d659a10491b1d9c6cfdae4"
-  integrity sha512-2yYzEFghrfjV4AMvNO4tiX0OznEL5S1xFF1Q6o2vGfEyAiENz7u+qw+L85FEM3L5ZEkfFCXGHI6OYX/L/bsX9Q==
+"@vtex/api@^3.2.0-beta.4":
+  version "3.2.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.2.0-beta.4.tgz#0ea1943bc4109af724c920613bff220322d688c8"
+  integrity sha512-XK1/gcF4/w/CUsQ5CZBDdjfLHb2FE5A4aVLgN6t933wSLaCjNQGFfVpCZWNxKOIZdJ4/1N/+qQXvCKrfYxed3g==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
@@ -300,6 +300,7 @@
     axios "^0.18.0"
     axios-retry "^3.1.2"
     co-body "^6.0.0"
+    cookie "^0.3.1"
     dataloader "^1.4.0"
     fs-extra "^7.0.0"
     graphql "^0.13.2"
@@ -3228,7 +3229,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-stats-lite@vtex/node-stats-lite#dist:
+"stats-lite@github:vtex/node-stats-lite#dist":
   version "2.2.0"
   resolved "https://codeload.github.com/vtex/node-stats-lite/tar.gz/1b0d39cc41ef7aaecfd541191f877887a2044797"
   dependencies:

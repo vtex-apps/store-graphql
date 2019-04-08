@@ -102,10 +102,10 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, {orderFormId, items}, {dataSources: {checkout, session}}) => {
+  addItem: async (_, {orderFormId, items}, {dataSources: {checkout}, clients: {segment}}) => {
     const [{marketingData}, segmentData] = await Promise.all([
       checkout.orderForm(),
-      session.getSegmentData().catch((err) => {
+      segment.getSegment().catch((err) => {
         // todo: log error using colossus
         console.error(err)
         return {} as SegmentData
@@ -126,7 +126,7 @@ export const mutations: Record<string, Resolver> = {
     const addItem = await checkout.addItem(orderFormId, cleanItems)
     const withOptions = items.filter(({ options }: any) => !!options && options.length > 0)
     await addOptionsForItems(withOptions, checkout, addItem)
-    
+
     return withOptions.length === 0 ? addItem : (await checkout.orderForm())
   },
 
