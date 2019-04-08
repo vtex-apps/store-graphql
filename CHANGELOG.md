@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Add `productSearch` query, to replace `search` without the `rest` parameter.
+- Add fields `selected` and `map` to `Facet` type, alongside the camel case version of previous fields.
+
+### Deprecated
+- `search` query.
 
 ## [2.66.1] - 2019-04-09
 
