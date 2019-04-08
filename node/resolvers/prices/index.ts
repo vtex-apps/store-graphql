@@ -1,6 +1,6 @@
 import { flatten, path } from 'ramda'
 import { queries as checkoutQueries } from '../checkout'
-import { acronym, fields, schema } from './utils'
+import { acronym, fields, schema, page, pageSize } from './utils'
 
 export const fieldResolvers = {
   PriceBreak: {
@@ -16,7 +16,7 @@ export const queries = {
     const { dataSources: { document } } = ctx
 
     const where = `itemId=${args.itemId}`
-    const quantityBreaks = await document.searchDocumentsWithSchema(acronym, fields, where, schema, { page: 1, pageSize: 100 })
+    const quantityBreaks = await document.searchDocumentsWithSchema(acronym, fields, where, schema, { page: page, pageSize: pageSize })
 
     if (!quantityBreaks || !quantityBreaks.length) {
       return null
