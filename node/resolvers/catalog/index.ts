@@ -78,11 +78,16 @@ export const fieldResolvers = {
 
 export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
-    const { dataSources: { portal, messages, session } } = ctx
+    const { dataSources: { portal }, clients: { segment, messages } } = ctx
 
-    const from = await session.getSegmentData().then(prop('cultureInfo'))
-    const to = await session.getSegmentData(true).then(prop('cultureInfo'))
-    const translatedTerm = await messages.translate(from, to, args.searchTerm)
+    const segmentData = await segment.getSegment()
+    // Grabbing a segment without token should give us the default store locale
+    const defaultSegmentData = await segment.getSegmentByToken(null)
+    console.log('segments autocomplete', segmentData, defaultSegmentData)
+    const from = segmentData.cultureInfo
+    const to = defaultSegmentData.cultureInfo
+    // Only translate if necessary
+    const translatedTerm = from && from !== to ? await messages.translate(to, [{id: `autocomplete-${args.searchTerm}`, description: '', content: args.searchTerm, from}]) : args.searchTerm
     const { itemsReturned }: { itemsReturned: Item[] } = await portal.autocomplete({ maxRows: args.maxRows, searchTerm: translatedTerm })
     return {
       cacheId: args.searchTerm,
