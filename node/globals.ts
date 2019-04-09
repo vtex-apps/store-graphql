@@ -1,5 +1,4 @@
-import { IOClients, IOContext, MetricsAccumulator, ServiceContext, SegmentData } from '@vtex/api'
-import { DataSource } from 'apollo-datasource'
+import { IOClients, IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
 
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
