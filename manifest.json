@@ -13,7 +13,8 @@
     "prereleasy": "bash lint.sh"
   },
   "dependencies": {
-    "vtex.messages": "1.x"
+    "vtex.messages": "1.x",
+    "vtex.catalog-api-proxy": "0.x"
   },
   "policies": [
     {
@@ -21,13 +22,6 @@
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/oms/*"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
-        "host": "{{account}}.vtexcommercestable.com.br",
-        "path": "/api/catalog_system/*"
       }
     },
     {
@@ -110,13 +104,6 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "api.gocommerce.com",
-        "path": "/{{account}}/search/*"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/sessions/*"
       }
@@ -153,6 +140,9 @@
     },
     {
       "name": "vtex.messages:translate-messages"
+    },
+    {
+      "name": "vtex.catalog-api-proxy:catalog-proxy"
     }
   ]
 }

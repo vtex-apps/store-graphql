@@ -14,12 +14,17 @@ interface ProductsArgs {
   map: string
 }
 
+interface AutocompleteArgs {
+  maxRows: string
+  searchTerm: string
+}
+
 const memoryCache = new LRUCache<string, any>({max: 2000})
 
 metrics.trackCache('catalog', memoryCache)
 
 const forProxy: HttpClientFactory = ({context, options}) => context &&
-  HttpClient.forWorkspace('store-graphql.vtex', context, {...options, headers: {
+  HttpClient.forWorkspace('catalog-api-proxy.vtex', context, {...options, headers: {
     ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
   }, memoryCache, metrics})
 
@@ -93,16 +98,19 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-crossSelling'}
   )
 
+  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
+    `/buscaautocomplete?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
+    {metric: 'catalog-autocomplete'}
+  )
+
   private get = <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
-    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
-    const appMajor = `${appMajorNumber}.x`
 
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __v: appMajor,
+      __p: process.env.VTEX_APP_ID,
     }
     return this.http.get<T>(`/proxy/catalog${url}`, config)
   }
@@ -110,13 +118,11 @@ export class CatalogDataSource extends IODataSource {
   private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
-    const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
-    const appMajor = `${appMajorNumber}.x`
 
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __v: appMajor,
+      __p: process.env.VTEX_APP_ID,
     }
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }

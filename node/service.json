@@ -2,13 +2,7 @@
   "stack": "nodejs",
   "memory": 1024,
   "ttl": 60,
-  "timeout": 9,
+  "timeout": 12,
   "minReplicas": 20,
-  "maxReplicas": 40,
-  "routes": {
-    "catalogProxy": {
-      "path": "/proxy/catalog/*path",
-      "public": false
-    }
-  }
+  "maxReplicas": 40
 }

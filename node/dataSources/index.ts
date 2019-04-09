@@ -6,7 +6,6 @@ import { IdentityDataSource } from './identity'
 import { LicenseManagerDataSource } from './licenseManager'
 import { LogisticsDataSource } from './logistics'
 import { OMSDataSource } from './oms'
-import { PortalDataSource } from './portal'
 import { ProfileDataSource } from './profile'
 import { SessionDataSource } from './session'
 
@@ -19,7 +18,6 @@ export const dataSources = () => ({
   licenseManager: new LicenseManagerDataSource(),
   logistics: new LogisticsDataSource(),
   oms: new OMSDataSource(),
-  portal: new PortalDataSource(),
   profile: new ProfileDataSource(undefined, { metrics }),
   session: new SessionDataSource(),
 })
