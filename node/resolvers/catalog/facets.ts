@@ -10,7 +10,7 @@ const objToNameValue = (keyName: string, valueName: string, record: Record<strin
 
 export const resolvers = {
   Facet: {
-    Name: ({Name, Id}: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Id}`),
+    Name: ({Name, Link}: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
   },
   Facets: {
     SpecificationFilters: ({SpecificationFilters = {}}) => objToNameValue('name', 'facets', SpecificationFilters),

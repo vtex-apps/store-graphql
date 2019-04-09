@@ -18,7 +18,6 @@
     "ramda": "^0.24.1",
     "slugify": "^1.2.6",
     "typescript": "^2.5.2",
-    "@vtex/api": "^3.2.0-beta.6",
     "url-parse": "^1.2.0"
   },
   "devDependencies": {
@@ -34,6 +33,7 @@
     "@types/qs": "^6.5.1",
     "@types/ramda": "types/npm-ramda#dist",
     "@types/url-parse": "^1.4.3",
+    "@vtex/api": "^3.2.1",
     "http2": "^3.3.7",
     "tslint": "^5.8.0",
     "tslint-config-vtex": "^2.0.0"
