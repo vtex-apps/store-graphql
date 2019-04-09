@@ -90,13 +90,6 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "{{account}}.vtexcommercestable.com.br",
-        "path": "/buscaautocomplete"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
         "host": "api.vtex.com",
         "path": "/{{account}}/dataentities/*"
       }
