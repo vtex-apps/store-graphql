@@ -1,3 +1,4 @@
+import { Segment } from '@vtex/api'
 import http from 'axios'
 import camelCase from 'camelcase'
 import { both, find, isEmpty, path, pickBy, prop, propEq } from 'ramda'
@@ -5,8 +6,6 @@ import { renameKeysWith } from '../../utils'
 import paths from '../paths'
 
 import { MetadataItem } from '../checkout/types'
-
-import { SessionDataSource } from '../../dataSources/session'
 
 const headersWithToken = (authToken: any) => ({
   Accept: 'application/json',
@@ -63,8 +62,8 @@ const fetchPrice = async ({
   }
 }
 
-const getSimulationPayload = async (session: SessionDataSource, account: string, authToken: string) => {
-  const segmentData = await session.getSegmentData().catch(() => null)
+const getSimulationPayload = async (segment: Segment, account: string, authToken: string) => {
+  const segmentData = await segment.getSegment().catch(() => null)
   if (!segmentData) { return null }
 
   let marketingData = {}
@@ -88,7 +87,7 @@ const getSimulationPayload = async (session: SessionDataSource, account: string,
 
 export const resolvers = {
   ItemMetadata: {
-    priceTable: async ({items}: Parent, _: any, { vtex: { account, authToken }, dataSources: { session } }: Context) => {
+    priceTable: async ({items}: Parent, _: any, { vtex: { account, authToken }, clients: { segment } }: Context) => {
       const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
@@ -97,7 +96,7 @@ export const resolvers = {
         })
       })
 
-      const fetchPayload = await getSimulationPayload(session, account, authToken)
+      const fetchPayload = await getSimulationPayload(segment, account, authToken)
 
       const itemsPromises = itemsToFetch.map(({ id, priceTable, seller }) => {
         if (!fetchPayload) { return { id, priceTable, price: 0 } }

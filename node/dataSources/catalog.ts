@@ -14,7 +14,7 @@ interface ProductsArgs {
   map: string
 }
 
-const memoryCache = new LRUCache<string, any>({max: 4000})
+const memoryCache = new LRUCache<string, any>({max: 2000})
 
 metrics.trackCache('catalog', memoryCache)
 
@@ -94,7 +94,7 @@ export class CatalogDataSource extends IODataSource {
   )
 
   private get = <T = any>(url: string, config: RequestConfig = {}) => {
-    const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
+    const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
     const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
     const appMajor = `${appMajorNumber}.x`
@@ -108,7 +108,7 @@ export class CatalogDataSource extends IODataSource {
   }
 
   private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
-    const segmentData: SegmentData | null = (this.context! as CustomIOContext).segment
+    const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
     const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
     const appMajor = `${appMajorNumber}.x`
