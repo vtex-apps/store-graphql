@@ -171,7 +171,7 @@ export class CheckoutDataSource extends RESTDataSource {
     }
 
     if (!!salesChannel) {
-      request.params.set('sc', salesChannel)
+      request.params.set('sc', salesChannel.toString())
     }
 
     forEachObjIndexed(

@@ -1,4 +1,6 @@
+import { GraphQLResolveInfo } from 'graphql'
 import { map, toPairs } from 'ramda'
+
 import { toIOMessage } from '../../utils/ioMessage'
 
 const objToNameValue = (keyName: string, valueName: string, record: Record<string, any>) => map(
@@ -8,7 +10,7 @@ const objToNameValue = (keyName: string, valueName: string, record: Record<strin
 
 export const resolvers = {
   Facet: {
-    Name: ({Name}: any, _: any, ctx: Context) => toIOMessage(ctx, Name),
+    Name: ({Name, Link}: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
   },
   Facets: {
     SpecificationFilters: ({SpecificationFilters = {}}) => objToNameValue('name', 'facets', SpecificationFilters),

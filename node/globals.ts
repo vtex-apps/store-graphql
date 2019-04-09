@@ -1,5 +1,4 @@
-import { IOClients, IOContext, MetricsAccumulator, ServiceContext } from '@vtex/api'
-import { DataSource } from 'apollo-datasource'
+import { IOClients, IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
 
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
@@ -8,11 +7,10 @@ import { DocumentDataSource } from './dataSources/document'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
-import { Messages } from './dataSources/messages'
 import { OMSDataSource } from './dataSources/oms'
 import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
-import { SegmentData, SessionDataSource } from './dataSources/session'
+import { SessionDataSource } from './dataSources/session'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -31,17 +29,16 @@ declare global {
 
   interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
-    segment: SegmentData
+    segment?: SegmentData
   }
 
-  interface StoreGraphQLDataSources extends Record<string, DataSource> {
+  interface StoreGraphQLDataSources {
     catalog: CatalogDataSource
     checkout: CheckoutDataSource
     document: DocumentDataSource
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
-    messages: Messages
     portal: PortalDataSource
     profile: ProfileDataSource
     session: SessionDataSource
