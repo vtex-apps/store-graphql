@@ -8,7 +8,6 @@ import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
-import { PortalDataSource } from './dataSources/portal'
 import { ProfileDataSource } from './dataSources/profile'
 import { SessionDataSource } from './dataSources/session'
 
@@ -39,7 +38,6 @@ declare global {
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
-    portal: PortalDataSource
     profile: ProfileDataSource
     session: SessionDataSource
     callcenterOperator: CallcenterOperatorDataSource
