@@ -5,7 +5,6 @@ import { IOClients, LRUCache, Service } from '@vtex/api'
 import { dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
-import { catalogProxy } from './routes/catalogProxy'
 
 const TWO_SECONDS_MS =  2 * 1000
 const FOUR_SECONDS_MS =  4 * 1000
@@ -38,8 +37,5 @@ export default new Service<IOClients, void, CustomContext>({
     dataSources,
     resolvers,
     schemaDirectives,
-  },
-  routes: {
-    catalogProxy,
   }
 })
