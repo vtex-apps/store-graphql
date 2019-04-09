@@ -1,4 +1,5 @@
 import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } from '@vtex/api'
+import { stringify } from 'qs'
 import { SegmentData } from './session'
 
 interface ProductsArgs {
@@ -19,9 +20,19 @@ interface AutocompleteArgs {
   searchTerm: string
 }
 
+const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
+const appMajor = `${appMajorNumber}.x`
+const appIdWithMajor = `${process.env.VTEX_APP_VENDOR}.${process.env.VTEX_APP_NAME}@${appMajor}`
+
 const memoryCache = new LRUCache<string, any>({max: 2000})
 
 metrics.trackCache('catalog', memoryCache)
+
+const inflightKey = ({baseURL, url, params, headers}: RequestConfig) => {
+  const key = baseURL! + url! + stringify(params, {arrayFormat: 'repeat', addQueryPrefix: true}) + `&segmentToken=${headers['x-vtex-segment']}`
+  console.log('inflight', key)
+  return key
+}
 
 const forProxy: HttpClientFactory = ({context, options}) => context &&
   HttpClient.forWorkspace('catalog-api-proxy.vtex', context, {...options, headers: {
@@ -110,7 +121,8 @@ export class CatalogDataSource extends IODataSource {
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __p: process.env.VTEX_APP_ID,
+      __p: appIdWithMajor,
+      inflightKey,
     }
     return this.http.get<T>(`/proxy/catalog${url}`, config)
   }
@@ -122,7 +134,8 @@ export class CatalogDataSource extends IODataSource {
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __p: process.env.VTEX_APP_ID,
+      __p: appIdWithMajor,
+      inflightKey,
     }
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
