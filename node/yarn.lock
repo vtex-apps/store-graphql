@@ -287,15 +287,16 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@vtex/api@^3.2.0-beta.4":
-  version "3.2.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.2.0-beta.4.tgz#0ea1943bc4109af724c920613bff220322d688c8"
-  integrity sha512-XK1/gcF4/w/CUsQ5CZBDdjfLHb2FE5A4aVLgN6t933wSLaCjNQGFfVpCZWNxKOIZdJ4/1N/+qQXvCKrfYxed3g==
+"@vtex/api@^3.2.0-beta.6":
+  version "3.2.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.2.0-beta.6.tgz#b7ab1dd40a591de76c813763d79d47db83a3a836"
+  integrity sha512-T2i6SJg8chyytPiQRSICAiGU1O6NbAy+AECsU9Lag8NVgxS4EOLAjye4a67QvduLCPFjZr6xNonuQotcrcvhaw==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
     apollo-datasource "^0.3.1"
     apollo-server-core "^2.4.8"
+    apollo-server-errors "^2.2.1"
     archiver "^3.0.0"
     axios "^0.18.0"
     axios-retry "^3.1.2"
@@ -492,7 +493,7 @@ apollo-server-errors@2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.0.2.tgz#e9cbb1b74d2cd78aed23cd886ca2d0c186323b2b"
 
-apollo-server-errors@2.2.1:
+apollo-server-errors@2.2.1, apollo-server-errors@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.2.1.tgz#f68a3f845929768057da7e1c6d30517db5872205"
   integrity sha512-wY/YE3iJVMYC+WYIf8QODBjIP4jhI+oc7kiYo9mrz7LdYPKAgxr/he+NteGcqn/0Ea9K5/ZFTGJDbEstSMeP8g==
