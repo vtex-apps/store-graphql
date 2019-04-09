@@ -20,18 +20,12 @@ interface AutocompleteArgs {
   searchTerm: string
 }
 
-const [appMajorNumber] = process.env.VTEX_APP_VERSION!.split('.')
-const appMajor = `${appMajorNumber}.x`
-const appIdWithMajor = `${process.env.VTEX_APP_VENDOR}.${process.env.VTEX_APP_NAME}@${appMajor}`
-
 const memoryCache = new LRUCache<string, any>({max: 2000})
 
 metrics.trackCache('catalog', memoryCache)
 
 const inflightKey = ({baseURL, url, params, headers}: RequestConfig) => {
-  const key = baseURL! + url! + stringify(params, {arrayFormat: 'repeat', addQueryPrefix: true}) + `&segmentToken=${headers['x-vtex-segment']}`
-  console.log('inflight', key)
-  return key
+  return baseURL! + url! + stringify(params, {arrayFormat: 'repeat', addQueryPrefix: true}) + `&segmentToken=${headers['x-vtex-segment']}`
 }
 
 const forProxy: HttpClientFactory = ({context, options}) => context &&
@@ -121,9 +115,10 @@ export class CatalogDataSource extends IODataSource {
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __p: appIdWithMajor,
-      inflightKey,
     }
+
+    config.inflightKey = inflightKey
+
     return this.http.get<T>(`/proxy/catalog${url}`, config)
   }
 
@@ -134,9 +129,10 @@ export class CatalogDataSource extends IODataSource {
     config.params = {
       ...config.params,
       ...!!salesChannel && {sc: salesChannel},
-      __p: appIdWithMajor,
-      inflightKey,
     }
+
+    config.inflightKey = inflightKey
+
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
 
