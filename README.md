@@ -32,44 +32,44 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 
 ### Catalog
 
-`product` by slug
-`products`
-`facets`
-`category`
-`categories` tree of categories
-`brand`
+* `product` - Return product by slug
+* `products`
+* `facets`
+* `category`
+* `categories` - Return the categories tree
+* `brand`
 
 ### Logistics 
-`shipping`
+* `shipping`
 
 ### Checkout
-`orderForm`
+* `orderForm`
 
 ### OMS
-`orders`
+* `orders`
 
 ## Mutations
 
 ### Checkout
 
-`addItem`
-`updateItems`
-`updateOrderFormProfile`
-`updateOrderFormShipping`
-`updateOrderFormPayment`
-`updateOrderFormIgnoreProfile`
-`addOrderFormPaymentToken`
-`setOrderFormCustomData`
-`createPaymentSession`
-`createPaymentTokens`
-`cancelOrder`
+* `addItem`
+* `updateItems` 
+* `updateOrderFormProfile`
+* `updateOrderFormShipping`
+* `updateOrderFormPayment`
+* `updateOrderFormIgnoreProfile`
+* `addOrderFormPaymentToken`
+* `setOrderFormCustomData`
+* `createPaymentSession`
+* `createPaymentTokens`
+* `cancelOrder`
 
 ### Profile System
 
-`createAddress`
-`updateProfile`
-`updateAddress`
-`deleteAddress`
+* `createAddress`
+* `updateProfile`
+* `updateAddress`
+* `deleteAddress`
 
 ## Contributing
 
