@@ -1,7 +1,7 @@
 scalar IOMessage
 
 type Query {
-    """ Get a specified product """
+    """ Returns a specified product """
   product(
      """ Product slug """
     slug: String,
@@ -9,7 +9,7 @@ type Query {
     identifier: ProductUniqueIdentifier
   ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
-  """ Product search filtered and ordered """
+  """ Returns products list filtered and ordered """
   products(
     """ Terms that is used in search e.g.: eletronics/samsung """
     query: String = "",
@@ -33,7 +33,7 @@ type Query {
     to: Int = 9
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
-  """ Get facets category """
+  """ Returns facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
     facets: String = ""
@@ -65,28 +65,28 @@ type Query {
     to: Int = 9
   ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
-  """ Get category details """
+  """ Returns a specified category """
   category(
     """ Category id """
     id: Int
   ): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  """ Get categories tree """
+  """ Returns categories tree """
   categories(
     """ Category tree level. Default: 3"""
     treeLevel: Int = 3
   ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  """ Get brand details """
+  """ Returns a specified brand """
   brand(
     """ Brand id """
     id: Int
   ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  """ Get a list of brands """
+  """ Returns brands list """
   brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
-  """ OrderForm simulation """
+  """ Returns orderForm shipping simulation """
   shipping(
     """ List of SKU products """
     items: [ShippingItem],
@@ -96,16 +96,16 @@ type Query {
     country: String
   ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
-  """ Get checkout cart details """
+  """ Returns checkout cart details """
   orderForm: OrderForm @cacheControl(scope: PRIVATE)
 
-  """ Get user orders details """
+  """ Returns user orders details """
   orders: [Order] @cacheControl(scope: PRIVATE)
 
-    """ Get user order by id """
+    """ Returns a specified user order """
   order(id: String!): Order @cacheControl(scope: PRIVATE)
 
-  """ Get user profile details """
+  """ Returns user profile details """
   profile(
     """ Comma separated fields """
     customFields: String

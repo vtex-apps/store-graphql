@@ -20,9 +20,10 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
   - [Logistics](#logistics)
   - [Checkout](#checkout)
   - [OMS](#oms)
-- [Mutations](#mutations)
-  - [Checkout](#checkout)
   - [Profile System](#profile-system)
+- [Mutations](#mutations)
+  - [Checkout](#checkout-1)
+  - [Profile System](#profile-system-1)
 - [Contributing](#contributing)
 - [Troubleshooting](#troubleshooting)
 
@@ -32,21 +33,27 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 
 ### Catalog
 
-* `product` - Return product by slug
-* `products`
-* `facets`
-* `category`
-* `categories` - Return the categories tree
-* `brand`
+* `product` - Returns a specified product
+* `products` - Returns products list filtered and ordered
+* `facets` - Returns facets category
+* `category` - Returns a specified category
+* `categories` - Returns categories tree
+* `brand` - Returns a specified brand
+* `brands` - Returns brands list
 
 ### Logistics 
-* `shipping`
+* `shipping` - Returns orderForm shipping simulation
 
 ### Checkout
-* `orderForm`
+* `orderForm` - Returns checkout cart details
 
 ### OMS
-* `orders`
+* `orders` - Returns user orders details
+* `order` - Returns a specified user order
+
+### Profile System
+* `profile` - Returns user profile details
+
 
 ## Mutations
 
