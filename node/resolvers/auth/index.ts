@@ -7,7 +7,7 @@ import { headers as authHeaders, withAuthToken } from '../headers'
 import paths from '../paths'
 
 
-export async function makeRequest(ctx, url, method='POST', vtexIdVersion='store-graphql', cookie = null) {
+export async function makeRequest(ctx: any, url: string, method='POST', vtexIdVersion='store-graphql', cookie: string | null = null) {
   const composedHeaders = {
     ...authHeaders.profile,
     'Cookie': `VtexIdClientAutCookie=${cookie}`,
