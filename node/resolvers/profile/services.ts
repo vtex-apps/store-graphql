@@ -8,7 +8,6 @@ import paths from '../paths'
 
 import { parse } from 'cookie'
 
-
 export function getProfile(context: Context, customFields?: string) {
   const {
     dataSources: { profile },
