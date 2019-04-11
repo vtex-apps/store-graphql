@@ -1,7 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'
 import { map, toPairs, prop } from 'ramda'
-import unorm from 'unorm'
-import slugify from 'slugify'
 
 import { toIOMessage } from '../../utils/ioMessage'
 
@@ -15,18 +13,11 @@ const objToNameValue = (
     toPairs(record)
   )
 
-const removeAccents = (name: string): string =>
-  unorm.nfd(name).replace(/[\u0300-\u036f]/g, '')
-
-const transformSlug = (name: string): string =>
-  slugify(removeAccents(name)).replace('.', '-')
-
 const formatCategoriesTree = (root: any) => {
   const format = (tree: any[] = []): any => {
     return tree.map(node => {
       return {
         ...node,
-        Slug: transformSlug(node.Name),
         Children: format(node.Children),
       }
     })
@@ -34,11 +25,6 @@ const formatCategoriesTree = (root: any) => {
 
   return format(root)
 }
-
-const addSlugFromName = map((facet: any) => ({
-  ...facet,
-  Slug: transformSlug(facet.Name),
-}))
 
 const addSelected = (facets: any[], { query }: { query: string }): any => {
   return facets.map((facet: any) => {
@@ -54,14 +40,19 @@ const addSelected = (facets: any[], { query }: { query: string }): any => {
       selected: query
         .toLowerCase()
         .split('/')
-        .includes(facet.Slug.toLowerCase()),
+        .includes(facet.Value.toLowerCase()),
     }
   })
 }
 
 export const resolvers = {
   Facet: {
-    Name: ({ Name, Link }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
+    Name: (
+      { Name, Link }: any,
+      _: any,
+      ctx: Context,
+      info: GraphQLResolveInfo
+    ) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
     name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
       return resolvers.Facet.Name(root, args, ctx, info)
     },
@@ -72,17 +63,18 @@ export const resolvers = {
     slug: prop('Slug'),
     children: prop('Children'),
     map: prop('Map'),
+    value: prop('Value'),
   },
   Facets: {
     Departments: ({ Departments = [], queryArgs = {} }: any) => {
-      return addSelected(addSlugFromName(Departments), queryArgs)
+      return addSelected(Departments, queryArgs)
     },
     departments: (root: any) => {
       return resolvers.Facets.Departments(root)
     },
 
     Brands: ({ Brands = [], queryArgs = {} }: any) => {
-      return addSelected(addSlugFromName(Brands), queryArgs)
+      return addSelected(Brands, queryArgs)
     },
     brands: (root: any) => {
       return resolvers.Facets.Brands(root)
@@ -92,15 +84,10 @@ export const resolvers = {
       SpecificationFilters = {},
       queryArgs = {},
     }: any) => {
-      const specificationFilters = map(
-        specificationFilter => ({
-          ...specificationFilter,
-          facets: specificationFilter.facets.map((facet: any) => ({
-            ...facet,
-            Slug: facet.Name,
-          })),
-        }),
-        objToNameValue('name', 'facets', SpecificationFilters)
+      const specificationFilters = objToNameValue(
+        'name',
+        'facets',
+        SpecificationFilters
       )
 
       return specificationFilters.map((specificationFilter: any) => ({
