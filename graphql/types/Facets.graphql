@@ -23,10 +23,11 @@ type Facet {
   name: IOMessage!
   quantity: Int!
   link: String!
-  slug: String!
+  slug: String
   children: [Facet]
-  map: String
-  selected: Boolean
+  value: String!
+  map: String!
+  selected: Boolean!
 }
 
 type Filter {
