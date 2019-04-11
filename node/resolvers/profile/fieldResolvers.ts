@@ -1,6 +1,6 @@
 import { prop } from 'ramda'
 
-import { getAddresses, getPayments, pickCustomFieldsFromData } from './services'
+import { getAddresses, getPasswordLastUpdate, getPayments, pickCustomFieldsFromData } from './services'
 
 export default {
   Address: {
@@ -19,6 +19,9 @@ export default {
       typeof obj.customFields === 'string'
         ? pickCustomFieldsFromData(obj.customFields, obj)
         : obj.customFields,
+    passwordLastUpdate: (_: any, __: any, context: any) => {
+      return getPasswordLastUpdate(context)
+    },
     payments: (_: any, __: any, context: any) => getPayments(context),
     profilePicture: (obj: any, _: any, context: any) =>
       obj.profilePicture &&

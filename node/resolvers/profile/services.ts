@@ -1,7 +1,12 @@
+import { makeRequest } from './../auth/index'
+
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
 import { uploadAttachment } from '../document/attachment'
+import paths from '../paths'
+
+import { parse } from 'cookie'
 
 export function getProfile(context: Context, customFields?: string) {
   const {
@@ -25,6 +30,16 @@ export function getProfile(context: Context, customFields?: string) {
 
       return { email: currentProfile.email }
     })
+}
+
+export function getPasswordLastUpdate(context: Context) {
+  const { request: { headers: { cookie } }, vtex: { account } } = context
+  const url = paths.getUser(account)
+  const parsedCookies = parse(cookie)
+  const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
+  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then((response: any) => {
+    return response.data.passwordLastUpdate
+  })
 }
 
 export function getAddresses(context: Context) {
