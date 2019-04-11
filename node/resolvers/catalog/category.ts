@@ -3,6 +3,12 @@ import { toIOMessage } from '../../utils/ioMessage'
 
 const lastSegment = compose<string, string[], string>(last, split('/'))
 
+interface Category {
+  id: string,
+  url: string,
+  children: Category[],
+}
+
 export const resolvers = {
   Category: {
     cacheId: prop('id'),
@@ -55,7 +61,7 @@ export const resolvers = {
         (c : Category) => c.id === id,
         categories
       ) || {}
-      
+    
       return path(['children'], category)
     },
   },
