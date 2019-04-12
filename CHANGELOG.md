@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Fix category resolver.
+- Return relative href within categories.
+- Fix how category children field was resolved.
 
 ## [2.66.3] - 2019-04-15
 ### Fixed
