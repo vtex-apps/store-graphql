@@ -56,10 +56,15 @@ export const resolvers = {
 
     children: async ({ id }: any, _: any, { dataSources: { catalog } }: any) => {
       const categories = await catalog.categories(3) as Category[]
+      
+      const flattenCategories = categories.reduce(
+        (acc : Category[], category) => acc.concat(category, category.children),
+        []
+      )
 
       const category = find(
         (c : Category) => c.id === id,
-        categories
+        flattenCategories
       ) || {}
     
       return path(['children'], category)
