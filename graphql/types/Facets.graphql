@@ -23,6 +23,7 @@ type Facet {
   name: IOMessage!
   quantity: Int!
   link: String!
+  linkEncoded: String!
   slug: String
   children: [Facet]
   value: String!

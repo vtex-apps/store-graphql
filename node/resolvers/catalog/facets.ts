@@ -60,6 +60,7 @@ export const resolvers = {
     id: prop('Id'),
     quantity: prop('Quantity'),
     link: prop('Link'),
+    linkEncoded: prop('LinkEncoded'),
     slug: prop('Slug'),
     children: prop('Children'),
     map: prop('Map'),
