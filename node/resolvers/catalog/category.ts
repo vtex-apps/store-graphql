@@ -1,4 +1,4 @@
-import { compose, last, path, prop, split, find } from 'ramda'
+import { compose, find, last, path, prop, split } from 'ramda'
 import { toIOMessage } from '../../utils/ioMessage'
 
 const lastSegment = compose<string, string[], string>(last, split('/'))
@@ -17,7 +17,7 @@ export const resolvers = {
       const categories = await catalog.categories(3) as Category[]
 
       const flattenCategories = categories.reduce(
-        (acc : Category[], category) => acc.concat(category, category.children),
+        (acc : Category[], cat) => acc.concat(cat, cat.children),
         []
       )
 
@@ -40,7 +40,7 @@ export const resolvers = {
       const categories = await catalog.categories(3) as Category[]
 
       const flattenCategories = categories.reduce(
-        (acc : Category[], category) => acc.concat(category, category.children),
+        (acc : Category[], c) => acc.concat(c, c.children),
         []
       )
 
@@ -58,7 +58,7 @@ export const resolvers = {
       const categories = await catalog.categories(3) as Category[]
       
       const flattenCategories = categories.reduce(
-        (acc : Category[], category) => acc.concat(category, category.children),
+        (acc : Category[], c) => acc.concat(c, c.children),
         []
       )
 
