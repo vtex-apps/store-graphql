@@ -12,7 +12,7 @@ const objToNameValue = (
 ) =>
   compose(
     reject(value => typeof value === 'boolean' && value === false),
-    map(
+    map<[string, any], any>(
       ([key, value]) =>
         typeof value === 'string' && { [keyName]: key, [valueName]: value }
     ),
