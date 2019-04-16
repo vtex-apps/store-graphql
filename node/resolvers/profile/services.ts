@@ -170,10 +170,10 @@ export function updateAddress(
   } = context
 
   const addressesData = {} as any
-  addressesData[id] = {
+  addressesData[id] = JSON.stringify({
     ...fields,
     userId: currentProfile.userId,
-  }
+  })
 
   return profile
     .updateAddress(currentProfile.email, addressesData)
