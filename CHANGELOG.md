@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.66.5] - 2019-04-15
+
+## [2.66.4] - 2019-04-15
+### Fixed
+- Return relative href within categories.
+- Fix how category children field was resolved.
+
 ## [2.66.3] - 2019-04-15
 ### Fixed
 - Typescript error introduced in Typescript 3.4.
