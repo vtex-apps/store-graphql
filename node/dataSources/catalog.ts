@@ -29,9 +29,16 @@ const inflightKey = ({baseURL, url, params, headers}: RequestConfig) => {
 }
 
 const forProxy: HttpClientFactory = ({context, options}) => context &&
-  HttpClient.forWorkspace('catalog-api-proxy.vtex', context, {...options, headers: {
-    ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
-  }, memoryCache, metrics})
+  HttpClient.forWorkspace('catalog-api-proxy.vtex', context, {
+    ...options,
+    headers: {
+      ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
+    },
+    memoryCache,
+    metrics,
+    retries: 1,
+    timeout: 3000,
+  })
 
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
