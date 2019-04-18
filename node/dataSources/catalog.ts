@@ -170,25 +170,60 @@ export class CatalogDataSource extends IODataSource {
   private productSearchUrl = ({
     query = '',
     category = '',
-    specificationFilters,
+    specificationFilters = [],
     priceRange = '',
     collection = '',
     salesChannel = '',
     orderBy = '',
     from = 0,
     to = 9,
-    map = ''
+    map = '',
   }: ProductsArgs) => {
+    const BASE_URL = '/pub/products/search/'
+
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
-    return `/pub/products/search/${sanitizedQuery}?${category &&
-      !query &&
-      `&fq=C:/${category}/`}${(specificationFilters &&
-      specificationFilters.length > 0 &&
-      specificationFilters.map(filter => `&fq=${filter}`)) ||
-      ''}${priceRange && `&fq=P:[${priceRange}]`}${collection &&
-      `&fq=productClusterIds:${collection}`}${salesChannel &&
-      `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy &&
-      `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 &&
-      `&_from=${from}`}${to > -1 && `&_to=${to}`}`
+
+    let queryString = '?'
+
+    if (category && !query) {
+      queryString += `fq=C:/${category}/&`
+    }
+
+    queryString += specificationFilters.reduce(
+      (acc, currFilter) => acc + `fq=${currFilter}&`,
+      ''
+    )
+
+    if (priceRange) {
+      queryString += `fq=P:[${priceRange}]&`
+    }
+
+    if (collection) {
+      queryString += `fq=productClusterIds:${collection}&`
+    }
+
+    if (salesChannel) {
+      queryString += `fq=isAvailablePerSalesChannel_${salesChannel}:1&`
+    }
+
+    if (orderBy) {
+      queryString += `O=${orderBy}&`
+    }
+
+    if (map) {
+      queryString += `map=${map}&`
+    }
+
+    if (from > -1) {
+      queryString += `_from=${from}&`
+    }
+
+    if (to > -1) {
+      queryString += `_to=${to}&`
+    }
+
+    queryString = queryString.slice(0, queryString.length - 1)
+
+    return `${BASE_URL}${sanitizedQuery}${queryString}`
   }
 }
