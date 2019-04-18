@@ -4,9 +4,20 @@ import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
   documents: async (_: any, args: any, { dataSources: { document } }: any) => {
-    const { acronym, fields, page, pageSize, where } = args
+    const { acronym, fields, page, pageSize, where, schema } = args
     const fieldsWithId = union(fields, ['id'])
-    const data = await document.searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
+    const data = schema
+      ? await document.searchDocumentsWithSchema(
+          acronym,
+          fieldsWithId,
+          where,
+          schema,
+          { page, pageSize }
+        )
+      : await document.searchDocuments(acronym, fieldsWithId, where, {
+          page,
+          pageSize,
+        })
     return data.map((doc: any) => ({
       cacheId: doc.id,
       fields: mapKeyValues(doc),
