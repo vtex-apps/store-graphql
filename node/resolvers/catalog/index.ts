@@ -376,14 +376,6 @@ interface Brand {
   metaTagDescription: string
 }
 
-interface Brand {
-  id: string
-  name: string
-  isActive: boolean
-  title: string
-  metaTagDescription: string
-}
-
 interface Category {
   id: string
   name: string
