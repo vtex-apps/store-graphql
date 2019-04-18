@@ -15,7 +15,7 @@
   "dependencies": {
     "vtex.messages": "1.x",
     "vtex.catalog-api-proxy": "0.x",
-    "infra:service-node": "4.9.1-beta"
+    "infra:service-node": "4.9.2-beta"
   },
   "policies": [
     {
