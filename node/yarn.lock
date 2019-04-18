@@ -287,10 +287,10 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@vtex/api@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.2.1.tgz#16575137e6e984297bb704233eb5ccfe65982484"
-  integrity sha512-Y9VA2sPi980kZme0/AZEkINK9EPOyEeTzUTwttGVEzHfGfVJh8CIbJ4QccmtRd6wC8b4b1UHXDKakDB+lzEsYQ==
+"@vtex/api@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.4.0.tgz#80d28cf69c06838e44d25991d3b75abccf8565f2"
+  integrity sha512-d/srHekgSxuRGuQSOng7/VjOfbWEY6QVZZiqQHCEemeQYfkhd5gnWw725PU5ZekRAZ/xHwN1YrbXHckIYuP2SQ==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
@@ -3230,7 +3230,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-stats-lite@vtex/node-stats-lite#dist:
+"stats-lite@github:vtex/node-stats-lite#dist":
   version "2.2.0"
   resolved "https://codeload.github.com/vtex/node-stats-lite/tar.gz/1b0d39cc41ef7aaecfd541191f877887a2044797"
   dependencies:
