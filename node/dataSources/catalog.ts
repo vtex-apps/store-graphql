@@ -99,9 +99,7 @@ export class CatalogDataSource extends IODataSource {
     const clientAuth = cookies.get('VtexIdclientAutCookie')
     /* TODO: use this.context.vtex.region in getting these data */
     const { data } = await http.get(
-      `http://${account}.vtexcommercestable.com.br/api/catalog_system${this.collectionsUrl(
-        query
-      )}`,
+      `http://${account}.vtexcommercestable.com.br/api/catalog_system/pvt/collection/search/${query}?pageSize=50`,
       {
         headers: {
           'Proxy-Authorization': authToken,
@@ -163,9 +161,6 @@ export class CatalogDataSource extends IODataSource {
 
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
-
-  private collectionsUrl = (query: string) =>
-    `/pvt/collection/search/${query}?pageSize=50`
 
   private productSearchUrl = ({
     query = '',
