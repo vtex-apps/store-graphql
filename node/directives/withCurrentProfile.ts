@@ -3,7 +3,7 @@ import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import jwtDecode from 'jwt-decode'
 
-import ResolverError from '../errors/resolverError'
+import { AuthenticationError, ResolverError } from '@vtex/api'
 import { queries as sessionQueries } from '../resolvers/session'
 import { SessionFields } from '../resolvers/session/sessionResolver'
 
@@ -32,7 +32,7 @@ function getCurrentProfileFromSession(
     const session = currentSession as SessionFields
 
     if (!session || !session.id) {
-      throw new ResolverError(`ERROR no session`)
+      throw new ResolverError('Error fetching session data')
     }
 
     const profile =
@@ -78,7 +78,7 @@ async function getCurrentProfileFromCookies(
       (await isValidCallcenterOperator(context, callOpUserEmail))
 
     if (!isValidCallOp) {
-      throw new ResolverError(`Unauthorized`, 401)
+      throw new AuthenticationError('User is not a valid callcenter operator')
     }
 
     const customerEmail = parsedCookies['vtex-impersonated-customer-email']
