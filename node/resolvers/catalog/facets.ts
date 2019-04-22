@@ -34,13 +34,16 @@ const addSelected = (facets: any[], { query }: { query: string }): any => {
       children = addSelected(children, { query })
     }
 
+    const isSelected = query
+        .toLowerCase()
+        .split('/')
+        .map(decodeURIComponent)
+        .includes(decodeURIComponent(facet.Value).toLowerCase())
+
     return {
       ...facet,
       Children: children,
-      selected: query
-        .toLowerCase()
-        .split('/')
-        .includes(facet.Value.toLowerCase()),
+      selected: isSelected,
     }
   })
 }
