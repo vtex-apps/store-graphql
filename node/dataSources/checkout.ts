@@ -152,10 +152,13 @@ export class CheckoutDataSource extends RESTDataSource {
     const result = await super.didReceiveResponse(response, request)
 
     const rawHeaders = (response.headers as any).raw() as Record<string, any>
-    const responseSetCookies: string[] = rawHeaders ? rawHeaders['set-cookie'] : []
-    const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
-    if (forwardedSetCookies.length > 0) {
-      this.context.set('set-cookie', forwardedSetCookies)
+    const responseSetCookies: string[] = rawHeaders && rawHeaders['set-cookie']
+
+    if (responseSetCookies) {
+      const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+      if (forwardedSetCookies.length > 0) {
+        this.context.set('set-cookie', forwardedSetCookies)
+      }
     }
 
     return result
