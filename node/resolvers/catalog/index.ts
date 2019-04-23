@@ -1,5 +1,4 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
-import { ApolloError } from 'apollo-server-errors'
 import { GraphQLResolveInfo } from 'graphql'
 import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 
@@ -166,7 +165,7 @@ export const queries = {
     const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {
-      throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
+      throw new UserInputError('Search query/map cannot be null')
     }
 
     const categoryMetaData = async () => {

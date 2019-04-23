@@ -1,3 +1,4 @@
+import { UserInputError } from '@vtex/api'
 import cookies from 'cookie'
 
 const DEFAULT_PAGE_SIZE = 15
@@ -38,7 +39,7 @@ export const withAuthAsVTEXID = (currentHeaders = {}) => (ioContext: any) => {
 
 export const withMDPagination = (currentHeaders = {}) => (ioContext: any, cookie = null) => (page = 1, pageSize = DEFAULT_PAGE_SIZE) => {
   if (page < 1) {
-    throw new Error('Smallest page value is 1')
+    throw new UserInputError('Smallest page value is 1')
   }
   const startIndex = (page - 1) * pageSize
   const endIndex = startIndex + pageSize
