@@ -91,8 +91,10 @@ export const resolvers = {
       const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
       items.filter(item => item.assemblyOptions.length > 0).map(item => {
         const { assemblyOptions } = item
-        assemblyOptions.map(({ composition: { items: compItems } }) => {
-          compItems.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
+        assemblyOptions.map(({ composition }) => {
+          if (composition && composition.items) {
+            composition.items.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
+          }
         })
       })
 
