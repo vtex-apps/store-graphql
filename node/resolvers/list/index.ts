@@ -1,6 +1,6 @@
+import { UserInputError } from '@vtex/api'
 import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
 
-import ResolverError from '../../errors/resolverError'
 import { mapKeyValues } from '../../utils/object'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
 import { validateItems } from './util'
@@ -90,7 +90,7 @@ export const mutation = {
       const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
       return queries.list(_, { id: DocumentId }, context)
     } catch (error) {
-      throw new ResolverError(`Cannot create list: ${error}`, 406)
+      throw new UserInputError(`Cannot create list: ${error}`)
     }
   },
 
@@ -113,7 +113,7 @@ export const mutation = {
       await document.updateDocument(acronymList, id, mapKeyValues({ ...list, items: itemsUpdatedId }))
       return queries.list(_, { id }, context)
     } catch (error) {
-      throw new ResolverError(`Cannot update the list: ${error}`, 406)
+      throw new UserInputError(`Cannot update the list: ${error}`)
     }
   },
 }

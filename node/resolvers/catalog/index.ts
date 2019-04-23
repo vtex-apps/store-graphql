@@ -1,8 +1,7 @@
-import { ApolloError } from 'apollo-server-errors'
+import { NotFoundError, UserInputError } from '@vtex/api'
 import { GraphQLResolveInfo } from 'graphql'
 import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 
-import ResolverError from '../../errors/resolverError'
 import { toIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
@@ -56,10 +55,7 @@ async function getProductBySlug(slug: string, catalog: any){
   if (products.length > 0) {
     return head(products)
   }
-  throw new ResolverError(
-    `No product was found with requested sku`,
-    404
-  )
+  throw new NotFoundError('No product was found with requested sku')
 }
 
 export const fieldResolvers = {
@@ -138,20 +134,14 @@ export const queries = {
       return head(products)
     }
 
-    throw new ResolverError(
-      `No product was found with requested ${field}`,
-      404
-    )
+    throw new NotFoundError(`No product was found with requested ${field}`)
   },
 
   products: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
-      throw new ResolverError(
-        `The query term: '${queryTerm}' contains invalid characters.`,
-        500
-      )
+      throw new UserInputError(`The query term contains invalid characters. query=${queryTerm}`)
     }
     return catalog.products(args)
   },
@@ -160,7 +150,7 @@ export const queries = {
     const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id') as any), brands)
     if (!brand) {
-      throw new ResolverError(`Brand with id ${args.id} not found`, 404)
+      throw new NotFoundError(`Brand not found`)
     }
     return brand
   },
@@ -175,7 +165,7 @@ export const queries = {
     const { map: mapParams, query } = args
 
     if (query == null || mapParams == null) {
-      throw new ApolloError('Search query/map cannot be null', 'ERR_EMPTY_QUERY')
+      throw new UserInputError('Search query/map cannot be null')
     }
 
     const categoryMetaData = async () => {
