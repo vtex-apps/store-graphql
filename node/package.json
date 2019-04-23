@@ -33,7 +33,7 @@
     "@types/qs": "^6.5.1",
     "@types/ramda": "types/npm-ramda#dist",
     "@types/url-parse": "^1.4.3",
-    "@vtex/api": "3.4.0",
+    "@vtex/api": "3.5.0",
     "http2": "^3.3.7",
     "tslint": "^5.8.0",
     "tslint-config-vtex": "^2.0.0"

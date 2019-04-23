@@ -287,10 +287,10 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@vtex/api@3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.4.0.tgz#80d28cf69c06838e44d25991d3b75abccf8565f2"
-  integrity sha512-d/srHekgSxuRGuQSOng7/VjOfbWEY6QVZZiqQHCEemeQYfkhd5gnWw725PU5ZekRAZ/xHwN1YrbXHckIYuP2SQ==
+"@vtex/api@3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.5.0.tgz#00c49de992bd9fd826969cc3f6aac68614905409"
+  integrity sha512-xdWupgQCv/ABY7n3p2A6TqyZvgFDUvzK3Xv7P4lE1Cr1IjmhXpRo0a5ep2EifEt3qHIn2pk3HGUe4nZaMFQpkg==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
