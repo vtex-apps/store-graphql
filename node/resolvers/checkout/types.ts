@@ -18,7 +18,7 @@ export interface AssemblyOption {
     minQuantity: number
     maxQuantity: number
     items: CompositionItem[]
-  }
+  } | null
 }
 
 export interface MetadataItem {
