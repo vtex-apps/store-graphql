@@ -1,6 +1,6 @@
+import { ResolverError } from '@vtex/api'
 import FormData from 'form-data'
 
-import ResolverError from '../../errors/resolverError'
 import { generateRandomName } from '../../utils'
 
 export const uploadAttachment = async (args: any, ctx: any) => {
@@ -37,7 +37,7 @@ export const uploadAttachment = async (args: any, ctx: any) => {
   )
 
   if (response) {
-    throw new ResolverError(response, 500)
+    throw new ResolverError(response)
   }
 
   return { filename: randomName, mimetype }

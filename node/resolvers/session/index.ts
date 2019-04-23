@@ -1,7 +1,7 @@
+import { ResolverError } from '@vtex/api'
 import { serialize } from 'cookie'
 import { identity } from 'ramda'
 
-import ResolverError from '../../errors/resolverError'
 import { headers } from '../headers'
 import httpResolver from '../httpResolver'
 import paths from '../paths'
@@ -26,7 +26,7 @@ const makeRequest = async (_: any, args: any, config: any, url: any, data?: any,
     url,
   })(_, args, config)
   if (response.status > 400) {
-    throw new ResolverError('ERROR', response.data)
+    throw new ResolverError(response)
   }
   return response
 }

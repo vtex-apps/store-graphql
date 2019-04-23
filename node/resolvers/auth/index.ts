@@ -1,11 +1,13 @@
+import { ResolverError, UserInputError } from '@vtex/api'
 import http from 'axios'
 import { parse, serialize } from 'cookie'
 import { stringify } from 'querystring'
 
-import ResolverError from '../../errors/resolverError'
 import { headers as authHeaders, withAuthToken } from '../headers'
 import paths from '../paths'
 
+const E_PASS = 'Password does not follow specified format'
+const E_TOKEN = 'VtexSessionToken cookie is null'
 
 export async function makeRequest(ctx: any, url: any, method='POST', vtexIdVersion='store-graphql', cookie: string | null = null) {
   const composedHeaders = {
@@ -35,7 +37,7 @@ const makeSecureRequest = async (ctx: any, url: any, body: any, method='POST', v
 const getSessionToken = async (ioContext: any, redirectUrl?: any) => {
   const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl), 'GET')
   if (!data.authenticationToken) {
-    throw new ResolverError(`ERROR ${data}`, status)
+    throw new ResolverError(`Failed to get session token from VTEX ID. status=${status}`)
   }
   return data.authenticationToken
 }
@@ -93,7 +95,7 @@ export const mutations = {
   accessKeySignIn: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }: any) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
-      throw new ResolverError('ERROR VtexSessionToken is null', 400)
+      throw new UserInputError(E_TOKEN)
     }
     const { headers, data: { authStatus } } = await makeSecureRequest(ioContext, paths.accessKeySignIn(), {
       accesskey: args.code,
@@ -109,7 +111,7 @@ export const mutations = {
    */
   classicSignIn: async (_: any, args: any, { vtex: ioContext, response }: any) => {
     if (!checkPasswordFormat(args.password)) {
-      throw new ResolverError('Password does not follow specific format', 400)
+      throw new UserInputError(E_PASS)
     }
     const VtexSessionToken = await getSessionToken(ioContext)
     const { headers, data: { authStatus } } = await makeSecureRequest(ioContext, paths.classicSignIn(), {
@@ -142,10 +144,10 @@ export const mutations = {
   recoveryPassword: async (_: any, args: any, { vtex: ioContext, request: { headers: { cookie } }, response }: any) => {
     const { VtexSessionToken } = parse(cookie)
     if (!VtexSessionToken) {
-      throw new ResolverError('ERROR VtexSessionToken is null', 400)
+      throw new UserInputError(E_TOKEN)
     }
     if (!checkPasswordFormat(args.newPassword)) {
-      throw new ResolverError('Password does not follow specific format', 400)
+      throw new UserInputError(E_PASS)
     }
     const { headers, data: { authStatus } } = await makeRequest(ioContext, paths.recoveryPassword(VtexSessionToken, args.email, args.newPassword, args.code))
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
@@ -156,7 +158,7 @@ export const mutations = {
    */
   redefinePassword: async (_: any, args: any, { vtex: ioContext, response }: any) => {
     if (!checkPasswordFormat(args.newPassword) || !checkPasswordFormat(args.currentPassword)) {
-      throw new ResolverError('Password does not follow specific format', 400)
+      throw new UserInputError(E_PASS)
     }
 
     const VtexSessionToken = await getSessionToken(ioContext)
@@ -168,10 +170,10 @@ export const mutations = {
     const { headers, data: { authStatus } } = await makeRequest(ioContext, passPath, 'POST', args.vtexIdVersion)
 
     if(authStatus === 'WrongCredentials') {
-      throw new ResolverError('Wrong credentials.', 400)
+      throw new UserInputError('Wrong credentials.')
     }
     else if(authStatus === 'BlockedUser') {
-      throw new ResolverError('You were blocked by VTEX ID.', 400)
+      throw new UserInputError('You were blocked by VTEX ID.')
     }
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
