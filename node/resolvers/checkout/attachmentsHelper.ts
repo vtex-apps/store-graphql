@@ -1,4 +1,4 @@
-import { all, filter, find, partition, path, pathOr, prop, propEq } from 'ramda'
+import { all, filter, find, partition, path, pathOr, propEq } from 'ramda'
 
 import { AssemblyOption, CompositionItem, MetadataItem, RemovedItem } from './types'
 
@@ -69,7 +69,7 @@ const joinOptionsWithType = (options: OptionsType[]) => {
 const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   const { checkout, orderFormId, itemIndex, options } = input
   if (!options || options.length === 0) { return }
-  const isRemove = (option: any) => option.quantity === 0
+  const isRemove = (option: OptionsType) => option.quantity === 0
   const [toRemove, toAdd] = partition<OptionsType>(isRemove, options)
   const joinedToAdd = joinOptionsWithType(toAdd)
   const joinedToRemove = joinOptionsWithType(toRemove)
@@ -106,7 +106,7 @@ export const addOptionsForItems = async (
   }
 }
 
-const filterCompositionNull = (assemblyOptions: any) => assemblyOptions.filter(({ composition }: any) => !!composition)
+const filterCompositionNull = (assemblyOptions: AssemblyOption[]) => assemblyOptions.filter(({ composition }) => !!composition)
 
 export const buildAssemblyOptionsMap = (orderForm: any) => {
   const metadataItems = pathOr([], ['itemMetadata', 'items'], orderForm) as MetadataItem[]
@@ -115,14 +115,22 @@ export const buildAssemblyOptionsMap = (orderForm: any) => {
          .reduce((prev, curr) => ({ ...prev, [curr.id]: filterCompositionNull(curr.assemblyOptions) }) , {})
 }
 
-const isParentOptionSingleChoice = ({composition: { minQuantity, maxQuantity }}: AssemblyOption) =>
-  minQuantity === 1 && maxQuantity === 1
 
-const isParentOptionToggleChoice = ({ composition: { items }}: AssemblyOption) => all(propEq('maxQuantity', 1))(items)
+const isParentOptionSingleChoice = ({ composition }: AssemblyOption) => {
+  if (!composition) { return false }
+  const { minQuantity, maxQuantity } = composition
+  return minQuantity === 1 && maxQuantity === 1
+}
 
-const getItemChoiceType = (childAssemblyData: AssemblyOption) => {
+const isParentOptionToggleChoice = ({ composition }: AssemblyOption) => {
+  if (!composition) { return false }
+  const { items } = composition
+  return all(propEq('maxQuantity', 1))(items)
+}
+
+const getItemChoiceType = (childAssemblyData?: AssemblyOption) => {
   if (!childAssemblyData) { return CHOICE_TYPES.MULTIPLE }
-  const isSingle = isParentOptionSingleChoice(childAssemblyData)
+  const isSingle = isParentOptionSingleChoice(childAssemblyData!)
   if (isSingle) { return CHOICE_TYPES.SINGLE }
   const isToggle = isParentOptionToggleChoice(childAssemblyData)
   if (isToggle) { return CHOICE_TYPES.TOGGLE }
@@ -130,9 +138,10 @@ const getItemChoiceType = (childAssemblyData: AssemblyOption) => {
   return CHOICE_TYPES.MULTIPLE
 }
 
-const getItemComposition = (childItem: OrderFormItem, childAssemblyData: AssemblyOption): CompositionItem | null => {
-  if (!childAssemblyData) { return null }
-  return find<CompositionItem>(propEq('id', childItem.id))(childAssemblyData.composition.items) as any
+const getItemComposition = (childItem: OrderFormItem, childAssemblyData?: AssemblyOption): CompositionItem | undefined => {
+  if (!childAssemblyData) { return undefined }
+  const items = childAssemblyData.composition && childAssemblyData.composition.items || []
+  return find<CompositionItem>(propEq('id', childItem.id), items)
 }
 
 const isSonOfItem = (parentIndex: number) => propEq('parentItemIndex', parentIndex)
@@ -148,7 +157,7 @@ export const buildAddedOptionsForItem = (
   const children = filter<OrderFormItem>(isSonOfItem(index), childs)
   return children.map(childItem => {
     const parentAssemblyOptions = assemblyOptionsMap[item.id]
-    const childAssemblyData: any = find<AssemblyOption>(propEq('id', childItem.parentAssemblyBinding))(parentAssemblyOptions)
+    const childAssemblyData = find<AssemblyOption>(propEq('id', childItem.parentAssemblyBinding))(parentAssemblyOptions)
     const compositionItem = getItemComposition(childItem, childAssemblyData) || { initialQuantity: 0 }
     return {
       choiceType: getItemChoiceType(childAssemblyData),
@@ -175,9 +184,14 @@ const isInitialItemMissing = (parentCartItem: OrderFormItem, orderForm: any) =>
     return null
   }
 
+  const metadataItems = path<MetadataItem[]>(['itemMetadata', 'items'], orderForm)
+  const metadataItem = metadataItems && find(propEq('id', initialItem.id), metadataItems)
+  if (!metadataItem) {
+    return null
+  }
   return {
     initialQuantity: initialItem.initialQuantity,
-    name: prop('name', find<any>(propEq('id', initialItem.id), path(['itemMetadata', 'items'], orderForm))),
+    name: metadataItem.name,
     removedQuantity: initialItem.initialQuantity - (selectedQuantity || 0),
   }
 }
@@ -193,14 +207,16 @@ export const buildRemovedOptions = (
   const assemblyOptions = assemblyOptionsMap[item.id]
   if (!assemblyOptions) { return [] }
   const itemsWithInitials: InitialItem[] = []
-  assemblyOptions.map(assemblyOption=> {
-    assemblyOption.composition.items.map(compItem => {
-      if (compItem.initialQuantity > 0) {
-        itemsWithInitials.push({ ...compItem, parentAssemblyBinding: assemblyOption.id })
-      }
-    })
+  assemblyOptions.map(assemblyOption => {
+    if (assemblyOption.composition) {
+      assemblyOption.composition.items.map(compItem => {
+        if (compItem.initialQuantity > 0) {
+          itemsWithInitials.push({ ...compItem, parentAssemblyBinding: assemblyOption.id })
+        }
+      })
+    }
   })
 
-  const removed: any = itemsWithInitials.map(isInitialItemMissing(item, orderForm)).filter(Boolean)
+  const removed = itemsWithInitials.map(isInitialItemMissing(item, orderForm)).filter(Boolean) as RemovedItem[]
   return removed
 }
