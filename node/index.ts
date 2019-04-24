@@ -7,11 +7,7 @@ import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 
 const TWO_SECONDS_MS =  2 * 1000
-const FOUR_SECONDS_MS =  4 * 1000
-
-const retryConfig = {
-  retries: 1,
-}
+const THREE_SECONDS_MS =  3 * 1000
 
 // Segments are small and immutable.
 const MAX_SEGMENT_CACHE = 10000
@@ -24,12 +20,12 @@ export default new Service<IOClients, void, CustomContext>({
   clients: {
     options: {
       default: {
-        retryConfig,
-        timeout: FOUR_SECONDS_MS,
+        retries: 1,
+        timeout: TWO_SECONDS_MS,
       },
       segment: {
         memoryCache: segmentCache,
-        timeout: TWO_SECONDS_MS,
+        timeout: THREE_SECONDS_MS,
       }
     }
   },
