@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.67.1] - 2019-04-24
+### Fixed
+- Check if composition is null before mapping over its items on itemMetadata priceTable resolver.
+
 ## [2.67.0] - 2019-04-23
 
 ### Changed

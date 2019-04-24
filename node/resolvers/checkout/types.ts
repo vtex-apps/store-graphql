@@ -11,14 +11,16 @@ export interface CompositionItem {
   seller: string
 }
 
+interface Composition {
+  minQuantity: number
+  maxQuantity: number
+  items: CompositionItem[]
+}
+
 export interface AssemblyOption {
   id: string
   name: string
-  composition: {
-    minQuantity: number
-    maxQuantity: number
-    items: CompositionItem[]
-  }
+  composition: Composition | null
 }
 
 export interface MetadataItem {
