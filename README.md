@@ -28,6 +28,7 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 - [Troubleshooting](#troubleshooting)
 
 ## Usage
+TODO
 
 ## Queries
 
@@ -54,7 +55,6 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 ### Profile System
 * `profile` - Returns user profile details
 
-
 ## Mutations
 
 ### Checkout
@@ -79,6 +79,7 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 * `deleteAddress`
 
 ## Contributing
+TODO 
 
 ## Troubleshooting
 
