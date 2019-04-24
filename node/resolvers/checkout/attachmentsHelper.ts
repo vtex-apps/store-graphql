@@ -207,15 +207,15 @@ export const buildRemovedOptions = (
   const assemblyOptions = assemblyOptionsMap[item.id]
   if (!assemblyOptions) { return [] }
   const itemsWithInitials: InitialItem[] = []
-  assemblyOptions.map(assemblyOption => {
+  for (const assemblyOption of assemblyOptions) {
     if (assemblyOption.composition) {
-      assemblyOption.composition.items.map(compItem => {
+      for (const compItem of assemblyOption.composition.items) {
         if (compItem.initialQuantity > 0) {
           itemsWithInitials.push({ ...compItem, parentAssemblyBinding: assemblyOption.id })
         }
-      })
+      }
     }
-  })
+  }
 
   const removed = itemsWithInitials.map(isInitialItemMissing(item, orderForm)).filter(Boolean) as RemovedItem[]
   return removed

@@ -27,6 +27,12 @@ interface FetchPriceInput {
   url: string,
 }
 
+interface ItemToFetch { 
+  id: string
+  priceTable: string
+  seller: string
+}
+
 interface Parent {
   items: MetadataItem[],
 }
@@ -63,7 +69,7 @@ const fetchPrice = async ({
 }
 
 const getSimulationPayload = async (segment: Segment, account: string, authToken: string) => {
-  const segmentData = await segment.getSegment().catch(() => null)
+  const segmentData = await segment.segment().catch(() => null)
   if (!segmentData) { return null }
 
   let marketingData = {}
@@ -85,21 +91,29 @@ const getSimulationPayload = async (segment: Segment, account: string, authToken
   }
 }
 
+const buildItemsToFetch = (items: MetadataItem[]) => {
+  const itemsToFetch = [] as ItemToFetch[]
+  const itemsWithAssembly = items.filter(item => item.assemblyOptions.length > 0)
+  for (const item of itemsWithAssembly) {
+    const { assemblyOptions } = item
+    for (const assemblyOption of assemblyOptions) {
+      const { composition } = assemblyOption
+      if (composition && composition.items) {
+        for (const compItem of composition.items) {
+          const { id, priceTable, seller } = compItem
+          itemsToFetch.push({ id, priceTable, seller })
+        }
+      }
+    }
+  }
+  return itemsToFetch
+}
+
 export const resolvers = {
   ItemMetadata: {
     priceTable: async ({items}: Parent, _: any, { vtex: { account, authToken }, clients: { segment } }: Context) => {
-      const itemsToFetch = [] as Array<{ id: string, priceTable: string, seller: string }>
-      items.filter(item => item.assemblyOptions.length > 0).map(item => {
-        const { assemblyOptions } = item
-        assemblyOptions.map(({ composition }) => {
-          if (composition && composition.items) {
-            composition.items.map(({ id, priceTable, seller }) => itemsToFetch.push({ id, priceTable, seller }))
-          }
-        })
-      })
-
       const fetchPayload = await getSimulationPayload(segment, account, authToken)
-
+      const itemsToFetch = buildItemsToFetch(items)
       const itemsPromises = itemsToFetch.map(({ id, priceTable, seller }) => {
         if (!fetchPayload) { return { id, priceTable, price: 0 } }
         return fetchPrice({ ...fetchPayload, id, priceTable, seller })
