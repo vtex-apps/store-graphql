@@ -6,7 +6,7 @@ import { acronymList, acronymListProduct, fields, fieldsListProduct } from './ut
 import { validateItems } from './util'
 
 const getListItemsWithProductInfo = (items: any, catalog: any) => Promise.all(
-  map(async item => {
+  map(async (item: any) => {
     const productsResponse = await catalog.productBySku([path(['skuId'], item)])
     const product = nth(0, productsResponse)
     return { ...item, product }
@@ -15,7 +15,7 @@ const getListItemsWithProductInfo = (items: any, catalog: any) => Promise.all(
 
 const getListItems = async (itemsId: any, dataSources: any) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(id =>
+  const items = itemsId ? await Promise.all(map((id: string) =>
     document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
@@ -28,7 +28,7 @@ const addListItem = async (item: any, document: any) => {
 const addItems = async (items = [], dataSources: any) => {
   const { document } = dataSources
   validateItems(items, dataSources)
-  const promises = map(async item => addListItem(item, document), items)
+  const promises = map(async (item: any) => addListItem(item, document), items)
   return Promise.all(promises)
 }
 
@@ -38,20 +38,20 @@ const deleteItems = (items: any, document: any) => (
 
 const updateItems = async (items: any, dataSources: any) => {
   const { document } = dataSources
-  const itemsWithoutDuplicated = map(item => last(item),
+  const itemsWithoutDuplicated = map((item: any) => last(item),
     values(groupBy(prop('skuId') as any, items)))
-  const itemsToBeDeleted = filter(item => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
-  const itemsToBeAdded = filter(item => !path(['id'], item), itemsWithoutDuplicated)
-  const itemsToBeUpdated = filter(item => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
+  const itemsToBeDeleted = filter((item: any) => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
+  const itemsToBeAdded = filter((item: any) => !path(['id'], item), itemsWithoutDuplicated)
+  const itemsToBeUpdated = filter((item: any) => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
 
   deleteItems(itemsToBeDeleted, document)
 
   const itemsIdAdded = await Promise.all(
-    map(async item => await addListItem(item, document), itemsToBeAdded)
+    map(async (item: any) => await addListItem(item, document), itemsToBeAdded)
   )
 
   const itemsIdUpdated = map(
-    item => {
+    (item: any) => {
       document.updateDocument(
         acronymListProduct,
         path(['id'], item),
@@ -74,7 +74,7 @@ export const queries = {
   listsByOwner: async (_: any, { owner, page, pageSize }: any, context: any) => {
     const { dataSources, dataSources: { document } } = context
     const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
-    const listsWithProducts = map(async list => {
+    const listsWithProducts = map(async (list: any) => {
       const items = await getListItems(path(['items'], list), dataSources)
       return { ...list, items }
     }, lists)
