@@ -17,7 +17,7 @@ export class CallcenterOperatorDataSource extends RESTDataSource {
     )
   }
 
-  get baseURL() {
+  public get baseURL() {
     return `http://licensemanager.vtex.com.br/api/pvt/accounts`
   }
 

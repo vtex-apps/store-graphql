@@ -8,14 +8,14 @@ const DEFAULT_TIMEOUT_MS = 5 * 1000
 export { SegmentData } from '@vtex/api'
 
 export class SessionDataSource extends RESTDataSource {
-  constructor() {
+  public constructor() {
     super()
   }
 
   public updateSession = (key: string, value: any) =>
     this.post('/sessions', { public: { [key]: { value } } }, {metric: 'sessions-updateSession'})
 
-  get baseURL() {
+  public get baseURL() {
     const {
       vtex: { account },
     } = this.context

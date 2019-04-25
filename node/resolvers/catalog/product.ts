@@ -38,14 +38,38 @@ export const resolvers = {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({ categories }: {categories: string[]}, _: any, ctx: Context) => mapP(
-      categories,
-      category => toIOMessage(ctx, category, `category-${category}`)
-    ),
+    categories: (
+      { categories }: { categories: string[] },
+      _: any,
+      ctx: Context
+    ) =>
+      mapP(categories, category =>
+        toIOMessage(ctx, category, `category-${category}`)
+      ),
 
-    description: ({ description, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, description, `${info.parentType}-${info.fieldName}-${productId}`),
+    description: (
+      { description, productId }: any,
+      _: any,
+      ctx: Context,
+      info: GraphQLResolveInfo
+    ) =>
+      toIOMessage(
+        ctx,
+        description,
+        `${info.parentType}-${info.fieldName}-${productId}`
+      ),
 
-    productName: ({ productName, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, productName, `${info.parentType}-${info.fieldName}-${productId}`),
+    productName: (
+      { productName, productId }: any,
+      _: any,
+      ctx: Context,
+      info: GraphQLResolveInfo
+    ) =>
+      toIOMessage(
+        ctx,
+        productName,
+        `${info.parentType}-${info.fieldName}-${productId}`
+      ),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -81,9 +105,11 @@ export const resolvers = {
     titleTag: ({ productTitle }: any) => productTitle,
 
     specificationGroups: (product: any) => {
-      const allSpecificationsGroups = propOr([], 'allSpecificationsGroups', product).concat([
-        'allSpecifications',
-      ])
+      const allSpecificationsGroups = propOr(
+        [],
+        'allSpecificationsGroups',
+        product
+      ).concat(['allSpecifications'])
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,
