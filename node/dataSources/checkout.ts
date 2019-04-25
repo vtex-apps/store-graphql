@@ -68,7 +68,10 @@ export class CheckoutDataSource extends RESTDataSource {
     {
       orderItems,
     },
-    {metric: 'checkout-updateItems'}
+    {
+      metric: 'checkout-updateItems',
+      timeout: LONG_TIMEOUT_MS,
+    }
   )
 
   public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
