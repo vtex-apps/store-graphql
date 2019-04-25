@@ -1,7 +1,7 @@
 import { UserInputError } from '@vtex/api'
 import { filter, path } from 'ramda'
 
-export const fields = ['name', 'isPublic', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
+export const fields = ['name', 'isPublic', 'isEditable', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
 export const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
 export const acronymListProduct = 'LP'
 export const acronymList = 'WL'
@@ -22,7 +22,7 @@ const checkProduct = async (item: any, catalog: any) => {
 }
 
 const checkDuplicatedListItem = (items: any, item: any) => {
-  const itemDuplicated = filter(i => path(['skuId'], i) === path(['skuId'], item), items)
+  const itemDuplicated = filter((i: any) => path(['skuId'], i) === path(['skuId'], item), items)
   if (itemDuplicated.length > 1) {
     throw new UserInputError('Cannot add duplicated items.')
   }
