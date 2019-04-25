@@ -36,7 +36,11 @@ type Query {
   """ Returns facets category """
   facets(
     """ Categories separated by / followed by map. e.g.:  /eletronics/tvs?map=c,c """
-    facets: String = ""
+    facets: String = "" @deprecated(reason: "Use 'query' and 'map' field instead"),
+    """ Terms that is used in search e.g.: eletronics/samsung """
+    query: String = "",
+    """ Defines terms types: Brand, Category, Department e.g.: c,b """
+    map: String = ""
   ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """ Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b') """
@@ -63,7 +67,7 @@ type Query {
     from: Int = 0,
     """ Pagination item end """
     to: Int = 9
-  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): Search @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment @deprecated(reason: "Use the 'products' and 'facets' queries separately")
 
   """ Returns a specified category """
   category(

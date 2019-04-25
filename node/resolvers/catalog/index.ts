@@ -97,9 +97,21 @@ export const queries = {
     }
   },
 
-  facets: (_: any, { facets }: any, ctx: Context) => {
+  facets: async (_: any, { facets, query, map }: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
-    return catalog.facets(facets)
+    const queryArgs = { query, map }
+
+    let result
+
+    if (facets) {
+      result = await catalog.facets(facets)
+    } else {
+      result = await catalog.facets(`${query}?map=${map}`)
+    }
+
+    result.queryArgs = queryArgs
+
+    return result
   },
 
   product: async (_: any, args: any, ctx: Context) => {
@@ -140,7 +152,7 @@ export const queries = {
   products: async (_: any, args: any, ctx: Context) => {
     const { dataSources: { catalog } } = ctx
     const queryTerm = args.query
-    if (queryTerm == null || test(/[\?\&\[\]\=\,]/, queryTerm)) {
+    if (queryTerm == null || test(/[?&[\]=,]/, queryTerm)) {
       throw new UserInputError(`The query term contains invalid characters. query=${queryTerm}`)
     }
     return catalog.products(args)

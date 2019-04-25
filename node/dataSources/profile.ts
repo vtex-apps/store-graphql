@@ -11,7 +11,7 @@ const forProfile: HttpClientFactory = ({context, options}) => context &&
 export class ProfileDataSource extends IODataSource {
   protected httpClientFactory = forProfile
 
-  constructor(ctx?: IOContext, opts?: InstanceOptions) {
+  public constructor(ctx?: IOContext, opts?: InstanceOptions) {
     super(ctx, opts)
   }
 
