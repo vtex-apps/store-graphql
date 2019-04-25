@@ -17,7 +17,7 @@ type Facet {
   Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
-  Slug: String! @deprecated(reason: "Use 'slug' field instead")
+  Slug: String @deprecated(reason: "Use 'slug' field instead")
   Children: [Facet] @deprecated(reason: "Use 'children' field instead")
   id: Int
   name: IOMessage!

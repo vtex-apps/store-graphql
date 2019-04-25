@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.68.1] - 2019-04-25
+### Changed
+- `Slug` field not required in `Facet` type.
+
 ## [2.68.0] - 2019-04-25
 ### Added
 - Add fields `selected` and `map` to `Facet` type, alongside the camel case version of previous fields.
