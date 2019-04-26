@@ -1,12 +1,14 @@
 import { UserInputError } from '@vtex/api'
 import { filter, path } from 'ramda'
 
+import { Document } from '../../clients/masterdata'
+
 export const fields = ['name', 'isPublic', 'isEditable', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
 export const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
 export const acronymListProduct = 'LP'
 export const acronymList = 'WL'
 
-export interface Item {
+export interface Item extends Document {
   id: string
   skuId: string
   productId: string
