@@ -27,7 +27,8 @@ type Facet {
   slug: String
   children: [Facet]
   value: String!
-  map: String!
+  # Not required for price ranges
+  map: String
   selected: Boolean!
 }
 
