@@ -27,7 +27,6 @@ export class MasterData extends ExternalClient {
     })
   }
 
-
   public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
