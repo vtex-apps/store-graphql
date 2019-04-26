@@ -166,10 +166,10 @@ export const mutation = {
     } = context
     try {
       const itemsId = await addItems(items, masterdata)
-      const { Id } = await masterdata.createDocument(
-        acronymList,
-        mapKeyValues({ ...list, items: itemsId }) as any
-      )
+      const { Id } = await masterdata.createDocument(acronymList, mapKeyValues({
+        ...list,
+        items: itemsId,
+      }) as any)
       return queries.list(_, { id: Id }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)
