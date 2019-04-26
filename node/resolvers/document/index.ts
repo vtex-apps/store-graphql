@@ -3,10 +3,10 @@ import {parseFieldsToJson }  from '../../utils'
 import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
-  documents: async (_: any, args: any, { dataSources: { document } }: any) => {
+  documents: async (_: any, args: any, { clients: { masterdata } }: Context) => {
     const { acronym, fields, page, pageSize, where } = args
     const fieldsWithId = union(fields, ['id'])
-    const data = await document.searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
+    const data = await masterdata.searchDocuments(acronym, fieldsWithId as any, where, { page, pageSize })
     return data.map((doc: any) => ({
       cacheId: doc.id,
       fields: mapKeyValues(doc),
@@ -14,30 +14,30 @@ export const queries = {
     }))
   },
 
-  document: async (_: any, args: any, { dataSources: { document } }: any) => {
+  document: async (_: any, args: any, { clients: { masterdata } }: Context) => {
     const { acronym, fields, id } = args
-    const data = await document.getDocument(acronym, id, fields)
+    const data = await masterdata.getDocument(acronym, id, fields)
     return { id, cacheId: id, fields: mapKeyValues(data) }
   },
 }
 
 export const mutations = {
-  createDocument: async (_: any, args: any, { dataSources: { document } }: any) => {
+  createDocument: async (_: any, args: any, { clients: { masterdata } }: Context) => {
     const { acronym, document: { fields } } = args
-    const { Id, Href, DocumentId } = await document.createDocument(acronym, fields)
+    const { Id, Href, DocumentId } = await masterdata.createDocument(acronym, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  updateDocument: async (_: any, args: any, { dataSources: { document } }: any) => {
+  updateDocument: async (_: any, args: any, { clients: { masterdata } }: Context) => {
     const { acronym, document: { fields } } = args
-    const id = prop('id', parseFieldsToJson(fields))
-    const { Id, Href, DocumentId } = await document.updateDocument(acronym, id, fields)
+    const id = prop('id', parseFieldsToJson(fields)) as string
+    const { Id, Href, DocumentId } = await masterdata.updateDocument(acronym, id, fields)
     return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
   },
 
-  deleteDocument: async (_: any, args: any, { dataSources: { document } }: any) => {
+  deleteDocument: async (_: any, args: any, { clients: { masterdata } }: Context) => {
     const { acronym, documentId } = args
-    await document.deleteDocument(acronym, documentId)
+    await masterdata.deleteDocument(acronym, documentId)
     return { id: documentId }
   }
 }

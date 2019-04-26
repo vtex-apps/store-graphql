@@ -1,9 +1,9 @@
-import { IOClients, IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
+import { IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
 
+import { Clients } from './clients'
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
 import { CheckoutDataSource } from './dataSources/checkout'
-import { DocumentDataSource } from './dataSources/document'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
@@ -17,7 +17,7 @@ if (!global.metrics) {
 }
 
 declare global {
-  type Context = ServiceContext<IOClients, void, CustomContext>
+  type Context = ServiceContext<Clients, void, CustomContext>
 
   interface CustomContext {
     cookie: string
@@ -34,7 +34,6 @@ declare global {
   interface StoreGraphQLDataSources {
     catalog: CatalogDataSource
     checkout: CheckoutDataSource
-    document: DocumentDataSource
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
