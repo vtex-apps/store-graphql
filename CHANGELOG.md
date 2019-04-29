@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.70.0] - 2019-04-29
+### Added
+- `productSearch` query.
+
 ## [2.69.1] - 2019-04-29
 
 ## [2.69.0] - 2019-04-29
