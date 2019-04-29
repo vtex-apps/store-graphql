@@ -3,55 +3,55 @@ import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ram
 
 import { mapKeyValues } from '../../utils/object'
 import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
-import { validateItems } from './util'
+import { validateItems, Item } from './util'
 
-const getListItemsWithProductInfo = (items: any, catalog: any) => Promise.all(
-  map(async item => {
+const getListItemsWithProductInfo = (items: Item[], catalog: any) => Promise.all(
+  map(async (item: Item) => {
     const productsResponse = await catalog.productBySku([path(['skuId'], item)])
     const product = nth(0, productsResponse)
     return { ...item, product }
   }, items)
 )
 
-const getListItems = async (itemsId: any, dataSources: any) => {
+const getListItems = async (itemsId: string[], dataSources: any) => {
   const { catalog, document } = dataSources
-  const items = itemsId ? await Promise.all(map(id =>
+  const items: Item[] = itemsId ? await Promise.all(map((id: string) =>
     document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
   return getListItemsWithProductInfo(items, catalog)
 }
 
-const addListItem = async (item: any, document: any) => {
+const addListItem = async (item: Item, document: any) => {
   const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues({ ...item }))
   return DocumentId
 }
 
-const addItems = async (items = [], dataSources: any) => {
+const addItems = async (items: Item[] = [], dataSources: any) => {
   const { document } = dataSources
   validateItems(items, dataSources)
-  const promises = map(async item => addListItem(item, document), items)
+  const promises = map(async (item: Item) => addListItem(item, document), items)
   return Promise.all(promises)
 }
 
-const deleteItems = (items: any, document: any) => (
-  items && items.forEach((item: any) => document.deleteDocument(acronymListProduct, path(['id'], item)))
+const deleteItems = (items: Item[], document: any) => (
+  items && items.forEach((item: Item) => document.deleteDocument(acronymListProduct, path(['id'], item)))
 )
 
-const updateItems = async (items: any, dataSources: any) => {
+const updateItems = async (items: Item[], dataSources: any) => {
   const { document } = dataSources
-  const itemsWithoutDuplicated = map(item => last(item),
+  const itemsWithoutDuplicated = map((item: any) => last(item),
     values(groupBy(prop('skuId') as any, items)))
-  const itemsToBeDeleted = filter(item => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
-  const itemsToBeAdded = filter(item => !path(['id'], item), itemsWithoutDuplicated)
-  const itemsToBeUpdated = filter(item => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
+  const itemsToBeDeleted = filter((item: Item) => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
+  const itemsToBeAdded = filter((item: Item) => !path(['id'], item), itemsWithoutDuplicated)
+  const itemsToBeUpdated = filter((item: Item) => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
 
   deleteItems(itemsToBeDeleted, document)
 
   const itemsIdAdded = await Promise.all(
-    map(async item => await addListItem(item, document), itemsToBeAdded)
+    map(async (item: Item) => await addListItem(item, document), itemsToBeAdded)
   )
 
   const itemsIdUpdated = map(
-    item => {
+    (item: Item) => {
       document.updateDocument(
         acronymListProduct,
         path(['id'], item),
@@ -74,8 +74,8 @@ export const queries = {
   listsByOwner: async (_: any, { owner, page, pageSize }: any, context: any) => {
     const { dataSources, dataSources: { document } } = context
     const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
-    const listsWithProducts = map(async list => {
-      const items = await getListItems(path(['items'], list), dataSources)
+    const listsWithProducts = map(async (list: any) => {
+      const items = await getListItems(path(['items'], list) || [], dataSources)
       return { ...list, items }
     }, lists)
     return Promise.all(listsWithProducts)
