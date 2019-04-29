@@ -6,6 +6,8 @@ type List {
     name: String
     """ Flag that indicates if the list is public or not """
     isPublic: Boolean
+    """ Flag that indicates if the list is editable or not """
+    isEditable: Boolean
     """ List's owner """
     owner: String
     """ Creation date """
@@ -35,6 +37,8 @@ input ListInput {
     name: String!
     """ Flag that indicates if the list is public or not """
     isPublic: Boolean
+    """ Flag that indicates if the list is editable or not """
+    isEditable: Boolean
     """ List's owner """
     owner: String
     """ List items """

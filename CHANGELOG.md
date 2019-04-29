@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.69.0] - 2019-04-29
+### Added
+- `isEditable` field to `list` graphql type .
+
 ## [2.68.2] - 2019-04-26
 ### Fixed
 - `map` field not required in `Facet` type.
