@@ -158,6 +158,17 @@ export const queries = {
     return catalog.products(args)
   },
 
+  productSearch: async (_: any, args: any, ctx: Context) => {
+    const { dataSources: { catalog } } = ctx
+    const products = await queries.products(_, args, ctx)
+    const recordsFiltered = await catalog.productsQuantity(args)
+
+    return {
+      products,
+      recordsFiltered,
+    }
+  },
+
   brand: async (_: any, args: any, { dataSources: { catalog } }: Context) => {
     const brands = await catalog.brands()
     const brand = find(compose(equals(args.id), prop('id') as any), brands)
