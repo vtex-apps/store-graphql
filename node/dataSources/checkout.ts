@@ -5,6 +5,7 @@ import { RESTDataSource } from './RESTDataSource'
 import { SegmentData } from './session'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
+const LONG_TIMEOUT_MS = 11 * 1000
 
 export interface SimulationData {
   country: string
@@ -42,7 +43,10 @@ export class CheckoutDataSource extends RESTDataSource {
     {
       orderItems: items,
     },
-    {metric: 'checkout-addItem'}
+    {
+      metric: 'checkout-addItem',
+      timeout: LONG_TIMEOUT_MS
+    }
   )
 
   public cancelOrder = (orderFormId: string, reason: string) => this.post(
@@ -64,7 +68,10 @@ export class CheckoutDataSource extends RESTDataSource {
     {
       orderItems,
     },
-    {metric: 'checkout-updateItems'}
+    {
+      metric: 'checkout-updateItems',
+      timeout: LONG_TIMEOUT_MS,
+    }
   )
 
   public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
