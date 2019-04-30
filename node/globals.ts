@@ -6,7 +6,6 @@ import {
 } from '@vtex/api'
 
 import { Clients } from './clients'
-import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
@@ -43,7 +42,6 @@ declare global {
     logistics: LogisticsDataSource
     profile: ProfileDataSource
     session: SessionDataSource
-    callcenterOperator: CallcenterOperatorDataSource
     oms: OMSDataSource
   }
 
