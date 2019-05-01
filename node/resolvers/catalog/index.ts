@@ -1,6 +1,17 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
 import { GraphQLResolveInfo } from 'graphql'
-import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
+import {
+  compose,
+  equals,
+  find,
+  head,
+  last,
+  map,
+  path,
+  prop,
+  split,
+  test,
+} from 'ramda'
 
 import { toIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
@@ -34,7 +45,10 @@ const extractSlug = (item: any) => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-const lastSegment = compose<string, string[], string>(last, split('/'))
+const lastSegment = compose<string, string[], string>(
+  last,
+  split('/')
+)
 
 function findInTree(tree: any, values: any, index = 0): any {
   for (const node of tree) {
@@ -48,9 +62,60 @@ function findInTree(tree: any, values: any, index = 0): any {
   }
   return {}
 }
+/** Get Category metadata for the search/productSearch query
+ *
+ */
+const categoryMetaData = async (_: any, args: any, ctx: any) => {
+  const { query } = args
+  const category = findInTree(
+    await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
+    query.split('/')
+  )
+  return {
+    metaTagDescription: path(['MetaTagDescription'], category),
+    titleTag: path(['Title'], category),
+  }
+}
+/** Get brand metadata for the search/productSearch query
+ *
+ */
+const brandMetaData = async (_: any, args: any, ctx: any) => {
+  const brands = await queries.brands(_, { ...args }, ctx)
+  const brand = find(
+    compose(
+      equals(args.query.split('/').pop(-1)),
+      Slugify,
+      prop('name') as any
+    ),
+    brands
+  )
+  return {
+    metaTagDescription: path(['metaTagDescription'], brand as any),
+    titleTag: path(['title'], brand as any),
+  }
+}
 
-// TODO: This method should be removed in the next major.
-async function getProductBySlug(slug: string, catalog: any){
+/**
+ * Get metadata of category/brand APIs
+ *
+ * @param _
+ * @param args
+ * @param ctx
+ */
+const searchMetaData = async (_: any, args: any, ctx: any) => {
+  const { map } = args
+  const lastMap = map.split(',').pop(-1)
+  const meta =
+    lastMap === 'c'
+      ? await categoryMetaData(_, args, ctx)
+      : lastMap === 'b' && (await brandMetaData(_, args, ctx))
+  return meta
+}
+
+/** TODO: This method should be removed in the next major.
+ * @author Ana Luiza
+ */
+async function getProductBySlug(slug: string, catalog: any) {
   const products = await catalog.product(slug)
   if (products.length > 0) {
     return head(products)
@@ -73,8 +138,16 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (_: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
-    const { dataSources: { catalog }, clients: { segment, messages } } = ctx
+  autocomplete: async (
+    _: any,
+    args: any,
+    ctx: Context,
+    info: GraphQLResolveInfo
+  ) => {
+    const {
+      dataSources: { catalog },
+      clients: { segment, messages },
+    } = ctx
 
     const segmentData = await segment.getSegment()
     // Grabbing a segment without token should give us the default store locale
@@ -82,14 +155,33 @@ export const queries = {
     const from = segmentData.cultureInfo
     const to = defaultSegmentData.cultureInfo
     // Only translate if necessary
-    const translatedTerm = from && from !== to ? await messages.translate(to, [{id: `autocomplete-${args.searchTerm}`, description: '', content: args.searchTerm, from}]) : args.searchTerm
-    const { itemsReturned }: { itemsReturned: Item[] } = await catalog.autocomplete({ maxRows: args.maxRows, searchTerm: translatedTerm })
+    const translatedTerm =
+      from && from !== to
+        ? await messages.translate(to, [
+            {
+              id: `autocomplete-${args.searchTerm}`,
+              description: '',
+              content: args.searchTerm,
+              from,
+            },
+          ])
+        : args.searchTerm
+    const {
+      itemsReturned,
+    }: { itemsReturned: Item[] } = await catalog.autocomplete({
+      maxRows: args.maxRows,
+      searchTerm: translatedTerm,
+    })
     return {
       cacheId: args.searchTerm,
       itemsReturned: map(
         item => ({
           ...item,
-          name: toIOMessage(ctx, item.name, `${info.parentType}-${info.fieldName}-${extractSlug(item)}`),
+          name: toIOMessage(
+            ctx,
+            item.name,
+            `${info.parentType}-${info.fieldName}-${extractSlug(item)}`
+          ),
           slug: extractSlug(item),
         }),
         itemsReturned
@@ -98,7 +190,9 @@ export const queries = {
   },
 
   facets: async (_: any, { facets, query, map }: any, ctx: Context) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     const queryArgs = { query, map }
 
     let result
@@ -115,7 +209,9 @@ export const queries = {
   },
 
   product: async (_: any, args: any, ctx: Context) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     // TODO this is only for backwards compatibility. Should be removed in the next major.
     if (args.slug) {
       return getProductBySlug(args.slug, catalog)
@@ -124,7 +220,7 @@ export const queries = {
     const { field, value } = args.identifier
     let products = []
 
-    switch (field){
+    switch (field) {
       case 'id':
         products = await catalog.productById(value)
         break
@@ -150,20 +246,32 @@ export const queries = {
   },
 
   products: async (_: any, args: any, ctx: Context) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=,]/, queryTerm)) {
-      throw new UserInputError(`The query term contains invalid characters. query=${queryTerm}`)
+      throw new UserInputError(
+        `The query term contains invalid characters. query=${queryTerm}`
+      )
     }
     return catalog.products(args)
   },
 
   productSearch: async (_: any, args: any, ctx: Context) => {
-    const { dataSources: { catalog } } = ctx
+    const {
+      dataSources: { catalog },
+    } = ctx
     const products = await queries.products(_, args, ctx)
     const recordsFiltered = await catalog.productsQuantity(args)
-
+    const { titleTag, metaTagDescription }: any = await searchMetaData(
+      _,
+      args,
+      ctx
+    )
     return {
+      titleTag,
+      metaTagDescription,
       products,
       recordsFiltered,
     }
@@ -171,56 +279,49 @@ export const queries = {
 
   brand: async (_: any, args: any, { dataSources: { catalog } }: Context) => {
     const brands = await catalog.brands()
-    const brand = find(compose(equals(args.id), prop('id') as any), brands)
+    const brand = find(
+      compose(
+        equals(args.id),
+        prop('id') as any
+      ),
+      brands
+    )
     if (!brand) {
       throw new NotFoundError(`Brand not found`)
     }
     return brand
   },
 
-  brands: async (_: any, __: any, { dataSources: { catalog } }: Context) => catalog.brands(),
+  brands: async (_: any, __: any, { dataSources: { catalog } }: Context) =>
+    catalog.brands(),
 
-  category: async (_: any, { id }: any, { dataSources: { catalog } }: Context) => catalog.category(id),
+  category: async (
+    _: any,
+    { id }: any,
+    { dataSources: { catalog } }: Context
+  ) => catalog.category(id),
 
-  categories: async (_: any, { treeLevel }: any, { dataSources: { catalog } }: Context) => catalog.categories(treeLevel),
+  categories: async (
+    _: any,
+    { treeLevel }: any,
+    { dataSources: { catalog } }: Context
+  ) => catalog.categories(treeLevel),
 
+  /** TODO: This method should be removed in the next major.
+   * @author Bruno Dias
+   */
   search: async (_: any, args: any, ctx: Context) => {
-    const { map: mapParams, query } = args
+    const { map, query } = args
 
-    if (query == null || mapParams == null) {
+    if (query == null || map == null) {
       throw new UserInputError('Search query/map cannot be null')
     }
 
-    const categoryMetaData = async () => {
-      const category = findInTree(
-        await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
-        query.split('/')
-      )
-      return {
-        metaTagDescription: path(['MetaTagDescription'], category),
-        titleTag: path(['Title'], category),
-      }
-    }
-
-    const brandMetaData = async () => {
-      const brands = await queries.brands(_, { ...args }, ctx)
-      const brand = find(
-        compose(equals(query.split('/').pop(-1)), Slugify, prop('name') as any), brands
-      )
-      return {
-        metaTagDescription: path(['metaTagDescription'], brand as any),
-        titleTag: path(['title'], brand as any),
-      }
-    }
-
-    const searchMetaData = async () => {
-      const lastMap = mapParams.split(',').pop(-1)
-      const meta = lastMap === 'c' ? await categoryMetaData()
-        : lastMap === 'b' && await brandMetaData()
-      return meta
-    }
-
-    const { titleTag, metaTagDescription }: any = await searchMetaData()
+    const { titleTag, metaTagDescription }: any = await searchMetaData(
+      _,
+      args,
+      ctx
+    )
 
     return {
       metaTagDescription,
@@ -243,8 +344,7 @@ export const queries = {
     if (args.brand) {
       const brands = await catalog.brands()
       const found = brands.find(
-        (brand: any) =>
-          brand.isActive && Slugify(brand.name) === args.brand
+        (brand: any) => brand.isActive && Slugify(brand.name) === args.brand
       )
       response.brand = found && found.id
     }
@@ -268,7 +368,7 @@ export const queries = {
         ) as any
       }
 
-      response.category = found && found.id as any
+      response.category = found && (found.id as any)
     }
 
     return response
