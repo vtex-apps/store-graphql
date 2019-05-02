@@ -1,6 +1,6 @@
-import { addIndex, map, reject } from 'ramda'
-import { SimulationData, UpdateCheckinArgs } from '../../dataSources/checkout'
+import { addIndex, map, reject, keys } from 'ramda'
 import { SegmentData } from '../../dataSources/session'
+import { parse } from 'cookie'
 
 
 import { headers, withAuthToken } from '../headers'
@@ -15,6 +15,16 @@ import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './att
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
+
+const SetCookieWhitelist = [
+  'checkout.vtex.com',
+  '.ASPXAUTH',
+]
+
+const isWhitelistedSetCookie = (cookie: string) => {
+  const [key] = cookie.split('=')
+  return SetCookieWhitelist.includes(key)
+}
 
 /**
  * It will convert an integer to float moving the
@@ -79,32 +89,59 @@ export const fieldResolvers = {
   ...orderFormItemResolvers,
 }
 
+const replaceDomain = (cookie: any, host: string) => cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
+
 export const queries: Record<string, Resolver> = {
   orderForm: async (root, args, ctx) => {
-    const {dataSources: {checkout}} = ctx
+    const {clients: {checkout}} = ctx
 
     const sessionData = await sessionQueries.getSession(root, args, ctx) as SessionFields
     await syncCheckoutAndSessionPreCheckout(sessionData, ctx)
-
-    const orderForm = await checkout.orderForm()
-
+    const { headers, data: orderForm } = await checkout.orderForm(true)
     const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
+
+    const rawHeaders = headers as Record<string, any>
+    const responseSetCookies: string[] = rawHeaders && rawHeaders['set-cookie']
+
+    console.log('teste responseSetCookies: ', responseSetCookies)
+
+    const host = ctx.get('x-forwarded-host')
+
+    if (responseSetCookies) {
+      const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+      if (forwardedSetCookies.length > 0) {
+        const cleanCookies = responseSetCookies.map(cookie => replaceDomain(cookie, host))
+        cleanCookies.map(cookie => {
+          const parsed = parse(cookie)
+          const cookieName = keys(parsed)[0]
+          const cookieValue = parsed[cookieName]
+
+          const extraOptions = {
+            path: parsed.path,
+            domain: parsed.domain,
+            expires: !!parsed.expires ? new Date(parsed.expires) : undefined,
+          }
+
+          ctx.cookies.set(cookieName, cookieValue, extraOptions)
+        })
+      }
+    }
     return syncedOrderForm
   },
 
-  orders: (_, __, {dataSources: {checkout}}) => {
+  orders: (_, __, {clients: {checkout}}) => {
     return checkout.orders()
   },
 
-  shipping: (_, args: SimulationData, {dataSources: {checkout}}) => {
+  shipping: (_, args: any, {clients: {checkout}}) => {
     return checkout.shipping(args)
   },
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, {orderFormId, items}, {dataSources: {checkout}, clients: {segment}}) => {
+  addItem: async (_, {orderFormId, items}, {clients: {segment, checkout}}) => {
     const [{marketingData}, segmentData] = await Promise.all([
-      checkout.orderForm(),
+      checkout.orderForm() as any,
       segment.getSegment().catch((err) => {
         // todo: log error using colossus
         console.error(err)
@@ -132,7 +169,7 @@ export const mutations: Record<string, Resolver> = {
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: async (_, {orderFormId, reason}, {dataSources: {checkout}}) => {
+  cancelOrder: async (_, {orderFormId, reason}, {clients: {checkout}}) => {
     await checkout.cancelOrder(orderFormId, reason)
     return true
   },
@@ -153,28 +190,28 @@ export const mutations: Record<string, Resolver> = {
     url: paths.gatewayTokenizePayment,
   }),
 
-  setOrderFormCustomData: (_, {orderFormId, appId, field, value}, {dataSources: {checkout}}) => {
+  setOrderFormCustomData: (_, {orderFormId, appId, field, value}, {clients: {checkout}}) => {
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, {orderFormId, items}, {dataSources: {checkout}}) => {
+  updateItems: (_, {orderFormId, items}, {clients: {checkout}}) => {
     return checkout.updateItems(orderFormId, items)
   },
 
-  updateOrderFormIgnoreProfile: (_, {orderFormId, ignoreProfileData}, {dataSources: {checkout}}) => {
+  updateOrderFormIgnoreProfile: (_, {orderFormId, ignoreProfileData}, {clients: {checkout}}) => {
     return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
   },
 
-  updateOrderFormPayment: (_, {orderFormId, payments}, {dataSources: {checkout}}) => {
+  updateOrderFormPayment: (_, {orderFormId, payments}, {clients: {checkout}}) => {
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
-  updateOrderFormProfile: (_, {orderFormId, fields}, {dataSources: {checkout}}) => {
+  updateOrderFormProfile: (_, {orderFormId, fields}, {clients: {checkout}}) => {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
   updateOrderFormShipping: async (root, {orderFormId, address}, ctx) => {
-    const {dataSources: {checkout}} = ctx
+    const {clients: {checkout}} = ctx
     const [sessionData, orderForm] = await Promise.all([
       sessionQueries.getSession(root, {}, ctx) as SessionFields,
       checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] }),
@@ -184,7 +221,7 @@ export const mutations: Record<string, Resolver> = {
     return syncedOrderForm
   },
 
-  addAssemblyOptions: (_, { orderFormId, itemId, assemblyOptionsId, options }, { dataSources: { checkout }}) => {
+  addAssemblyOptions: (_, { orderFormId, itemId, assemblyOptionsId, options }, { clients: { checkout }}) => {
     const body = {
       composition: {
         items: options,
@@ -194,7 +231,7 @@ export const mutations: Record<string, Resolver> = {
     return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
   },
 
-  updateOrderFormCheckin: (_, { orderFormId, checkin }: UpdateCheckinArgs, {dataSources: { checkout }}) => {
+  updateOrderFormCheckin: (_, { orderFormId, checkin }: any, {clients: { checkout }}) => {
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 }
