@@ -11,59 +11,6 @@ import { AxiosError } from 'axios'
 import FormData from 'form-data'
 import { mergeAll, zipObj } from 'ramda'
 
-interface PaginationArgs {
-  page: number
-  pageSize: number
-}
-
-export interface Document {
-  Id: string
-  Href: string
-  DocumentId: string
-  [key: string]: any
-}
-
-interface KeyValue {
-  key: string
-  value: string
-}
-
-/*
- * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
- * to a JSON format.
- */
-const parseFieldsToJson = (fields: KeyValue[]) =>
-  mergeAll(fields.map((field: any) => zipObj([field.key], [field.value])))
-
-const statusToError = (e: any) => {
-  if (!e.response) {
-    throw e
-  }
-  const { response } = e as AxiosError
-  const { status } = response!
-  if (status === 401) {
-    throw new AuthenticationError(e)
-  }
-  if (status === 403) {
-    throw new ForbiddenError(e)
-  }
-  if (status === 400) {
-    throw new UserInputError(e)
-  }
-  throw e
-}
-
-const paginationArgsToHeaders = ({ page, pageSize }: PaginationArgs) => {
-  if (page < 1) {
-    throw new UserInputError('Smallest page value is 1')
-  }
-  const startIndex = (page - 1) * pageSize
-  const endIndex = startIndex + pageSize
-  return {
-    'REST-Range': `resources=${startIndex}-${endIndex}`,
-  }
-}
-
 export class MasterData extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -154,4 +101,57 @@ export class MasterData extends JanusClient {
       search: (acronym: string) => `${base}/${acronym}/search`,
     }
   }
+}
+
+/*
+ * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
+ * to a JSON format.
+ */
+const parseFieldsToJson = (fields: KeyValue[]) =>
+  mergeAll(fields.map((field: any) => zipObj([field.key], [field.value])))
+
+const statusToError = (e: any) => {
+  if (!e.response) {
+    throw e
+  }
+  const { response } = e as AxiosError
+  const { status } = response!
+  if (status === 401) {
+    throw new AuthenticationError(e)
+  }
+  if (status === 403) {
+    throw new ForbiddenError(e)
+  }
+  if (status === 400) {
+    throw new UserInputError(e)
+  }
+  throw e
+}
+
+const paginationArgsToHeaders = ({ page, pageSize }: PaginationArgs) => {
+  if (page < 1) {
+    throw new UserInputError('Smallest page value is 1')
+  }
+  const startIndex = (page - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  return {
+    'REST-Range': `resources=${startIndex}-${endIndex}`,
+  }
+}
+
+export interface Document {
+  Id: string
+  Href: string
+  DocumentId: string
+  [key: string]: any
+}
+
+interface PaginationArgs {
+  page: number
+  pageSize: number
+}
+
+interface KeyValue {
+  key: string
+  value: string
 }
