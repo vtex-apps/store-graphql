@@ -34,7 +34,7 @@ const syncOrderFormAndSessionAddress = async (
   sessionAddress: GenericObject | null,
   ctx: Context,
   ): Promise<object | null> => {
-  const {dataSources: {session, checkout}} = ctx
+  const {dataSources: {session}, clients: { checkout }} = ctx
   if (!orderFormAddress && sessionAddress && !isMasked(sessionAddress.postalCode)) {
     checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
   }

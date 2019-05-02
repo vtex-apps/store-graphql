@@ -8,7 +8,6 @@ import {
 import { Clients } from './clients'
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
-import { CheckoutDataSource } from './dataSources/checkout'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
@@ -34,11 +33,11 @@ declare global {
   interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
     segment?: SegmentData
+    orderFormId?: string
   }
 
   interface StoreGraphQLDataSources {
     catalog: CatalogDataSource
-    checkout: CheckoutDataSource
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
