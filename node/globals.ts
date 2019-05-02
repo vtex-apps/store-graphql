@@ -1,4 +1,9 @@
-import { IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
+import {
+  IOContext,
+  MetricsAccumulator,
+  SegmentData,
+  ServiceContext,
+} from '@vtex/api'
 
 import { Clients } from './clients'
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
@@ -140,5 +145,29 @@ declare global {
     paymentSystemName: string
     carNumber: string
     address: Address
+  }
+
+  interface DocumentArgs {
+    acronym: string
+    fields: string[]
+    id: string
+  }
+
+  interface DocumentsArgs {
+    acronym: string
+    fields: string[]
+    page: number
+    pageSize: number
+    where: string
+  }
+
+  interface CreateDocumentArgs {
+    acronym: string
+    document: { fields: KeyValue[] }
+  }
+
+  interface KeyValue {
+    key: string
+    value: string
   }
 }

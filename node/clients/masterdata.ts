@@ -1,19 +1,19 @@
+import { Document } from './masterdata'
 import {
   AuthenticationError,
   ForbiddenError,
   InstanceOptions,
   IOContext,
-  JanusClient,
+  ExternalClient,
   RequestConfig,
   UserInputError,
 } from '@vtex/api'
 import { AxiosError } from 'axios'
 import FormData from 'form-data'
-import { mergeAll, zipObj } from 'ramda'
 
-export class MasterData extends JanusClient {
-  constructor(ctx: IOContext, options?: InstanceOptions) {
-    super(ctx, {
+export class MasterData extends ExternalClient {
+  public constructor(ctx: IOContext, options?: InstanceOptions) {
+    super(`http://api.vtex.com/${ctx.account}/dataentities`, ctx, {
       ...options,
       headers: {
         ...(options && options.headers),
@@ -22,40 +22,40 @@ export class MasterData extends JanusClient {
           ? { VtexIdclientAutCookie: ctx.adminUserAuthToken }
           : null),
         ...(ctx.storeUserAuthToken
-          ? { [`VtexIdclientAutCookie_${ctx.account}`]: ctx.storeUserAuthToken }
+          ? { VtexIdclientAutCookie: ctx.storeUserAuthToken }
           : null),
       },
     })
   }
 
-  public getDocument = (acronym: string, id: string, fields: string[]) =>
-    this.get<Document>(this.routes.document(acronym, id), {
+  public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
+    this.get<T & Document>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
-      params: { _fields: fields },
+      params: {
+        _fields: generateFieldsArg(fields),
+      },
     })
 
-  public createDocument = (acronym: string, fields: KeyValue[]) =>
-    this.post<Document>(this.routes.documents(acronym), {
+  public createDocument = (acronym: string, fields: object) =>
+    this.post<Document>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
-      params: parseFieldsToJson(fields),
     })
 
-  public updateDocument = (acronym: string, id: string, fields: KeyValue[]) =>
-    this.patch<Document>(this.routes.document(acronym, id), {
+  public updateDocument = (acronym: string, id: string, fields: object) =>
+    this.patch<Document>(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
-      params: parseFieldsToJson(fields),
     })
 
-  public searchDocuments = (
+  public searchDocuments = <T>(
     acronym: string,
     fields: string[],
     where: string,
     pagination: PaginationArgs
   ) =>
-    this.get<any[]>(this.routes.search(acronym), {
+    this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
       metric: 'masterdata-searchDocuments',
-      params: { _fields: fields, _where: where },
+      params: { _fields: generateFieldsArg(fields), _where: where },
     })
 
   public deleteDocument = (acronym: string, id: string) =>
@@ -86,29 +86,20 @@ export class MasterData extends JanusClient {
     return this.http.delete<T>(url, config).catch(statusToError)
   }
 
-  protected patch = <T>(url: string, config?: RequestConfig) => {
-    return this.http.patch<T>(url, config).catch(statusToError)
+  protected patch = <T>(url: string, data?: any, config?: RequestConfig) => {
+    return this.http.patch<T>(url, data, config).catch(statusToError)
   }
 
   private get routes() {
-    const base = '/api/dataentities'
     return {
       attachments: (acronym: string, id: string, fields: string) =>
         `${acronym}/documents/${id}/${fields}/attachments`,
-      document: (acronym: string, id: string) =>
-        `${base}/${acronym}/documents/${id}`,
-      documents: (acronym: string) => `${base}/${acronym}/documents`,
-      search: (acronym: string) => `${base}/${acronym}/search`,
+      document: (acronym: string, id: string) => `${acronym}/documents/${id}`,
+      documents: (acronym: string) => `${acronym}/documents`,
+      search: (acronym: string) => `${acronym}/search`,
     }
   }
 }
-
-/*
- * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
- * to a JSON format.
- */
-const parseFieldsToJson = (fields: KeyValue[]) =>
-  mergeAll(fields.map((field: any) => zipObj([field.key], [field.value])))
 
 const statusToError = (e: any) => {
   if (!e.response) {
@@ -128,15 +119,21 @@ const statusToError = (e: any) => {
   throw e
 }
 
-const paginationArgsToHeaders = ({ page, pageSize }: PaginationArgs) => {
+function paginationArgsToHeaders({ page, pageSize }: PaginationArgs) {
   if (page < 1) {
     throw new UserInputError('Smallest page value is 1')
   }
+
   const startIndex = (page - 1) * pageSize
   const endIndex = startIndex + pageSize
+
   return {
     'REST-Range': `resources=${startIndex}-${endIndex}`,
   }
+}
+
+function generateFieldsArg(fields: string[]) {
+  return fields.reduce((previous, current) => `${previous}${current},`, '')
 }
 
 export interface Document {
@@ -149,9 +146,4 @@ export interface Document {
 interface PaginationArgs {
   page: number
   pageSize: number
-}
-
-interface KeyValue {
-  key: string
-  value: string
 }
