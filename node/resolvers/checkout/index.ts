@@ -16,8 +16,10 @@ import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
 
+import { CHECKOUT_COOKIE } from '../../utils'
+
 const SetCookieWhitelist = [
-  'checkout.vtex.com',
+  CHECKOUT_COOKIE,
   '.ASPXAUTH',
 ]
 
@@ -101,9 +103,7 @@ export const queries: Record<string, Resolver> = {
     const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
 
     const rawHeaders = headers as Record<string, any>
-    const responseSetCookies: string[] = rawHeaders && rawHeaders['set-cookie']
-
-    console.log('teste responseSetCookies: ', responseSetCookies)
+    const responseSetCookies: string[] | null = rawHeaders && rawHeaders['set-cookie']
 
     const host = ctx.get('x-forwarded-host')
 

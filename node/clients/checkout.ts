@@ -1,5 +1,6 @@
 import { AuthenticationError, ForbiddenError, InstanceOptions, IOContext, JanusClient, RequestConfig, UserInputError } from '@vtex/api'
 import { AxiosError } from 'axios'
+import { checkoutCookieFormat } from '../utils';
 
 const statusToError = (e: any) => {
   if (!e.response) {
@@ -39,7 +40,7 @@ export class Checkout extends JanusClient {
 
   private getCommonHeaders = () => {
     const { orderFormId } = this.context as CustomIOContext
-    const checkoutCookie = orderFormId ? `checkout.vtex.com=__ofid=${orderFormId};` : ''
+    const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
     return {
       Cookie: `${checkoutCookie};vtex_segment=${this.context.segmentToken};vtex_session=${this.context.sessionToken};`,
     }
