@@ -1,4 +1,4 @@
-import cookies from 'cookie'
+import * as Cookies from "cookies"
 
 const appendToCookie = (ctx: Context, extraValue: string) => {
   const {request: { headers: { cookie } }} = ctx
@@ -6,9 +6,18 @@ const appendToCookie = (ctx: Context, extraValue: string) => {
 }
 
 const isUserLoggedIn = (ctx: Context) => {
-  const { vtex: { account }, headers: {cookie} } = ctx
-  const parsedCookie = cookies.parse(cookie)
-  return !!parsedCookie[`VtexIdclientAutCookie_${account}`]
+  const { vtex: { account } } = ctx
+  return !!ctx.cookies.get(`VtexIdclientAutCookie_${account}`)
 }
 
-export { appendToCookie, isUserLoggedIn }
+/** Checkout cookie methods */
+const CHECKOUT_COOKIE = 'checkout.vtex.com'
+
+const checkoutCookieFormat = (orderFormId: string) => `${CHECKOUT_COOKIE}=__ofid=${orderFormId};`
+
+const getOrderFormIdFromCookie = (cookies: Cookies) => {
+  const cookie = cookies.get(CHECKOUT_COOKIE)
+  return cookie && cookie.split('=')[1]
+}
+
+export { appendToCookie, isUserLoggedIn, CHECKOUT_COOKIE, checkoutCookieFormat, getOrderFormIdFromCookie }
