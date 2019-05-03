@@ -56,7 +56,7 @@ export const resolvers = {
       toIOMessage(
         ctx,
         description,
-        `${info.parentType}-${info.fieldName}-${productId}`
+        `${productId}::${info.parentType}-${info.fieldName}`
       ),
 
     productName: (
@@ -68,7 +68,7 @@ export const resolvers = {
       toIOMessage(
         ctx,
         productName,
-        `${info.parentType}-${info.fieldName}-${productId}`
+        `${productId}::${info.parentType}-${info.fieldName}`
       ),
 
     cacheId: ({ linkText }: any) => linkText,
