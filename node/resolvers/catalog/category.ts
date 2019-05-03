@@ -12,32 +12,20 @@ interface Category {
 
 type CategoryMap = Record<string, Category>
 
+const appendToMap = (mapCategories: CategoryMap, category: Category) => {
+  mapCategories[category.id] = {
+    ...category,
+  }
+
+  mapCategories = category.children.reduce(appendToMap, mapCategories)
+
+  return mapCategories
+}
+
 const getCategoryInfo = async (catalog: any, id: string) => {
   const categories = await catalog.categories(3) as Category[]
 
-  const mapCategories = categories.reduce((mapCategories: CategoryMap, department) => {
-    mapCategories[department.id] = {
-      ...department,
-    }
-
-    mapCategories = department.children.reduce((mapCategories: CategoryMap, category) => {
-      mapCategories[category.id] = {
-        ...category,
-      }
-
-      mapCategories = category.children.reduce((mapCategories, subCategory) => {
-        mapCategories[subCategory.id] = {
-          ...subCategory,
-        }
-
-        return mapCategories
-      }, mapCategories)
-
-      return mapCategories
-    }, mapCategories)
-
-    return mapCategories
-  }, {}) as CategoryMap
+  const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
 
   const category = mapCategories[id] || { url: '' }
 
