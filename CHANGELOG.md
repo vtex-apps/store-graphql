@@ -6,8 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Added
-- Parameter to filter unavailable items on catalog products search queries.
+### Changed
 
 ## [2.70.3] - 2019-05-06
 

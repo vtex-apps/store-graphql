@@ -13,7 +13,6 @@ interface ProductsArgs {
   from: number
   to: number
   map: string
-  filterUnavailableBySegment: boolean
 }
 
 interface AutocompleteArgs {
@@ -154,12 +153,11 @@ export class CatalogDataSource extends IODataSource {
     orderBy = '',
     from = 0,
     to = 9,
-    map = '',
-    filterUnavailableBySegment = false,
+    map = ''
   }: ProductsArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
-    if (filterUnavailableBySegment) {
-      const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
+    if (salesChannel.length === 0) {
+      const segmentData = (this.context as CustomIOContext).segment
       salesChannel = segmentData && segmentData.channel.toString() || ''
     }
 
