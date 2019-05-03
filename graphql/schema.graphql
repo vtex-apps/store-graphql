@@ -30,7 +30,8 @@ type Query {
     """ Pagination item start """
     from: Int = 0,
     """ Pagination item end """
-    to: Int = 9
+    to: Int = 9,
+    filterUnavailableBySegment: Boolean = false
   ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Returns products list filtered and ordered """
@@ -54,7 +55,8 @@ type Query {
     """ Pagination item start """
     from: Int = 0,
     """ Pagination item end """
-    to: Int = 9
+    to: Int = 9,
+    filterUnavailableBySegment: Boolean = false
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Returns facets category """

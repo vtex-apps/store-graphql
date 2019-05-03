@@ -13,6 +13,7 @@ interface ProductsArgs {
   from: number
   to: number
   map: string
+  filterUnavailableBySegment: boolean
 }
 
 interface AutocompleteArgs {
@@ -153,9 +154,15 @@ export class CatalogDataSource extends IODataSource {
     orderBy = '',
     from = 0,
     to = 9,
-    map = ''
+    map = '',
+    filterUnavailableBySegment = false,
   }: ProductsArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
+    if (filterUnavailableBySegment) {
+      const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
+      salesChannel = segmentData && segmentData.channel.toString() || ''
+    }
+
     return (
       `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
     )
