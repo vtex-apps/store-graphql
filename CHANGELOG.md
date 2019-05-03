@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Take subcategories into account when generating slug for a category.
+
 ## [2.70.1] - 2019-05-01
 
 ### Fixed

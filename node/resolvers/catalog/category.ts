@@ -9,6 +9,14 @@ interface Category {
   children: Category[],
 }
 
+const flatten: (categories: Category[]) => Category[] = (
+  categories: Category[]
+) => {
+  return categories.reduce((acc: Category[], cat) => {
+    return [...acc, cat, ...cat.children, ...flatten(cat.children)]
+  }, [])
+}
+
 export const resolvers = {
   Category: {
     cacheId: prop('id'),
@@ -39,10 +47,7 @@ export const resolvers = {
     slug: async ({ id }: any, _: any, { dataSources: { catalog } }: any) => {
       const categories = await catalog.categories(3) as Category[]
 
-      const flattenCategories = categories.reduce(
-        (acc : Category[], c) => acc.concat(c, c.children),
-        []
-      )
+      const flattenCategories: Category[] = flatten(categories)
 
       const category = find(
         (c : Category) => c.id === id,
