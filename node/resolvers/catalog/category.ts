@@ -22,7 +22,8 @@ type CategoryMap = Record<string, Category>
  * there instead until the Catalog team fixes this issue with the category API.
  */
 async function getCategoryInfo(catalog: CatalogDataSource, id: string) {
-  const categories = (await catalog.categories(3)) as Category[]
+  const LEVELS = ['department', 'category', 'subcategory']
+  const categories = (await catalog.categories(LEVELS.length)) as Category[]
 
   const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
 
