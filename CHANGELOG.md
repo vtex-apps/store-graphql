@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.70.2] - 2019-05-03
+
+### Changed
+
+- Add `/d` to `href` when it's a department.
+
+### Fixed
+
+- Fields `href` and `slug` from a subcategory.
+
 ## [2.70.1] - 2019-05-01
 
 ### Fixed
