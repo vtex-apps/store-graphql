@@ -16,17 +16,12 @@ interface Category {
 
 type CategoryMap = Record<string, Category>
 
-const appendToMap = (mapCategories: CategoryMap, category: Category) => {
-  mapCategories[category.id] = {
-    ...category,
-  }
-
-  mapCategories = category.children.reduce(appendToMap, mapCategories)
-
-  return mapCategories
-}
-
-const getCategoryInfo = async (catalog: CatalogDataSource, id: string) => {
+/**
+ * We are doing this because the `get category` API is not returning the values
+ * for slug and href. So we get the whole category tree and get that info from
+ * there instead until the Catalog team fixes this issue with the category API.
+ */
+async function getCategoryInfo(catalog: CatalogDataSource, id: string) {
   const categories = (await catalog.categories(3)) as Category[]
 
   const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
@@ -34,6 +29,18 @@ const getCategoryInfo = async (catalog: CatalogDataSource, id: string) => {
   const category = mapCategories[id] || { url: '' }
 
   return category
+}
+
+/**
+ * That's a recursive function to fill an object like { [categoryId]: Category }
+ * It will go down the category.children appending its children and so on.
+ */
+function appendToMap(mapCategories: CategoryMap, category: Category) {
+  mapCategories[category.id] = category
+
+  mapCategories = category.children.reduce(appendToMap, mapCategories)
+
+  return mapCategories
 }
 
 function cleanUrl(url: string) {
@@ -53,6 +60,8 @@ export const resolvers = {
 
       const path = cleanUrl(category.url)
 
+      // If the path is `/clothing`, we now that's a department
+      // But if it is `/clothing/shirts`, it's not.
       const isDepartment = path.slice(1).indexOf('/') === -1
       if (isDepartment) {
         return path + '/d'
