@@ -63,9 +63,9 @@ export const resolvers = {
     Name: (
       { Name, Link }: any,
       _: any,
-      ctx: Context,
+      {clients: {segment}}: Context,
       info: GraphQLResolveInfo
-    ) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
+    ) => toIOMessage(segment, Name, `${info.parentType}-${info.fieldName}-${Link}`),
     name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
       return resolvers.Facet.Name(root, args, ctx, info)
     },
