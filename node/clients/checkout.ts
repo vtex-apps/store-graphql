@@ -1,4 +1,4 @@
-import { AuthenticationError, ForbiddenError, InstanceOptions, IOContext, JanusClient, RequestConfig, UserInputError, SegmentData } from '@vtex/api'
+import { AuthenticationError, ForbiddenError, InstanceOptions, IOContext, JanusClient, RequestConfig, UserInputError } from '@vtex/api'
 import { AxiosError } from 'axios'
 
 const statusToError = (e: any) => {
