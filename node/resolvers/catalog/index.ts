@@ -178,7 +178,7 @@ export const queries = {
         item => ({
           ...item,
           name: toIOMessage(
-            ctx,
+            segment,
             item.name,
             `${info.parentType}-${info.fieldName}-${extractSlug(item)}`
           ),
