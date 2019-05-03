@@ -1,18 +1,9 @@
 import { equals, path } from 'ramda'
 
-import { appendToCookie } from '../../utils'
+import { appendToCookie, getOrderFormIdFromCookie, checkoutCookieFormat } from '../../utils'
 import { SessionFields } from '../session/sessionResolver'
 
-export const CHECKOUT_COOKIE = 'checkout.vtex.com'
-
 interface GenericObject { [key: string]: any }
-
-const checkoutCookieFormat = (orderFormId: string) => `${CHECKOUT_COOKIE}=__ofid=${orderFormId}`
-
-const getOrderFormIdFromCookie = (cookies: any): string | void => {
-  const cookie: string | void = cookies.get(CHECKOUT_COOKIE)
-  return cookie && cookie.split('=')[1]
-}
 
 /**
  * After doing changes to the OrderForm, this keeps orderForm and session synced.
