@@ -41,20 +41,20 @@ export const resolvers = {
     categories: (
       { categories }: { categories: string[] },
       _: any,
-      ctx: Context
+      {clients: {segment}}: Context
     ) =>
       mapP(categories, category =>
-        toIOMessage(ctx, category, `category-${category}`)
+        toIOMessage(segment, category, `category-${category}`)
       ),
 
     description: (
       { description, productId }: any,
       _: any,
-      ctx: Context,
+      {clients: {segment}}: Context,
       info: GraphQLResolveInfo
     ) =>
       toIOMessage(
-        ctx,
+        segment,
         description,
         `${productId}::${info.parentType}-${info.fieldName}`
       ),
@@ -62,11 +62,11 @@ export const resolvers = {
     productName: (
       { productName, productId }: any,
       _: any,
-      ctx: Context,
+      {clients: {segment}}: Context,
       info: GraphQLResolveInfo
     ) =>
       toIOMessage(
-        ctx,
+        segment,
         productName,
         `${productId}::${info.parentType}-${info.fieldName}`
       ),

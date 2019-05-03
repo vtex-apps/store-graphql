@@ -4,11 +4,8 @@ import { prop } from 'ramda'
 const localeFromDefaultSalesChannel = (segment: Segment) =>
   segment.getSegmentByToken(null).then(prop('cultureInfo'))
 
-export const toIOMessage = async (ctx: Context, content: string, id: string) => {
-  const { clients: { segment } } = ctx
-  return {
-    content,
-    from: await localeFromDefaultSalesChannel(segment),
-    id,
-  }
-}
+export const toIOMessage = async (segment: Segment, content: string, id: string) => ({
+  content,
+  from: await localeFromDefaultSalesChannel(segment),
+  id,
+})
