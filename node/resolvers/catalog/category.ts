@@ -1,6 +1,7 @@
-import { compose, last, path, prop, split } from 'ramda'
-import { toIOMessage } from '../../utils/ioMessage'
+import { compose, last, prop, split, path } from 'ramda'
+
 import { CatalogDataSource } from '../../dataSources/catalog'
+import { toCategoryIOMessage } from '../../utils/ioMessage'
 
 const lastSegment = compose<string, string[], string>(
   last,
@@ -73,8 +74,8 @@ export const resolvers = {
 
     metaTagDescription: prop('MetaTagDescription'),
 
-    name: ({ name }: Category, _: any, {clients: {segment}}: Context) =>
-      toIOMessage(segment, name, `category-${name}`),
+    name: async ({ name, id }: Category, _: any, {clients: {segment}}: Context) =>
+      toCategoryIOMessage('name')(segment, name, id),
 
     slug: async (
       { id }: Category,

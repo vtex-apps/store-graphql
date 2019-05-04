@@ -5,9 +5,11 @@ type Product {
   cacheId: ID
   categoryId: ID
   """ Categories of the product """
-  categories: [IOMessage]
+  categories: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
   """ Categories ids of the product """
-  categoriesIds: [String]
+  categoriesIds: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
+  """ Product's categories """
+  categoryTree: [Category]
   """ List of related products """
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
@@ -47,8 +49,9 @@ type Product {
 type OnlyProduct {
   brand: String
   categoryId: ID
-  categories: [String]
-  categoriesIds: [String]
+  categories: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
+  categoriesIds: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
+  categoryTree: [Category]
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
   description: String
@@ -195,7 +198,7 @@ type Image {
 }
 
 type SpecificationGroup {
-  name: String, 
+  name: String,
   specifications: [Property]
 }
 
