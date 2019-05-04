@@ -60,15 +60,15 @@ const addSelected = (
 
 export const resolvers = {
   Facet: {
-    Name: (
-      { Name, Link }: any,
-      _: any,
-      {clients: {segment}}: Context,
-      info: GraphQLResolveInfo
-    ) => toIOMessage(segment, Name, `${info.parentType}-${info.fieldName}-${Link}`),
-    name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
-      return resolvers.Facet.Name(root, args, ctx, info)
-    },
+    Name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) =>
+      resolvers.Facet.name(root, args, ctx, info),
+
+    /**
+     * TODO: Fix this last missing point for messages translations
+     */
+    name: ({ Name, Link }: any, _: any, {clients: {segment}}: Context, info: GraphQLResolveInfo) =>
+      toIOMessage(segment, Name, `${info.parentType}-${info.fieldName}-${Link}`),
+
 
     id: prop('Id'),
     quantity: prop('Quantity'),
