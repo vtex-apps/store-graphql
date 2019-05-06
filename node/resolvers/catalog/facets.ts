@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'
-import { map, toPairs, prop } from 'ramda'
+import { map, toPairs, prop, zip } from 'ramda'
 
 import { toIOMessage } from '../../utils/ioMessage'
 
@@ -26,19 +26,29 @@ const formatCategoriesTree = (root: any) => {
   return format(root)
 }
 
-const addSelected = (facets: any[], { query }: { query: string }): any => {
+const addSelected = (
+  facets: any[],
+  { query, map }: { query: string; map: string }
+): any => {
   return facets.map((facet: any) => {
     let children = facet.Children
 
     if (children) {
-      children = addSelected(children, { query })
+      children = addSelected(children, { query, map })
     }
 
-    const isSelected = query
-        .toLowerCase()
-        .split('/')
-        .map(decodeURIComponent)
-        .includes(decodeURIComponent(facet.Value).toLowerCase())
+    const currentFacetSlug = decodeURIComponent(facet.Value).toLowerCase()
+
+    const isSelected =
+      zip(
+        query
+          .toLowerCase()
+          .split('/')
+          .map(decodeURIComponent),
+        map.toLowerCase().split(',')
+      ).find(
+        ([slug, slugMap]) => slug === currentFacetSlug && facet.Map === slugMap
+      ) !== undefined
 
     return {
       ...facet,
