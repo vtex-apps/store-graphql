@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.70.3] - 2019-05-06
+
 ### Fixed
 
 - Selected property in facets accounting for corresponding `map`.
