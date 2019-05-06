@@ -13,6 +13,7 @@ interface ProductsArgs {
   from: number
   to: number
   map: string
+  hideUnavailableItems: boolean
 }
 
 interface AutocompleteArgs {
@@ -115,7 +116,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-autocomplete'}
   )
 
-  private get = <T = any>(url: string, config: RequestConfig = {}) => {
+  private get = async <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
 
@@ -126,10 +127,13 @@ export class CatalogDataSource extends IODataSource {
 
     config.inflightKey = inflightKey
 
-    return this.http.get<T>(`/proxy/catalog${url}`, config)
+    const a = await this.http.get<T>(`/proxy/catalog${url}`, config)
+    // console.log('teste =-====== RESP GET: ', a)
+    return a
+    // return this.http.get<T>(`/proxy/catalog${url}`, config)
   }
 
-  private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
+  private getRaw = async <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | undefined = (this.context! as CustomIOContext).segment
     const { channel: salesChannel = '' } = segmentData || {}
 
@@ -139,8 +143,10 @@ export class CatalogDataSource extends IODataSource {
     }
 
     config.inflightKey = inflightKey
-
-    return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
+    const a = await this.http.getRaw<T>(`/proxy/catalog${url}`, config)
+    console.log('teste =-====== RESP GETRAW: ', a)
+    return a
+    // return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
 
   private productSearchUrl = ({
@@ -149,20 +155,20 @@ export class CatalogDataSource extends IODataSource {
     specificationFilters,
     priceRange = '',
     collection = '',
-    salesChannel = '',
+    salesChannel,
     orderBy = '',
     from = 0,
     to = 9,
-    map = ''
+    map = '',
+    hideUnavailableItems = false,
   }: ProductsArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
-    if (salesChannel.length === 0) {
-      const segmentData = (this.context as CustomIOContext).segment
-      salesChannel = segmentData && segmentData.channel.toString() || ''
-    }
-
+    const segmentData = (this.context as CustomIOContext).segment
+    const segmentSC = segmentData && segmentData.channel.toString() || ''
+    const querySalesChannel = salesChannel || segmentSC
+    const filterSalesChannel = hideUnavailableItems ? segmentSC : salesChannel
     return (
-      `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
+      `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}&sc=${querySalesChannel}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${filterSalesChannel && `&fq=isAvailablePerSalesChannel_${filterSalesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
     )
   }
 }
