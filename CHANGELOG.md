@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `href` field to facets category. This field should be used to populate links in the store
+
+### Changed
+- SEGMENT scope to root field resolvers containing translatable fields
+
+### Fixed
+- Uses default sales channel as API language
 
 ## [2.70.2] - 2019-05-03
 
