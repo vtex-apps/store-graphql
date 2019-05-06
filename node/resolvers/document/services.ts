@@ -1,9 +1,11 @@
 import { ResolverError } from '@vtex/api'
+import { union } from 'ramda'
 import FormData from 'form-data'
 
 import { generateRandomName } from '../../utils'
+import { mapKeyValues } from '../../utils/object'
 
-export const uploadAttachment = async (args: any, ctx: Context) => {
+export async function uploadAttachment(args: any, ctx: Context) {
   const {
     clients: { masterdata },
   } = ctx
@@ -41,6 +43,38 @@ export const uploadAttachment = async (args: any, ctx: Context) => {
   }
 
   return { filename: randomName, mimetype }
+}
+
+export function retrieveDocument({
+  context: {
+    clients: { masterdata },
+  },
+  args: { acronym, fields, id },
+}: {
+  context: Context
+  args: DocumentArgs
+}) {
+  return masterdata.getDocument(acronym, id, fields).then(data => ({
+    id: id,
+    fields: mapKeyValues(data),
+  }))
+}
+
+export function retrieveDocuments({
+  args: { acronym, fields, page, pageSize, where },
+  context: {
+    clients: { masterdata },
+  },
+}: {
+  context: Context
+  args: DocumentsArgs
+}) {
+  const fieldsWithId = union(fields, ['id'])
+
+  return masterdata.searchDocuments(acronym, fieldsWithId, where, {
+    page,
+    pageSize,
+  })
 }
 
 function getFileExtension(fileName: any) {
