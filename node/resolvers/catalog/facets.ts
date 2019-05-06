@@ -2,6 +2,7 @@ import { GraphQLResolveInfo } from 'graphql'
 import { map, toPairs, prop, zip } from 'ramda'
 
 import { toIOMessage } from '../../utils/ioMessage'
+import { pathToCategoryHref } from './category';
 
 const objToNameValue = (
   keyName: string,
@@ -69,7 +70,6 @@ export const resolvers = {
     name: ({ Name, Link }: any, _: any, {clients: {segment}}: Context, info: GraphQLResolveInfo) =>
       toIOMessage(segment, Name, `${info.parentType}-${info.fieldName}-${Link}`),
 
-
     id: prop('Id'),
     quantity: prop('Quantity'),
     link: prop('Link'),
@@ -78,6 +78,11 @@ export const resolvers = {
     children: prop('Children'),
     map: prop('Map'),
     value: prop('Value'),
+
+    href: ({Link}: {Link: string}) => {
+      const [linkPath] = Link.split('?')
+      return pathToCategoryHref(linkPath)
+    }
   },
   Facets: {
     Departments: ({ Departments = [], queryArgs = {} }: any) => {
