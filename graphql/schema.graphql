@@ -30,7 +30,9 @@ type Query {
     """ Pagination item start """
     from: Int = 0,
     """ Pagination item end """
-    to: Int = 9
+    to: Int = 9,
+    """ If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg """
+    hideUnavailableItems: Boolean = false
   ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Returns products list filtered and ordered """
@@ -54,7 +56,9 @@ type Query {
     """ Pagination item start """
     from: Int = 0,
     """ Pagination item end """
-    to: Int = 9
+    to: Int = 9,
+    """ If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg """
+    hideUnavailableItems: Boolean = false
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """ Returns facets category """

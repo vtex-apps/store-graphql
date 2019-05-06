@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.70.4] - 2019-05-06
+### Added
+- Parameter `hideUnavailableItems` to catalog search queries.
+
 ## [2.70.3] - 2019-05-06
 
 ### Fixed
