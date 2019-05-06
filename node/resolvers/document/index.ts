@@ -1,34 +1,14 @@
-import { prop, union } from 'ramda'
+import { prop } from 'ramda'
+
+import { retrieveDocument, retrieveDocuments } from './services'
 import { parseFieldsToJson } from '../../utils'
-import { mapKeyValues } from '../../utils/object'
 
 export const queries = {
-  documents: (
-    _: any,
-    { acronym, fields, page, pageSize, where }: DocumentsArgs,
-    { clients: { masterdata } }: Context
-  ) => {
-    const fieldsWithId = union(fields, ['id'])
+  documents: (_: any, args: DocumentsArgs, context: Context) =>
+    retrieveDocuments({ args, context }),
 
-    return masterdata
-      .searchDocuments(acronym, fieldsWithId, where, { page, pageSize })
-      .then(data =>
-        data.map((doc: any) => ({
-          cacheId: doc.id,
-          fields: mapKeyValues(doc),
-          id: doc.id,
-        }))
-      )
-  },
-
-  document: (
-    _: any,
-    { acronym, fields, id }: DocumentArgs,
-    { clients: { masterdata } }: Context
-  ) =>
-    masterdata
-      .getDocument(acronym, id, fields)
-      .then(data => ({ id, cacheId: id, fields: mapKeyValues(data) })),
+  document: (_: any, args: DocumentArgs, context: Context) =>
+    retrieveDocument({ context, args }),
 }
 
 export const mutations = {
