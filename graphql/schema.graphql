@@ -101,22 +101,22 @@ type Query {
   category(
     """ Category id """
     id: Int
-  ): Category @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Category @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """ Returns categories tree """
   categories(
     """ Category tree level. Default: 3"""
     treeLevel: Int = 3
-  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): [Category] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """ Returns a specified brand """
   brand(
     """ Brand id """
     id: Int
-  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Brand @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """ Returns brands list """
-  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  brands: [Brand] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """ Returns orderForm shipping simulation """
   shipping(
