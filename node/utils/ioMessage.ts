@@ -1,10 +1,25 @@
+import { Segment } from '@vtex/api'
 import { prop } from 'ramda'
 
-export const toIOMessage = async (ctx: Context, str: string, id: string) => {
-  const { clients: { segment } } = ctx
-  return {
-    content: str,
-    from: await segment.getSegment().then(prop('cultureInfo')),
-    id,
-  }
-}
+import { extractSlug } from '../resolvers/catalog'
+
+const localeFromDefaultSalesChannel = (segment: Segment) =>
+  segment.getSegmentByToken(null).then(prop('cultureInfo'))
+
+export const toIOMessage = async (segment: Segment, content: string, id: string) => ({
+  content,
+  from: await localeFromDefaultSalesChannel(segment),
+  id,
+})
+
+export const toProductIOMessage = (field: string) => (segment: Segment, content: string, link: string) => toIOMessage(
+  segment,
+  content,
+  `slug.${extractSlug({href: link})}::Product-${field}`
+)
+
+export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `id.${id}::Category-${field}`
+)
