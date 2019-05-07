@@ -37,7 +37,7 @@ const removeTrailingSlashes = (str: string) => str.endsWith('/')
 
 const productCategoriesToCategoryTree = (
   {categories, categoriesIds}: {categories: string[], categoriesIds: string[]}
-) => compose<Array<[string, string]>, Array<{id: number, name: string}>, Array<{id: number, name: string}>>(
+) => compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
   reverse,
   map(([idTree, categoryTree]) => ({
     id: Number(last(split('/', removeTrailingSlashes(idTree)))),
