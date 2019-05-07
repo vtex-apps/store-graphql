@@ -119,7 +119,7 @@ export const queries: Record<string, Resolver> = {
           const extraOptions = {
             path: parsed.path,
             domain: parsed.domain,
-            expires: !!parsed.expires ? new Date(parsed.expires) : undefined,
+            expires: parsed.expires ? new Date(parsed.expires) : undefined,
           }
 
           ctx.cookies.set(cookieName, cookieValue, extraOptions)
