@@ -78,7 +78,7 @@ export const resolvers = {
 
     metaTagDescription: prop('MetaTagDescription'),
 
-    name: async ({ name, id }: Category, _: any, {clients: {segment}}: Context) =>
+    name: ({ name, id }: Category, _: any, {clients: {segment}}: Context) =>
       toCategoryIOMessage('name')(segment, name, id),
 
     slug: async (

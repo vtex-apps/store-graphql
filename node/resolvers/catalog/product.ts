@@ -59,7 +59,7 @@ export const resolvers = {
     ) =>
       toProductIOMessage('description')(segment, description, link),
 
-    productName: async (
+    productName: (
       { productName, link }: any,
       _: any,
       {clients: {segment}}: Context
