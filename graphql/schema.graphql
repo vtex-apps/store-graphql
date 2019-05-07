@@ -218,7 +218,7 @@ type Query {
   ): Brand @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
-   Returns brands list
+  Returns brands list
   """
   brands: [Brand] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
@@ -426,18 +426,55 @@ type Mutation {
     @withSegment
 
   """
-  Profile
+  Used to update the CL entity on masterData.
+  This mutation is mostly used on the MyAccount app to update the customer's profile.
+  The user needs to be signed in or impersonated to perform this mutation.
   """
   updateProfile(
+    """
+    The default fields on the CL.
+    """
     fields: ProfileInput
+    """
+    Extra fields that can be added to the CL.
+    """
     customFields: [ProfileCustomFieldInput]
   ): Profile @withCurrentProfile
-  updateAddress(id: String, fields: AddressInput): Profile @withCurrentProfile
-  createAddress(fields: AddressInput): Profile @withCurrentProfile
-  deleteAddress(id: String): Profile @withCurrentProfile
 
   """
-  Updates the Profile Picture by erasing the old ones
+  Updates one address related to a customer profile. This is the AD entity on MasterData.
+  The user needs to be signed in or impersonated to perform this mutation.
+  """
+  updateAddress(
+    """
+    Address's id.
+    """
+    id: String
+    """
+    Address's field.
+    """
+    fields: AddressInput
+  ): Profile @withCurrentProfile
+
+  """
+  Creates one address related to a customer profile. This is the AD entity on MasterData.
+  The user needs to be signed in or impersonated to perform this mutation.
+  """
+  createAddress(fields: AddressInput): Profile @withCurrentProfile
+
+  """
+  Deletes an address related to a customer profile. This is the AD entity on MasterData.
+  The user needs to be signed in or impersonated to perform this mutation.
+  """
+  deleteAddress(
+    """
+    Address's id.
+    """
+    id: String
+  ): Profile @withCurrentProfile
+
+  """
+  Updates the Profile Picture by erasing the old ones DEPRECATED
   """
   updateProfilePicture(
     """
@@ -448,7 +485,8 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String @deprecated
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @deprecated
+
   """
   Uploads the Profile Picture by appending to the existing ones DEPRECATED
   """
