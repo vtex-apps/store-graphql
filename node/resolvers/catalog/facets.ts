@@ -2,7 +2,8 @@ import { GraphQLResolveInfo } from 'graphql'
 import { map, toPairs, prop, zip } from 'ramda'
 
 import { toIOMessage } from '../../utils/ioMessage'
-import { pathToCategoryHref } from './category';
+import { pathToCategoryHref } from './category'
+import { Slugify } from './slug'
 
 const objToNameValue = (
   keyName: string,
@@ -45,7 +46,7 @@ const addSelected = (
         query
           .toLowerCase()
           .split('/')
-          .map(decodeURIComponent),
+          .map(str => Slugify(decodeURIComponent(str))),
         map.toLowerCase().split(',')
       ).find(
         ([slug, slugMap]) => slug === currentFacetSlug && facet.Map === slugMap
