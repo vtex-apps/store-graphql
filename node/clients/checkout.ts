@@ -27,7 +27,7 @@ export interface SimulationData {
 }
 
 export class Checkout extends JanusClient {
-  constructor (ctx: IOContext, options?: InstanceOptions) {
+  public constructor (ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
       ...options,
       headers: {
