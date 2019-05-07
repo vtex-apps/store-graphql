@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.71.1] - 2019-05-07
+
+## [2.71.0] - 2019-05-07
+### Added
+- Added `href` field to facets category. This field should be used to populate links in the store
+
+### Changed
+- SEGMENT scope to root field resolvers containing translatable fields
+
+### Fixed
+- Uses default sales channel as API language
+
 ## [2.70.4] - 2019-05-06
 ### Added
 - Parameter `hideUnavailableItems` to catalog search queries.

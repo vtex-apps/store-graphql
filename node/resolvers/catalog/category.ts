@@ -1,6 +1,8 @@
-import { compose, last, path, prop, split } from 'ramda'
-import { toIOMessage } from '../../utils/ioMessage'
+import { compose, last, prop, split, path } from 'ramda'
+
 import { CatalogDataSource } from '../../dataSources/catalog'
+import { toCategoryIOMessage } from '../../utils/ioMessage'
+import { Slugify } from './slug'
 
 const lastSegment = compose<string, string[], string>(
   last,
@@ -48,6 +50,14 @@ function cleanUrl(url: string) {
   return url.replace(/https:\/\/[A-z0-9]+\.vtexcommercestable\.com\.br/, '')
 }
 
+export const pathToCategoryHref = (path: string) => {
+  const slugfiedPath = Slugify(path)
+  const isDepartment = path.slice(1).indexOf('/') === -1
+  return isDepartment
+    ? `${slugfiedPath}/d`
+    : slugfiedPath
+}
+
 export const resolvers = {
   Category: {
     cacheId: prop('id'),
@@ -61,20 +71,15 @@ export const resolvers = {
 
       const path = cleanUrl(category.url)
 
-      // If the path is `/clothing`, we now that's a department
+      // If the path is `/clothing`, we know that's a department
       // But if it is `/clothing/shirts`, it's not.
-      const isDepartment = path.slice(1).indexOf('/') === -1
-      if (isDepartment) {
-        return path + '/d'
-      }
-
-      return path
+      return pathToCategoryHref(path)
     },
 
     metaTagDescription: prop('MetaTagDescription'),
 
-    name: ({ name }: Category, _: any, ctx: Context) =>
-      toIOMessage(ctx, name, `category-${name}`),
+    name: ({ name, id }: Category, _: any, {clients: {segment}}: Context) =>
+      toCategoryIOMessage('name')(segment, name, id),
 
     slug: async (
       { id }: Category,

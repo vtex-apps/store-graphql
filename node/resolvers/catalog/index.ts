@@ -1,19 +1,7 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
-import { GraphQLResolveInfo } from 'graphql'
-import {
-  compose,
-  equals,
-  find,
-  head,
-  last,
-  map,
-  path,
-  prop,
-  split,
-  test,
-} from 'ramda'
+import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
 
-import { toIOMessage } from '../../utils/ioMessage'
+import { toProductIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as discountResolvers } from './discount'
@@ -40,7 +28,7 @@ import { Slugify } from './slug'
  *
  * @param item The item to extract the information
  */
-const extractSlug = (item: any) => {
+export const extractSlug = (item: any) => {
   const href = split('/', item.href)
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
@@ -141,8 +129,7 @@ export const queries = {
   autocomplete: async (
     _: any,
     args: any,
-    ctx: Context,
-    info: GraphQLResolveInfo
+    ctx: Context
   ) => {
     const {
       dataSources: { catalog },
@@ -177,11 +164,7 @@ export const queries = {
       itemsReturned: map(
         item => ({
           ...item,
-          name: toIOMessage(
-            ctx,
-            item.name,
-            `${info.parentType}-${info.fieldName}-${extractSlug(item)}`
-          ),
+          name: toProductIOMessage('name')(segment, item.name, item.href),
           slug: extractSlug(item),
         }),
         itemsReturned

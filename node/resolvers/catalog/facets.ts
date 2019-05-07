@@ -2,6 +2,7 @@ import { GraphQLResolveInfo } from 'graphql'
 import { map, toPairs, prop, zip } from 'ramda'
 
 import { toIOMessage } from '../../utils/ioMessage'
+import { pathToCategoryHref } from './category';
 
 const objToNameValue = (
   keyName: string,
@@ -60,15 +61,14 @@ const addSelected = (
 
 export const resolvers = {
   Facet: {
-    Name: (
-      { Name, Link }: any,
-      _: any,
-      ctx: Context,
-      info: GraphQLResolveInfo
-    ) => toIOMessage(ctx, Name, `${info.parentType}-${info.fieldName}-${Link}`),
-    name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) => {
-      return resolvers.Facet.Name(root, args, ctx, info)
-    },
+    Name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) =>
+      resolvers.Facet.name(root, args, ctx, info),
+
+    /**
+     * TODO: Fix this last missing point for messages translations
+     */
+    name: ({ Name, Link }: any, _: any, {clients: {segment}}: Context, info: GraphQLResolveInfo) =>
+      toIOMessage(segment, Name, `${info.parentType}-${info.fieldName}-${Link}`),
 
     id: prop('Id'),
     quantity: prop('Quantity'),
@@ -78,6 +78,11 @@ export const resolvers = {
     children: prop('Children'),
     map: prop('Map'),
     value: prop('Value'),
+
+    href: ({Link}: {Link: string}) => {
+      const [linkPath] = Link.split('?')
+      return pathToCategoryHref(linkPath)
+    }
   },
   Facets: {
     Departments: ({ Departments = [], queryArgs = {} }: any) => {

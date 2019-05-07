@@ -24,6 +24,8 @@ type Facet {
   quantity: Int!
   link: String!
   linkEncoded: String!
+  """ Contains slugified links according to the store structure. /:department/d, /:category/:subcategory, etc """
+  href: String
   slug: String
   children: [Facet]
   value: String!
