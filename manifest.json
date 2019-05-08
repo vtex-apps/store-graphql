@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "vtex.messages": "1.x",
-    "vtex.catalog-api-proxy": "0.x"
+    "vtex.catalog-api-proxy": "0.x",
+    "vtex.file-manager": "0.x"
   },
   "policies": [
     {
@@ -136,6 +137,9 @@
     },
     {
       "name": "vtex.catalog-api-proxy:catalog-proxy"
+    },
+    {
+      "name": "vtex.file-manager:file-manager-read-write"
     }
   ]
 }
