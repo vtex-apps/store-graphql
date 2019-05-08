@@ -1,19 +1,8 @@
 {
-  "extends": "vtex",
+  "extends": "eslint-config-vtex",
   "env": {
+    "node": true,
     "es6": true,
-    "jest": true,
-    "node": true
-  },
-  "rules": {
-    "prettier/prettier": "off",
-    "@typescript-eslint/camelcase": "off",
-    "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-object-literal-type-assertion": "off",
-    "@typescript-eslint/no-explicit-any": "off"
-  },
-  "globals": {
-    "metrics": true
+    "jest": true
   }
 }

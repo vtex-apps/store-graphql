@@ -185,4 +185,10 @@ declare global {
     key: string
     value: string
   }
+
+  interface IncomingFile {
+    filename: string
+    mimetype: string
+    encoding: string
+  }
 }
