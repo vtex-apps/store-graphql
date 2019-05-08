@@ -6,7 +6,7 @@ type Brand {
   """ Text link"""
   slug: String
   """ Name of brand """
-  name: String
+  name: IOMessage
   """ Title used by html tag"""
   titleTag: String
   """ Description used by html tag"""

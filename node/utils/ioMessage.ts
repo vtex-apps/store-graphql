@@ -15,11 +15,17 @@ export const toIOMessage = async (segment: Segment, content: string, id: string)
 export const toProductIOMessage = (field: string) => (segment: Segment, content: string, link: string) => toIOMessage(
   segment,
   content,
-  `slug.${extractSlug({href: link})}::Product-${field}`
+  `Product-slug.${extractSlug({href: link})}::${field}`
 )
 
 export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
   segment,
   content,
-  `id.${id}::Category-${field}`
+  `Category-id.${id}::${field}`
+)
+
+export const toBrandIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `Brand-id.${id}::${field}`
 )
