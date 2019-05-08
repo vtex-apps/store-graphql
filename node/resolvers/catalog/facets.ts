@@ -1,7 +1,6 @@
-import { GraphQLResolveInfo } from 'graphql'
-import { map, toPairs, prop, zip } from 'ramda'
+import { map, prop, toPairs, zip } from 'ramda'
 
-import { toIOMessage } from '../../utils/ioMessage'
+import { toBrandIOMessage, toCategoryIOMessage } from '../../utils/ioMessage'
 import { pathToCategoryHref } from './category'
 import { Slugify } from './slug'
 
@@ -60,30 +59,61 @@ const addSelected = (
   })
 }
 
-export const resolvers = {
-  Facet: {
-    Name: (root: any, args: any, ctx: Context, info: GraphQLResolveInfo) =>
-      resolvers.Facet.name(root, args, ctx, info),
+const baseFacetResolvers = {
+  quantity: prop('Quantity'),
+  name: prop('Name'),
+  link: prop('Link'),
+  linkEncoded: prop('LinkEncoded'),
+  map: prop('Map'),
+  value: prop('Value')
+}
 
-    /**
-     * TODO: Fix this last missing point for messages translations
-     */
-    name: ({ Name, Link }: any, _: any, {clients: {segment}}: Context, info: GraphQLResolveInfo) =>
-      toIOMessage(segment, Name, `${info.parentType}-${info.fieldName}-${Link}`),
+export const resolvers = {
+  Facet: baseFacetResolvers,
+  DepartmentFacet: {
+    ...baseFacetResolvers,
 
     id: prop('Id'),
-    quantity: prop('Quantity'),
-    link: prop('Link'),
-    linkEncoded: prop('LinkEncoded'),
+
+    name: (root: any, args: any, ctx: Context) =>
+      resolvers.CategoriesTreeFacet.name(root, args, ctx),
+
+    Name: (root: any, args: any, ctx: Context) =>
+      resolvers.CategoriesTreeFacet.name(root, args, ctx),
+  },
+  BrandFacet: {
+    ...baseFacetResolvers,
+
+    id: prop('Id'),
+
+    name: ({Id, Name}: {Id: string, Name: string}, _: any, { clients: { segment } }: Context) =>
+      toBrandIOMessage('brand')(segment, Name, Id),
+
+    Name: (root: any, args: any, ctx: Context) =>
+      resolvers.BrandFacet.name(root, args, ctx),
+  },
+  PriceRangesFacet: {
+    ...baseFacetResolvers,
+
     slug: prop('Slug'),
+  },
+  CategoriesTreeFacet: {
+    ...baseFacetResolvers,
+
+    id: prop('Id'),
+
     children: prop('Children'),
-    map: prop('Map'),
-    value: prop('Value'),
 
     href: ({Link}: {Link: string}) => {
       const [linkPath] = Link.split('?')
       return pathToCategoryHref(linkPath)
-    }
+    },
+
+    name: ({Id, Name}: {Id: string, Name: string}, _: any, { clients: { segment } }: Context) =>
+      toCategoryIOMessage('name')(segment, Name, Id),
+
+    Name: (root: any, args: any, ctx: Context) =>
+      resolvers.CategoriesTreeFacet.name(root, args, ctx),
   },
   Facets: {
     Departments: ({ Departments = [], queryArgs = {} }: any) => {
