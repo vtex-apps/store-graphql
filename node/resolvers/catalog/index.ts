@@ -57,7 +57,6 @@ const lastSegment = compose<string, string[], string>(
 function findInTree(tree: any, values: string[], index = 0): any {
   for (const node of tree) {
     const slug = lastSegment(node.url)
-    
     if (slug.toUpperCase() === values[index].toUpperCase()) {
       if (index === values.length - 1) {
         return node
@@ -113,14 +112,13 @@ const searchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
   const { map } = args
   const lastMap = last(map.split(','))
 
-  let meta = null
   if (lastMap === 'c') {
     return categoryMetaData(_, args, ctx)
   }
   if (lastMap === 'b') {
     return brandMetaData(_, args, ctx)
   }
-  return meta || { titleTag: null, metaTagDescription: null }
+  return { titleTag: null, metaTagDescription: null }
 }
 
 /** TODO: This method should be removed in the next major.
