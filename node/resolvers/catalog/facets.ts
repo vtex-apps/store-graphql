@@ -1,6 +1,6 @@
 import { map, prop, toPairs, zip } from 'ramda'
 
-import { toBrandIOMessage, toCategoryIOMessage, toFacetIOMessage } from '../../utils/ioMessage'
+import { toCategoryIOMessage, toFacetIOMessage } from '../../utils/ioMessage'
 import { pathToCategoryHref } from './category'
 import { Slugify } from './slug'
 
@@ -94,12 +94,6 @@ export const resolvers = {
     ...baseFacetResolvers,
 
     id: prop('Id'),
-
-    name: ({Id, Name}: {Id: string, Name: string}, _: any, { clients: { segment } }: Context) =>
-      toBrandIOMessage('brand')(segment, Name, Id),
-
-    Name: (root: any, args: any, ctx: Context) =>
-      resolvers.BrandFacet.name(root, args, ctx),
   },
   PriceRangesFacet: {
     ...baseFacetResolvers,
