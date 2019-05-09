@@ -7,11 +7,8 @@ import {
 } from './services'
 
 export const queries = {
-  documents: async (_: any, args: DocumentsArgs, context: Context) => {
-    const response = await retrieveDocuments({ args, context })
-    console.log(response)
-    return response
-  },
+  documents: async (_: any, args: DocumentsArgs, context: Context) =>
+    retrieveDocuments({ args, context }),
 
   document: async (_: any, args: DocumentArgs, context: Context) =>
     retrieveDocument({ args, context }),
