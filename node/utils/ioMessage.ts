@@ -1,8 +1,6 @@
 import { Segment } from '@vtex/api'
 import { prop } from 'ramda'
 
-import { extractSlug } from '../resolvers/catalog'
-
 const localeFromDefaultSalesChannel = (segment: Segment) =>
   segment.getSegmentByToken(null).then(prop('cultureInfo'))
 
@@ -12,10 +10,10 @@ export const toIOMessage = async (segment: Segment, content: string, id: string)
   id,
 })
 
-export const toProductIOMessage = (field: string) => (segment: Segment, content: string, link: string) => toIOMessage(
+export const toProductIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
   segment,
   content,
-  `Product-slug.${extractSlug({href: link})}::${field}`
+  `Product-id.${id}::${field}`
 )
 
 export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
