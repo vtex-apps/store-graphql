@@ -147,6 +147,11 @@ declare global {
     address: Address
   }
 
+  interface Document {
+    id: string,
+    fields: {key: string, value: string}[]
+  }
+
   interface DocumentArgs {
     acronym: string
     fields: string[]
@@ -164,6 +169,17 @@ declare global {
   interface CreateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+  }
+
+  interface UpdateDocumentArgs {
+    acronym: string
+    document: { fields: KeyValue[] }
+    id: string
+  }
+
+  interface DeleteDocumentArgs {
+    acronym: string
+    id: string
   }
 
   interface KeyValue {
