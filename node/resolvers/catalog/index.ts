@@ -1,5 +1,16 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
-import { compose, equals, find, head, last, map, path, prop, split, test } from 'ramda'
+import {
+  compose,
+  equals,
+  find,
+  head,
+  last,
+  map,
+  path,
+  prop,
+  split,
+  test,
+} from 'ramda'
 
 import { toProductIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
@@ -61,7 +72,7 @@ const categoryMetaData = async (_: any, args: any, ctx: any) => {
   )
   return {
     metaTagDescription: path(['MetaTagDescription'], category),
-    titleTag: path(['Title'], category),
+    titleTag: path(['Title'], category) || path(['Name'], category),
   }
 }
 /** Get brand metadata for the search/productSearch query
@@ -79,7 +90,7 @@ const brandMetaData = async (_: any, args: any, ctx: any) => {
   )
   return {
     metaTagDescription: path(['metaTagDescription'], brand as any),
-    titleTag: path(['title'], brand as any),
+    titleTag: path(['title'], brand as any) || path(['name'], brand as any),
   }
 }
 
@@ -126,11 +137,7 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  autocomplete: async (
-    _: any,
-    args: any,
-    ctx: Context
-  ) => {
+  autocomplete: async (_: any, args: any, ctx: Context) => {
     const {
       dataSources: { catalog },
       clients: { segment, messages },
