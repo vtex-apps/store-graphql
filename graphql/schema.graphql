@@ -215,12 +215,12 @@ type Query {
     Brand id
     """
     id: Int
-  ): Brand @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Returns brands list
   """
-  brands: [Brand] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Returns orderForm shipping simulation

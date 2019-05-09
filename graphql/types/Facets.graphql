@@ -34,7 +34,7 @@ type BrandFacet {
   Link: String! @deprecated(reason: "Use 'link' field instead")
   id: ID!
   quantity: Int!
-  name: IOMessage!
+  name: String!
   link: String!
   linkEncoded: String!
   map: String

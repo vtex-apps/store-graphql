@@ -22,12 +22,6 @@ export const toCategoryIOMessage = (field: string) => (segment: Segment, content
   `Category-id.${id}::${field}`
 )
 
-export const toBrandIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
-  segment,
-  content,
-  `Brand-id.${id}::${field}`
-)
-
 export const toFacetIOMessage = (segment: Segment, content: string, id: string) => toIOMessage(
   segment,
   content,
