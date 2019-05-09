@@ -32,8 +32,6 @@ export class Checkout extends JanusClient {
       ...options,
       headers: {
         ...options && options.headers,
-        ...ctx.adminUserAuthToken ? {VtexIdclientAutCookie: ctx.adminUserAuthToken} : null,
-        ...ctx.storeUserAuthToken ? {[`VtexIdclientAutCookie_${ctx.account}`]: ctx.storeUserAuthToken} : null,
       }
     })
   }
@@ -42,7 +40,7 @@ export class Checkout extends JanusClient {
     const { orderFormId } = this.context as CustomIOContext
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
     return {
-      Cookie: `${checkoutCookie};vtex_segment=${this.context.segmentToken};vtex_session=${this.context.sessionToken};`,
+      Cookie: `${checkoutCookie}vtex_segment=${this.context.segmentToken};vtex_session=${this.context.sessionToken};`,
     }
   }
 
