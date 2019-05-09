@@ -1,6 +1,6 @@
 import { equals, path } from 'ramda'
 
-import { appendToCookie, getOrderFormIdFromCookie, checkoutCookieFormat } from '../../utils'
+import { getOrderFormIdFromCookie } from '../../utils'
 import { SessionFields } from '../session/sessionResolver'
 
 interface GenericObject { [key: string]: any }
@@ -27,7 +27,7 @@ const syncOrderFormAndSessionAddress = async (
   ): Promise<object | null> => {
   const {dataSources: {session}, clients: { checkout }} = ctx
   if (!orderFormAddress && sessionAddress && !isMasked(sessionAddress.postalCode)) {
-    checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
+    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
   }
 
   if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
@@ -52,6 +52,6 @@ export const syncCheckoutAndSessionPreCheckout = (sessionData: SessionFields, ct
   const { cookies } = ctx
   const checkoutOrderFormId = getOrderFormIdFromCookie(cookies)
   if (sessionData.orderFormId && !checkoutOrderFormId) {
-    appendToCookie(ctx, checkoutCookieFormat(sessionData.orderFormId))
+    ctx.vtex.orderFormId = sessionData.orderFormId
   }
 }
