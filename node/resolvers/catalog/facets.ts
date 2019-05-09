@@ -2,7 +2,6 @@ import { map, prop, toPairs, zip } from 'ramda'
 
 import { toCategoryIOMessage, toFacetIOMessage } from '../../utils/ioMessage'
 import { pathToCategoryHref } from './category'
-import { Slugify } from './slug'
 
 const objToNameValue = (
   keyName: string,
@@ -45,7 +44,7 @@ const addSelected = (
         query
           .toLowerCase()
           .split('/')
-          .map(str => Slugify(decodeURIComponent(str))),
+          .map(decodeURIComponent),
         map.toLowerCase().split(',')
       ).find(
         ([slug, slugMap]) => slug === currentFacetSlug && facet.Map === slugMap
