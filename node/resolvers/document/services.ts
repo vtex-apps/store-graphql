@@ -54,13 +54,8 @@ export function retrieveDocument({
   args: DocumentArgs
   context: Context
 }) {
-  return masterdata.getDocument(acronym, id, fields).then(data =>{
-    console.log(data)
-    return {
-    id,
-    fields: mapKeyValues(data),
-  }
-  })
+  return masterdata.getDocument(acronym, id, fields).then(data => (
+    { id, fields: mapKeyValues(data) }))
 }
 
 export function retrieveDocuments({
