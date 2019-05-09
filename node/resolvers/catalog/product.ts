@@ -53,18 +53,18 @@ export const resolvers = {
     categoryTree: productCategoriesToCategoryTree,
 
     description: (
-      { description, link }: any,
+      { description, productId }: any,
       _: any,
       {clients: {segment}}: Context
     ) =>
-      toProductIOMessage('description')(segment, description, link),
+      toProductIOMessage('description')(segment, description, productId),
 
     productName: (
-      { productName, link }: any,
+      { productName, productId }: any,
       _: any,
       {clients: {segment}}: Context
     ) =>
-      toProductIOMessage('name')(segment, productName, link),
+      toProductIOMessage('name')(segment, productName, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
