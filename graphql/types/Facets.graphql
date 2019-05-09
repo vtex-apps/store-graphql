@@ -1,40 +1,96 @@
 type Facets {
-  Departments: [Facet] @deprecated(reason: "Use 'departments' field instead")
-  Brands: [Facet] @deprecated(reason: "Use 'brands' field instead")
-  SpecificationFilters: [Filter] @deprecated(reason: "Use 'specificationFilters' field instead")
-  CategoriesTrees: [Facet] @deprecated(reason: "Use 'categoriesTrees' field instead")
-  PriceRanges: [Facet] @deprecated(reason: "Use 'priceRanges' field instead")
-  departments: [Facet]
-  brands: [Facet]
-  specificationFilters: [Filter]
-  categoriesTrees: [Facet]
-  priceRanges: [Facet]
+  Departments: [DepartmentFacet] @deprecated(reason: "Use 'departments' field instead")
+  Brands: [BrandFacet] @deprecated(reason: "Use 'brands' field instead")
+  SpecificationFilters: [FilterFacets] @deprecated(reason: "Use 'specificationFilters' field instead")
+  CategoriesTrees: [CategoriesTreeFacet] @deprecated(reason: "Use 'categoriesTrees' field instead")
+  PriceRanges: [PriceRangesFacet] @deprecated(reason: "Use 'priceRanges' field instead")
+  departments: [DepartmentFacet]
+  brands: [BrandFacet]
+  specificationFilters: [FilterFacets]
+  categoriesTrees: [CategoriesTreeFacet]
+  priceRanges: [PriceRangesFacet]
   recordsFiltered: Int
 }
 
-type Facet {
+type DepartmentFacet {
+  Id: Int @deprecated(reason: "Use 'id' field instead")
+  Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
+  Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
+  Link: String! @deprecated(reason: "Use 'link' field instead")
+  id: ID!
+  quantity: Int!
+  name: IOMessage!
+  link: String!
+  linkEncoded: String!
+  map: String
+  value: String!
+  selected: Boolean!
+}
+
+type BrandFacet {
+  Id: Int @deprecated(reason: "Use 'id' field instead")
+  Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
+  Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
+  Link: String! @deprecated(reason: "Use 'link' field instead")
+  id: ID!
+  quantity: Int!
+  name: String!
+  link: String!
+  linkEncoded: String!
+  map: String
+  value: String!
+  selected: Boolean!
+}
+
+type PriceRangesFacet {
   Id: Int @deprecated(reason: "Use 'id' field instead")
   Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
-  Children: [Facet] @deprecated(reason: "Use 'children' field instead")
-  id: Int
-  name: IOMessage!
   quantity: Int!
+  name: IOMessage!
+  link: String!
+  linkEncoded: String!
+  map: String
+  value: String!
+  selected: Boolean!
+  slug: String
+}
+
+type CategoriesTreeFacet {
+  Id: Int @deprecated(reason: "Use 'id' field instead")
+  Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
+  Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
+  Link: String! @deprecated(reason: "Use 'link' field instead")
+  Children: [CategoriesTreeFacet] @deprecated(reason: "Use 'children' field instead")
+  id: ID!
+  quantity: Int!
+  name: IOMessage!
   link: String!
   linkEncoded: String!
   """ Contains slugified links according to the store structure. /:department/d, /:category/:subcategory, etc """
-  href: String
-  slug: String
-  children: [Facet]
-  value: String!
-  # Not required for price ranges
+  href: String!
   map: String
+  value: String!
+  children: [CategoriesTreeFacet]
   selected: Boolean!
 }
 
-type Filter {
+type FilterFacet {
+  Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
+  Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
+  Link: String! @deprecated(reason: "Use 'link' field instead")
+  quantity: Int!
+  name: IOMessage!
+  link: String!
+  linkEncoded: String!
+  map: String
+  value: String!
+  selected: Boolean!
+}
+
+type FilterFacets {
   name: String
-  facets: [Facet]
+  facets: [FilterFacet]
 }

@@ -1,18 +1,6 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
-import {
-  compose,
-  equals,
-  find,
-  head,
-  last,
-  map,
-  path,
-  prop,
-  split,
-  test,
-} from 'ramda'
+import { compose, equals, find, head, last, path, prop, split, test } from 'ramda'
 
-import { toProductIOMessage } from '../../utils/ioMessage'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as discountResolvers } from './discount'
@@ -24,6 +12,7 @@ import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
+import { resolvers as autocompleteResolvers } from './autocomplete'
 import { Slugify } from './slug'
 
 /**
@@ -123,6 +112,7 @@ async function getProductBySlug(slug: string, catalog: any) {
 }
 
 export const fieldResolvers = {
+  ...autocompleteResolvers,
   ...brandResolvers,
   ...categoryResolvers,
   ...facetsResolvers,
@@ -168,14 +158,7 @@ export const queries = {
     })
     return {
       cacheId: args.searchTerm,
-      itemsReturned: map(
-        item => ({
-          ...item,
-          name: toProductIOMessage('name')(segment, item.name, item.href),
-          slug: extractSlug(item),
-        }),
-        itemsReturned
-      ),
+      itemsReturned,
     }
   },
 
