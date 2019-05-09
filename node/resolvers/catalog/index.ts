@@ -1,6 +1,6 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
-import { compose, equals, find, head, last, path, prop, split, test } from 'ramda'
+import { compose, equals, find, head, last, path, prop, split, test, toLower } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
@@ -16,19 +16,19 @@ import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
 import { Slugify } from './slug'
+import { ProductsArgs } from '../../dataSources/catalog'
 
-interface SearchArgs {
-  query: string
-  map: string
-  category: string
-  specificationFilters: [string]
-  priceRange: string
-  collection: string
-  salesChannel: string
-  orderBy: string
-  from: number
-  to: number
-  hideUnavailableItems: boolean
+interface Metadata {
+  metaTagDescription?: string
+  titleTag?: string
+}
+
+interface Brand {
+  id: string
+  name: string
+  isActive: boolean
+  title?: string
+  metaTagDescription?: string
 }
 
 /**
@@ -54,9 +54,10 @@ const lastSegment = compose<string, string[], string>(
   split('/')
 )
 
-function findInTree(tree: any, values: any, index = 0): any {
+function findInTree(tree: any, values: string[], index = 0): any {
   for (const node of tree) {
     const slug = lastSegment(node.url)
+    
     if (slug.toUpperCase() === values[index].toUpperCase()) {
       if (index === values.length - 1) {
         return node
@@ -69,7 +70,7 @@ function findInTree(tree: any, values: any, index = 0): any {
 /** Get Category metadata for the search/productSearch query
  *
  */
-const categoryMetaData = async (_: any, args: any, ctx: any) => {
+const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
   const { query } = args
   const category = findInTree(
     await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
@@ -83,19 +84,21 @@ const categoryMetaData = async (_: any, args: any, ctx: any) => {
 /** Get brand metadata for the search/productSearch query
  *
  */
-const brandMetaData = async (_: any, args: any, ctx: any) => {
-  const brands = await queries.brands(_, { ...args }, ctx)
+const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
+  const brands = await queries.brands(_, { ...args }, ctx) as Brand[]
+  const brandName = toLower(last(args.query.split('/')) || '')
   const brand = find(
     compose(
-      equals(args.query.split('/').pop(-1)),
+      equals(brandName),
+      toLower,
       Slugify,
       prop('name') as any
     ),
     brands
-  )
+  ) || {}
   return {
-    metaTagDescription: path(['metaTagDescription'], brand as any),
-    titleTag: path(['title'], brand as any) || path(['name'], brand as any),
+    metaTagDescription: path(['metaTagDescription'], brand),
+    titleTag: path(['title'], brand) || path(['name'], brand),
   }
 }
 
@@ -106,14 +109,18 @@ const brandMetaData = async (_: any, args: any, ctx: any) => {
  * @param args
  * @param ctx
  */
-const searchMetaData = async (_: any, args: any, ctx: any) => {
+const searchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
   const { map } = args
-  const lastMap = map.split(',').pop(-1)
-  const meta =
-    lastMap === 'c'
-      ? await categoryMetaData(_, args, ctx)
-      : lastMap === 'b' && (await brandMetaData(_, args, ctx))
-  return meta
+  const lastMap = last(map.split(','))
+
+  let meta = null
+  if (lastMap === 'c') {
+    return categoryMetaData(_, args, ctx)
+  }
+  if (lastMap === 'b') {
+    return brandMetaData(_, args, ctx)
+  }
+  return meta || { titleTag: null, metaTagDescription: null }
 }
 
 /** TODO: This method should be removed in the next major.
@@ -240,7 +247,7 @@ export const queries = {
     return catalog.products(args)
   },
 
-  productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
+  productSearch: async (_: any, args: ProductsArgs, ctx: Context) => {
     const {
       dataSources: { catalog },
       clients,
@@ -252,7 +259,7 @@ export const queries = {
     }
     const products = await queries.products(_, translatedArgs, ctx)
     const recordsFiltered = await catalog.productsQuantity(translatedArgs)
-    const { titleTag, metaTagDescription }: any = await searchMetaData(
+    const { titleTag, metaTagDescription } = await searchMetaData(
       _,
       translatedArgs,
       ctx
