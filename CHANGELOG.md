@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.72.0] - 2019-05-09
+### Added
+- Autocomplete field resolvers for internationalization
+
+### Changed
+- scope from SEGMENT to PUBLIC for Brand related queries
+- Splits Deparment, Brand etc types from Facets
+- Product id as translation provider id
+
 ## [2.71.3] - 2019-05-09
 
 ### Changed
