@@ -2,7 +2,7 @@ import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } 
 import { stringify } from 'qs'
 import { SegmentData } from './session'
 
-interface ProductsArgs {
+export interface ProductsArgs {
   query: string
   category: string
   specificationFilters: string[]
