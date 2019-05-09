@@ -1,28 +1,15 @@
 type Facets {
   Departments: [DepartmentFacet] @deprecated(reason: "Use 'departments' field instead")
   Brands: [BrandFacet] @deprecated(reason: "Use 'brands' field instead")
-  SpecificationFilters: [FilterFacet] @deprecated(reason: "Use 'specificationFilters' field instead")
+  SpecificationFilters: [FilterFacets] @deprecated(reason: "Use 'specificationFilters' field instead")
   CategoriesTrees: [CategoriesTreeFacet] @deprecated(reason: "Use 'categoriesTrees' field instead")
   PriceRanges: [PriceRangesFacet] @deprecated(reason: "Use 'priceRanges' field instead")
   departments: [DepartmentFacet]
   brands: [BrandFacet]
-  specificationFilters: [FilterFacet]
+  specificationFilters: [FilterFacets]
   categoriesTrees: [CategoriesTreeFacet]
   priceRanges: [PriceRangesFacet]
   recordsFiltered: Int
-}
-
-type Facet {
-  Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
-  Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
-  Link: String! @deprecated(reason: "Use 'link' field instead")
-  quantity: Int!
-  name: IOMessage!
-  link: String!
-  linkEncoded: String!
-  map: String
-  value: String!
-  selected: Boolean!
 }
 
 type DepartmentFacet {
@@ -91,6 +78,19 @@ type CategoriesTreeFacet {
 }
 
 type FilterFacet {
+  Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
+  Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
+  Link: String! @deprecated(reason: "Use 'link' field instead")
+  quantity: Int!
+  name: IOMessage!
+  link: String!
+  linkEncoded: String!
+  map: String
+  value: String!
+  selected: Boolean!
+}
+
+type FilterFacets {
   name: String
-  facets: [Facet]
+  facets: [FilterFacet]
 }

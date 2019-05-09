@@ -1,6 +1,6 @@
 import { map, prop, toPairs, zip } from 'ramda'
 
-import { toBrandIOMessage, toCategoryIOMessage } from '../../utils/ioMessage'
+import { toBrandIOMessage, toCategoryIOMessage, toFacetIOMessage } from '../../utils/ioMessage'
 import { pathToCategoryHref } from './category'
 import { Slugify } from './slug'
 
@@ -69,7 +69,16 @@ const baseFacetResolvers = {
 }
 
 export const resolvers = {
-  Facet: baseFacetResolvers,
+  FilterFacet: {
+    ...baseFacetResolvers,
+
+    name: async ({Map, Name}: any, _: any, { clients: { segment } }: Context) => {
+      const [, id] = Map.split('_')
+      return toFacetIOMessage(segment, Name, id)
+    },
+
+    Name: (root: any, args: any, ctx: Context) => resolvers.FilterFacet.name(root, args, ctx),
+  },
   DepartmentFacet: {
     ...baseFacetResolvers,
 
