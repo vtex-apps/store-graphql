@@ -27,3 +27,9 @@ export const toBrandIOMessage = (field: string) => (segment: Segment, content: s
   content,
   `Brand-id.${id}::${field}`
 )
+
+export const toFacetIOMessage = (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `SpecificationFilter-id.${id}::${content}`
+)
