@@ -1,54 +1,29 @@
-import { prop } from 'ramda'
-
-import { retrieveDocument, retrieveDocuments } from './services'
-import { parseFieldsToJson } from '../../utils'
+import {
+  retrieveDocument,
+  retrieveDocuments,
+  createDocument,
+  updateDocument,
+  deleteDocument,
+} from './services'
 
 export const queries = {
-  documents: (_: any, args: DocumentsArgs, context: Context) =>
-    retrieveDocuments({ args, context }),
+  documents: async (_: any, args: DocumentsArgs, context: Context) => {
+    const response = await retrieveDocuments({ args, context })
+    console.log(response)
+    return response
+  },
 
-  document: (_: any, args: DocumentArgs, context: Context) =>
-    retrieveDocument({ context, args }),
+  document: async (_: any, args: DocumentArgs, context: Context) =>
+    retrieveDocument({ args, context }),
 }
 
 export const mutations = {
-  createDocument: async (
-    _: any,
-    { acronym, document: { fields } }: any,
-    { clients: { masterdata } }: Context
-  ) => {
-    const { Id, Href, DocumentId } = await masterdata.createDocument(
-      acronym,
-      fields
-    )
-    return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
-  },
+  createDocument: async (_: any, args: CreateDocumentArgs, context: Context) =>
+    createDocument({ args, context }),
 
-  updateDocument: async (
-    _: any,
-    args: any,
-    { clients: { masterdata } }: Context
-  ) => {
-    const {
-      acronym,
-      document: { fields },
-    } = args
-    const id = prop('id', parseFieldsToJson(fields)) as string
-    const { Id, Href, DocumentId } = await masterdata.updateDocument(
-      acronym,
-      id,
-      fields
-    )
-    return { cacheId: DocumentId, id: Id, href: Href, documentId: DocumentId }
-  },
+  updateDocument: async (_: any, args: UpdateDocumentArgs, context: Context) =>
+    updateDocument({ args, context }),
 
-  deleteDocument: async (
-    _: any,
-    args: any,
-    { clients: { masterdata } }: Context
-  ) => {
-    const { acronym, documentId } = args
-    await masterdata.deleteDocument(acronym, documentId)
-    return { id: documentId }
-  },
+  deleteDocument: async (_: any, args: DeleteDocumentArgs, context: Context) =>
+    deleteDocument({ args, context }),
 }
