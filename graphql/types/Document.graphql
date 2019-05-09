@@ -10,12 +10,17 @@ type Field {
   value: String
 }
 
-type DocumentResponse {
+type CreateDocumentResponse {
   """ documentId is used as cacheId """
   cacheId: ID
   id: String,
   href: String,
-  documentId: String
+}
+
+type UpdateDocumentResponse {
+  """ documentId is used as cacheId """
+  cacheId: ID
+  id: String,
 }
 
 type AttachmentResponse {
