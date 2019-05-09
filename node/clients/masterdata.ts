@@ -36,12 +36,10 @@ export class MasterData extends ExternalClient {
       },
     })
 
-  public createDocument = (acronym: string, fields: object) => {
-    console.log(fields)
-    return this.post<Document>(this.routes.documents(acronym), fields, {
+  public createDocument = (acronym: string, fields: object) =>
+    this.post<Document>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
     })
-  }
 
   public updateDocument = (acronym: string, id: string, fields: object) =>
     this.patch<Document>(this.routes.document(acronym, id), fields, {
@@ -53,15 +51,12 @@ export class MasterData extends ExternalClient {
     fields: string[],
     where: string,
     pagination: PaginationArgs
-  ) => {
-    const parsedFields = generateFieldsArg(fields)
-    console.log(parsedFields)
-    return this.get<T[]>(this.routes.search(acronym), {
+  ) =>
+    this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
       metric: 'masterdata-searchDocuments',
       params: { _fields: generateFieldsArg(fields), _where: where },
     })
-  }
 
   public deleteDocument = (acronym: string, id: string) =>
     this.delete(this.routes.document(acronym, id), {
