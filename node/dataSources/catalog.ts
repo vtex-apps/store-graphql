@@ -2,20 +2,6 @@ import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } 
 import { stringify } from 'qs'
 import { SegmentData } from './session'
 
-export interface ProductsArgs {
-  query: string
-  category: string
-  specificationFilters: string[]
-  priceRange: string
-  collection: string
-  salesChannel: string
-  orderBy: string
-  from: number
-  to: number
-  map: string
-  hideUnavailableItems: boolean
-}
-
 interface AutocompleteArgs {
   maxRows: string
   searchTerm: string
@@ -83,12 +69,12 @@ export class CatalogDataSource extends IODataSource {
     return parseInt(quantity, 10)
   }
 
-  public brands = () => this.get(
+  public brands = () => this.get<Brand[]>(
     '/pub/brand/list',
     {metric: 'catalog-brands'}
   )
 
-  public categories = (treeLevel: number) => this.get(
+  public categories = (treeLevel: number) => this.get<Category[]>(
     `/pub/category/tree/${treeLevel}/`,
     {metric: 'catalog-categories'}
   )
@@ -101,7 +87,7 @@ export class CatalogDataSource extends IODataSource {
     )
   }
 
-  public category = (id: string) => this.get(
+  public category = (id: string | number) => this.get(
     `/pub/category/${id}`,
     {metric: 'catalog-category'}
   )

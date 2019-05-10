@@ -1,6 +1,17 @@
-import { NotFoundError, UserInputError } from '@vtex/api'
+import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
-import { compose, equals, find, head, last, path, prop, split, test, toLower } from 'ramda'
+import {
+  compose,
+  equals,
+  find,
+  head,
+  last,
+  path,
+  prop,
+  split,
+  test,
+  toLower,
+} from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
@@ -16,19 +27,18 @@ import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
 import { Slugify } from './slug'
-import { ProductsArgs } from '../../dataSources/catalog'
 
-interface Metadata {
-  metaTagDescription?: string
-  titleTag?: string
+interface SearchContext {
+  brand: string | null
+  category: string | null
+  contextKey: string
 }
 
-interface Brand {
-  id: string
-  name: string
-  isActive: boolean
-  title?: string
-  metaTagDescription?: string
+interface SearchContextParams {
+  brand: string
+  department: string
+  category: string
+  subcategory: string
 }
 
 /**
@@ -54,7 +64,7 @@ const lastSegment = compose<string, string[], string>(
   split('/')
 )
 
-function findInTree(tree: any, values: string[], index = 0): any {
+function findInTree(tree: Category[], values: string[], index = 0): any {
   for (const node of tree) {
     const slug = lastSegment(node.url)
     if (slug.toUpperCase() === values[index].toUpperCase()) {
@@ -84,7 +94,7 @@ const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<M
  *
  */
 const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
-  const brands = await queries.brands(_, { ...args }, ctx) as Brand[]
+  const brands = await queries.brands(_, { ...args }, ctx)
   const brandName = toLower(last(args.query.split('/')) || '')
   const brand = find(
     compose(
@@ -175,7 +185,7 @@ export const queries = {
     }
   },
 
-  facets: async (_: any, { facets, query, map }: any, ctx: Context) => {
+  facets: async (_: any, { facets, query, map }: FacetsArgs, ctx: Context) => {
     const {
       dataSources: { catalog },
       clients,
@@ -270,11 +280,11 @@ export const queries = {
     }
   },
 
-  brand: async (_: any, args: any, { dataSources: { catalog } }: Context) => {
+  brand: async (_: any, { id }: {id?: number}, { dataSources: { catalog } }: Context) => {
     const brands = await catalog.brands()
     const brand = find(
       compose(
-        equals(args.id),
+        equals(id),
         prop('id') as any
       ),
       brands
@@ -290,13 +300,18 @@ export const queries = {
 
   category: async (
     _: any,
-    { id }: any,
+    { id }: { id?: number },
     { dataSources: { catalog } }: Context
-  ) => catalog.category(id),
+  ) => {
+    if (id == null) {
+      throw new ResolverWarning(`No category ID provided`)
+    }
+    return catalog.category(id)
+  },
 
   categories: async (
     _: any,
-    { treeLevel }: any,
+    { treeLevel }: { treeLevel: number },
     { dataSources: { catalog } }: Context
   ) => catalog.categories(treeLevel),
 
@@ -325,10 +340,10 @@ export const queries = {
 
   searchContextFromParams: async (
     _: any,
-    args: any,
+    args: SearchContextParams,
     { dataSources: { catalog } }: Context
   ) => {
-    const response = {
+    const response: SearchContext = {
       brand: null,
       category: null,
       contextKey: 'search',
@@ -336,41 +351,32 @@ export const queries = {
 
     if (args.brand) {
       const brands = await catalog.brands()
-      const found = brands.find(
-        (brand: any) => brand.isActive && Slugify(brand.name) === args.brand
-      )
-      response.brand = found && found.id
+      const found = brands.find(brand => brand.isActive && Slugify(brand.name) === args.brand)
+      response.brand = found ? found.id : null
     }
 
     if (args.department) {
       const departments = await catalog.categories(2)
-      let found: Category
+      let found
 
-      found = departments.find((department: any) =>
+      found = departments.find((department) =>
         department.url.endsWith(`/${args.department.toLowerCase()}`)
       )
       if (args.category && found) {
         found = found.children.find(category =>
           category.url.endsWith(`/${args.category.toLowerCase()}`)
-        ) as any
+        )
       }
 
       if (args.subcategory && found) {
         found = found.children.find(subcategory =>
           subcategory.url.endsWith(`/${args.subcategory.toLowerCase()}`)
-        ) as any
+        )
       }
 
-      response.category = found && (found.id as any)
+      response.category = found ? found.id : null
     }
 
     return response
   },
-}
-
-interface Category {
-  id: string
-  name: string
-  url: string
-  children: Category[]
 }
