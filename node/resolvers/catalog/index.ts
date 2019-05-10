@@ -173,19 +173,24 @@ export const queries = {
   facets: async (_: any, { facets, query, map }: any, ctx: Context) => {
     const {
       dataSources: { catalog },
+      clients,
     } = ctx
-    const queryArgs = { query, map }
-
     let result
 
     if (facets) {
       result = await catalog.facets(facets)
+      result.queryArgs = {
+        query,
+        map
+      }
     } else {
-      result = await catalog.facets(`${query}?map=${map}`)
+      const translatedQuery = await translateToStoreDefaultLanguage(clients)(query)
+      result = await catalog.facets(`${translatedQuery}?map=${map}`)
+      result.queryArgs = {
+        query: translatedQuery,
+        map,
+      }
     }
-
-    result.queryArgs = queryArgs
-
     return result
   },
 
