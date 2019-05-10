@@ -111,7 +111,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-crossSelling'}
   )
 
-  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
+  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get<{itemsReturned: Item[]}>(
     `/buscaautocomplete?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
     {metric: 'catalog-autocomplete'}
   )
