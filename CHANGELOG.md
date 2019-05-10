@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.72.2] - 2019-05-10
+### Fixed
+- Remove comma from invalid characters of product search.
+
 ## [2.72.1] - 2019-05-09
 ### Fixed
 - Remove slugify on facets when computing selected property.

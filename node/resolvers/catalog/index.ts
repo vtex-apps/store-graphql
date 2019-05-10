@@ -223,7 +223,7 @@ export const queries = {
       dataSources: { catalog },
     } = ctx
     const queryTerm = args.query
-    if (queryTerm == null || test(/[?&[\]=,]/, queryTerm)) {
+    if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
       throw new UserInputError(
         `The query term contains invalid characters. query=${queryTerm}`
       )
