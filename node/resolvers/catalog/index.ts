@@ -127,7 +127,7 @@ async function getProductBySlug(slug: string, catalog: any) {
   throw new NotFoundError('No product was found with requested sku')
 }
 
-const translateToStoreDefaultLanguage = (clients: Context['clients']) => async (term: string): Promise<string> => {
+const translateToStoreDefaultLanguage = async (clients: Context['clients'], term: string): Promise<string> => {
   const { segment, messages } = clients
   const [{cultureInfo: to}, {cultureInfo: from}] = await all([
     segment.getSegmentByToken(null),
@@ -159,7 +159,7 @@ export const queries = {
       dataSources: { catalog },
       clients,
     } = ctx
-    const translatedTerm = await translateToStoreDefaultLanguage(clients)(args.searchTerm)
+    const translatedTerm = await translateToStoreDefaultLanguage(clients, args.searchTerm)
     const { itemsReturned } = await catalog.autocomplete({
       maxRows: args.maxRows,
       searchTerm: translatedTerm,
@@ -176,20 +176,16 @@ export const queries = {
       clients,
     } = ctx
     let result
+    const translatedQuery = await translateToStoreDefaultLanguage(clients, query)
 
     if (facets) {
       result = await catalog.facets(facets)
-      result.queryArgs = {
-        query,
-        map
-      }
     } else {
-      const translatedQuery = await translateToStoreDefaultLanguage(clients)(query)
       result = await catalog.facets(`${translatedQuery}?map=${map}`)
-      result.queryArgs = {
-        query: translatedQuery,
-        map,
-      }
+    }
+    result.queryArgs = {
+      query: translatedQuery,
+      map
     }
     return result
   },
@@ -249,10 +245,10 @@ export const queries = {
       dataSources: { catalog },
       clients,
     } = ctx
-    const translate = translateToStoreDefaultLanguage(clients)
+    const query = await translateToStoreDefaultLanguage(clients, args.query)
     const translatedArgs = {
       ...args,
-      query: await translate(args.query),
+      query,
     }
     const products = await queries.products(_, translatedArgs, ctx)
     const recordsFiltered = await catalog.productsQuantity(translatedArgs)
