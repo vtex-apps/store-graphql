@@ -1,6 +1,8 @@
 import { Segment } from '@vtex/api'
 import { prop } from 'ramda'
 
+import { Slugify } from '../resolvers/catalog/slug'
+
 const localeFromDefaultSalesChannel = (segment: Segment) =>
   segment.getSegmentByToken(null).then(prop('cultureInfo'))
 
@@ -27,3 +29,10 @@ export const toFacetIOMessage = (segment: Segment, content: string, id: string) 
   content,
   `SpecificationFilter-id.${id}::${content}`
 )
+
+export const toSearchTerm = (term: string, from: string, description: string = '') => ({
+  id: `Search::${Slugify(term)}`,
+  description,
+  content: term,
+  from,
+})

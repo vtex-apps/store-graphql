@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.73.0] - 2019-05-13
+### Changed
+- Translate terms (with `Messages`) before sending them to search api for `productSearch` and `facets` resolvers
+
 ## [2.72.2] - 2019-05-10
 ### Fixed
 - Remove comma from invalid characters of product search.

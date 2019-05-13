@@ -1,6 +1,9 @@
 import { NotFoundError, UserInputError } from '@vtex/api'
+import { all } from 'bluebird'
 import { compose, equals, find, head, last, path, prop, split, test } from 'ramda'
 
+import { toSearchTerm } from '../../utils/ioMessage'
+import { resolvers as autocompleteResolvers } from './autocomplete'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
 import { resolvers as discountResolvers } from './discount'
@@ -12,8 +15,21 @@ import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
-import { resolvers as autocompleteResolvers } from './autocomplete'
 import { Slugify } from './slug'
+
+interface SearchArgs {
+  query: string
+  map: string
+  category: string
+  specificationFilters: [string]
+  priceRange: string
+  collection: string
+  salesChannel: string
+  orderBy: string
+  from: number
+  to: number
+  hideUnavailableItems: boolean
+}
 
 /**
  * It will extract the slug from the HREF in the item
@@ -111,6 +127,17 @@ async function getProductBySlug(slug: string, catalog: any) {
   throw new NotFoundError('No product was found with requested sku')
 }
 
+const translateToStoreDefaultLanguage = async (clients: Context['clients'], term: string): Promise<string> => {
+  const { segment, messages } = clients
+  const [{cultureInfo: to}, {cultureInfo: from}] = await all([
+    segment.getSegmentByToken(null),
+    segment.getSegment()
+  ])
+  return from && from !== to
+    ? messages.translate(to, [toSearchTerm(term, from)]).then(head)
+    : term
+}
+
 export const fieldResolvers = {
   ...autocompleteResolvers,
   ...brandResolvers,
@@ -130,29 +157,10 @@ export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context) => {
     const {
       dataSources: { catalog },
-      clients: { segment, messages },
+      clients,
     } = ctx
-
-    const segmentData = await segment.getSegment()
-    // Grabbing a segment without token should give us the default store locale
-    const defaultSegmentData = await segment.getSegmentByToken(null)
-    const from = segmentData.cultureInfo
-    const to = defaultSegmentData.cultureInfo
-    // Only translate if necessary
-    const translatedTerm =
-      from && from !== to
-        ? await messages.translate(to, [
-            {
-              id: `autocomplete-${args.searchTerm}`,
-              description: '',
-              content: args.searchTerm,
-              from,
-            },
-          ])
-        : args.searchTerm
-    const {
-      itemsReturned,
-    }: { itemsReturned: Item[] } = await catalog.autocomplete({
+    const translatedTerm = await translateToStoreDefaultLanguage(clients, args.searchTerm)
+    const { itemsReturned } = await catalog.autocomplete({
       maxRows: args.maxRows,
       searchTerm: translatedTerm,
     })
@@ -165,19 +173,20 @@ export const queries = {
   facets: async (_: any, { facets, query, map }: any, ctx: Context) => {
     const {
       dataSources: { catalog },
+      clients,
     } = ctx
-    const queryArgs = { query, map }
-
     let result
+    const translatedQuery = await translateToStoreDefaultLanguage(clients, query)
 
     if (facets) {
       result = await catalog.facets(facets)
     } else {
-      result = await catalog.facets(`${query}?map=${map}`)
+      result = await catalog.facets(`${translatedQuery}?map=${map}`)
     }
-
-    result.queryArgs = queryArgs
-
+    result.queryArgs = {
+      query: translatedQuery,
+      map
+    }
     return result
   },
 
@@ -231,15 +240,21 @@ export const queries = {
     return catalog.products(args)
   },
 
-  productSearch: async (_: any, args: any, ctx: Context) => {
+  productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
     const {
       dataSources: { catalog },
+      clients,
     } = ctx
-    const products = await queries.products(_, args, ctx)
-    const recordsFiltered = await catalog.productsQuantity(args)
+    const query = await translateToStoreDefaultLanguage(clients, args.query)
+    const translatedArgs = {
+      ...args,
+      query,
+    }
+    const products = await queries.products(_, translatedArgs, ctx)
+    const recordsFiltered = await catalog.productsQuantity(translatedArgs)
     const { titleTag, metaTagDescription }: any = await searchMetaData(
       _,
-      args,
+      translatedArgs,
       ctx
     )
     return {
