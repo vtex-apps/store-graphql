@@ -17,6 +17,8 @@ type DepartmentFacet {
   Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
+  Slug: String @deprecated(reason: "Use 'slug' field instead")
+  Children: [DepartmentFacet] @deprecated(reason: "Use 'children' field instead")
   id: ID!
   quantity: Int!
   name: IOMessage!
@@ -32,6 +34,8 @@ type BrandFacet {
   Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
+  Slug: String @deprecated(reason: "Use 'slug' field instead")
+  Children: [BrandFacet] @deprecated(reason: "Use 'children' field instead")
   id: ID!
   quantity: Int!
   name: String!
@@ -48,6 +52,7 @@ type PriceRangesFacet {
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
+  Children: [PriceRangesFacet] @deprecated(reason: "Use 'children' field instead")
   quantity: Int!
   name: IOMessage!
   link: String!
@@ -63,6 +68,7 @@ type CategoriesTreeFacet {
   Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
+  Slug: String @deprecated(reason: "Use 'slug' field instead")
   Children: [CategoriesTreeFacet] @deprecated(reason: "Use 'children' field instead")
   id: ID!
   quantity: Int!
@@ -78,9 +84,12 @@ type CategoriesTreeFacet {
 }
 
 type FilterFacet {
+  Id: Int @deprecated(reason: "Use 'id' field instead")
   Name: IOMessage! @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
+  Slug: String @deprecated(reason: "Use 'slug' field instead")
+  Children: [FilterFacet] @deprecated(reason: "Use 'children' field instead")
   quantity: Int!
   name: IOMessage!
   link: String!
