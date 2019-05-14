@@ -27,6 +27,11 @@ export default {
         : obj.customFields,
     passwordLastUpdate: (_: any, __: any, context: any) => getPasswordLastUpdate(context),
     payments: (_: any, __: any, context: any) => getPayments(context),
+    profilePicture: (obj: any, _: any, context: any) =>
+      obj.profilePicture &&
+      `https://${
+        context.vtex.account
+      }.vteximg.com.br/assets/vtex.store-graphql/image/${obj.profilePicture}`,
   },
   ProfileCustomField: {
     cacheId: (root: any) => root.key,
