@@ -36,4 +36,5 @@ interface FacetsArgs {
   facets: string //deprecated!
   query: string
   map: string
+  hideUnavailableItems: boolean
 }
