@@ -30,7 +30,7 @@ const routes = {
 
 export default class FileManagerClient extends AppClient {
   constructor(ioContext: IOContext, options: InstanceOptions = {}) {
-    super('vtex.file-manager', ioContext, options)
+    super('vtex.file-manager', ioContext, { ...options, timeout: 5000 })
 
     if (runningAppName === '') {
       throw new ResolverError(
