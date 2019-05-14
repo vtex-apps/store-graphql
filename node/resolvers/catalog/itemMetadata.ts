@@ -121,7 +121,7 @@ export const resolvers = {
 
       const priceData = await Promise.all(itemsPromises)
 
-      const prices = priceData.reduce<{ [key: string]: Array<{ price: number, id: string }>}>((prev, curr) => {
+      const prices = priceData.reduce<{ [key: string]: { price: number, id: string }[]}>((prev, curr) => {
         const { id, priceTable, price } = curr
         const currentArray = prev[priceTable] || []
         return {

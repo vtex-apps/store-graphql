@@ -13,6 +13,7 @@ interface ProductsArgs {
   from: number
   to: number
   map: string
+  hideUnavailableItems: boolean
 }
 
 interface AutocompleteArgs {
@@ -110,7 +111,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-crossSelling'}
   )
 
-  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get(
+  public autocomplete = ({maxRows, searchTerm}: AutocompleteArgs) => this.get<{itemsReturned: Item[]}>(
     `/buscaautocomplete?maxRows=${maxRows}&productNameContains=${encodeURIComponent(searchTerm)}`,
     {metric: 'catalog-autocomplete'}
   )
@@ -139,7 +140,6 @@ export class CatalogDataSource extends IODataSource {
     }
 
     config.inflightKey = inflightKey
-
     return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
   }
 
@@ -153,9 +153,14 @@ export class CatalogDataSource extends IODataSource {
     orderBy = '',
     from = 0,
     to = 9,
-    map = ''
+    map = '',
+    hideUnavailableItems = false,
   }: ProductsArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
+    if (hideUnavailableItems) {
+      const segmentData = (this.context as CustomIOContext).segment
+      salesChannel = segmentData && segmentData.channel.toString() || ''
+    }
     return (
       `/pub/products/search/${sanitizedQuery}?${category && !query && `&fq=C:/${category}/`}${(specificationFilters && specificationFilters.length > 0 && specificationFilters.map(filter => `&fq=${filter}`)) || ''}${priceRange && `&fq=P:[${priceRange}]`}${collection && `&fq=productClusterIds:${collection}`}${salesChannel && `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy && `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 && `&_from=${from}`}${to > -1 && `&_to=${to}`}`
     )

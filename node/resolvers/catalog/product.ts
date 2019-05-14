@@ -1,9 +1,7 @@
-import { map as mapP } from 'bluebird'
-import { GraphQLResolveInfo } from 'graphql'
-import { compose, map, omit, propOr, reject, toPairs } from 'ramda'
+import { compose, last, map, omit, propOr, reject, reverse, split, toPairs, zip } from 'ramda'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toIOMessage } from './../../utils/ioMessage'
+import { toProductIOMessage } from './../../utils/ioMessage'
 
 const objToNameValue = (
   keyName: string,
@@ -33,19 +31,40 @@ const knownNotPG = [
   'productReference',
 ]
 
+const removeTrailingSlashes = (str: string) => str.endsWith('/')
+  ? str.slice(0, str.length-1)
+  : str
+
+const productCategoriesToCategoryTree = (
+  {categories, categoriesIds}: {categories: string[], categoriesIds: string[]}
+) => compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
+  reverse,
+  map(([idTree, categoryTree]) => ({
+    id: Number(last(split('/', removeTrailingSlashes(idTree)))),
+    name: String(last(split('/', removeTrailingSlashes(categoryTree)))),
+  }))
+)(zip(categoriesIds, categories))
+
 export const resolvers = {
   Product: {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({ categories }: {categories: string[]}, _: any, ctx: Context) => mapP(
-      categories,
-      category => toIOMessage(ctx, category, `category-${category}`)
-    ),
+    categoryTree: productCategoriesToCategoryTree,
 
-    description: ({ description, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, description, `${info.parentType}-${info.fieldName}-${productId}`),
+    description: (
+      { description, productId }: any,
+      _: any,
+      {clients: {segment}}: Context
+    ) =>
+      toProductIOMessage('description')(segment, description, productId),
 
-    productName: ({ productName, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, productName, `${info.parentType}-${info.fieldName}-${productId}`),
+    productName: (
+      { productName, productId }: any,
+      _: any,
+      {clients: {segment}}: Context
+    ) =>
+      toProductIOMessage('name')(segment, productName, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -81,9 +100,11 @@ export const resolvers = {
     titleTag: ({ productTitle }: any) => productTitle,
 
     specificationGroups: (product: any) => {
-      const allSpecificationsGroups = propOr([], 'allSpecificationsGroups', product).concat([
-        'allSpecifications',
-      ])
+      const allSpecificationsGroups = propOr(
+        [],
+        'allSpecificationsGroups',
+        product
+      ).concat(['allSpecifications'])
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,
@@ -96,4 +117,7 @@ export const resolvers = {
       return specificationGroups || []
     },
   },
+  OnlyProduct: {
+    categoryTree: productCategoriesToCategoryTree,
+  }
 }

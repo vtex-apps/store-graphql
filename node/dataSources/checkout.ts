@@ -5,6 +5,7 @@ import { RESTDataSource } from './RESTDataSource'
 import { SegmentData } from './session'
 
 const DEFAULT_TIMEOUT_MS = 4 * 1000
+const LONG_TIMEOUT_MS = 11 * 1000
 
 export interface SimulationData {
   country: string
@@ -33,7 +34,7 @@ const isWhitelistedSetCookie = (cookie: string) => {
 }
 
 export class CheckoutDataSource extends RESTDataSource {
-  constructor() {
+  public constructor() {
     super()
   }
 
@@ -42,7 +43,10 @@ export class CheckoutDataSource extends RESTDataSource {
     {
       orderItems: items,
     },
-    {metric: 'checkout-addItem'}
+    {
+      metric: 'checkout-addItem',
+      timeout: LONG_TIMEOUT_MS
+    }
   )
 
   public cancelOrder = (orderFormId: string, reason: string) => this.post(
@@ -64,7 +68,10 @@ export class CheckoutDataSource extends RESTDataSource {
     {
       orderItems,
     },
-    {metric: 'checkout-updateItems'}
+    {
+      metric: 'checkout-updateItems',
+      timeout: LONG_TIMEOUT_MS,
+    }
   )
 
   public updateOrderFormIgnoreProfile = (orderFormId: string, ignoreProfileData: boolean) => this.patch(
@@ -143,7 +150,7 @@ export class CheckoutDataSource extends RESTDataSource {
     {metric: 'checkout-shipping'}
   )
 
-  get baseURL() {
+  public get baseURL() {
     const {vtex: {account}} = this.context
     return `http://${account}.vtexcommercestable.com.br/api/checkout`
   }
@@ -173,7 +180,7 @@ export class CheckoutDataSource extends RESTDataSource {
       request.timeout = DEFAULT_TIMEOUT_MS
     }
 
-    if (!!salesChannel) {
+    if (salesChannel) {
       request.params.set('sc', salesChannel.toString())
     }
 

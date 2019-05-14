@@ -11,7 +11,7 @@ interface PaginationArgs {
 }
 
 export class DocumentDataSource extends RESTDataSource {
-  constructor() {
+  public constructor() {
     super()
   }
 
@@ -82,7 +82,7 @@ export class DocumentDataSource extends RESTDataSource {
     forEachObjIndexed((value, key) => request.headers.set(key, value), headers)
   }
 
-  get baseURL() {
+  public get baseURL() {
     const { vtex: { account } } = this.context
     return `http://api.vtex.com/${account}/dataentities/`
   }

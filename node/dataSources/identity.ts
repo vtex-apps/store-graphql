@@ -12,7 +12,7 @@ export class IdentityDataSource extends RESTDataSource {
     )
   }
 
-  get baseURL() {
+  public get baseURL() {
     return `http://vtexid.vtex.com.br/api/vtexid/pub`
   }
 

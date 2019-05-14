@@ -1,0 +1,6 @@
+type ProductSearch {
+  products: [Product]
+  recordsFiltered: Int
+  titleTag: String
+  metaTagDescription: String
+}

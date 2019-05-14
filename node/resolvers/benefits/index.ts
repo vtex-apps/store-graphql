@@ -15,7 +15,7 @@ export const fieldResolvers = {
       if (teaserType === CATALOG) {
         const {
           parameters: conditionsParameters,
-          minimumQuantity = parseInt(DEFAULT_QUANTITY), // tslint:disable-line:radix
+          minimumQuantity = parseInt(DEFAULT_QUANTITY, 10),
         } = conditions
 
         const { parameters: effectsParameters } = effects

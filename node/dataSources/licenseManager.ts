@@ -12,7 +12,7 @@ export class LicenseManagerDataSource extends RESTDataSource {
     ).then(data => data.id)
   }
 
-  get baseURL() {
+  public get baseURL() {
     const { vtex: { account } } = this.context
 
     return `http://${account}.vtexcommercestable.com.br/api/license-manager`
