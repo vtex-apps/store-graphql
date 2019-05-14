@@ -1,7 +1,5 @@
-import { addIndex, map, reject, keys } from 'ramda'
+import { addIndex, compose, forEach, map, reject } from 'ramda'
 import { SegmentData } from '../../dataSources/session'
-import { parse } from 'cookie'
-
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -16,7 +14,7 @@ import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
 
-import { CHECKOUT_COOKIE } from '../../utils'
+import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 
 const SetCookieWhitelist = [
   CHECKOUT_COOKIE,
@@ -91,7 +89,7 @@ export const fieldResolvers = {
   ...orderFormItemResolvers,
 }
 
-const replaceDomain = (cookie: any, host: string) => cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
+const replaceDomain = (host: string) => (cookie: string) => cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
 export const queries: Record<string, Resolver> = {
   orderForm: async (root, args, ctx) => {
@@ -103,29 +101,14 @@ export const queries: Record<string, Resolver> = {
     const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
 
     const rawHeaders = headers as Record<string, any>
-    const responseSetCookies: string[] | null = rawHeaders && rawHeaders['set-cookie']
+    const responseSetCookies: string[] = rawHeaders && rawHeaders['set-cookie'] || []
 
     const host = ctx.get('x-forwarded-host')
+    const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+    const parseAndClean = compose(parseCookie, replaceDomain(host))
+    const cleanCookies = map(parseAndClean, forwardedSetCookies)
+    forEach(({ name, value, options }) => ctx.cookies.set(name, value, options), cleanCookies)
 
-    if (responseSetCookies) {
-      const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
-      if (forwardedSetCookies.length > 0) {
-        const cleanCookies = responseSetCookies.map(cookie => replaceDomain(cookie, host))
-        cleanCookies.map(cookie => {
-          const parsed = parse(cookie)
-          const cookieName = keys(parsed)[0]
-          const cookieValue = parsed[cookieName]
-
-          const extraOptions = {
-            path: parsed.path,
-            domain: parsed.domain,
-            expires: parsed.expires ? new Date(parsed.expires) : undefined,
-          }
-
-          ctx.cookies.set(cookieName, cookieValue, extraOptions)
-        })
-      }
-    }
     return syncedOrderForm
   },
 
