@@ -52,13 +52,11 @@ export async function uploadFile(
   }
 }
 
-export async function deleteFile(
+export function deleteFile(
   ctx: IOContext,
   { path, bucket }: { path: string; bucket: string }
 ) {
   const fileManager = new FileManager(ctx)
 
-  await fileManager.deleteFile(path, bucket)
-
-  return true
+  fileManager.deleteFile(path, bucket)
 }

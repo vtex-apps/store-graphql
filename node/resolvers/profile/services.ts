@@ -126,11 +126,7 @@ export async function updateProfilePicture(context: Context, file: any) {
   const bucket = 'image'
 
   if (profilePicture) {
-    try {
-      deleteFile(context.vtex, { path: profilePicture, bucket })
-    } catch (e) {
-      console.error(e)
-    }
+    await deleteFile(context.vtex, { path: profilePicture, bucket })
   }
 
   const result = await uploadFile(context.vtex, { file, bucket })
