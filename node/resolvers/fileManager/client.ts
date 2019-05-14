@@ -1,13 +1,14 @@
-import { HttpClient, IOContext, InstanceOptions } from '@vtex/api'
-import { pathEq, path, pick } from 'ramda'
-
-import { FileNotFound } from './exceptions/fileNotFound'
-import { InternalServerError } from './exceptions/internalServerError'
+import {
+  AppClient,
+  IOContext,
+  InstanceOptions,
+  ResolverError,
+  NotFoundError,
+} from '@vtex/api'
+import { pathEq, path } from 'ramda'
 
 const appId = process.env.VTEX_APP_ID
 const [runningAppName] = appId ? appId.split('@') : ['']
-
-const FORWARD_FIELDS = ['status', 'statusText', 'data', 'stack', 'stackTrace']
 
 const routes = {
   Assets: () => `/assets/${runningAppName}`,
@@ -27,16 +28,15 @@ const routes = {
     `${routes.Assets()}/${bucket}/${path}?width=${width}&height=${height}&aspect=${aspect}`,
 }
 
-export default class FileManager {
-  private http: HttpClient
+export default class FileManagerClient extends AppClient {
+  constructor(ioContext: IOContext, options: InstanceOptions = {}) {
+    super('vtex.file-manager', ioContext, options)
 
-  constructor(ioContext: IOContext, opts: InstanceOptions = {}) {
     if (runningAppName === '') {
-      throw new InternalServerError(
+      throw new ResolverError(
         `Invalid path to access FileManger. Variable VTEX_APP_ID is not available.`
       )
     }
-    this.http = HttpClient.forWorkspace('file-manager.vtex', ioContext, opts)
   }
 
   getFile = async (
@@ -52,7 +52,7 @@ export default class FileManager {
       )
     } catch (e) {
       if (e.statusCode === 404 || pathEq(['response', 'status'], 404, e)) {
-        throw new FileNotFound(pick(FORWARD_FIELDS, e.response))
+        throw new NotFoundError(e)
       } else {
         throw e
       }
@@ -64,7 +64,7 @@ export default class FileManager {
       return await this.http.get(routes.FileUrl(bucket, path))
     } catch (e) {
       if (e.statusCode === 404 || pathEq(['response', 'status'], 404, e)) {
-        throw new FileNotFound(pick(FORWARD_FIELDS, e.response))
+        throw new NotFoundError(e)
       } else {
         throw e
       }
@@ -87,8 +87,7 @@ export default class FileManager {
       )
     } catch (e) {
       const status = e.statusCode || path(['response', 'status'], e) || 500
-      const extensions = pick(FORWARD_FIELDS, e.response)
-      throw new InternalServerError(extensions, 'Fail to save file', status)
+      throw new ResolverError(e, status)
     }
   }
 
@@ -97,7 +96,7 @@ export default class FileManager {
       return await this.http.delete(routes.FileDelete(bucket, path))
     } catch (e) {
       if (e.statusCode === 404 || pathEq(['response', 'status'], 404, e)) {
-        throw new FileNotFound(pick(FORWARD_FIELDS, e.response))
+        throw new NotFoundError(e)
       } else {
         throw e
       }
