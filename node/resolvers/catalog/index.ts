@@ -185,18 +185,22 @@ export const queries = {
     }
   },
 
-  facets: async (_: any, { facets, query, map }: FacetsArgs, ctx: Context) => {
+  facets: async (_: any, { facets, query, map, hideUnavailableItems }: FacetsArgs, ctx: Context) => {
     const {
       dataSources: { catalog },
       clients,
     } = ctx
     let result
     const translatedQuery = await translateToStoreDefaultLanguage(clients, query)
+    const segmentData = ctx.vtex.segment
+    const salesChannel = segmentData && segmentData.channel.toString() || ''
 
+    const unavailableString =
+       hideUnavailableItems ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1` : ''
     if (facets) {
       result = await catalog.facets(facets)
     } else {
-      result = await catalog.facets(`${translatedQuery}?map=${map}`)
+      result = await catalog.facets(`${translatedQuery}?map=${map}${unavailableString}`)
     }
     result.queryArgs = {
       query: translatedQuery,
