@@ -132,6 +132,10 @@ type Query {
     Defines terms types: Brand, Category, Department e.g.: c,b
     """
     map: String = ""
+    """
+    If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel.
+    """
+    hideUnavailableItems: Boolean = false
   ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
 
   """
