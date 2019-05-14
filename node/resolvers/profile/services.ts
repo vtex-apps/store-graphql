@@ -3,7 +3,7 @@ import { makeRequest } from './../auth/index'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
-import { uploadAttachment } from '../document/services'
+import { uploadAttachment } from '../document/attachment'
 import paths from '../paths'
 
 import { parse } from 'cookie'
