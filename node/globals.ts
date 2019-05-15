@@ -146,9 +146,9 @@ declare global {
     address: Address
   }
 
-  interface Document {
-    id: string,
-    fields: {key: string, value: string}[]
+  interface DocumentResponse {
+    Id: string
+    Href: string
   }
 
   interface DocumentArgs {

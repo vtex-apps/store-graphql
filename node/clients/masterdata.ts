@@ -1,4 +1,3 @@
-import { Document } from './masterdata'
 import {
   AuthenticationError,
   ForbiddenError,
@@ -28,8 +27,9 @@ export class MasterData extends ExternalClient {
     })
   }
 
+
   public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
-    this.get<T & Document>(this.routes.document(acronym, id), {
+    this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
       params: {
         _fields: generateFieldsArg(fields),
@@ -37,12 +37,12 @@ export class MasterData extends ExternalClient {
     })
 
   public createDocument = (acronym: string, fields: object) =>
-    this.post<Document>(this.routes.documents(acronym), fields, {
+    this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
     })
 
   public updateDocument = (acronym: string, id: string, fields: object) =>
-    this.patch<Document>(this.routes.document(acronym, id), fields, {
+    this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
     })
 
@@ -134,13 +134,6 @@ function paginationArgsToHeaders({ page, pageSize }: PaginationArgs) {
 
 function generateFieldsArg(fields: string[]) {
   return fields.reduce((previous, current) => `${previous}${current},`, '')
-}
-
-export interface Document {
-  Id: string
-  Href: string
-  DocumentId: string
-  [key: string]: any
 }
 
 interface PaginationArgs {
