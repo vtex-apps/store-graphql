@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.73.3] - 2019-05-14
+### Fixed
+- Use filter for availability on facets query as well.
+
+## [2.73.2] - 2019-05-14
+### Fixed
+- Search metadata for Brands.
+
 ## [2.73.1] - 2019-05-13
 ### Fixed
 - Adds missing facets fields back after schema breaking change
