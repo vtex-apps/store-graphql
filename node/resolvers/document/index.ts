@@ -65,10 +65,10 @@ export const mutations = {
     const { clients: { masterdata }, vtex: { account } } = context
     await masterdata.deleteDocument(acronym, documentId)
     return {
-      cacheId: documentId,
       documentId,
       href: generateHref(account, acronym, documentId),
       id: getId(acronym, documentId),
+      cacheId: documentId,
     }
   }
 }
@@ -79,7 +79,7 @@ export const mutations = {
  */
 const mapKeyAndStringifiedValues = (document: any) => Object.keys(document).map(key => ({
   key,
-  value: JSON.stringify(document[key])
+  value: typeof(document[key]) === 'string' ? document[key] : JSON.stringify(document[key])
 }))
 
 const removeAcronymFromId = (acronym: string, data: { Id: string }) => {
