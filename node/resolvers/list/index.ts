@@ -55,11 +55,11 @@ const getListItems = async (
 }
 
 const addListItem = async (item: Item, masterdata: MasterData) => {
-  const { DocumentId } = await masterdata.createDocument(
+  const { Id } = await masterdata.createDocument(
     acronymListProduct,
     mapKeyValues({ ...item }) as any
   )
-  return DocumentId
+  return Id
 }
 
 const addItems = async (items: Item[] = [], masterdata: MasterData) => {
@@ -123,7 +123,7 @@ export const queries = {
     { id }: any,
     { dataSources: { catalog }, clients: { masterdata } }: Context
   ) => {
-    const list = await masterdata.getDocument(acronymList, id, fields)
+    const list = await masterdata.getDocument<any>(acronymList, id, fields)
     const items = await getListItems(list.items, catalog, masterdata)
     return { id, ...list, items }
   },
@@ -166,11 +166,11 @@ export const mutation = {
     } = context
     try {
       const itemsId = await addItems(items, masterdata)
-      const { DocumentId } = await masterdata.createDocument(
+      const { Id } = await masterdata.createDocument(
         acronymList,
         mapKeyValues({ ...list, items: itemsId }) as any
       )
-      return queries.list(_, { id: DocumentId }, context)
+      return queries.list(_, { id: Id }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)
     }
