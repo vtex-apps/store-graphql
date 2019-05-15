@@ -21,6 +21,7 @@ export const queries = {
       })
     )(data)
   },
+
   document: async (_: any, args: DocumentArgs, context: Context) => {
     const { acronym, fields, id } = args
     const { clients: { masterdata } } = context
