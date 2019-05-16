@@ -2,7 +2,7 @@ import { all, filter, find, partition, path, pathOr, propEq } from 'ramda'
 
 import { AssemblyOption, CompositionItem, MetadataItem, RemovedItem } from './types'
 
-import { CheckoutDataSource } from '../../dataSources/checkout'
+import { Checkout } from '../../clients/checkout'
 
 export const CHOICE_TYPES = {
   MULTIPLE: 'MULTIPLE',
@@ -35,7 +35,7 @@ interface ItemsToAdd {
 }
 
 interface AddOptionsLogicInput {
-  checkout: CheckoutDataSource,
+  checkout: Checkout,
   orderFormId: string,
   itemIndex: string,
   options?: OptionsType[],
@@ -91,7 +91,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
 
 export const addOptionsForItems = async (
   items: ItemsToAdd[],
-  checkout: CheckoutDataSource,
+  checkout: Checkout,
   orderForm: any) => {
   for (const item of items) {
     if (!item.options || item.options.length === 0) { continue }
