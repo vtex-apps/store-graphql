@@ -32,6 +32,9 @@ export class Checkout extends JanusClient {
       ...options,
       headers: {
         ...options && options.headers,
+        ...(ctx.storeUserAuthToken
+          ? { VtexIdclientAutCookie: ctx.storeUserAuthToken }
+          : null),
       }
     })
   }
@@ -207,8 +210,8 @@ export class Checkout extends JanusClient {
        `${base}/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       checkin: (orderFormId: string) => `${base}/orderForm/${orderFormId}/checkIn`,
       orderForm: `${base}/orderForm`,
-      orders: `${base}/pub/orders`,
-      shipping: (queryString: string) => `${base}/pub/orderForms/simulation${queryString}`,
+      orders: `${base}/orders`,
+      shipping: (queryString: string) => `${base}/orderForms/simulation${queryString}`,
    }
   }
 }
