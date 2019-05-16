@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.74.2] - 2019-05-16
+### Fixed
+- Fix `orders` and `shipping` routes in Checkout Client.
+
 ## [2.74.1] - 2019-05-16
 
 ## Added
