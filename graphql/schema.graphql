@@ -252,7 +252,7 @@ type Query {
   """
   Returns user orders details
   """
-  orders: [Order] @cacheControl(scope: PRIVATE)
+  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
 
   """
   Returns a specified user order
