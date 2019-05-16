@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Added
+- Check for when user is impersonated in `getPasswordLastUpdate`
 
 ## [2.73.3] - 2019-05-14
 ### Fixed

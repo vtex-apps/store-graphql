@@ -19,9 +19,7 @@ export default {
       typeof obj.customFields === 'string'
         ? pickCustomFieldsFromData(obj.customFields, obj)
         : obj.customFields,
-    passwordLastUpdate: (_: any, __: any, context: any) => {
-      return getPasswordLastUpdate(context)
-    },
+    passwordLastUpdate: (_: any, __: any, context: any) => getPasswordLastUpdate(context),
     payments: (_: any, __: any, context: any) => getPayments(context),
     profilePicture: (obj: any, _: any, context: any) =>
       obj.profilePicture &&
