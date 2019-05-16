@@ -1,48 +1,103 @@
 import { UserInputError } from '@vtex/api'
-import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
+import {
+  concat,
+  filter,
+  groupBy,
+  last,
+  map,
+  nth,
+  path,
+  prop,
+  values,
+} from 'ramda'
 
+import { MasterData } from '../../clients/masterdata'
 import { mapKeyValues } from '../../utils/object'
-import { acronymList, acronymListProduct, fields, fieldsListProduct } from './util'
-import { validateItems, Item } from './util'
+import { CatalogDataSource } from './../../dataSources/catalog'
+import {
+  acronymList,
+  acronymListProduct,
+  fields,
+  fieldsListProduct,
+  validateItems,
+  Item,
+} from './util'
 
-const getListItemsWithProductInfo = (items: Item[], catalog: any) => Promise.all(
-  map(async (item: Item) => {
-    const productsResponse = await catalog.productBySku([path(['skuId'], item)])
-    const product = nth(0, productsResponse)
-    return { ...item, product }
-  }, items)
-)
+const getListItemsWithProductInfo = (
+  items: Item[],
+  catalog: CatalogDataSource
+) =>
+  Promise.all(
+    map(async (item: Item) => {
+      const productsResponse = await catalog.productBySku([
+        path(['skuId'], item) as string,
+      ])
+      const product = nth(0, productsResponse)
+      return { ...item, product }
+    }, items)
+  )
 
-const getListItems = async (itemsId: string[], dataSources: any) => {
-  const { catalog, document } = dataSources
-  const items: Item[] = itemsId ? await Promise.all(map((id: string) =>
-    document.getDocument(acronymListProduct, id, fieldsListProduct), itemsId)) : []
+const getListItems = async (
+  itemsId: string[],
+  catalog: CatalogDataSource,
+  masterdata: MasterData
+) => {
+  const items: Item[] = itemsId
+    ? ((await Promise.all(
+        map(
+          (id: string) =>
+            masterdata.getDocument(acronymListProduct, id, fieldsListProduct),
+          itemsId
+        )
+      )) as Item[])
+    : []
   return getListItemsWithProductInfo(items, catalog)
 }
 
-const addListItem = async (item: Item, document: any) => {
-  const { DocumentId } = await document.createDocument(acronymListProduct, mapKeyValues({ ...item }))
-  return DocumentId
+const addListItem = async (item: Item, masterdata: MasterData) => {
+  const { Id } = await masterdata.createDocument(
+    acronymListProduct,
+    mapKeyValues({ ...item }) as any
+  )
+  return Id
 }
 
-const addItems = async (items: Item[] = [], dataSources: any) => {
-  const { document } = dataSources
-  validateItems(items, dataSources)
-  const promises = map(async (item: Item) => addListItem(item, document), items)
+const addItems = async (items: Item[] = [], masterdata: MasterData) => {
+  validateItems(items, masterdata)
+  const promises = map(async item => addListItem(item, masterdata), items)
   return Promise.all(promises)
 }
 
-const deleteItems = (items: Item[], document: any) => (
-  items && items.forEach((item: Item) => document.deleteDocument(acronymListProduct, path(['id'], item)))
-)
+const deleteItems = (items: Item[], masterdata: MasterData) =>
+  items &&
+  Promise.all(
+    items.map((item: Item) =>
+      masterdata.deleteDocument(acronymListProduct, path(
+        ['id'],
+        item
+      ) as string)
+    )
+  )
 
 const updateItems = async (items: Item[], dataSources: any) => {
   const { document } = dataSources
-  const itemsWithoutDuplicated = map((item: any) => last(item),
-    values(groupBy(prop('skuId') as any, items)))
-  const itemsToBeDeleted = filter((item: Item) => path<any>(['id'], item) && path(['quantity'], item) === 0, itemsWithoutDuplicated)
-  const itemsToBeAdded = filter((item: Item) => !path(['id'], item), itemsWithoutDuplicated)
-  const itemsToBeUpdated = filter((item: Item) => path<any>(['id'], item) && path<any>(['quantity'], item) > 0, itemsWithoutDuplicated)
+  const itemsWithoutDuplicated = map(
+    (item: any) => last(item),
+    values(groupBy(prop('skuId') as any, items))
+  )
+  const itemsToBeDeleted = filter(
+    (item: Item) => path<any>(['id'], item) && path(['quantity'], item) === 0,
+    itemsWithoutDuplicated
+  )
+  const itemsToBeAdded = filter(
+    (item: Item) => !path(['id'], item),
+    itemsWithoutDuplicated
+  )
+  const itemsToBeUpdated = filter(
+    (item: Item) =>
+      path<any>(['id'], item) && path<any>(['quantity'], item) > 0,
+    itemsWithoutDuplicated
+  )
 
   deleteItems(itemsToBeDeleted, document)
 
@@ -50,54 +105,85 @@ const updateItems = async (items: Item[], dataSources: any) => {
     map(async (item: Item) => await addListItem(item, document), itemsToBeAdded)
   )
 
-  const itemsIdUpdated = map(
-    (item: Item) => {
-      document.updateDocument(
-        acronymListProduct,
-        path(['id'], item),
-        mapKeyValues(item))
-      return path(['id'], item)
-    },
-    itemsToBeUpdated
-  )
+  const itemsIdUpdated = map((item: Item) => {
+    document.updateDocument(
+      acronymListProduct,
+      path(['id'], item),
+      mapKeyValues(item)
+    )
+    return path(['id'], item)
+  }, itemsToBeUpdated)
 
   return concat(itemsIdAdded, itemsIdUpdated)
 }
 
 export const queries = {
-  list: async (_: any, { id }: any, { dataSources, dataSources: { document } }: any) => {
-    const list = await document.getDocument(acronymList, id, fields)
-    const items = await getListItems(list.items, dataSources)
+  list: async (
+    _: any,
+    { id }: any,
+    { dataSources: { catalog }, clients: { masterdata } }: Context
+  ) => {
+    const list = await masterdata.getDocument<any>(acronymList, id, fields)
+    const items = await getListItems(list.items, catalog, masterdata)
     return { id, ...list, items }
   },
 
-  listsByOwner: async (_: any, { owner, page, pageSize }: any, context: any) => {
-    const { dataSources, dataSources: { document } } = context
-    const lists = await document.searchDocuments(acronymList, fields, `owner=${owner}`, { page, pageSize })
-    const listsWithProducts = map(async (list: any) => {
-      const items = await getListItems(path(['items'], list) || [], dataSources)
+  listsByOwner: async (
+    _: any,
+    { owner, page, pageSize }: any,
+    context: Context
+  ) => {
+    const {
+      dataSources: { catalog },
+      clients: { masterdata },
+    } = context
+    const lists = await masterdata.searchDocuments(
+      acronymList,
+      fields,
+      `owner=${owner}`,
+      { page, pageSize }
+    )
+    const listsWithProducts = map(async list => {
+      const items = await getListItems(
+        path(['items'], list) || [],
+        catalog,
+        masterdata
+      )
       return { ...list, items }
     }, lists)
     return Promise.all(listsWithProducts)
-  }
+  },
 }
 
 export const mutation = {
-  createList: async (_: any, { list, list: { items } }: any, context: any) => {
-    const { dataSources, dataSources: { document } } = context
+  createList: async (
+    _: any,
+    { list, list: { items } }: any,
+    context: Context
+  ) => {
+    const {
+      clients: { masterdata },
+    } = context
     try {
-      const itemsId = await addItems(items, dataSources)
-      const { DocumentId } = await document.createDocument(acronymList, mapKeyValues({ ...list, items: itemsId }))
-      return queries.list(_, { id: DocumentId }, context)
+      const itemsId = await addItems(items, masterdata)
+      const { Id } = await masterdata.createDocument(
+        acronymList,
+        mapKeyValues({ ...list, items: itemsId }) as any
+      )
+      return queries.list(_, { id: Id }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)
     }
   },
 
-  deleteList: async (_: any, { id }: any, { dataSources: { document } }: any) => {
-    const { items } = await document.getDocument(acronymList, id, fields)
-    deleteItems(items, document)
-    return document.deleteDocument(acronymList, id)
+  deleteList: async (
+    _: any,
+    { id }: any,
+    { clients: { masterdata } }: Context
+  ) => {
+    const { items } = await masterdata.getDocument(acronymList, id, fields)
+    await deleteItems(items, masterdata)
+    return masterdata.deleteDocument(acronymList, id)
   },
 
   /**
@@ -106,11 +192,21 @@ export const mutation = {
    * If the item given has got an id, but its quantity is 0, remove it from the list
    * Otherwise, update it.
    */
-  updateList: async (_: any, { id, list, list: { items } }: any, context: any) => {
-    const { dataSources, dataSources: { document } } = context
+  updateList: async (
+    _: any,
+    { id, list, list: { items } }: any,
+    context: Context
+  ) => {
+    const {
+      dataSources,
+      clients: { masterdata },
+    } = context
     try {
       const itemsUpdatedId = await updateItems(items, dataSources)
-      await document.updateDocument(acronymList, id, mapKeyValues({ ...list, items: itemsUpdatedId }))
+      await masterdata.updateDocument(acronymList, id, mapKeyValues({
+        ...list,
+        items: itemsUpdatedId,
+      }) as any)
       return queries.list(_, { id }, context)
     } catch (error) {
       throw new UserInputError(`Cannot update the list: ${error}`)

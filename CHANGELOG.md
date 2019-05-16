@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.74.0] - 2019-05-16
+### Fixed
+- `document` resolvers working according to the graphql schema.
+
+### Changed
+- Ported DocumentDataSource to MasterData IOClient
+- Ported CheckoutDataSource to Checkout IOClient
+
 ## [2.73.3] - 2019-05-14
 ### Fixed
 - Use filter for availability on facets query as well.

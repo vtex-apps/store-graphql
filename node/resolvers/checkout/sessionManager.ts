@@ -1,18 +1,9 @@
 import { equals, path } from 'ramda'
 
-import { appendToCookie } from '../../utils'
+import { getOrderFormIdFromCookie } from '../../utils'
 import { SessionFields } from '../session/sessionResolver'
 
-export const CHECKOUT_COOKIE = 'checkout.vtex.com'
-
 interface GenericObject { [key: string]: any }
-
-const checkoutCookieFormat = (orderFormId: string) => `${CHECKOUT_COOKIE}=__ofid=${orderFormId}`
-
-const getOrderFormIdFromCookie = (cookies: any): string | void => {
-  const cookie: string | void = cookies.get(CHECKOUT_COOKIE)
-  return cookie && cookie.split('=')[1]
-}
 
 /**
  * After doing changes to the OrderForm, this keeps orderForm and session synced.
@@ -34,9 +25,9 @@ const syncOrderFormAndSessionAddress = async (
   sessionAddress: GenericObject | null,
   ctx: Context,
   ): Promise<object | null> => {
-  const {dataSources: {session, checkout}} = ctx
+  const {dataSources: {session}, clients: { checkout }} = ctx
   if (!orderFormAddress && sessionAddress && !isMasked(sessionAddress.postalCode)) {
-    checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
+    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
   }
 
   if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
@@ -61,6 +52,6 @@ export const syncCheckoutAndSessionPreCheckout = (sessionData: SessionFields, ct
   const { cookies } = ctx
   const checkoutOrderFormId = getOrderFormIdFromCookie(cookies)
   if (sessionData.orderFormId && !checkoutOrderFormId) {
-    appendToCookie(ctx, checkoutCookieFormat(sessionData.orderFormId))
+    ctx.vtex.orderFormId = sessionData.orderFormId
   }
 }

@@ -3,9 +3,9 @@ import FormData from 'form-data'
 
 import { generateRandomName } from '../../utils'
 
-export const uploadAttachment = async (args: any, ctx: any) => {
+export async function uploadAttachment(args: any, ctx: Context) {
   const {
-    dataSources: { document },
+    clients: { masterdata },
   } = ctx
   const { acronym, documentId, field, file } = args
   const { createReadStream, filename, mimetype } = await file
@@ -29,7 +29,7 @@ export const uploadAttachment = async (args: any, ctx: any) => {
     knownLength: buffer.byteLength,
   })
 
-  const response = await document.uploadAttachment(
+  const response = await masterdata.uploadAttachment(
     acronym,
     documentId,
     field,
