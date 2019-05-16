@@ -42,11 +42,12 @@ export function getPasswordLastUpdate(context: Context) {
   const url = paths.getUser(account)
   const parsedCookies = parse(cookie)
   const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
-  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then(
-    (response: any) => {
-      return response.data.passwordLastUpdate
-    }
-  )
+
+  if (!userCookie) return null
+
+  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then((response: any) => {
+    return response.data.passwordLastUpdate
+  })
 }
 
 export function getAddresses(context: Context) {
