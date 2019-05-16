@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.74.1] - 2019-05-16
+
+## Added
+- Check when user is impersonated in `getPasswordLastUpdate`
+
 ## [2.74.0] - 2019-05-16
 ### Fixed
 - `document` resolvers working according to the graphql schema.
