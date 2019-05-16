@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Ported DocumentDataSource to MasterData IOClient
+- Ported CheckoutDataSource to Checkout IOClient
 
 ## [2.73.3] - 2019-05-14
 ### Fixed
