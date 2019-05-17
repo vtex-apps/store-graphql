@@ -1,6 +1,6 @@
 import { toLower } from 'ramda'
 import { findCategoryInTree, getBrandFromSlug } from "./utils"
-import { toCategoryIOMessage } from "../../utils/ioMessage"
+import { toCategoryIOMessage, toClusterIOMessage } from "../../utils/ioMessage"
 
 interface BreadcrumbParams {
   queryUnit: string
@@ -34,7 +34,9 @@ export const resolvers = {
         }
         // if cant find a category, we should try to see if its a product cluster
         const clusterName = findClusterNameFromId(products, queryUnit)
-        return clusterName || defaultName
+        if (clusterName) {
+          return toClusterIOMessage(segment, clusterName, queryUnit)
+        }
       }
       if (mapUnit === 'b') {
         const brand = await getBrandFromSlug(toLower(queryUnit), ctx) || {}
