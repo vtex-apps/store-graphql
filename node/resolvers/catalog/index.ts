@@ -1,19 +1,21 @@
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
-import { all } from 'bluebird'
+import { all, map as PromiseMap } from 'bluebird'
 import {
   compose,
   equals,
   find,
   head,
   last,
+  merge,
   path,
   prop,
   split,
   test,
   toLower,
+  zip,
 } from 'ramda'
 
-import { toSearchTerm } from '../../utils/ioMessage'
+import { toSearchTerm, toCategoryIOMessage } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
@@ -26,7 +28,7 @@ import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
-import { Slugify } from './slug'
+import { CatalogSlugify } from './slug'
 
 interface SearchContext {
   brand: string | null
@@ -39,6 +41,71 @@ interface SearchContextParams {
   department: string
   category: string
   subcategory: string
+}
+
+const getBrandFromSlug = async (brandSlug: string, {dataSources:{catalog}}: Context)  => {
+  const brands = await catalog.brands()
+  return <Brand>find(
+    compose(
+      equals(brandSlug),
+      toLower,
+      CatalogSlugify,
+      prop('name') as any
+    ),
+    brands
+  )
+}
+
+const findClusterNameFromId = (products: Product[], clusterId: string) => {
+  // Slice only the first fifty to prevent problem if this products array eventually get to thousands of units
+  const allSearchableClusters = 
+    products.slice(0, 50).reduce<Record<string, string>>((acc, prod) => {
+      const { searchableClusters } = prod
+      return merge(acc, searchableClusters)
+    }, 
+    {})
+  return allSearchableClusters[clusterId]
+}
+
+const buildBreadCrumb = async ({ query, map }: ProductsArgs, products: Product[], ctx: Context) => {
+  const {clients: {segment}} = ctx
+  if (map === 'ft') {
+    return [{ name: query, href: null }]
+  }
+  const queryAndMap = zip(
+    query
+      .toLowerCase()
+      .split('/')
+      .map(decodeURIComponent),
+    map.split(',')
+  )
+  const queryArray = query.split('/')
+  const mapArray = map.split(',')
+  const categoriesSearched = queryAndMap.filter(([_, m]) => m === 'c').map(([q]) => q)
+  const categories = await queries.categories({}, { treeLevel: categoriesSearched.length }, ctx)
+  const findNameAndLink = async ([queryUnit, mapUnit]: [string, string], index: number) => {
+    const isLast = index === queryAndMap.length - 1
+    let name = queryArray[index]
+    if (mapUnit === 'c') {
+      const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
+      const category = findInTree(categories, categoriesSearched.slice(0, queryPosition + 1))
+      if (category) {
+        const nameIoMessage = await toCategoryIOMessage('name')(segment, category.name, category.id)
+        name = nameIoMessage.content
+      }
+      // if cant find a category, we should try to see if its a product cluster
+      const clusterName = findClusterNameFromId(products, queryUnit)
+      name = clusterName || name
+    }
+    if (mapUnit === 'b') {
+      const brand = await getBrandFromSlug(toLower(queryUnit), ctx) || {}
+      name = brand.name || name
+    }
+    const href = isLast ? null : '/' + queryArray.slice(0, index + 1).join('/') + '?map=' + mapArray.slice(0, index + 1)
+    return { name, href }
+  }
+
+  return PromiseMap(queryAndMap, findNameAndLink)
 }
 
 /**
@@ -64,7 +131,7 @@ const lastSegment = compose<string, string[], string>(
   split('/')
 )
 
-function findInTree(tree: Category[], values: string[], index = 0): any {
+function findInTree(tree: Category[], values: string[], index = 0): Category | null {
   for (const node of tree) {
     const slug = lastSegment(node.url)
     if (slug.toUpperCase() === values[index].toUpperCase()) {
@@ -74,7 +141,7 @@ function findInTree(tree: Category[], values: string[], index = 0): any {
       return findInTree(node.children, values, index + 1)
     }
   }
-  return {}
+  return null
 }
 /** Get Category metadata for the search/productSearch query
  *
@@ -84,7 +151,7 @@ const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<M
   const category = findInTree(
     await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
     query.split('/')
-  )
+  ) || {}
   return {
     metaTagDescription: path(['MetaTagDescription'], category),
     titleTag: path(['Title'], category) || path(['Name'], category),
@@ -94,17 +161,8 @@ const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<M
  *
  */
 const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
-  const brands = await queries.brands(_, { ...args }, ctx)
-  const brandName = toLower(last(args.query.split('/')) || '')
-  const brand = find(
-    compose(
-      equals(brandName),
-      toLower,
-      Slugify,
-      prop('name') as any
-    ),
-    brands
-  ) || {}
+  const brandSlug = toLower(last(args.query.split('/')) || '')
+  const brand = getBrandFromSlug(brandSlug, ctx) || {}
   return {
     metaTagDescription: path(['metaTagDescription'], brand),
     titleTag: path(['title'], brand) || path(['name'], brand),
@@ -276,11 +334,14 @@ export const queries = {
       translatedArgs,
       ctx
     )
+    const breadcrumb = await buildBreadCrumb(args, products, ctx)
+    
     return {
       titleTag,
       metaTagDescription,
       products,
       recordsFiltered,
+      breadcrumb,
     }
   },
 
@@ -355,7 +416,7 @@ export const queries = {
 
     if (args.brand) {
       const brands = await catalog.brands()
-      const found = brands.find(brand => brand.isActive && Slugify(brand.name) === args.brand)
+      const found = brands.find(brand => brand.isActive && CatalogSlugify(brand.name) === args.brand)
       response.brand = found ? found.id : null
     }
 
