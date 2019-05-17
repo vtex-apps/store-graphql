@@ -1,5 +1,5 @@
 import { compose, last, split, find, equals, toLower, prop } from 'ramda'
-import { CatalogSlugify } from './slug';
+import { catalogSlugify } from './slug';
 const lastSegment = compose<string, string[], string>(
   last,
   split('/')
@@ -24,7 +24,7 @@ export const getBrandFromSlug = async (brandSlug: string, {dataSources:{catalog}
     compose(
       equals(brandSlug),
       toLower,
-      CatalogSlugify,
+      catalogSlugify,
       prop('name') as any
     ),
     brands
