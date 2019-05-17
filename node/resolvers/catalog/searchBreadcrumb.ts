@@ -23,28 +23,27 @@ export const resolvers = {
     name: async (obj: BreadcrumbParams, _: any, ctx: Context) => {
       const {clients: {segment}} = ctx
       const { queryUnit, mapUnit, index, queryArray, categories, categoriesSearched, products } = obj
-      let name = queryArray[index]
+      const defaultName = queryArray[index]
       if (mapUnit === 'c') {
         const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
         const category = findCategoryInTree(categories, categoriesSearched.slice(0, queryPosition + 1))
         if (category) {
           const nameIoMessage = await toCategoryIOMessage('name')(segment, category.name, category.id)
-          name = nameIoMessage.content
+          return nameIoMessage.content
         }
         // if cant find a category, we should try to see if its a product cluster
         const clusterName = findClusterNameFromId(products, queryUnit)
-        name = clusterName || name
+        return clusterName || defaultName
       }
       if (mapUnit === 'b') {
         const brand = await getBrandFromSlug(toLower(queryUnit), ctx) || {}
-        name = brand.name || name
+        return brand.name || defaultName
       }
-      return name
+      return defaultName
     },
     href: async (obj: BreadcrumbParams) => {
       const { index, queryArray, mapArray } = obj
-      const isLast = index === mapArray.length - 1
-      return isLast ? null : '/' + queryArray.slice(0, index + 1).join('/') + '?map=' + mapArray.slice(0, index + 1)
+      return '/' + queryArray.slice(0, index + 1).join('/') + '?map=' + mapArray.slice(0, index + 1)
     }
   }
 }
