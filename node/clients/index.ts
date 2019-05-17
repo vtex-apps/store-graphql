@@ -5,6 +5,7 @@ import { Catalog } from './catalog'
 import { Checkout } from './checkout'
 import { MasterData } from './masterdata'
 import { ProfileClient } from './profile'
+import { OMS } from './oms'
 
 export class Clients extends IOClients {
   public get masterdata() {
@@ -25,5 +26,9 @@ export class Clients extends IOClients {
 
   public get profile() {
     return this.getOrSet('profile', ProfileClient)
+  }
+  
+  public get oms() {
+    return this.getOrSet('oms', OMS)
   }
 }
