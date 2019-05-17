@@ -18,6 +18,8 @@ const findClusterNameFromId = (products: Product[], clusterId: string) => {
   return productWithCluster && productWithCluster.productClusters[clusterId]
 }
 
+const sliceAndJoin = (array: string[], max: number, joinChar: string) => array.slice(0, max).join(joinChar)
+
 export const resolvers = {
   SearchBreadcrumb: {
     name: async (obj: BreadcrumbParams, _: any, ctx: Context) => {
@@ -41,9 +43,7 @@ export const resolvers = {
       }
       return defaultName
     },
-    href: async (obj: BreadcrumbParams) => {
-      const { index, queryArray, mapArray } = obj
-      return '/' + queryArray.slice(0, index + 1).join('/') + '?map=' + mapArray.slice(0, index + 1)
-    }
+    href: ({ index, queryArray, mapArray }: BreadcrumbParams) =>
+      `/${sliceAndJoin(queryArray, index+1, '/')}?map=${sliceAndJoin(mapArray, index+1, ',')}`
   }
 }
