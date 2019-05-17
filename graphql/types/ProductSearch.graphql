@@ -7,6 +7,6 @@ type ProductSearch {
 }
 
 type SearchBreadcrumb {
-  name: String!
+  name: IOMessage
   href: String
 }
