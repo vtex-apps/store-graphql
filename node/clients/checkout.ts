@@ -1,10 +1,4 @@
-import {
-  InstanceOptions,
-  IOContext,
-  JanusClient,
-  RequestConfig,
-} from '@vtex/api'
-
+import { InstanceOptions, IOContext, JanusClient, RequestConfig } from '@vtex/api'
 import { checkoutCookieFormat, statusToError } from '../utils'
 
 export interface SimulationData {
