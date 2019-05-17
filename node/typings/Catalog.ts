@@ -29,7 +29,10 @@ interface Category {
   id: string
   name: string
   url: string
+  hasChildren: boolean
   children: Category[]
+  MetaTagDescription: string
+  Title: string
 }
 
 interface FacetsArgs {
@@ -37,4 +40,24 @@ interface FacetsArgs {
   query: string
   map: string
   hideUnavailableItems: boolean
+}
+
+interface Product {
+  productId: string
+  productName: string
+  brand: string
+  brandId: number
+  linkText: string
+  productReference: string
+  categoryId: string
+  productTitle: string
+  metaTagDescription: string
+  clusterHighlights: Record<string, string>
+  productClusters: Record<string, string>
+  searchableClusters: Record<string, string>
+  categories: string[]
+  categoriesIds: string[]
+  link: string
+  description: string
+  items: any[]
 }

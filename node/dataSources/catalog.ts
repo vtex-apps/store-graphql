@@ -58,7 +58,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-productBySku'}
   )
 
-  public products = (args: ProductsArgs) => this.get(
+  public products = (args: ProductsArgs) => this.get<Product[]>(
     this.productSearchUrl(args),
     {metric: 'catalog-products'}
   )
