@@ -6,7 +6,6 @@ import {
   find,
   head,
   last,
-  merge,
   path,
   prop,
   split,
@@ -57,14 +56,8 @@ const getBrandFromSlug = async (brandSlug: string, {dataSources:{catalog}}: Cont
 }
 
 const findClusterNameFromId = (products: Product[], clusterId: string) => {
-  // Slice only the first fifty to prevent problem if this products array eventually get to thousands of units
-  const allSearchableClusters = 
-    products.slice(0, 50).reduce<Record<string, string>>((acc, prod) => {
-      const { searchableClusters } = prod
-      return merge(acc, searchableClusters)
-    }, 
-    {})
-  return allSearchableClusters[clusterId]
+  const productWithCluster = products.find(({ productClusters }) => !!productClusters[clusterId])
+  return productWithCluster && productWithCluster.productClusters[clusterId]
 }
 
 const buildBreadCrumb = async ({ query, map }: ProductsArgs, products: Product[], ctx: Context) => {
