@@ -30,8 +30,7 @@ export const resolvers = {
         const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
         const category = findCategoryInTree(categories, categoriesSearched.slice(0, queryPosition + 1))
         if (category) {
-          const nameIoMessage = await toCategoryIOMessage('name')(segment, category.name, category.id)
-          return nameIoMessage.content
+          return toCategoryIOMessage('name')(segment, category.name, category.id)
         }
         // if cant find a category, we should try to see if its a product cluster
         const clusterName = findClusterNameFromId(products, queryUnit)
