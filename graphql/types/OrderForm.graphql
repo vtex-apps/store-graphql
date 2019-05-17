@@ -63,6 +63,8 @@ type OrderFormItem {
   seller: String
   """ Item index on cart """
   cartIndex: Int
+  """ Category ids on orderFormItem """
+  productCategoryIds: String
 }
 
 type AssemblyOptionItem {
