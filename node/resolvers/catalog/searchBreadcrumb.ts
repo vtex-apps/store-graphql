@@ -20,7 +20,7 @@ const findClusterNameFromId = (products: Product[], clusterId: string) => {
 
 export const resolvers = {
   SearchBreadcrumb: {
-    name: async (obj: BreadcrumbParams, args: any, ctx: Context) => {
+    name: async (obj: BreadcrumbParams, _: any, ctx: Context) => {
       const {clients: {segment}} = ctx
       const { queryUnit, mapUnit, index, queryArray, categories, categoriesSearched, products } = obj
       let name = queryArray[index]

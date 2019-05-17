@@ -28,7 +28,7 @@ import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as productSearchResolvers } from './productSearch'
-import { CatalogSlugify } from './slug'
+import { catalogSlugify } from './slug'
 import { findCategoryInTree, getBrandFromSlug } from './utils'
 
 interface SearchContext {
@@ -326,7 +326,7 @@ export const queries = {
 
     if (args.brand) {
       const brands = await catalog.brands()
-      const found = brands.find(brand => brand.isActive && CatalogSlugify(brand.name) === args.brand)
+      const found = brands.find(brand => brand.isActive && catalogSlugify(brand.name) === args.brand)
       response.brand = found ? found.id : null
     }
 
