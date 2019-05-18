@@ -270,17 +270,21 @@ export const queries = {
       query,
     }
     const products = await queries.products(_, translatedArgs, ctx)
-    const recordsFiltered = await catalog.productsQuantity(translatedArgs)
+    const pagingInfo = await catalog.productsPaging(translatedArgs)
     const { titleTag, metaTagDescription } = await searchMetaData(
       _,
       translatedArgs,
       ctx
     )
+    console.log('-------------------------------')
+    console.log('paging ' + JSON.stringify(pagingInfo))
+    console.log('-------------------------------')
     return {
       titleTag,
       metaTagDescription,
       products,
-      recordsFiltered,
+      recordsFiltered: pagingInfo.total,
+      paging: pagingInfo
     }
   },
 

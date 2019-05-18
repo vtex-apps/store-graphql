@@ -69,6 +69,23 @@ export class CatalogDataSource extends IODataSource {
     return parseInt(quantity, 10)
   }
 
+  public productsPaging = async (args: ProductsArgs) => {
+    const {headers: {resources}} = await this.getRaw(this.productSearchUrl(args))
+
+    const [ resource, total ] = resources.split('/')
+    const [ start, end ] = resource.split('-')
+    const perPage = (!args.from && args.from !== 0 && !args.to && args.to !== 0)? 0: args.to - args.from + 1
+
+    return {
+      total,
+      perPage,
+      pages: perPage? Math.ceil(total / perPage) : 0,
+      page: perPage? Math.ceil(args.from / perPage) + 1 : 0,
+      _from: (!args.from && args.from !== 0)? start: args.from,
+      _to: (!args.to && args.to !== 0)? end: args.to,
+    }
+  }
+
   public brands = () => this.get<Brand[]>(
     '/pub/brand/list',
     {metric: 'catalog-brands'}

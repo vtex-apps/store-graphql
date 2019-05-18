@@ -3,4 +3,5 @@ type ProductSearch {
   recordsFiltered: Int
   titleTag: String
   metaTagDescription: String
+  paging: Paging
 }
