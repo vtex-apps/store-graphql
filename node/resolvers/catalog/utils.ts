@@ -20,7 +20,7 @@ export function findCategoryInTree(tree: Category[], values: string[], index = 0
 
 export const getBrandFromSlug = async (brandSlug: string, {dataSources:{catalog}}: Context)  => {
   const brands = await catalog.brands()
-  return <Brand>find(
+  return find<Brand>(
     compose(
       equals(brandSlug),
       toLower,

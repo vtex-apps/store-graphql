@@ -39,8 +39,8 @@ export const resolvers = {
         }
       }
       if (mapUnit === 'b') {
-        const brand = await getBrandFromSlug(toLower(queryUnit), ctx) || {}
-        return brand.name || defaultName
+        const brand = await getBrandFromSlug(toLower(queryUnit), ctx)
+        return brand ? brand.name : defaultName
       }
       return defaultName
     },
