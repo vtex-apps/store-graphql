@@ -95,7 +95,7 @@ const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Meta
  * @param args
  * @param ctx
  */
-const searchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
+const getSearchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
   const { map } = args
   const lastMap = last(map.split(','))
 
@@ -247,10 +247,13 @@ export const queries = {
       ...args,
       query,
     }
-    const products = await queries.products(_, translatedArgs, ctx)
+    const [products, searchMetaData] = await all([
+      queries.products(_, translatedArgs, ctx),
+      getSearchMetaData(_, translatedArgs, ctx),
+    ])
     return {
       translatedArgs,
-      searchMetaData: await searchMetaData(_, translatedArgs, ctx),
+      searchMetaData,
       products,
     }
   },
@@ -300,7 +303,7 @@ export const queries = {
       throw new UserInputError('Search query/map cannot be null')
     }
 
-    const { titleTag, metaTagDescription }: any = await searchMetaData(
+    const { titleTag, metaTagDescription }: any = await getSearchMetaData(
       _,
       args,
       ctx
