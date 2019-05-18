@@ -81,7 +81,7 @@ const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<M
  */
 const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
   const brandSlug = toLower(last(args.query.split('/')) || '')
-  const brand = getBrandFromSlug(brandSlug, ctx) || {}
+  const brand = await getBrandFromSlug(brandSlug, ctx) || {}
   return {
     metaTagDescription: path(['metaTagDescription'], brand),
     titleTag: path(['title'], brand) || path(['name'], brand),
