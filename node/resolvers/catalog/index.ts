@@ -26,7 +26,10 @@ import { resolvers as productResolvers } from './product'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as skuResolvers } from './sku'
-import { Slugify } from './slug'
+import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
+import { resolvers as productSearchResolvers } from './productSearch'
+import { catalogSlugify } from './slug'
+import { findCategoryInTree, getBrandFromSlug } from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -59,32 +62,15 @@ export const extractSlug = (item: any) => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-const lastSegment = compose<string, string[], string>(
-  last,
-  split('/')
-)
-
-function findInTree(tree: Category[], values: string[], index = 0): any {
-  for (const node of tree) {
-    const slug = lastSegment(node.url)
-    if (slug.toUpperCase() === values[index].toUpperCase()) {
-      if (index === values.length - 1) {
-        return node
-      }
-      return findInTree(node.children, values, index + 1)
-    }
-  }
-  return {}
-}
 /** Get Category metadata for the search/productSearch query
  *
  */
 const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
   const { query } = args
-  const category = findInTree(
+  const category = findCategoryInTree(
     await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
     query.split('/')
-  )
+  ) || {}
   return {
     metaTagDescription: path(['MetaTagDescription'], category),
     titleTag: path(['Title'], category) || path(['Name'], category),
@@ -94,17 +80,8 @@ const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<M
  *
  */
 const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
-  const brands = await queries.brands(_, { ...args }, ctx)
-  const brandName = toLower(last(args.query.split('/')) || '')
-  const brand = find(
-    compose(
-      equals(brandName),
-      toLower,
-      Slugify,
-      prop('name') as any
-    ),
-    brands
-  ) || {}
+  const brandSlug = toLower(last(args.query.split('/')) || '')
+  const brand = await getBrandFromSlug(brandSlug, ctx) || {}
   return {
     metaTagDescription: path(['metaTagDescription'], brand),
     titleTag: path(['title'], brand) || path(['name'], brand),
@@ -118,7 +95,7 @@ const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Meta
  * @param args
  * @param ctx
  */
-const searchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
+const getSearchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
   const { map } = args
   const lastMap = last(map.split(','))
 
@@ -166,6 +143,8 @@ export const fieldResolvers = {
   ...recommendationResolvers,
   ...searchResolvers,
   ...skuResolvers,
+  ...breadcrumbResolvers,
+  ...productSearchResolvers,
 }
 
 export const queries = {
@@ -261,7 +240,6 @@ export const queries = {
 
   productSearch: async (_: any, args: ProductsArgs, ctx: Context) => {
     const {
-      dataSources: { catalog },
       clients,
     } = ctx
     const query = await translateToStoreDefaultLanguage(clients, args.query)
@@ -269,18 +247,14 @@ export const queries = {
       ...args,
       query,
     }
-    const products = await queries.products(_, translatedArgs, ctx)
-    const recordsFiltered = await catalog.productsQuantity(translatedArgs)
-    const { titleTag, metaTagDescription } = await searchMetaData(
-      _,
-      translatedArgs,
-      ctx
-    )
+    const [products, searchMetaData] = await all([
+      queries.products(_, translatedArgs, ctx),
+      getSearchMetaData(_, translatedArgs, ctx),
+    ])
     return {
-      titleTag,
-      metaTagDescription,
+      translatedArgs,
+      searchMetaData,
       products,
-      recordsFiltered,
     }
   },
 
@@ -329,7 +303,7 @@ export const queries = {
       throw new UserInputError('Search query/map cannot be null')
     }
 
-    const { titleTag, metaTagDescription }: any = await searchMetaData(
+    const { titleTag, metaTagDescription }: any = await getSearchMetaData(
       _,
       args,
       ctx
@@ -355,7 +329,7 @@ export const queries = {
 
     if (args.brand) {
       const brands = await catalog.brands()
-      const found = brands.find(brand => brand.isActive && Slugify(brand.name) === args.brand)
+      const found = brands.find(brand => brand.isActive && catalogSlugify(brand.name) === args.brand)
       response.brand = found ? found.id : null
     }
 
