@@ -65,6 +65,8 @@ type OrderFormItem {
   cartIndex: Int
   """ Category ids on orderFormItem """
   productCategoryIds: String
+  """ Price tags on orderFormItem """
+  priceTags: []
 }
 
 type AssemblyOptionItem {
