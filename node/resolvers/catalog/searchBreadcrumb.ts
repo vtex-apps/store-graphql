@@ -26,6 +26,12 @@ export const resolvers = {
       const {clients: {segment}} = ctx
       const { queryUnit, mapUnit, index, queryArray, categories, categoriesSearched, products } = obj
       const defaultName = queryArray[index]
+      if (mapUnit === 'productClusterIds') {
+        const clusterName = findClusterNameFromId(products, queryUnit)
+        if (clusterName) {
+          return toClusterIOMessage(segment, clusterName, queryUnit)
+        }
+      }
       if (mapUnit === 'c') {
         const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
         const category = findCategoryInTree(categories, categoriesSearched.slice(0, queryPosition + 1))
