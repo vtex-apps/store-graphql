@@ -50,7 +50,15 @@ export const resolvers = {
       }
       return defaultName
     },
-    href: ({ index, queryArray, mapArray }: BreadcrumbParams) =>
-      `/${sliceAndJoin(queryArray, index+1, '/')}?map=${sliceAndJoin(mapArray, index+1, ',')}`
+    href: ({ index, queryArray, mapArray, mapUnit, queryUnit }: BreadcrumbParams) => {
+      if (index === 0 && mapUnit === 'c') {
+        return `/${queryUnit}/d`
+      }
+      if (index === 0 && mapUnit === 'b') {
+        return `/${queryUnit}/b`
+      }
+      return `/${sliceAndJoin(queryArray, index+1, '/')}?map=${sliceAndJoin(mapArray, index+1, ',')}`
+    }
+      
   }
 }
