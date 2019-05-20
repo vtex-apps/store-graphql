@@ -276,9 +276,7 @@ export const queries = {
       translatedArgs,
       ctx
     )
-    console.log('-------------------------------')
-    console.log('paging ' + JSON.stringify(pagingInfo))
-    console.log('-------------------------------')
+
     return {
       titleTag,
       metaTagDescription,
