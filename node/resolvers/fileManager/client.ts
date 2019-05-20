@@ -29,7 +29,7 @@ const routes = {
 }
 
 export default class FileManagerClient extends AppClient {
-  constructor(ioContext: IOContext, options: InstanceOptions = {}) {
+  public constructor(ioContext: IOContext, options: InstanceOptions = {}) {
     super('vtex.file-manager', ioContext, { ...options, timeout: 5000 })
 
     if (runningAppName === '') {
@@ -39,7 +39,7 @@ export default class FileManagerClient extends AppClient {
     }
   }
 
-  getFile = async (
+  public getFile = async (
     path: string,
     width: number,
     height: number,
@@ -59,7 +59,7 @@ export default class FileManagerClient extends AppClient {
     }
   }
 
-  getFileUrl = async (path: string, bucket: string) => {
+  public getFileUrl = async (path: string, bucket: string) => {
     try {
       return await this.http.get(routes.FileUrl(bucket, path))
     } catch (e) {
@@ -71,7 +71,7 @@ export default class FileManagerClient extends AppClient {
     }
   }
 
-  saveFile = async (file: IncomingFile, stream: any, bucket: string) => {
+  public saveFile = async (file: IncomingFile, stream: any, bucket: string) => {
     try {
       const { filename, encoding, mimetype } = file
       const headers = {
@@ -91,7 +91,7 @@ export default class FileManagerClient extends AppClient {
     }
   }
 
-  deleteFile = async (path: string, bucket: string) => {
+  public deleteFile = async (path: string, bucket: string) => {
     try {
       return await this.http.delete(routes.FileDelete(bucket, path))
     } catch (e) {
