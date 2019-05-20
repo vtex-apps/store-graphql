@@ -30,6 +30,12 @@ export const toFacetIOMessage = (segment: Segment, content: string, id: string) 
   `SpecificationFilter-id.${id}::${content}`
 )
 
+export const toClusterIOMessage = (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `ProductCluster-id.${id}::${content}`
+)
+
 export const toSearchTerm = (term: string, from: string, description: string = '') => ({
   id: `Search::${Slugify(term)}`,
   description,
