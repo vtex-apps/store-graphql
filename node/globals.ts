@@ -58,6 +58,7 @@ declare global {
     parentItemIndex: number
     parentAssemblyBinding: string
     productCategoryIds: string
+    priceTags: []
   }
 
   interface UserAddress {
