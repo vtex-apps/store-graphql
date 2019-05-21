@@ -8,7 +8,7 @@ export const queries = {
       clients: { masterdata },
     } = context
     const fieldsWithId = union(fields, ['id'])
-    const data = await masterdata.searchDocuments(
+    const data = (await masterdata.searchDocuments<any>(
       acronym,
       fieldsWithId,
       where,
@@ -16,7 +16,8 @@ export const queries = {
         page,
         pageSize,
       }
-    )
+    )) as any[]
+
     return map((document: any) => ({
       cacheId: document.id,
       id: document.id,
@@ -51,10 +52,11 @@ export const mutations = {
     const {
       clients: { masterdata },
     } = context
-    const response = await masterdata.createDocument(
+    const response = (await masterdata.createDocument(
       acronym,
       parseFieldsToJson(fields)
-    )
+    )) as DocumentResponse
+
     const documentId = removeAcronymFromId(acronym, response)
     return {
       cacheId: documentId,
