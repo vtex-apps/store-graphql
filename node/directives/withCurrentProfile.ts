@@ -122,13 +122,12 @@ async function validatedProfile(
 
 function isValidCallcenterOperator(context: Context, email: string) {
   const {
-    dataSources: { licenseManager },
-    clients: { callCenterOperator },
+    clients: { callCenterOperator, licenseManager },
   } = context
 
   return licenseManager
-    .getAccountId()
-    .then(id =>
+    .getAccountData()
+    .then(({ id }: any) =>
       callCenterOperator.isValidCallcenterOperator({ email, accountId: id })
     )
 }
