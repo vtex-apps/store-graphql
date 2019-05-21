@@ -55,10 +55,11 @@ const getListItems = async (
 }
 
 const addListItem = async (item: Item, masterdata: MasterData) => {
-  const { Id } = await masterdata.createDocument(
+  const { Id } = (await masterdata.createDocument(
     acronymListProduct,
     mapKeyValues({ ...item }) as any
-  )
+  )) as DocumentResponse
+
   return Id
 }
 
@@ -137,12 +138,14 @@ export const queries = {
       dataSources: { catalog },
       clients: { masterdata },
     } = context
-    const lists = await masterdata.searchDocuments(
+
+    const lists = (await masterdata.searchDocuments<any>(
       acronymList,
       fields,
       `owner=${owner}`,
       { page, pageSize }
-    )
+    )) as any[]
+
     const listsWithProducts = map(async list => {
       const items = await getListItems(
         path(['items'], list) || [],
@@ -151,6 +154,7 @@ export const queries = {
       )
       return { ...list, items }
     }, lists)
+
     return Promise.all(listsWithProducts)
   },
 }
@@ -166,10 +170,14 @@ export const mutation = {
     } = context
     try {
       const itemsId = await addItems(items, masterdata)
-      const { Id } = await masterdata.createDocument(
-        acronymList,
-        mapKeyValues({ ...list, items: itemsId }) as any
-      )
+
+      const { Id } = (await masterdata.createDocument(acronymList, mapKeyValues(
+        {
+          ...list,
+          items: itemsId,
+        }
+      ) as any)) as DocumentResponse
+
       return queries.list(_, { id: Id }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)
@@ -181,8 +189,10 @@ export const mutation = {
     { id }: any,
     { clients: { masterdata } }: Context
   ) => {
-    const { items } = await masterdata.getDocument(acronymList, id, fields)
+    const { items } = await masterdata.getDocument<any>(acronymList, id, fields)
+
     await deleteItems(items, masterdata)
+
     return masterdata.deleteDocument(acronymList, id)
   },
 
