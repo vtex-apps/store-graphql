@@ -5,7 +5,7 @@ import {
   RequestConfig,
 } from '@vtex/api'
 
-import { statusToError } from './utils'
+import { statusToError } from '../utils'
 
 export class CallCenterOperator extends ExternalClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
