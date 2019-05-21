@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Ported CallCenterOpDataSource to CallCenterOp IOClient
+- Ported CallCenterOpDataSource to CallCenterOp IOClient.
 
 ## [2.75.0] - 2019-05-20
 
