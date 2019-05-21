@@ -59,6 +59,7 @@ declare global {
     parentAssemblyBinding: string
     productCategoryIds: string
     priceTags: []
+    measurementUnit: string
   }
 
   interface UserAddress {
