@@ -2,12 +2,13 @@ import { AxiosError } from 'axios'
 import { AuthenticationError, ForbiddenError, UserInputError } from '@vtex/api'
 
 export function statusToError(e: any) {
-  console.log('error', e)
   if (!e.response) {
     throw e
   }
+
   const { response } = e as AxiosError
   const { status } = response!
+
   if (status === 401) {
     throw new AuthenticationError(e)
   }
@@ -17,5 +18,6 @@ export function statusToError(e: any) {
   if (status === 400) {
     throw new UserInputError(e)
   }
+
   throw e
 }
