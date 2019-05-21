@@ -4,26 +4,21 @@ import { parseFieldsToJson } from '../../utils/object'
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
-    const { acronym, fields, page, pageSize, where } = args
-    const {
-      clients: { masterdata },
-    } = context
+    const { acronym, fields, page, pageSize, where, schema } = args
+    const { clients: { masterdata } } = context
     const fieldsWithId = union(fields, ['id'])
-    const data = (await masterdata.searchDocuments<any>(
-      acronym,
-      fieldsWithId,
-      where,
-      {
-        page,
-        pageSize,
-      }
-    )) as any[]
-
-    return map((document: any) => ({
-      cacheId: document.id,
-      id: document.id,
-      fields: mapKeyAndStringifiedValues(document),
-    }))(data)
+    const data = await masterdata.searchDocuments(acronym, fieldsWithId, where, {
+      page,
+      pageSize,
+    }, schema) as any
+    return map(
+      (document: any) =>
+      ({
+        cacheId: document.id,
+        id: document.id,
+        fields: mapKeyAndStringifiedValues(document)
+      })
+    )(data)
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
