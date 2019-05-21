@@ -1,14 +1,13 @@
 import {
-  AuthenticationError,
-  ForbiddenError,
   InstanceOptions,
   IOContext,
   ExternalClient,
   RequestConfig,
   UserInputError,
 } from '@vtex/api'
-import { AxiosError } from 'axios'
 import FormData from 'form-data'
+
+import { statusToError } from '../utils'
 
 export class MasterData extends ExternalClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -26,7 +25,6 @@ export class MasterData extends ExternalClient {
       },
     })
   }
-
 
   public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
     this.get<T>(this.routes.document(acronym, id), {
@@ -99,24 +97,6 @@ export class MasterData extends ExternalClient {
       search: (acronym: string) => `${acronym}/search`,
     }
   }
-}
-
-const statusToError = (e: any) => {
-  if (!e.response) {
-    throw e
-  }
-  const { response } = e as AxiosError
-  const { status } = response!
-  if (status === 401) {
-    throw new AuthenticationError(e)
-  }
-  if (status === 403) {
-    throw new ForbiddenError(e)
-  }
-  if (status === 400) {
-    throw new UserInputError(e)
-  }
-  throw e
 }
 
 function paginationArgsToHeaders({ page, pageSize }: PaginationArgs) {
