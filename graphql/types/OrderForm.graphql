@@ -67,6 +67,8 @@ type OrderFormItem {
   productCategoryIds: String
   """ Price tags on orderFormItem """
   priceTags: []
+  """ measurementUnit on orderFormItem """
+  measurementUnit: String
 }
 
 type AssemblyOptionItem {
