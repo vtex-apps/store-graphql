@@ -1,3 +1,4 @@
+import { UserInputError } from '@vtex/api'
 import { compose, map, union, prop, replace } from 'ramda'
 import { parseFieldsToJson } from '../../utils/object'
 
@@ -76,6 +77,9 @@ export const mutations = {
       document: { fields },
     } = args
     const documentId = prop('id', parseFieldsToJson(fields)) as string
+    if (!documentId) {
+      throw new UserInputError('document id field cannot be null/undefined')
+    }
     const {
       clients: { masterdata },
       vtex: { account },
