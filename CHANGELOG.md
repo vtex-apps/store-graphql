@@ -6,10 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Throw error in `updateDocument` resolver if `id` field is null
 
 ## [2.75.2] - 2019-05-21
 ### Fixed
-
 - Use both slugify methods to find brand data on catalog queries.
 
 ## [2.75.1] - 2019-05-21
