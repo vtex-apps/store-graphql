@@ -49,8 +49,17 @@ const getSessionMarketingParams = (sesionData: SessionFields) => ({
   utmi_page: path(['utmiParams', 'page'], sesionData),
 })
 
+interface OrderFormMarketingData {
+  utmCampaign?: string
+  utmMedium?: string
+  utmSource?: string
+  utmiCampaign?: string
+  utmiPart?: string
+  utmipage?: string
+}
+
 const shouldUpdateMarketingData = (
-  orderFormMarketingTags: any,
+  orderFormMarketingTags: OrderFormMarketingData,
   sessionData: SessionFields
 ) => {
   const {
