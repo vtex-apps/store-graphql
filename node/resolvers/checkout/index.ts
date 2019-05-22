@@ -1,5 +1,4 @@
-import { addIndex, compose, forEach, map, reject } from 'ramda'
-import { SegmentData } from '../../dataSources/session'
+import { addIndex, compose, forEach, map, reject, path } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -41,14 +40,43 @@ const isWhitelistedSetCookie = (cookie: string) => {
  */
 const convertIntToFloat = (int: any) => int * 0.01
 
-const shouldUpdateMarketingData = (orderFormMarketingTags: any, segmentData: SegmentData) => {
-  const {utmSource=null, utmCampaign=null, utmiCampaign=null} = orderFormMarketingTags || {}
-  const {utm_source, utm_campaign, utmi_campaign} = segmentData
+const getSessionMarketingParams = (sesionData: SessionFields) => ({
+  utm_source: path(['utmParams', 'source'], sesionData),
+  utm_campaign: path(['utmParams', 'campaign'], sesionData),
+  utm_medium: path(['utmParams', 'medium'], sesionData),
+  utmi_campaign: path(['utmiParams', 'campaign'], sesionData),
+  utmi_part: path(['utmiParams', 'part'], sesionData),
+  utmi_page: path(['utmiParams', 'page'], sesionData),
+})
 
-  return (utm_source || utm_campaign || utmi_campaign)
-    && (utmSource !== utm_source
-    || utmCampaign !== utm_campaign
-    || utmiCampaign !== utmi_campaign)
+const shouldUpdateMarketingData = (
+  orderFormMarketingTags: any,
+  sessionData: SessionFields
+) => {
+  const {
+    utmCampaign = null,
+    utmMedium = null,
+    utmSource = null,
+    utmiCampaign = null,
+    utmiPart = null,
+    utmipage = null,
+  } = orderFormMarketingTags || {}
+  const params = getSessionMarketingParams(sessionData)
+
+  return (
+    (params.utm_source ||
+      params.utm_campaign ||
+      params.utm_medium ||
+      params.utmi_campaign ||
+      params.utmi_part ||
+      params.utmi_page) &&
+    (utmCampaign !== params.utm_campaign ||
+      utmMedium !== params.utm_medium ||
+      utmSource !== params.utm_source ||
+      utmiCampaign !== params.utmi_campaign ||
+      utmiPart !== params.utmi_part ||
+      utmipage !== params.utmi_page)
+  )
 }
 
 type Resolver<TArgs=any, TRoot=any> =
@@ -122,22 +150,27 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, {orderFormId, items}, {clients: {segment, checkout}}) => {
-    const [{marketingData}, segmentData] = await Promise.all([
+  addItem: async (root, {orderFormId, items}, ctx) => {
+    const {clients: {checkout}} = ctx
+    const [{marketingData}, sessionData] = await Promise.all([
       checkout.orderForm() as any,
-      segment.getSegment().catch((err) => {
-        // todo: log error using colossus
-        console.error(err)
-        return {} as SegmentData
-      })
+      sessionQueries.getSession(root, {}, ctx)
+        .catch((err) => {
+          // todo: log error using colossus
+          console.error(err)
+          return {} as SessionFields
+        }) as SessionFields
     ])
 
-    if (shouldUpdateMarketingData(marketingData, segmentData)) {
+    if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
         ...marketingData || {},
-        utmCampaign: segmentData.utm_campaign,
-        utmSource: segmentData.utm_source,
-        utmiCampaign: segmentData.utmi_campaign,
+        utmCampaign: path(['utmParams', 'campaign'], sessionData),
+        utmMedium: path(['utmParams', 'medium'], sessionData),
+        utmSource: path(['utmParams', 'source'], sessionData),
+        utmiCampaign: path(['utmiParams', 'campaign'], sessionData),
+        utmiPart: path(['utmiParams', 'part'], sessionData),
+        utmipage: path(['utmiParams', 'page'], sessionData),
       }
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
     }
