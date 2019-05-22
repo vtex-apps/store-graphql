@@ -128,6 +128,7 @@ declare global {
 
   interface PersonalPreferences {
     isNewsletterOptIn?: 'True' | 'False'
+    firstName?: string
   }
 
   interface ProfileCustomField {
