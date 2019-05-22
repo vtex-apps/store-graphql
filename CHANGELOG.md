@@ -7,11 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.76.0] - 2019-05-22
+
+### Fixed
+
+- UTM and UTMI params in orderform.
+
+### Added
+
+- New field `utmParams` to query `getSession`.
+- New field `utmiParams` to query `getSession`.
+
 ## [2.75.3] - 2019-05-22
+
 ### Fixed
 - Throw error in `updateDocument` resolver if `id` field is null
 
 ## [2.75.2] - 2019-05-21
+
 ### Fixed
 - Use both slugify methods to find brand data on catalog queries.
 
