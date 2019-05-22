@@ -20,6 +20,7 @@ export interface SessionFields {
   address?: any
   profile?: ProfileFields
   utmParams?: UtmParams
+  utmiParams?: UtmiParams
   public?: {
     [key: string]: {
       value: string
@@ -33,6 +34,12 @@ interface UtmParams {
   campaign?: string
   term?: string
   content?: string
+}
+
+interface UtmiParams {
+  campaign?: string
+  page?: string
+  part?: string
 }
 
 const convertToBool = (str: any) => !!str && toLower(str) === 'true'
@@ -72,6 +79,12 @@ const setUtmParams = (publicFields: SessionPublic) => ({
   content: path(['utm_content', 'value'], publicFields),
 })
 
+const setUtmiParams = (publicFields: SessionPublic) => ({
+  campaign: path(['utmi_cp', 'value'], publicFields),
+  page: path(['utmi_p', 'value'], publicFields),
+  part: path(['utmi_pc', 'value'], publicFields),
+})
+
 export const sessionFields = (session: Session): SessionFields | {} => {
   const { namespaces } = session
   return namespaces
@@ -93,6 +106,7 @@ export const sessionFields = (session: Session): SessionFields | {} => {
           ...setProfileData(namespaces.profile, namespaces.impersonate),
         },
         utmParams: setUtmParams(namespaces.public),
+        utmiParams: setUtmiParams(namespaces.public),
         orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
         ...setProfileData(namespaces.profile, namespaces.authentication),
       }
@@ -138,4 +152,7 @@ interface SessionPublic {
   utm_campaign?: ObjValue
   utm_term?: ObjValue
   utm_content?: ObjValue
+  utmi_cp?: ObjValue
+  utmi_pc?: ObjValue
+  utmi_p?: ObjValue
 }

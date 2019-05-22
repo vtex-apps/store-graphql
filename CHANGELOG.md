@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - New field `utmParams` to query `getSession`.
+- New field `utmiParams` to query `getSession`.
 
 ## [2.75.3] - 2019-05-22
 
