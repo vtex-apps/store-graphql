@@ -66,7 +66,7 @@ type OrderFormItem {
   """ Category ids on orderFormItem """
   productCategoryIds: String
   """ Price tags on orderFormItem """
-  priceTags: []
+  priceTags: [String]
   """ measurementUnit on orderFormItem """
   measurementUnit: String
 }
