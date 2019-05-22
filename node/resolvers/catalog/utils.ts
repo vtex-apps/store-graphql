@@ -1,5 +1,5 @@
-import { compose, last, split, find, equals, toLower, prop } from 'ramda'
-import { catalogSlugify } from './slug';
+import { compose, last, split, toLower } from 'ramda'
+import { catalogSlugify, Slugify } from './slug';
 const lastSegment = compose<string, string[], string>(
   last,
   split('/')
@@ -20,13 +20,7 @@ export function findCategoryInTree(tree: Category[], values: string[], index = 0
 
 export const getBrandFromSlug = async (brandSlug: string, {dataSources:{catalog}}: Context)  => {
   const brands = await catalog.brands()
-  return find<Brand>(
-    compose(
-      equals(brandSlug),
-      toLower,
-      catalogSlugify,
-      prop('name') as any
-    ),
-    brands
+  return brands.find(brand => 
+    toLower(catalogSlugify(brand.name)) === brandSlug || toLower(Slugify(brand.name)) === brandSlug
   )
 }
