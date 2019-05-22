@@ -1,9 +1,13 @@
-import { IOClients, IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
+import {
+  IOContext,
+  MetricsAccumulator,
+  SegmentData,
+  ServiceContext,
+} from '@vtex/api'
 
+import { Clients } from './clients'
 import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
-import { CheckoutDataSource } from './dataSources/checkout'
-import { DocumentDataSource } from './dataSources/document'
 import { IdentityDataSource } from './dataSources/identity'
 import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
@@ -17,7 +21,7 @@ if (!global.metrics) {
 }
 
 declare global {
-  type Context = ServiceContext<IOClients, void, CustomContext>
+  type Context = ServiceContext<Clients, void, CustomContext>
 
   interface CustomContext {
     cookie: string
@@ -29,12 +33,11 @@ declare global {
   interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
     segment?: SegmentData
+    orderFormId?: string
   }
 
   interface StoreGraphQLDataSources {
     catalog: CatalogDataSource
-    checkout: CheckoutDataSource
-    document: DocumentDataSource
     identity: IdentityDataSource
     licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
@@ -141,5 +144,51 @@ declare global {
     paymentSystemName: string
     carNumber: string
     address: Address
+  }
+
+  interface DocumentResponse {
+    Id: string
+    Href: string
+  }
+
+  interface DocumentArgs {
+    acronym: string
+    fields: string[]
+    id: string
+  }
+
+  interface DocumentsArgs {
+    acronym: string
+    fields: string[]
+    page: number
+    pageSize: number
+    where: string
+  }
+
+  interface CreateDocumentArgs {
+    acronym: string
+    document: { fields: KeyValue[] }
+  }
+
+  interface UpdateDocumentArgs {
+    acronym: string
+    document: { fields: KeyValue[] }
+    documentId: string
+  }
+
+  interface DeleteDocumentArgs {
+    acronym: string
+    documentId: string
+  }
+
+  interface KeyValue {
+    key: string
+    value: string
+  }
+
+  interface IncomingFile {
+    filename: string
+    mimetype: string
+    encoding: string
   }
 }

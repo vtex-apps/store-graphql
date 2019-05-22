@@ -1,12 +1,10 @@
-import { makeRequest } from './../auth/index'
-
+import { parse } from 'cookie'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
-import { uploadAttachment } from '../document/attachment'
+import { makeRequest } from '../auth'
+import { uploadFile, deleteFile } from '../fileManager/services'
 import paths from '../paths'
-
-import { parse } from 'cookie'
 
 export function getProfile(context: Context, customFields?: string) {
   const {
@@ -33,13 +31,23 @@ export function getProfile(context: Context, customFields?: string) {
 }
 
 export function getPasswordLastUpdate(context: Context) {
-  const { request: { headers: { cookie } }, vtex: { account } } = context
+  const {
+    request: {
+      headers: { cookie },
+    },
+    vtex: { account },
+  } = context
   const url = paths.getUser(account)
   const parsedCookies = parse(cookie)
   const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
-  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then((response: any) => {
-    return response.data.passwordLastUpdate
-  })
+
+  if (!userCookie) return null
+
+  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then(
+    (response: any) => {
+      return response.data.passwordLastUpdate
+    }
+  )
 }
 
 export function getAddresses(context: Context) {
@@ -92,7 +100,7 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
-    ...extraFields && extraFields.customFieldsObj,
+    ...(extraFields && extraFields.customFieldsObj),
   }
 
   return dataSources.profile
@@ -104,25 +112,30 @@ export async function updateProfile(
     .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
 }
 
-export async function updateProfilePicture(context: Context, file: string) {
+export async function updateProfilePicture(context: Context, file: any) {
   const {
     dataSources: { profile },
     vtex: { currentProfile },
   } = context
 
-  const field = 'profilePicture'
-
-  const { id } = await profile.getProfileInfo(currentProfile.email, 'id')
-
-  await profile.updateProfileInfo(
+  const { profilePicture } = await profile.getProfileInfo(
     currentProfile.email,
-    { profilePicture: '' },
     'profilePicture'
   )
 
-  await uploadAttachment(
-    { acronym: 'CL', documentId: id, field, file },
-    context
+  const bucket = 'image'
+
+  if (profilePicture) {
+    await deleteFile(context.vtex, { path: profilePicture, bucket })
+  }
+
+  const result = await uploadFile(context.vtex, { file, bucket })
+
+  const fileUrl = result.fileUrl.split('image/')[1]
+  await profile.updateProfileInfo(
+    currentProfile.email,
+    { profilePicture: fileUrl },
+    'profilePicture'
   )
 
   return getProfile(context)

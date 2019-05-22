@@ -1,7 +1,8 @@
 import './globals'
 
-import { IOClients, LRUCache, Service } from '@vtex/api'
+import { LRUCache, Service } from '@vtex/api'
 
+import { Clients } from './clients'
 import { dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
@@ -16,8 +17,9 @@ metrics.trackCache('segment', segmentCache)
 
 export { Runtime } from '@vtex/api'
 
-export default new Service<IOClients, void, CustomContext>({
+export default new Service<Clients, void, CustomContext>({
   clients: {
+    implementation: Clients,
     options: {
       default: {
         retries: 1,
