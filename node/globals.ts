@@ -160,7 +160,7 @@ declare global {
     page: number
     pageSize: number
     where: string
-    schema: string
+    schema?: string
   }
 
   interface CreateDocumentArgs {

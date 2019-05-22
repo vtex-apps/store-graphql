@@ -57,7 +57,7 @@ export class MasterData extends ExternalClient {
       params: {
         _fields: generateFieldsArg(fields),
         _where: where,
-        ...schema? {_schema: schema} : null
+        ...schema ? {_schema: schema} : null
       },
     })}
 
