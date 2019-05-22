@@ -169,7 +169,6 @@ declare global {
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
-    documentId: string
   }
 
   interface DeleteDocumentArgs {
