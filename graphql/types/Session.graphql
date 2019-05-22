@@ -16,6 +16,8 @@ type Session {
   profile: SessionProfile
   """ UTM Params """
   utmParams: UTMParams
+  """ UTMI Params """
+  utmiParams: UTMIParams
 }
 
 """ Basic information that is displayed when is a impersonated session """
@@ -30,4 +32,10 @@ type UTMParams {
   campaign: String
   term: String
   content: String
+}
+
+type UTMIParams {
+  campaign: String
+  page: String
+  part: String
 }
