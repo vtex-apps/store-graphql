@@ -1,5 +1,5 @@
 {
-  "vendor": "vtex",
+  "vendor": "codeby",
   "name": "store-graphql",
   "version": "2.82.0",
   "title": "GraphQL API for the VTEX store APIs",
