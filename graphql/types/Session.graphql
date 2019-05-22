@@ -14,10 +14,20 @@ type Session {
   address: Address,
   """ Profile information of session user """
   profile: SessionProfile
+  """ UTM Params """
+  utmParams: UTMParams
 }
 
 """ Basic information that is displayed when is a impersonated session """
 type ImpersonatedUser {
   """ Profile information of impersonated user """
   profile: SessionProfile
+}
+
+type UTMParams {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
 }

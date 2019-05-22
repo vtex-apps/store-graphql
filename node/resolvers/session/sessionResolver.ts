@@ -19,11 +19,28 @@ export interface SessionFields {
   orderFormId?: string
   address?: any
   profile?: ProfileFields
+  utmParams?: UtmParams
+  public?: {
+    [key: string]: {
+      value: string
+    }
+  }
+}
+
+interface UtmParams {
+  source?: string
+  medium?: string
+  campaign?: string
+  term?: string
+  content?: string
 }
 
 const convertToBool = (str: any) => !!str && toLower(str) === 'true'
 
-const profileFields = (profile: any, user: any): ProfileFields => ({
+const profileFields = (
+  profile: SessionProfile,
+  user: SessionImpersonate | SessionAuthentication
+): ProfileFields => ({
   document: path(['document', 'value'], profile),
   email:
     path(['email', 'value'], profile) ||
@@ -37,14 +54,25 @@ const profileFields = (profile: any, user: any): ProfileFields => ({
   phone: path(['phone', 'value'], profile),
 })
 
-const setProfileData = (profile: any, user: any) =>
+const setProfileData = (
+  profile: SessionProfile,
+  user: SessionImpersonate | SessionAuthentication
+) =>
   path(['storeUserId', 'value'], user) && {
     profile: {
       ...profileFields(profile, user),
     },
   }
 
-export const sessionFields = (session: any): SessionFields | {} => {
+const setUtmParams = (publicFields: SessionPublic) => ({
+  source: path(['utm_source', 'value'], publicFields),
+  medium: path(['utm_medium', 'value'], publicFields),
+  campaign: path(['utm_campaign', 'value'], publicFields),
+  term: path(['utm_term', 'value'], publicFields),
+  content: path(['utm_content', 'value'], publicFields),
+})
+
+export const sessionFields = (session: Session): SessionFields | {} => {
   const { namespaces } = session
   return namespaces
     ? {
@@ -64,8 +92,50 @@ export const sessionFields = (session: any): SessionFields | {} => {
         impersonate: {
           ...setProfileData(namespaces.profile, namespaces.impersonate),
         },
+        utmParams: setUtmParams(namespaces.public),
         orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
         ...setProfileData(namespaces.profile, namespaces.authentication),
       }
     : {}
+}
+
+export interface Session {
+  id: string
+  namespaces?: {
+    profile: SessionProfile
+    impersonate: SessionImpersonate
+    authentication: SessionAuthentication
+    public: SessionPublic
+  }
+}
+
+interface SessionProfile {
+  id?: ObjValue
+  email?: ObjValue
+  firstName?: ObjValue
+  lastName?: ObjValue
+  phone?: ObjValue
+  isAuthenticated?: ObjValue
+}
+
+interface SessionImpersonate {
+  storeUserEmail?: ObjValue
+  storeUserId?: ObjValue
+}
+
+interface SessionAuthentication {
+  [key: string]: string
+}
+
+interface ObjValue {
+  value: string
+}
+
+interface SessionPublic {
+  orderFormId?: ObjValue
+  utm_source?: ObjValue
+  utm_medium?: ObjValue
+  utm_campaign?: ObjValue
+  utm_term?: ObjValue
+  utm_content?: ObjValue
 }
