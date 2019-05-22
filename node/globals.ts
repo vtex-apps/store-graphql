@@ -58,7 +58,7 @@ declare global {
     parentItemIndex: number
     parentAssemblyBinding: string
     productCategoryIds: string
-    priceTags: []
+    priceTags: string[]
     measurementUnit: string
   }
 
