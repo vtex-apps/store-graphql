@@ -145,6 +145,7 @@ declare global {
   interface DocumentResponse {
     Id: string
     Href: string
+    DocumentId: string
   }
 
   interface DocumentArgs {

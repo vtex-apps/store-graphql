@@ -25,14 +25,6 @@ const renameKeysWith = curry((func: any, object: any) =>
   )(object)
 )
 
-/**
- * Map a document object to a list of {key: 'property', value: 'propertyValue'}.
- */
-const mapKeyValues = (document: any) => Object.keys(document).map(key => ({
-  key,
-  value: document[key],
-}))
-
 /*
  * Convert a list of fields like [ {key: 'propertyName', value: 'String'}, ... ]
  * to a JSON format.
@@ -41,4 +33,4 @@ const parseFieldsToJson = (fields: any) => mergeAll(
   fields.map((field: any) => zipObj([field.key], [field.value])),
 )
 
-export { renameKeysWith, mapKeyValues, parseFieldsToJson }
+export { renameKeysWith, parseFieldsToJson }

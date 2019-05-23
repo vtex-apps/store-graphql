@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.76.2] - 2019-05-23
+
+### Fixed
+
+- `createList` mutation not creating the documents in list's resolver.
+- `updateList` mutation not updating the documents in list's resolver.
+
 ## [2.76.1] - 2019-05-23
+
 ### Fixed
 
 - Eliminate two queries to catalog at the productSearch for products and recordFiltered.
