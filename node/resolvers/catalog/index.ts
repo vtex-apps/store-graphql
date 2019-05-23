@@ -38,10 +38,23 @@ interface SearchContext {
 }
 
 interface SearchContextParams {
-  brand: string
-  department: string
-  category: string
-  subcategory: string
+  brand?: string
+  department?: string
+  category?: string
+  subcategory?: string
+}
+
+interface ProductArgs {
+  slug?: string
+  identifier?: {
+    field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
+    value: string
+  }
+}
+
+interface ProductRecommendationArg {
+  slug?: string
+  type?: 'view' | 'buy' | 'similars' | 'viewAndBought' | 'suggestions' | 'accessories'
 }
 
 /**
@@ -65,7 +78,7 @@ export const extractSlug = (item: any) => {
 /** Get Category metadata for the search/productSearch query
  *
  */
-const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
+const categoryMetaData = async (_: any, args: SearchArgs, ctx: Context): Promise<Metadata> => {
   const { query } = args
   const category = findCategoryInTree(
     await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
@@ -79,7 +92,7 @@ const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<M
 /** Get brand metadata for the search/productSearch query
  *
  */
-const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
+const brandMetaData = async (_: any, args: SearchArgs, ctx: Context): Promise<Metadata> => {
   const brandSlug = toLower(last(args.query.split('/')) || '')
   const brand = await getBrandFromSlug(brandSlug, ctx) || {}
   return {
@@ -95,7 +108,7 @@ const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Meta
  * @param args
  * @param ctx
  */
-const getSearchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
+const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
   const { map } = args
   const lastMap = last(map.split(','))
 
@@ -111,7 +124,7 @@ const getSearchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
 /** TODO: This method should be removed in the next major.
  * @author Ana Luiza
  */
-async function getProductBySlug(slug: string, catalog: any) {
+async function getProductBySlug(slug: string, catalog: Context['dataSources']['catalog']) {
   const products = await catalog.product(slug)
   if (products.length > 0) {
     return head(products)
@@ -188,7 +201,7 @@ export const queries = {
     return result
   },
 
-  product: async (_: any, args: any, ctx: Context) => {
+  product: async (_: any, args: ProductArgs, ctx: Context) => {
     const {
       dataSources: { catalog },
     } = ctx
@@ -196,9 +209,14 @@ export const queries = {
     if (args.slug) {
       return getProductBySlug(args.slug, catalog)
     }
+    if (!args.identifier) {
+      throw new UserInputError(
+        'No product identifier provided'
+      )
+    }
 
     const { field, value } = args.identifier
-    let products = []
+    let products = [] as Product[]
 
     switch (field) {
       case 'id':
@@ -238,7 +256,7 @@ export const queries = {
     return catalog.products(args)
   },
 
-  productSearch: async (_: any, args: ProductsArgs, ctx: Context) => {
+  productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
     const {
       clients,
       dataSources:{catalog}
@@ -346,17 +364,17 @@ export const queries = {
       let found
 
       found = departments.find((department) =>
-        department.url.endsWith(`/${args.department.toLowerCase()}`)
+        department.url.endsWith(`/${args.department!.toLowerCase()}`)
       )
       if (args.category && found) {
         found = found.children.find(category =>
-          category.url.endsWith(`/${args.category.toLowerCase()}`)
+          category.url.endsWith(`/${args.category!.toLowerCase()}`)
         )
       }
 
       if (args.subcategory && found) {
         found = found.children.find(subcategory =>
-          subcategory.url.endsWith(`/${args.subcategory.toLowerCase()}`)
+          subcategory.url.endsWith(`/${args.subcategory!.toLowerCase()}`)
         )
       }
 
@@ -365,4 +383,38 @@ export const queries = {
 
     return response
   },
+
+  productRecommendations: async (_: any, { slug, type }: ProductRecommendationArg, {dataSources:{catalog}}: Context) => {
+    if (slug == null || type == null) {
+      throw new UserInputError('Wrong input provided')
+    }
+    const products = await catalog.product(slug)
+    let catalogType: CrossSellingType | null = null
+    switch (type) {
+      case 'buy':
+        catalogType = 'whoboughtalsobought'
+        break
+      case 'similars':
+        catalogType = 'similars'
+        break
+      case 'view':
+        catalogType = 'whosawalsosaw'
+        break
+      case 'viewAndBought':
+        catalogType = 'whosawalsobought'
+        break
+      case 'accessories':
+        catalogType = 'accessories'
+        break
+      case 'suggestions':
+        catalogType = 'suggestions'
+        break  
+    }
+
+    if (!catalogType || products.length === 0) {
+      return []
+    }
+
+    return catalog.crossSelling(head(products)!.productId, catalogType)
+  }
 }
