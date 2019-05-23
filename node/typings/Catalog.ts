@@ -62,4 +62,3 @@ interface Product {
   items: any[]
 }
 
-type CrossSellingType = 'whosawalsosaw' | 'whosawalsobought' | 'whoboughtalsobought' | 'accessories' | 'similars' | 'suggestions'

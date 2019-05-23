@@ -1,6 +1,7 @@
 import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } from '@vtex/api'
 import { stringify } from 'qs'
 import { SegmentData } from './session'
+import { CatalogCrossSellingTypes } from '../resolvers/catalog/utils'
 
 interface AutocompleteArgs {
   maxRows: string
@@ -95,7 +96,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-category'}
   )
 
-  public crossSelling = (id: string, type: CrossSellingType) => this.get<Product[]>(
+  public crossSelling = (id: string, type: CatalogCrossSellingTypes) => this.get<Product[]>(
     `/pub/products/crossselling/${type}/${id}`,
     {metric: 'catalog-crossSelling'}
   )

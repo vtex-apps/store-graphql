@@ -29,7 +29,7 @@ import { resolvers as skuResolvers } from './sku'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as productSearchResolvers } from './productSearch'
 import { catalogSlugify, Slugify } from './slug'
-import { findCategoryInTree, getBrandFromSlug } from './utils'
+import { findCategoryInTree, getBrandFromSlug, CatalogCrossSellingTypes } from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -54,9 +54,27 @@ interface ProductArgs {
   identifier?: ProductIndentifier
 }
 
+enum CrossSellingInput {
+  view = 'view',
+  buy = 'buy',
+  similars = 'similars',
+  viewAndBought = 'viewAndBought',
+  suggestions = 'suggestions',
+  accessories = 'accessories',
+}
+
 interface ProductRecommendationArg {
   identifier?: ProductIndentifier
-  type?: 'view' | 'buy' | 'similars' | 'viewAndBought' | 'suggestions' | 'accessories'
+  type?: CrossSellingInput
+}
+
+const inputToCatalogCrossSelling = {
+  [CrossSellingInput.buy]: CatalogCrossSellingTypes.whoboughtalsobought,
+  [CrossSellingInput.view]: CatalogCrossSellingTypes.whosawalsosaw,
+  [CrossSellingInput.similars]: CatalogCrossSellingTypes.similars,
+  [CrossSellingInput.viewAndBought]: CatalogCrossSellingTypes.whosawalsobought,
+  [CrossSellingInput.accessories]: CatalogCrossSellingTypes.accessories,
+  [CrossSellingInput.suggestions]: CatalogCrossSellingTypes.suggestions,
 }
 
 /**
@@ -390,37 +408,12 @@ export const queries = {
     if (identifier == null || type == null) {
       throw new UserInputError('Wrong input provided')
     }
-    let catalogType: CrossSellingType | null = null
-    switch (type) {
-      case 'buy':
-        catalogType = 'whoboughtalsobought'
-        break
-      case 'similars':
-        catalogType = 'similars'
-        break
-      case 'view':
-        catalogType = 'whosawalsosaw'
-        break
-      case 'viewAndBought':
-        catalogType = 'whosawalsobought'
-        break
-      case 'accessories':
-        catalogType = 'accessories'
-        break
-      case 'suggestions':
-        catalogType = 'suggestions'
-        break  
-    }
+    const catalogType = inputToCatalogCrossSelling[type]
     let productId = identifier.value
     if (identifier.field !== 'id') {
       const product = await queries.product(_, { identifier }, ctx)
       productId = product!.productId
     }
-
-    if (!catalogType) {
-      return []
-    }
-
     return ctx.dataSources.catalog.crossSelling(productId, catalogType)
   }
 }
