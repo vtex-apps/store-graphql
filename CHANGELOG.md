@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - `createList` mutation not creating the documents in list's resolver.
+- `updateList` mutation not updating the documents in list's resolver.
 
 ## [2.76.1] - 2019-05-23
 
