@@ -241,20 +241,21 @@ export const queries = {
   productSearch: async (_: any, args: ProductsArgs, ctx: Context) => {
     const {
       clients,
+      dataSources:{catalog}
     } = ctx
     const query = await translateToStoreDefaultLanguage(clients, args.query)
     const translatedArgs = {
       ...args,
       query,
     }
-    const [products, searchMetaData] = await all([
-      queries.products(_, translatedArgs, ctx),
+    const [productsRaw, searchMetaData] = await all([
+      catalog.products(args, true),
       getSearchMetaData(_, translatedArgs, ctx),
     ])
     return {
       translatedArgs,
       searchMetaData,
-      products,
+      productsRaw,
     }
   },
 
