@@ -12,7 +12,6 @@ import {
 } from 'ramda'
 
 import { MasterData } from '../../clients/masterdata'
-import { mapKeyValues } from '../../utils/object'
 import { CatalogDataSource } from './../../dataSources/catalog'
 import {
   acronymList,
@@ -55,16 +54,18 @@ const getListItems = async (
 }
 
 const addListItem = async (item: Item, masterdata: MasterData) => {
-  const { Id } = (await masterdata.createDocument(
+  const { DocumentId } = (await masterdata.createDocument(
     acronymListProduct,
-    mapKeyValues({ ...item }) as any
+    item
   )) as DocumentResponse
-
-  return Id
+  return DocumentId
 }
 
-const addItems = async (items: Item[] = [], masterdata: MasterData) => {
-  validateItems(items, masterdata)
+const addItems = async (
+    items: Item[] = [],
+    { dataSources, clients: { masterdata } }: Context
+  ) => {
+  validateItems(items, dataSources)
   const promises = map(async item => addListItem(item, masterdata), items)
   return Promise.all(promises)
 }
@@ -80,8 +81,7 @@ const deleteItems = (items: Item[], masterdata: MasterData) =>
     )
   )
 
-const updateItems = async (items: Item[], dataSources: any) => {
-  const { document } = dataSources
+const updateItems = async (items: Item[], masterdata: MasterData) => {
   const itemsWithoutDuplicated = map(
     (item: any) => last(item),
     values(groupBy(prop('skuId') as any, items))
@@ -100,17 +100,17 @@ const updateItems = async (items: Item[], dataSources: any) => {
     itemsWithoutDuplicated
   )
 
-  deleteItems(itemsToBeDeleted, document)
+  deleteItems(itemsToBeDeleted, masterdata)
 
   const itemsIdAdded = await Promise.all(
-    map(async (item: Item) => await addListItem(item, document), itemsToBeAdded)
+    map(async (item: Item) => await addListItem(item, masterdata), itemsToBeAdded)
   )
 
   const itemsIdUpdated = map((item: Item) => {
-    document.updateDocument(
+    masterdata.updateDocument(
       acronymListProduct,
-      path(['id'], item),
-      mapKeyValues(item)
+      path(['id'], item) || '',
+      item
     )
     return path(['id'], item)
   }, itemsToBeUpdated)
@@ -169,16 +169,13 @@ export const mutation = {
       clients: { masterdata },
     } = context
     try {
-      const itemsId = await addItems(items, masterdata)
-
-      const { Id } = (await masterdata.createDocument(acronymList, mapKeyValues(
-        {
+      const itemsId = await addItems(items, context)
+      const { DocumentId } = (await masterdata.createDocument(
+        acronymList, {
           ...list,
           items: itemsId,
-        }
-      ) as any)) as DocumentResponse
-
-      return queries.list(_, { id: Id }, context)
+        })) as DocumentResponse
+      return queries.list(_, { id: DocumentId }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)
     }
@@ -208,15 +205,14 @@ export const mutation = {
     context: Context
   ) => {
     const {
-      dataSources,
       clients: { masterdata },
     } = context
     try {
-      const itemsUpdatedId = await updateItems(items, dataSources)
-      await masterdata.updateDocument(acronymList, id, mapKeyValues({
+      const itemsUpdatedId = await updateItems(items, masterdata)
+      await masterdata.updateDocument(acronymList, id, {
         ...list,
         items: itemsUpdatedId,
-      }) as any)
+      } as any)
       return queries.list(_, { id }, context)
     } catch (error) {
       throw new UserInputError(`Cannot update the list: ${error}`)
