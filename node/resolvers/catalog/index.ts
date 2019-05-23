@@ -44,16 +44,18 @@ interface SearchContextParams {
   subcategory?: string
 }
 
+interface ProductIndentifier {
+  field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
+  value: string
+}
+
 interface ProductArgs {
   slug?: string
-  identifier?: {
-    field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
-    value: string
-  }
+  identifier?: ProductIndentifier
 }
 
 interface ProductRecommendationArg {
-  slug?: string
+  identifier?: ProductIndentifier
   type?: 'view' | 'buy' | 'similars' | 'viewAndBought' | 'suggestions' | 'accessories'
 }
 
@@ -384,11 +386,10 @@ export const queries = {
     return response
   },
 
-  productRecommendations: async (_: any, { slug, type }: ProductRecommendationArg, {dataSources:{catalog}}: Context) => {
-    if (slug == null || type == null) {
+  productRecommendations: async (_: any, { identifier, type }: ProductRecommendationArg, ctx: Context) => {
+    if (identifier == null || type == null) {
       throw new UserInputError('Wrong input provided')
     }
-    const products = await catalog.product(slug)
     let catalogType: CrossSellingType | null = null
     switch (type) {
       case 'buy':
@@ -410,11 +411,16 @@ export const queries = {
         catalogType = 'suggestions'
         break  
     }
+    let productId = identifier.value
+    if (identifier.field !== 'id') {
+      const product = await queries.product(_, { identifier }, ctx)
+      productId = product!.productId
+    }
 
-    if (!catalogType || products.length === 0) {
+    if (!catalogType) {
       return []
     }
 
-    return catalog.crossSelling(head(products)!.productId, catalogType)
+    return ctx.dataSources.catalog.crossSelling(productId, catalogType)
   }
 }
