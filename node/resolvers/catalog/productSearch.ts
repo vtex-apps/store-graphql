@@ -1,12 +1,26 @@
 import { path, zip } from 'ramda'
+import { IOResponse } from '@vtex/api';
+
+interface ProductSearchParent {
+  productsRaw: IOResponse<Product[]>
+  translatedArgs: ProductsArgs
+  searchMetaData: {
+    titleTag: string | null
+    metaTagDescription: string | null
+  }
+}
+
 export const resolvers = {
   ProductSearch: {
     titleTag: path(['searchMetaData', 'titleTag']),
     metaTagDescription: path(['searchMetaData', 'metaTagDescription']),
-    recordsFiltered: ({ translatedArgs }: { translatedArgs: ProductsArgs }, _: any, {dataSources: { catalog }}: Context) =>
-      catalog.productsQuantity(translatedArgs),
-
-    breadcrumb: async ({ translatedArgs, products }: { translatedArgs: ProductsArgs, products: Product[] }, _: any, ctx: Context) => {
+    recordsFiltered: ({ productsRaw }: ProductSearchParent) => {
+      const { headers: {resources}} = productsRaw
+      const quantity = resources.split('/')[1]
+      return parseInt(quantity, 10)
+    },
+    products: path(['productsRaw', 'data']),
+    breadcrumb: async ({ translatedArgs, productsRaw: {data: products} }: ProductSearchParent, _: any, ctx: Context) => {
       const {dataSources: { catalog }} = ctx
       const queryAndMap = zip(
         translatedArgs.query
