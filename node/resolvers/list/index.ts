@@ -55,16 +55,18 @@ const getListItems = async (
 }
 
 const addListItem = async (item: Item, masterdata: MasterData) => {
-  const { Id } = (await masterdata.createDocument(
+  const { DocumentId } = (await masterdata.createDocument(
     acronymListProduct,
-    mapKeyValues({ ...item }) as any
+    item
   )) as DocumentResponse
-
-  return Id
+  return DocumentId
 }
 
-const addItems = async (items: Item[] = [], masterdata: MasterData) => {
-  validateItems(items, masterdata)
+const addItems = async (
+    items: Item[] = [],
+    { dataSources, clients: { masterdata } }: Context
+  ) => {
+  validateItems(items, dataSources)
   const promises = map(async item => addListItem(item, masterdata), items)
   return Promise.all(promises)
 }
@@ -169,16 +171,13 @@ export const mutation = {
       clients: { masterdata },
     } = context
     try {
-      const itemsId = await addItems(items, masterdata)
-
-      const { Id } = (await masterdata.createDocument(acronymList, mapKeyValues(
-        {
+      const itemsId = await addItems(items, context)
+      const { DocumentId } = (await masterdata.createDocument(
+        acronymList, {
           ...list,
           items: itemsId,
-        }
-      ) as any)) as DocumentResponse
-
-      return queries.list(_, { id: Id }, context)
+        })) as DocumentResponse
+      return queries.list(_, { id: DocumentId }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)
     }
