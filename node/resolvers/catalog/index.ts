@@ -243,6 +243,12 @@ export const queries = {
       clients,
       dataSources:{catalog}
     } = ctx
+    const queryTerm = args.query
+    if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
+      throw new UserInputError(
+        `The query term contains invalid characters. query=${queryTerm}`
+      )
+    }
     const query = await translateToStoreDefaultLanguage(clients, args.query)
     const translatedArgs = {
       ...args,
