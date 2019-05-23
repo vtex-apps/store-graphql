@@ -6,10 +6,8 @@ import {
 } from '@vtex/api'
 
 import { Clients } from './clients'
-import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
 import { CatalogDataSource } from './dataSources/catalog'
 import { IdentityDataSource } from './dataSources/identity'
-import { LicenseManagerDataSource } from './dataSources/licenseManager'
 import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
 import { ProfileDataSource } from './dataSources/profile'
@@ -39,11 +37,9 @@ declare global {
   interface StoreGraphQLDataSources {
     catalog: CatalogDataSource
     identity: IdentityDataSource
-    licenseManager: LicenseManagerDataSource
     logistics: LogisticsDataSource
     profile: ProfileDataSource
     session: SessionDataSource
-    callcenterOperator: CallcenterOperatorDataSource
     oms: OMSDataSource
   }
 
@@ -174,7 +170,6 @@ declare global {
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
-    documentId: string
   }
 
   interface DeleteDocumentArgs {

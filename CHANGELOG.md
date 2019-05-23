@@ -7,11 +7,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.75.0] - 2019-05-20
+## [2.76.0] - 2019-05-22
+
+### Fixed
+
+- UTM and UTMI params in orderform.
+
+### Added
+
+- New field `utmParams` to query `getSession`.
+- New field `utmiParams` to query `getSession`.
+
+## [2.75.3] - 2019-05-22
+
+### Fixed
+- Throw error in `updateDocument` resolver if `id` field is null
+
+## [2.75.2] - 2019-05-21
+
+### Fixed
+- Use both slugify methods to find brand data on catalog queries.
+
+## [2.75.1] - 2019-05-21
+
 ### Changed
+
+- Ported CallCenterOpDataSource to CallCenterOp IOClient.
+
+## [2.75.0] - 2019-05-20
+
+### Changed
+
 - Use better resolver architecture at productSearch query.
 
 ### Added
+
 - breadcrum resolver at productSearch.
 
 ## [2.74.4] - 2019-05-20

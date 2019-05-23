@@ -1,52 +1,71 @@
+import { UserInputError } from '@vtex/api'
 import { compose, map, union, prop, replace } from 'ramda'
 import { parseFieldsToJson } from '../../utils/object'
 
-
 export const queries = {
-
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
     const { acronym, fields, page, pageSize, where, schema } = args
-    const { clients: { masterdata } } = context
+    const {
+      clients: { masterdata },
+    } = context
     const fieldsWithId = union(fields, ['id'])
-    const data = schema
-    ? await masterdata.searchDocumentsWithSchema(
-        acronym,
-        fieldsWithId,
-        where,
-        schema,
-        { page, pageSize }
-      )
-    : await masterdata.searchDocuments(acronym, fieldsWithId, where, {
-      page,
-      pageSize,
-    })
-    return map(
-      (document: any) =>
-      ({
-        cacheId: document.id,
-        id: document.id,
-        fields: mapKeyAndStringifiedValues(document)
-      })
-    )(data)
+    const data = (schema
+      ? await masterdata.searchDocumentsWithSchema<any>(
+          acronym,
+          fieldsWithId,
+          where,
+          schema,
+          { page, pageSize }
+        )
+      : await masterdata.searchDocuments<any>(
+      acronym,
+      fieldsWithId,
+      where,
+      {
+        page,
+        pageSize,
+      }
+    )) as any[]
+
+    return map((document: any) => ({
+      cacheId: document.id,
+      id: document.id,
+      fields: mapKeyAndStringifiedValues(document),
+    }))(data)
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
     const { acronym, fields, id } = args
-    const { clients: { masterdata } } = context
+    const {
+      clients: { masterdata },
+    } = context
     const data = await masterdata.getDocument(acronym, id, fields)
     return {
       cacheId: id,
       id,
-      fields: mapKeyAndStringifiedValues(data)}
-  }
+      fields: mapKeyAndStringifiedValues(data),
+    }
+  },
 }
 
 export const mutations = {
+  createDocument: async (
+    _: any,
+    args: CreateDocumentArgs,
+    context: Context
+  ) => {
+    const {
+      acronym,
+      document: { fields },
+    } = args
+    const {
+      clients: { masterdata },
+    } = context
+    const response = (await masterdata.createDocument(
+      acronym,
+      parseFieldsToJson(fields)
+    )) as DocumentResponse
 
-  createDocument: async (_: any, args: CreateDocumentArgs, context: Context) => {
-    const { acronym, document: { fields } } = args
-    const { clients: { masterdata } } = context
-    const response = await masterdata.createDocument(acronym, parseFieldsToJson(fields))
     const documentId = removeAcronymFromId(acronym, response)
     return {
       cacheId: documentId,
@@ -56,11 +75,28 @@ export const mutations = {
     }
   },
 
-  updateDocument: async (_: any, args: UpdateDocumentArgs, context: Context) => {
-    const { acronym, document: { fields } } = args
+  updateDocument: async (
+    _: any,
+    args: UpdateDocumentArgs,
+    context: Context
+  ) => {
+    const {
+      acronym,
+      document: { fields },
+    } = args
     const documentId = prop('id', parseFieldsToJson(fields)) as string
-    const { clients: { masterdata }, vtex: { account } } = context
-    await masterdata.updateDocument(acronym, documentId, parseFieldsToJson(fields))
+    if (!documentId) {
+      throw new UserInputError('document id field cannot be null/undefined')
+    }
+    const {
+      clients: { masterdata },
+      vtex: { account },
+    } = context
+    await masterdata.updateDocument(
+      acronym,
+      documentId,
+      parseFieldsToJson(fields)
+    )
     return {
       cacheId: documentId,
       documentId,
@@ -69,9 +105,16 @@ export const mutations = {
     }
   },
 
-  deleteDocument: async (_: any, args: DeleteDocumentArgs, context: Context) => {
+  deleteDocument: async (
+    _: any,
+    args: DeleteDocumentArgs,
+    context: Context
+  ) => {
     const { acronym, documentId } = args
-    const { clients: { masterdata }, vtex: { account } } = context
+    const {
+      clients: { masterdata },
+      vtex: { account },
+    } = context
     await masterdata.deleteDocument(acronym, documentId)
     return {
       documentId,
@@ -79,17 +122,21 @@ export const mutations = {
       id: getId(acronym, documentId),
       cacheId: documentId,
     }
-  }
+  },
 }
 
 /**
  * Map a document object to a list of {key: 'property', value: 'propertyValue'},
  * Uses `JSON.stringify` in every value.
  */
-const mapKeyAndStringifiedValues = (document: any) => Object.keys(document).map(key => ({
-  key,
-  value: typeof(document[key]) === 'string' ? document[key] : JSON.stringify(document[key])
-}))
+const mapKeyAndStringifiedValues = (document: any) =>
+  Object.keys(document).map(key => ({
+    key,
+    value:
+      typeof document[key] === 'string'
+        ? document[key]
+        : JSON.stringify(document[key]),
+  }))
 
 const removeAcronymFromId = (acronym: string, data: { Id: string }) => {
   return compose<any, any, any>(
@@ -98,7 +145,8 @@ const removeAcronymFromId = (acronym: string, data: { Id: string }) => {
   )(data)
 }
 
-const getId = (acronym: string, documentId: string) => `${acronym}-${documentId}`
+const getId = (acronym: string, documentId: string) =>
+  `${acronym}-${documentId}`
 
 const generateHref = (account: string, acronym: string, documentId: string) =>
   `http://api.vtex.com/${account}/dataentities/${acronym}/documents/${documentId}`
