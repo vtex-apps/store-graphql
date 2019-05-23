@@ -1,5 +1,15 @@
 import { compose, last, split, toLower } from 'ramda'
-import { catalogSlugify, Slugify } from './slug';
+import { catalogSlugify, Slugify } from './slug'
+
+export enum CatalogCrossSellingTypes {
+  whoboughtalsobought = 'whoboughtalsobought',
+  similars = 'similars',
+  whosawalsosaw = 'whosawalsosaw',
+  whosawalsobought = 'whosawalsobought',
+  accessories = 'accessories',
+  suggestions = 'suggestions',
+}
+
 const lastSegment = compose<string, string[], string>(
   last,
   split('/')
