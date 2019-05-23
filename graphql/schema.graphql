@@ -116,7 +116,7 @@ type Query {
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   productRecommendations(
-    slug: String
+    identifier: ProductUniqueIdentifier
     type: CrossSelingInputEnum
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
