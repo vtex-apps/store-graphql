@@ -2,10 +2,10 @@ import { CatalogCrossSellingTypes } from "./utils"
 
 export const resolvers = {
   Recommendation: {
-    buy: ({productId}: any, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, CatalogCrossSellingTypes.whoboughtalsobought),
+    buy: ({productId}: Product, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, CatalogCrossSellingTypes.whoboughtalsobought),
 
-    similars: ({productId}: any, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, CatalogCrossSellingTypes.similars),
+    similars: ({productId}: Product, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, CatalogCrossSellingTypes.similars),
 
-    view: ({productId}: any, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, CatalogCrossSellingTypes.whosawalsosaw),
+    view: ({productId}: Product, _: any, {dataSources: {catalog}}: Context) => catalog.crossSelling(productId, CatalogCrossSellingTypes.whosawalsosaw),
   }
 }
