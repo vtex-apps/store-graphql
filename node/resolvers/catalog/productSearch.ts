@@ -3,7 +3,7 @@ import { IOResponse } from '@vtex/api';
 
 interface ProductSearchParent {
   productsRaw: IOResponse<Product[]>
-  translatedArgs: ProductsArgs
+  translatedArgs: SearchArgs
   searchMetaData: {
     titleTag: string | null
     metaTagDescription: string | null

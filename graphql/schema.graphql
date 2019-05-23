@@ -115,6 +115,11 @@ type Query {
     hideUnavailableItems: Boolean = false
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
+  productRecommendations(
+    slug: String
+    type: CrossSelingInputEnum
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
   """
   Returns facets category
   """

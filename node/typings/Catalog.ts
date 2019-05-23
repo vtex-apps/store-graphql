@@ -1,4 +1,4 @@
-interface ProductsArgs {
+interface SearchArgs {
   query: string
   category: string
   specificationFilters: string[]
@@ -61,3 +61,5 @@ interface Product {
   description: string
   items: any[]
 }
+
+type CrossSellingType = 'whosawalsosaw' | 'whosawalsobought' | 'whoboughtalsobought' | 'accessories' | 'similars' | 'suggestions'
