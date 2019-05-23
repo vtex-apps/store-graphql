@@ -58,10 +58,13 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-productBySku'}
   )
 
-  public products = (args: ProductsArgs) => this.get<Product[]>(
-    this.productSearchUrl(args),
-    {metric: 'catalog-products'}
-  )
+  public products = (args: ProductsArgs, useRaw = false) => {
+    const method = useRaw ? this.getRaw : this.get
+    return method<Product[]>(
+      this.productSearchUrl(args),
+      {metric: 'catalog-products'}
+    )
+  } 
 
   public productsQuantity = async (args: ProductsArgs) => {
     const {headers: {resources}} = await this.getRaw(this.productSearchUrl(args))

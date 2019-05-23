@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.76.1] - 2019-05-23
+### Fixed
+
+- Eliminate two queries to catalog at the productSearch for products and recordFiltered.
+
 ## [2.76.0] - 2019-05-22
 
 ### Fixed
