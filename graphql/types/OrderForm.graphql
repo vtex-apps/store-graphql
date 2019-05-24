@@ -81,9 +81,17 @@ type OrderFormItem {
   """ Category ids on orderFormItem """
   productCategoryIds: String
   """ Price tags on orderFormItem """
-  priceTags: [String]
+  priceTags: [PriceTags]
   """ measurementUnit on orderFormItem """
   measurementUnit: String
+}
+
+type PriceTags {
+  identifier: String
+  isPercentual: Boolean
+  name: String
+  rawValue: Int
+  value: Int
 }
 
 type AssemblyOptionItem {
