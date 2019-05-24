@@ -48,13 +48,18 @@ export class MasterData extends ExternalClient {
     acronym: string,
     fields: string[],
     where: string,
-    pagination: PaginationArgs
-  ) =>
-    this.get<T[]>(this.routes.search(acronym), {
+    pagination: PaginationArgs,
+    schema?: string
+  ) =>{
+    return this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
       metric: 'masterdata-searchDocuments',
-      params: { _fields: generateFieldsArg(fields), _where: where },
-    })
+      params: {
+        _fields: generateFieldsArg(fields),
+        _where: where,
+        ...schema ? {_schema: schema} : null
+      },
+    })}
 
   public deleteDocument = (acronym: string, id: string) =>
     this.delete(this.routes.document(acronym, id), {
