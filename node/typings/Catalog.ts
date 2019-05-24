@@ -1,4 +1,4 @@
-interface ProductsArgs {
+interface SearchArgs {
   query: string
   category: string
   specificationFilters: string[]
@@ -61,3 +61,4 @@ interface Product {
   description: string
   items: any[]
 }
+

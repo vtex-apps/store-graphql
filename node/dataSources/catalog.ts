@@ -1,6 +1,7 @@
 import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } from '@vtex/api'
 import { stringify } from 'qs'
 import { SegmentData } from './session'
+import { CatalogCrossSellingTypes } from '../resolvers/catalog/utils'
 
 interface AutocompleteArgs {
   maxRows: string
@@ -33,32 +34,32 @@ const forProxy: HttpClientFactory = ({context, options}) => context &&
 export class CatalogDataSource extends IODataSource {
   protected httpClientFactory = forProxy
 
-  public product = (slug: string) => this.get(
+  public product = (slug: string) => this.get<Product[]>(
     `/pub/products/search/${slug && slug.toLowerCase()}/p`,
     {metric: 'catalog-product'}
   )
 
-  public productByEan = (id: string) => this.get(
+  public productByEan = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=alternateIds_Ean=${id}`,
     {metric: 'catalog-productByEan'}
   )
 
-  public productById = (id: string) => this.get(
+  public productById = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=productId:${id}`,
     {metric: 'catalog-productById'}
   )
 
-  public productByReference = (id: string) => this.get(
+  public productByReference = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=alternateIds_RefId=${id}`,
     {metric: 'catalog-productByReference'}
   )
 
-  public productBySku = (skuIds: string[]) => this.get(
+  public productBySku = (skuIds: string[]) => this.get<Product[]>(
     `/pub/products/search?${skuIds.map(skuId => `fq=skuId:${skuId}`).join('&')}`,
     {metric: 'catalog-productBySku'}
   )
 
-  public products = (args: ProductsArgs, useRaw = false) => {
+  public products = (args: SearchArgs, useRaw = false) => {
     const method = useRaw ? this.getRaw : this.get
     return method<Product[]>(
       this.productSearchUrl(args),
@@ -66,7 +67,7 @@ export class CatalogDataSource extends IODataSource {
     )
   } 
 
-  public productsQuantity = async (args: ProductsArgs) => {
+  public productsQuantity = async (args: SearchArgs) => {
     const {headers: {resources}} = await this.getRaw(this.productSearchUrl(args))
     const quantity = resources.split('/')[1]
     return parseInt(quantity, 10)
@@ -95,7 +96,7 @@ export class CatalogDataSource extends IODataSource {
     {metric: 'catalog-category'}
   )
 
-  public crossSelling = (id: string, type: string) => this.get(
+  public crossSelling = (id: string, type: CatalogCrossSellingTypes) => this.get<Product[]>(
     `/pub/products/crossselling/${type}/${id}`,
     {metric: 'catalog-crossSelling'}
   )
@@ -144,7 +145,7 @@ export class CatalogDataSource extends IODataSource {
     to = 9,
     map = '',
     hideUnavailableItems = false,
-  }: ProductsArgs) => {
+  }: SearchArgs) => {
     const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
     if (hideUnavailableItems) {
       const segmentData = (this.context as CustomIOContext).segment

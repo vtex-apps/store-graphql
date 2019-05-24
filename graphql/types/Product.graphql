@@ -226,3 +226,12 @@ type Reference {
   Key: String
   Value: String
 }
+
+enum CrossSelingInputEnum {
+  buy
+  similars
+  view
+  viewAndBought
+  accessories
+  suggestions
+}

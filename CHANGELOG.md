@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.77.0] - 2019-05-24
+### Addded
+
+- `productRecommendations` query.
+
+### Fixed
+
+- Minor type fixes (removing `any`s).
+
 ## [2.76.2] - 2019-05-23
 
 ### Fixed
