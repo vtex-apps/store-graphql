@@ -2,6 +2,7 @@ type OrderForm {
   """ orderFormId is used as cacheId """
   cacheId: ID
   orderFormId: String
+  customData: CustomData
   value: Float
   items: [OrderFormItem]
   salesChannel: String
@@ -20,6 +21,20 @@ type OrderForm {
   itemMetadata: ItemMetadata
   checkedInPickupPointId: String
   pickupPointCheckedIn: PickupPoint
+}
+
+type CustomData {
+  customApps: [CustomApps]
+}
+
+type CustomApps {
+  fields: Fields
+  id: String
+  major: Int
+}
+
+type Fields {
+  substituteType: String
 }
 
 type StorePreferencesData {
