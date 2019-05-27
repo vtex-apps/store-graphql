@@ -118,7 +118,7 @@ function paginationArgsToHeaders({ page, pageSize }: PaginationArgs) {
 }
 
 function generateFieldsArg(fields: string[]) {
-  return fields.reduce((previous, current) => `${previous}${current},`, '')
+  return fields.join(',')
 }
 
 interface PaginationArgs {
