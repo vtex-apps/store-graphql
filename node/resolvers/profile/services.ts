@@ -17,7 +17,7 @@ export function getProfile(context: Context, customFields?: string) {
     : `profilePicture,id`
 
   return profile
-    .getProfileInfo(currentProfile.email, extraFields)
+    .getProfileInfo(currentProfile, extraFields)
     .then(profileData => {
       if (profileData) {
         return {
@@ -56,9 +56,7 @@ export function getAddresses(context: Context) {
     vtex: { currentProfile },
   } = context
 
-  return profile
-    .getUserAddresses(currentProfile.email)
-    .then(mapAddressesObjToList)
+  return profile.getUserAddresses(currentProfile).then(mapAddressesObjToList)
 }
 
 export async function getPayments(context: Context) {
@@ -67,7 +65,7 @@ export async function getPayments(context: Context) {
     vtex: { currentProfile },
   } = context
 
-  const paymentsRawData = await profile.getUserPayments(currentProfile.email)
+  const paymentsRawData = await profile.getUserPayments(currentProfile)
 
   if (!paymentsRawData) {
     return null
@@ -105,7 +103,7 @@ export async function updateProfile(
 
   return dataSources.profile
     .updateProfileInfo(
-      currentProfile.email,
+      currentProfile,
       newData,
       extraFields && extraFields.customFieldsStr
     )
@@ -119,7 +117,7 @@ export async function updateProfilePicture(context: Context, file: any) {
   } = context
 
   const { profilePicture } = await profile.getProfileInfo(
-    currentProfile.email,
+    currentProfile,
     'profilePicture'
   )
 
@@ -133,7 +131,7 @@ export async function updateProfilePicture(context: Context, file: any) {
 
   const fileUrl = result.fileUrl.split('image/')[1]
   await profile.updateProfileInfo(
-    currentProfile.email,
+    currentProfile,
     { profilePicture: fileUrl },
     'profilePicture'
   )
@@ -158,7 +156,7 @@ export function createAddress(context: Context, address: Address) {
   })
 
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .updateAddress(currentProfile, addressesData)
     .then(() => getProfile(context))
 }
 
@@ -169,7 +167,7 @@ export function deleteAddress(context: Context, addressName: string) {
   } = context
 
   return profile
-    .deleteAddress(currentProfile.email, addressName)
+    .deleteAddress(currentProfile, addressName)
     .then(() => getProfile(context))
 }
 
@@ -189,7 +187,7 @@ export function updateAddress(
   })
 
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .updateAddress(currentProfile, addressesData)
     .then(() => getProfile(context))
 }
 
