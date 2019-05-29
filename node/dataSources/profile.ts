@@ -34,33 +34,35 @@ export class ProfileDataSource extends IODataSource {
     super(ctx, opts)
   }
 
-  public getProfileInfo = (userEmail: string, customFields?: string) => {
+  public getProfileInfo = (user: CurrentProfile, customFields?: string) => {
     const queryString = queryStringBuilder.stringify({
       extraFields: customFields,
     })
 
     return this.http.get(
-      `${userEmail}/personalData${queryString ? `?${queryString}` : ''}`,
+      `${getUserIdentification(user)}/personalData${
+        queryString ? `?${queryString}` : ''
+      }`,
       {
         metric: 'profile-system-getProfileInfo',
       }
     )
   }
 
-  public getUserAddresses = (userEmail: string) => {
-    return this.http.get(`${userEmail}/addresses`, {
+  public getUserAddresses = (user: CurrentProfile) => {
+    return this.http.get(`${getUserIdentification(user)}/addresses`, {
       metric: 'profile-system-getUserAddresses',
     })
   }
 
-  public getUserPayments = (userEmail: string) => {
-    return this.http.get(`${userEmail}/vcs-checkout`, {
+  public getUserPayments = (user: CurrentProfile) => {
+    return this.http.get(`${getUserIdentification(user)}/vcs-checkout`, {
       metric: 'profile-system-getUserPayments',
     })
   }
 
   public updateProfileInfo = (
-    userEmail: string,
+    user: CurrentProfile,
     profile: Profile | { profilePicture: string },
     customFields?: string
   ) => {
@@ -69,7 +71,9 @@ export class ProfileDataSource extends IODataSource {
     })
 
     return this.http.post(
-      `${userEmail}/personalData${queryString ? `?${queryString}` : ''}`,
+      `${getUserIdentification(user)}/personalData${
+        queryString ? `?${queryString}` : ''
+      }`,
       profile,
       {
         metric: 'profile-system-updateProfileInfo',
@@ -77,28 +81,43 @@ export class ProfileDataSource extends IODataSource {
     )
   }
 
-  public updateAddress = (userEmail: string, addressesData: any) => {
-    return this.http.post(`${userEmail}/addresses`, addressesData, {
-      metric: 'profile-system-updateAddress',
-    })
+  public updateAddress = (user: CurrentProfile, addressesData: any) => {
+    return this.http.post(
+      `${getUserIdentification(user)}/addresses`,
+      addressesData,
+      {
+        metric: 'profile-system-updateAddress',
+      }
+    )
   }
 
-  public deleteAddress = (userEmail: string, addressName: string) => {
-    return this.http.delete(`${userEmail}/addresses/${addressName}`, {
-      metric: 'profile-system-deleteAddress',
-    })
+  public deleteAddress = (user: CurrentProfile, addressName: string) => {
+    return this.http.delete(
+      `${getUserIdentification(user)}/addresses/${addressName}`,
+      {
+        metric: 'profile-system-deleteAddress',
+      }
+    )
   }
 
   public updatePersonalPreferences = (
-    userEmail: string,
+    user: CurrentProfile,
     personalPreferences: PersonalPreferences
   ) => {
     return this.http.post(
-      `${userEmail}/personalPreferences/`,
+      `${getUserIdentification(user)}/personalPreferences/`,
       personalPreferences,
       {
         metric: 'profile-system-subscribeNewsletter',
       }
     )
   }
+
+  public createProfile = (profile: Profile) => {
+    return this.http.post('', { personalData: profile })
+  }
+}
+
+function getUserIdentification(user: CurrentProfile) {
+  return user.userId || encodeURIComponent(user.email)
 }

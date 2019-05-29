@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **profile** query creation when the profile doesn't exist already. Treating for emails with non uri char's like '+'.
+
 ## [2.77.0] - 2019-05-24
+
 ### Addded
 
 - `productRecommendations` query.
@@ -43,11 +48,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.75.3] - 2019-05-22
 
 ### Fixed
+
 - Throw error in `updateDocument` resolver if `id` field is null
 
 ## [2.75.2] - 2019-05-21
 
 ### Fixed
+
 - Use both slugify methods to find brand data on catalog queries.
 
 ## [2.75.1] - 2019-05-21
