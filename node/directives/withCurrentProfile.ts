@@ -89,7 +89,7 @@ async function getCurrentProfileFromCookies(
     const customerEmail = parsedCookies['vtex-impersonated-customer-email']
 
     return profile
-      .getProfileInfo(customerEmail)
+      .getProfileInfo({ email: customerEmail, userId: '' })
       .then(({ email, userId }) => ({ email, userId }))
   }
 
@@ -104,17 +104,22 @@ async function validatedProfile(
     dataSources: { profile },
   } = context
 
-  const { id, userId } = await profile.getProfileInfo(
-    currentProfile.email,
-    'id'
-  )
+  const { id, userId } = (await profile
+    .getProfileInfo(currentProfile, 'id')
+    .catch(() => {})) || { id: '', userId: '' } // 404 case.
+
+  console.log('validate profile', id, userId)
 
   if (!id) {
     // doesn't have a profile, create one
-    await profile.updateProfileInfo(currentProfile.email, {
-      email: currentProfile.email,
-      userId,
-    })
+    return profile
+      .createProfile({
+        email: currentProfile.email,
+        userId,
+      })
+      .then(({ profileId }: any) =>
+        profile.getProfileInfo({ userId: profileId, email: '' })
+      )
   }
 
   return { userId, email: currentProfile.email }
