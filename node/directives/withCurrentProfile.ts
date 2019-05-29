@@ -108,8 +108,6 @@ async function validatedProfile(
     .getProfileInfo(currentProfile, 'id')
     .catch(() => {})) || { id: '', userId: '' } // 404 case.
 
-  console.log('validate profile', id, userId)
-
   if (!id) {
     // doesn't have a profile, create one
     return profile
