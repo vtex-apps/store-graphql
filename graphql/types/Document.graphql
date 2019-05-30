@@ -31,3 +31,8 @@ input FieldInput {
 input DocumentInput {
   fields: [FieldInput]
 }
+
+type DocumentsPage {
+  items: [Document]
+  paging: Paging
+}

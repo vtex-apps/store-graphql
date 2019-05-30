@@ -50,7 +50,7 @@ export class CatalogDataSource extends IODataSource {
   )
 
   public productByReference = (id: string) => this.get<Product[]>(
-    `/pub/products/search?fq=alternateIds_RefId=${id}`,
+    `/pub/products/search?fq=alternateIds_RefId:${id}`,
     {metric: 'catalog-productByReference'}
   )
 

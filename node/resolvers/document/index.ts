@@ -1,6 +1,7 @@
 import { UserInputError } from '@vtex/api'
 import { compose, map, union, prop, replace } from 'ramda'
 import { parseFieldsToJson } from '../../utils/object'
+import { all } from 'bluebird';
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
@@ -19,6 +20,30 @@ export const queries = {
         fields: mapKeyAndStringifiedValues(document)
       })
     )(data)
+  },
+
+  documentsWithPaging: async (_: any, args: DocumentsArgs, context: Context) => {
+    const { acronym, fields, page, pageSize, where, schema } = args
+    const { clients: { masterdata } } = context
+    const fieldsWithId = union(fields, ['id'])
+    const [documentsData, pageInfo] = await all([
+      masterdata.searchDocuments(acronym, fieldsWithId, where, {
+        page,
+        pageSize,
+      }, schema) as any,
+      masterdata.searchDocumentRaw(acronym, fieldsWithId, where, {
+        page,
+        pageSize,
+      }, schema) as any
+    ])
+    return {
+      items: map((document: any) =>({
+        cacheId: document.id,
+        id: document.id,
+        fields: mapKeyAndStringifiedValues(document)
+        }))(documentsData),
+      paging: pageInfo
+    }
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
