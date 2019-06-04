@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Port `profile` datasource to an **ExternalClient** and incresead it's timeout to 3 seconds.
+- Port `profile` datasource to an **JanusClient** and incresead it's timeout to 3 seconds.
 
 ## [2.78.0] - 2019-06-04
 

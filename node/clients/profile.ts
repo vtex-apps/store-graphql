@@ -1,7 +1,7 @@
 import {
   InstanceOptions,
   IOContext,
-  ExternalClient,
+  JanusClient,
   RequestConfig,
 } from '@vtex/api'
 import * as queryStringBuilder from 'qs'
@@ -10,52 +10,45 @@ import { statusToError } from '../utils'
 
 const THREE_SECONDS_TIMEOUT = 3 * 1000
 
-export class ProfileClient extends ExternalClient {
+export class ProfileClient extends JanusClient {
   public constructor(context: IOContext, options?: InstanceOptions) {
-    super(
-      `http://${
-        context.account
-      }.vtexcommercestable.com.br/api/profile-system/pvt/profiles`,
-      context,
-      {
-        ...options,
-        headers: {
-          ...(options && options.headers),
-          'X-Vtex-Proxy-To': `http://${
-            context.account
-          }.vtexcommercestable.com.br`,
-          VtexIdClientAutCookie: context.authToken,
-        },
-        timeout: THREE_SECONDS_TIMEOUT,
-      }
-    )
+    super(context, {
+      ...options,
+      headers: {
+        ...(options && options.headers),
+        VtexIdClientAutCookie: context.authToken,
+      },
+      timeout: THREE_SECONDS_TIMEOUT,
+    })
   }
 
-  public getProfileInfo = (user: CurrentProfile, customFields?: string) => {
-    const queryString = queryStringBuilder.stringify({
-      extraFields: customFields,
-    })
-
-    return this.http.get(
-      `${getUserIdentification(user)}/personalData${
-        queryString ? `?${queryString}` : ''
-      }`,
+  public getProfileInfo = (user: CurrentProfile, customFields?: string) =>
+    this.http.get(
+      `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
       {
         metric: 'profile-system-getProfileInfo',
+        params: {
+          extraFields: customFields,
+        },
       }
     )
-  }
 
   public getUserAddresses = (user: CurrentProfile) => {
-    return this.http.get(`${getUserIdentification(user)}/addresses`, {
-      metric: 'profile-system-getUserAddresses',
-    })
+    return this.http.get(
+      `${this.baseUrl}/${getUserIdentification(user)}/addresses`,
+      {
+        metric: 'profile-system-getUserAddresses',
+      }
+    )
   }
 
   public getUserPayments = (user: CurrentProfile) => {
-    return this.http.get(`${getUserIdentification(user)}/vcs-checkout`, {
-      metric: 'profile-system-getUserPayments',
-    })
+    return this.http.get(
+      `${this.baseUrl}/${getUserIdentification(user)}/vcs-checkout`,
+      {
+        metric: 'profile-system-getUserPayments',
+      }
+    )
   }
 
   public updateProfileInfo = (
@@ -68,7 +61,7 @@ export class ProfileClient extends ExternalClient {
     })
 
     return this.http.post(
-      `${getUserIdentification(user)}/personalData${
+      `${this.baseUrl}/${getUserIdentification(user)}/personalData${
         queryString ? `?${queryString}` : ''
       }`,
       profile,
@@ -80,7 +73,7 @@ export class ProfileClient extends ExternalClient {
 
   public updateAddress = (user: CurrentProfile, addressesData: any) => {
     return this.http.post(
-      `${getUserIdentification(user)}/addresses`,
+      `${this.baseUrl}/${getUserIdentification(user)}/addresses`,
       addressesData,
       {
         metric: 'profile-system-updateAddress',
@@ -90,7 +83,7 @@ export class ProfileClient extends ExternalClient {
 
   public deleteAddress = (user: CurrentProfile, addressName: string) => {
     return this.http.delete(
-      `${getUserIdentification(user)}/addresses/${addressName}`,
+      `${this.baseUrl}/${getUserIdentification(user)}/addresses/${addressName}`,
       {
         metric: 'profile-system-deleteAddress',
       }
@@ -102,7 +95,7 @@ export class ProfileClient extends ExternalClient {
     personalPreferences: PersonalPreferences
   ) => {
     return this.http.post(
-      `${getUserIdentification(user)}/personalPreferences/`,
+      `${this.baseUrl}/${getUserIdentification(user)}/personalPreferences/`,
       personalPreferences,
       {
         metric: 'profile-system-subscribeNewsletter',
@@ -111,7 +104,7 @@ export class ProfileClient extends ExternalClient {
   }
 
   public createProfile = (profile: Profile) => {
-    return this.http.post('', { personalData: profile })
+    return this.http.post(this.baseUrl, { personalData: profile })
   }
 
   protected get = <T>(url: string, config?: RequestConfig) => {
@@ -129,6 +122,8 @@ export class ProfileClient extends ExternalClient {
   protected patch = <T>(url: string, data?: any, config?: RequestConfig) => {
     return this.http.patch<T>(url, data, config).catch(statusToError)
   }
+
+  private baseUrl = '/api/profile-system/pvt/profiles'
 }
 
 function getUserIdentification(user: CurrentProfile) {
