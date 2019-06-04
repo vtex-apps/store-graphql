@@ -1,37 +1,34 @@
 import {
-  HttpClient,
-  HttpClientFactory,
   InstanceOptions,
   IOContext,
-  IODataSource,
+  ExternalClient,
+  RequestConfig,
 } from '@vtex/api'
 import * as queryStringBuilder from 'qs'
 
-const forProfile: HttpClientFactory = ({ context, options }) =>
-  context &&
-  HttpClient.forExternal(
-    `http://${
-      context.account
-    }.vtexcommercestable.com.br/api/profile-system/pvt/profiles`,
-    context,
-    {
-      ...options,
-      headers: {
-        'Proxy-Authorization': context.authToken,
-        VtexIdClientAutCookie: context.authToken,
-        'X-Vtex-Proxy-To': `http://${
-          context.account
-        }.vtexcommercestable.com.br`,
-      },
-      metrics,
-    }
-  )
+import { statusToError } from '../utils'
 
-export class ProfileDataSource extends IODataSource {
-  protected httpClientFactory = forProfile
+const THREE_SECONDS_TIMEOUT = 3 * 1000
 
-  public constructor(ctx?: IOContext, opts?: InstanceOptions) {
-    super(ctx, opts)
+export class ProfileClient extends ExternalClient {
+  public constructor(context: IOContext, options?: InstanceOptions) {
+    super(
+      `http://${
+        context.account
+      }.vtexcommercestable.com.br/api/profile-system/pvt/profiles`,
+      context,
+      {
+        ...options,
+        headers: {
+          ...(options && options.headers),
+          'X-Vtex-Proxy-To': `http://${
+            context.account
+          }.vtexcommercestable.com.br`,
+          VtexIdClientAutCookie: context.authToken,
+        },
+        timeout: THREE_SECONDS_TIMEOUT,
+      }
+    )
   }
 
   public getProfileInfo = (user: CurrentProfile, customFields?: string) => {
@@ -115,6 +112,22 @@ export class ProfileDataSource extends IODataSource {
 
   public createProfile = (profile: Profile) => {
     return this.http.post('', { personalData: profile })
+  }
+
+  protected get = <T>(url: string, config?: RequestConfig) => {
+    return this.http.get<T>(url, config).catch(statusToError)
+  }
+
+  protected post = <T>(url: string, data?: any, config?: RequestConfig) => {
+    return this.http.post<T>(url, data, config).catch(statusToError)
+  }
+
+  protected delete = <T>(url: string, config?: RequestConfig) => {
+    return this.http.delete<T>(url, config).catch(statusToError)
+  }
+
+  protected patch = <T>(url: string, data?: any, config?: RequestConfig) => {
+    return this.http.patch<T>(url, data, config).catch(statusToError)
   }
 }
 

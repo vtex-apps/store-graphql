@@ -59,7 +59,8 @@ async function getCurrentProfileFromCookies(
   context: Context
 ): Promise<CurrentProfile | null> {
   const {
-    dataSources: { profile, identity },
+    dataSources: { identity },
+    clients: { profile },
     vtex: { adminUserAuthToken, storeUserAuthToken },
     request: {
       headers: { cookie },
@@ -101,7 +102,7 @@ async function validatedProfile(
   currentProfile: CurrentProfile
 ): Promise<CurrentProfile> {
   const {
-    dataSources: { profile },
+    clients: { profile },
   } = context
 
   const { id, userId } = (await profile
