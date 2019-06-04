@@ -1,6 +1,6 @@
 import { compose, last, prop, split, path } from 'ramda'
 
-import { CatalogDataSource } from '../../dataSources/catalog'
+import { Catalog } from '../../clients/catalog'
 import { toCategoryIOMessage } from '../../utils/ioMessage'
 import { Slugify } from './slug'
 
@@ -23,7 +23,7 @@ type CategoryMap = Record<string, Category>
  * for slug and href. So we get the whole category tree and get that info from
  * there instead until the Catalog team fixes this issue with the category API.
  */
-async function getCategoryInfo(catalog: CatalogDataSource, id: string) {
+async function getCategoryInfo(catalog: Catalog, id: string) {
   const LEVELS = ['department', 'category', 'subcategory']
   const categories = (await catalog.categories(LEVELS.length)) as Category[]
 
@@ -65,7 +65,7 @@ export const resolvers = {
     href: async (
       { id }: Category,
       _: any,
-      { dataSources: { catalog } }: Context
+      { clients: { catalog } }: Context
     ) => {
       const category = await getCategoryInfo(catalog, id)
 
@@ -84,7 +84,7 @@ export const resolvers = {
     slug: async (
       { id }: Category,
       _: any,
-      { dataSources: { catalog } }: Context
+      { clients: { catalog } }: Context
     ) => {
       const category = await getCategoryInfo(catalog, id)
 
@@ -96,7 +96,7 @@ export const resolvers = {
     children: async (
       { id }: Category,
       _: any,
-      { dataSources: { catalog } }: Context
+      { clients: { catalog } }: Context
     ) => {
       const category = await getCategoryInfo(catalog, id)
 

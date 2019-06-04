@@ -162,7 +162,7 @@ export const resolvers = {
 
     recordsFiltered: async (root: any, _: any, ctx: Context) => {
       const {
-        dataSources: { catalog },
+        clients: { catalog },
       } = ctx
 
       try {

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.78.0] - 2019-06-04
+### Changed
+- Ports catalog datasource to client
+
 ## [2.77.1] - 2019-05-29
 
 ### Fixed

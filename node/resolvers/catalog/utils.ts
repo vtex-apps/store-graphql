@@ -28,9 +28,9 @@ export function findCategoryInTree(tree: Category[], values: string[], index = 0
   return null
 }
 
-export const getBrandFromSlug = async (brandSlug: string, {dataSources:{catalog}}: Context)  => {
+export const getBrandFromSlug = async (brandSlug: string, {clients:{catalog}}: Context)  => {
   const brands = await catalog.brands()
-  return brands.find(brand => 
+  return brands.find(brand =>
     toLower(catalogSlugify(brand.name)) === brandSlug || toLower(Slugify(brand.name)) === brandSlug
   )
 }
