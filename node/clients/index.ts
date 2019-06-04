@@ -1,8 +1,9 @@
 import { IOClients } from '@vtex/api'
 
+import { CallCenterOperator } from './callCenterOperator'
+import { Catalog } from './catalog'
 import { Checkout } from './checkout'
 import { MasterData } from './masterdata'
-import { CallCenterOperator } from './callCenterOperator'
 
 export class Clients extends IOClients {
   public get masterdata() {
@@ -15,5 +16,9 @@ export class Clients extends IOClients {
 
   public get callCenterOperator() {
     return this.getOrSet('callCenterOperator', CallCenterOperator)
+  }
+
+  public get catalog() {
+    return this.getOrSet('catalog', Catalog)
   }
 }
