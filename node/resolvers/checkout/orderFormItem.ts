@@ -16,8 +16,5 @@ export const resolvers = {
     listPrice: ({ listPrice }: Params) => listPrice / 100,
     price: ({ price }: Params) => price / 100,
     sellingPrice: ({ sellingPrice }: Params) => sellingPrice / 100,
-    productCategoryIds: ({ productCategoryIds }: Params) => productCategoryIds,
-    priceTags: ({ priceTags }: Params) => priceTags,
-    measurementUnit: ({ measurementUnit }: Params) => measurementUnit,
   }
 }
