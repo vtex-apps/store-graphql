@@ -6,7 +6,6 @@ import {
 } from '@vtex/api'
 
 import { Clients } from './clients'
-import { CatalogDataSource } from './dataSources/catalog'
 import { IdentityDataSource } from './dataSources/identity'
 import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
@@ -35,7 +34,6 @@ declare global {
   }
 
   interface StoreGraphQLDataSources {
-    catalog: CatalogDataSource
     identity: IdentityDataSource
     logistics: LogisticsDataSource
     profile: ProfileDataSource

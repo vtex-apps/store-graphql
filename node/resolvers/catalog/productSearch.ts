@@ -21,7 +21,7 @@ export const resolvers = {
     },
     products: path(['productsRaw', 'data']),
     breadcrumb: async ({ translatedArgs, productsRaw: {data: products} }: ProductSearchParent, _: any, ctx: Context) => {
-      const {dataSources: { catalog }} = ctx
+      const {clients: { catalog }} = ctx
       const queryAndMap = zip(
         translatedArgs.query
           .toLowerCase()

@@ -1,5 +1,6 @@
 import { UserInputError } from '@vtex/api'
 import { filter, path } from 'ramda'
+import { Clients } from '../../clients';
 
 export const fields = ['name', 'isPublic', 'isEditable', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
 export const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
@@ -35,15 +36,15 @@ const checkDuplicatedListItem = (items: Item[], item: Item) => {
   }
 }
 
-const validateListItem = (items: Item[], item: Item, dataSources: any) => {
-  const { catalog } = dataSources
+const validateListItem = (items: Item[], item: Item, clients: Clients) => {
+  const { catalog } = clients
   checkListItemQuantity(path(['quantity'], item))
   checkDuplicatedListItem(items, item)
   checkProduct(item, catalog)
 }
 
-const validateItems = (items: Item[] = [], dataSources: any) => {
-  items.forEach(item => validateListItem(items, item, dataSources))
+const validateItems = (items: Item[] = [], clients: Clients) => {
+  items.forEach(item => validateListItem(items, item, clients))
 }
 
 export { validateItems, validateListItem }
