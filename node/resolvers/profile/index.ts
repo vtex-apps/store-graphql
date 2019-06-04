@@ -28,7 +28,7 @@ export const mutations = {
     updateProfilePicture(context, file),
 
   subscribeNewsletter: async (_: any, { email }: any, context: Context) => {
-    const profile = context.dataSources.profile
+    const profile = context.clients.profile
 
     await profile.updatePersonalPreferences(email, {
       isNewsletterOptIn: 'True',
@@ -39,7 +39,7 @@ export const mutations = {
 }
 
 export const queries = {
-  profile: (_: any, { customFields }: any, context: any) =>
+  profile: (_: any, { customFields }: any, context: Context) =>
     getProfile(context, customFields),
 }
 
