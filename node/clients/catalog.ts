@@ -17,7 +17,7 @@ const inflightKey = ({baseURL, url, params, headers}: RequestConfig) => {
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
 export class Catalog extends AppClient {
-  constructor(ctx: IOContext, opts?: InstanceOptions) {
+  public constructor(ctx: IOContext, opts?: InstanceOptions) {
     super('vtex.catalog-api-proxy', ctx, opts)
   }
 
