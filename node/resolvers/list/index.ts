@@ -1,30 +1,13 @@
 import { UserInputError } from '@vtex/api'
-import {
-  concat,
-  filter,
-  groupBy,
-  last,
-  map,
-  nth,
-  path,
-  prop,
-  values,
-} from 'ramda'
+import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
 
+import { Catalog } from '../../clients/catalog'
 import { MasterData } from '../../clients/masterdata'
-import { CatalogDataSource } from './../../dataSources/catalog'
-import {
-  acronymList,
-  acronymListProduct,
-  fields,
-  fieldsListProduct,
-  validateItems,
-  Item,
-} from './util'
+import { acronymList, acronymListProduct, fields, fieldsListProduct, Item, validateItems } from './util'
 
 const getListItemsWithProductInfo = (
   items: Item[],
-  catalog: CatalogDataSource
+  catalog: Catalog
 ) =>
   Promise.all(
     map(async (item: Item) => {
@@ -38,7 +21,7 @@ const getListItemsWithProductInfo = (
 
 const getListItems = async (
   itemsId: string[],
-  catalog: CatalogDataSource,
+  catalog: Catalog,
   masterdata: MasterData
 ) => {
   const items: Item[] = itemsId
@@ -63,9 +46,9 @@ const addListItem = async (item: Item, masterdata: MasterData) => {
 
 const addItems = async (
     items: Item[] = [],
-    { dataSources, clients: { masterdata } }: Context
+    { clients, clients: { masterdata } }: Context
   ) => {
-  validateItems(items, dataSources)
+  validateItems(items, clients)
   const promises = map(async item => addListItem(item, masterdata), items)
   return Promise.all(promises)
 }
@@ -122,7 +105,7 @@ export const queries = {
   list: async (
     _: any,
     { id }: any,
-    { dataSources: { catalog }, clients: { masterdata } }: Context
+    { clients: { masterdata, catalog } }: Context
   ) => {
     const list = await masterdata.getDocument<any>(acronymList, id, fields)
     const items = await getListItems(list.items, catalog, masterdata)
@@ -135,8 +118,7 @@ export const queries = {
     context: Context
   ) => {
     const {
-      dataSources: { catalog },
-      clients: { masterdata },
+      clients: { masterdata, catalog },
     } = context
 
     const lists = (await masterdata.searchDocuments<any>(

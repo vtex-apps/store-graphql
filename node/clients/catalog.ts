@@ -1,6 +1,7 @@
-import { HttpClient, HttpClientFactory, IODataSource, LRUCache, RequestConfig } from '@vtex/api'
+import { AppClient, InstanceOptions, IOContext, RequestConfig } from '@vtex/api'
 import { stringify } from 'qs'
-import { SegmentData } from './session'
+
+import { SegmentData } from '../dataSources/session'
 import { CatalogCrossSellingTypes } from '../resolvers/catalog/utils'
 
 interface AutocompleteArgs {
@@ -8,31 +9,17 @@ interface AutocompleteArgs {
   searchTerm: string
 }
 
-const memoryCache = new LRUCache<string, any>({max: 2000})
-
-metrics.trackCache('catalog', memoryCache)
-
 const inflightKey = ({baseURL, url, params, headers}: RequestConfig) => {
   return baseURL! + url! + stringify(params, {arrayFormat: 'repeat', addQueryPrefix: true}) + `&segmentToken=${headers['x-vtex-segment']}`
 }
 
-const forProxy: HttpClientFactory = ({context, options}) => context &&
-  HttpClient.forWorkspace('catalog-api-proxy.vtex', context, {
-    ...options,
-    headers: {
-      ... context.segmentToken ? {'x-vtex-segment': context.segmentToken} : null,
-    },
-    memoryCache,
-    metrics,
-    retries: 1,
-    timeout: 3000,
-  })
-
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
-export class CatalogDataSource extends IODataSource {
-  protected httpClientFactory = forProxy
+export class Catalog extends AppClient {
+  public constructor(ctx: IOContext, opts?: InstanceOptions) {
+    super('vtex.catalog-api-proxy', ctx, opts)
+  }
 
   public product = (slug: string) => this.get<Product[]>(
     `/pub/products/search/${slug && slug.toLowerCase()}/p`,
@@ -65,7 +52,7 @@ export class CatalogDataSource extends IODataSource {
       this.productSearchUrl(args),
       {metric: 'catalog-products'}
     )
-  } 
+  }
 
   public productsQuantity = async (args: SearchArgs) => {
     const {headers: {resources}} = await this.getRaw(this.productSearchUrl(args))

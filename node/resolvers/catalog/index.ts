@@ -1,17 +1,6 @@
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
-import {
-  compose,
-  equals,
-  find,
-  head,
-  last,
-  path,
-  prop,
-  split,
-  test,
-  toLower,
-} from 'ramda'
+import { compose, equals, find, head, last, path, prop, split, test, toLower } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
@@ -23,13 +12,13 @@ import { resolvers as itemMetadataResolvers } from './itemMetadata'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
 import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
+import { resolvers as productSearchResolvers } from './productSearch'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
-import { resolvers as skuResolvers } from './sku'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
-import { resolvers as productSearchResolvers } from './productSearch'
+import { resolvers as skuResolvers } from './sku'
 import { catalogSlugify, Slugify } from './slug'
-import { findCategoryInTree, getBrandFromSlug, CatalogCrossSellingTypes } from './utils'
+import { CatalogCrossSellingTypes, findCategoryInTree, getBrandFromSlug } from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -144,7 +133,7 @@ const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
 /** TODO: This method should be removed in the next major.
  * @author Ana Luiza
  */
-async function getProductBySlug(slug: string, catalog: Context['dataSources']['catalog']) {
+async function getProductBySlug(slug: string, catalog: Context['clients']['catalog']) {
   const products = await catalog.product(slug)
   if (products.length > 0) {
     return head(products)
@@ -183,7 +172,7 @@ export const fieldResolvers = {
 export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
       clients,
     } = ctx
     const translatedTerm = await translateToStoreDefaultLanguage(clients, args.searchTerm)
@@ -199,7 +188,7 @@ export const queries = {
 
   facets: async (_: any, { facets, query, map, hideUnavailableItems }: FacetsArgs, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
       clients,
     } = ctx
     let result
@@ -223,7 +212,7 @@ export const queries = {
 
   product: async (_: any, args: ProductArgs, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
     } = ctx
     // TODO this is only for backwards compatibility. Should be removed in the next major.
     if (args.slug) {
@@ -265,7 +254,7 @@ export const queries = {
 
   products: async (_: any, args: any, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
     } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
@@ -279,7 +268,7 @@ export const queries = {
   productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
     const {
       clients,
-      dataSources:{catalog}
+      clients: { catalog }
     } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
@@ -303,7 +292,7 @@ export const queries = {
     }
   },
 
-  brand: async (_: any, { id }: {id?: number}, { dataSources: { catalog } }: Context) => {
+  brand: async (_: any, { id }: {id?: number}, { clients: { catalog } }: Context) => {
     const brands = await catalog.brands()
     const brand = find(
       compose(
@@ -318,13 +307,13 @@ export const queries = {
     return brand
   },
 
-  brands: async (_: any, __: any, { dataSources: { catalog } }: Context) =>
+  brands: async (_: any, __: any, { clients: { catalog } }: Context) =>
     catalog.brands(),
 
   category: async (
     _: any,
     { id }: { id?: number },
-    { dataSources: { catalog } }: Context
+    { clients: { catalog } }: Context
   ) => {
     if (id == null) {
       throw new ResolverWarning(`No category ID provided`)
@@ -335,7 +324,7 @@ export const queries = {
   categories: async (
     _: any,
     { treeLevel }: { treeLevel: number },
-    { dataSources: { catalog } }: Context
+    { clients: { catalog } }: Context
   ) => catalog.categories(treeLevel),
 
   /** TODO: This method should be removed in the next major.
@@ -364,7 +353,7 @@ export const queries = {
   searchContextFromParams: async (
     _: any,
     args: SearchContextParams,
-    { dataSources: { catalog } }: Context
+    { clients: { catalog } }: Context
   ) => {
     const response: SearchContext = {
       brand: null,
@@ -414,6 +403,6 @@ export const queries = {
       const product = await queries.product(_, { identifier }, ctx)
       productId = product!.productId
     }
-    return ctx.dataSources.catalog.crossSelling(productId, catalogType)
+    return ctx.clients.catalog.crossSelling(productId, catalogType)
   }
 }
