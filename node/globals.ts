@@ -9,7 +9,6 @@ import { Clients } from './clients'
 import { IdentityDataSource } from './dataSources/identity'
 import { LogisticsDataSource } from './dataSources/logistics'
 import { OMSDataSource } from './dataSources/oms'
-import { ProfileDataSource } from './dataSources/profile'
 import { SessionDataSource } from './dataSources/session'
 
 if (!global.metrics) {
@@ -36,7 +35,6 @@ declare global {
   interface StoreGraphQLDataSources {
     identity: IdentityDataSource
     logistics: LogisticsDataSource
-    profile: ProfileDataSource
     session: SessionDataSource
     oms: OMSDataSource
   }
