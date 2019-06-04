@@ -4,7 +4,6 @@ import {
   JanusClient,
   RequestConfig,
 } from '@vtex/api'
-import * as queryStringBuilder from 'qs'
 
 import { statusToError } from '../utils'
 
@@ -23,7 +22,7 @@ export class ProfileClient extends JanusClient {
   }
 
   public getProfileInfo = (user: CurrentProfile, customFields?: string) =>
-    this.http.get(
+    this.get<Profile>(
       `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
       {
         metric: 'profile-system-getProfileInfo',
@@ -33,95 +32,75 @@ export class ProfileClient extends JanusClient {
       }
     )
 
-  public getUserAddresses = (user: CurrentProfile) => {
-    return this.http.get(
-      `${this.baseUrl}/${getUserIdentification(user)}/addresses`,
-      {
-        metric: 'profile-system-getUserAddresses',
-      }
-    )
-  }
+  public getUserAddresses = (user: CurrentProfile) =>
+    this.get(`${this.baseUrl}/${getUserIdentification(user)}/addresses`, {
+      metric: 'profile-system-getUserAddresses',
+    })
 
-  public getUserPayments = (user: CurrentProfile) => {
-    return this.http.get(
-      `${this.baseUrl}/${getUserIdentification(user)}/vcs-checkout`,
-      {
-        metric: 'profile-system-getUserPayments',
-      }
-    )
-  }
+  public getUserPayments = (user: CurrentProfile) =>
+    this.get(`${this.baseUrl}/${getUserIdentification(user)}/vcs-checkout`, {
+      metric: 'profile-system-getUserPayments',
+    })
 
   public updateProfileInfo = (
     user: CurrentProfile,
     profile: Profile | { profilePicture: string },
     customFields?: string
-  ) => {
-    const queryString = queryStringBuilder.stringify({
-      extraFields: customFields,
-    })
-
-    return this.http.post(
-      `${this.baseUrl}/${getUserIdentification(user)}/personalData${
-        queryString ? `?${queryString}` : ''
-      }`,
+  ) =>
+    this.post<Profile>(
+      `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
       profile,
       {
         metric: 'profile-system-updateProfileInfo',
+        params: {
+          extraFields: customFields,
+        },
       }
     )
-  }
 
-  public updateAddress = (user: CurrentProfile, addressesData: any) => {
-    return this.http.post(
+  public updateAddress = (user: CurrentProfile, addressesData: any) =>
+    this.post(
       `${this.baseUrl}/${getUserIdentification(user)}/addresses`,
       addressesData,
       {
         metric: 'profile-system-updateAddress',
       }
     )
-  }
 
-  public deleteAddress = (user: CurrentProfile, addressName: string) => {
-    return this.http.delete(
+  public deleteAddress = (user: CurrentProfile, addressName: string) =>
+    this.delete(
       `${this.baseUrl}/${getUserIdentification(user)}/addresses/${addressName}`,
       {
         metric: 'profile-system-deleteAddress',
       }
     )
-  }
 
   public updatePersonalPreferences = (
     user: CurrentProfile,
     personalPreferences: PersonalPreferences
-  ) => {
-    return this.http.post(
+  ) =>
+    this.post(
       `${this.baseUrl}/${getUserIdentification(user)}/personalPreferences/`,
       personalPreferences,
       {
         metric: 'profile-system-subscribeNewsletter',
       }
     )
-  }
 
-  public createProfile = (profile: Profile) => {
-    return this.http.post(this.baseUrl, { personalData: profile })
-  }
+  public createProfile = (profile: Profile) =>
+    this.post(this.baseUrl, { personalData: profile })
 
-  protected get = <T>(url: string, config?: RequestConfig) => {
-    return this.http.get<T>(url, config).catch(statusToError)
-  }
+  protected get = <T>(url: string, config?: RequestConfig) =>
+    this.http.get<T>(url, config).catch<any>(statusToError)
 
-  protected post = <T>(url: string, data?: any, config?: RequestConfig) => {
-    return this.http.post<T>(url, data, config).catch(statusToError)
-  }
+  protected post = <T>(url: string, data?: any, config?: RequestConfig) =>
+    this.http.post<T>(url, data, config).catch<any>(statusToError)
 
-  protected delete = <T>(url: string, config?: RequestConfig) => {
-    return this.http.delete<T>(url, config).catch(statusToError)
-  }
+  protected delete = <T>(url: string, config?: RequestConfig) =>
+    this.http.delete<T>(url, config).catch<any>(statusToError)
 
-  protected patch = <T>(url: string, data?: any, config?: RequestConfig) => {
-    return this.http.patch<T>(url, data, config).catch(statusToError)
-  }
+  protected patch = <T>(url: string, data?: any, config?: RequestConfig) =>
+    this.http.patch<T>(url, data, config).catch<any>(statusToError)
 
   private baseUrl = '/api/profile-system/pvt/profiles'
 }
