@@ -1,6 +1,8 @@
 import { UserInputError } from '@vtex/api'
 import { filter, path } from 'ramda'
-import { Clients } from '../../clients';
+
+import { Clients } from '../../clients'
+import { Catalog } from '../../clients/catalog'
 
 export const fields = ['name', 'isPublic', 'isEditable', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
 export const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
@@ -22,8 +24,8 @@ const checkListItemQuantity = (quantity: any) => {
 
 // Make this query to check if the skuId received is valid
 // If it isn't, it throws an exception.
-const checkProduct = async (item: Item, catalog: any) => {
-  const response = await catalog.productBySku([path(['skuId'], item)])
+const checkProduct = async (item: Item, catalog: Catalog) => {
+  const response = await catalog.productBySku([path(['skuId'], item) as string])
   if (!response.length) {
     throw new UserInputError('Cannot add an invalid product')
   }
