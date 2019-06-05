@@ -25,22 +25,22 @@ const syncOrderFormAndSessionAddress = async (
   sessionAddress: GenericObject | null,
   ctx: Context,
   ): Promise<object | null> => {
-  const {dataSources: {session}, clients: { checkout }} = ctx
+  const {clients: { checkout, session }} = ctx
   if (!orderFormAddress && sessionAddress && !isMasked(sessionAddress.postalCode)) {
     return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [sessionAddress] })
   }
 
   if (orderFormAddress && !equals(orderFormAddress, sessionAddress)) {
-    await session.updateSession('address', orderFormAddress)
+    await session.updateSession('address', orderFormAddress, [], {})
   }
   return null
 }
 
 const syncOrderFormAndSessionOrderFormId = async (orderFormId: string, sessionOrderFormId: string | null, ctx: Context) => {
-  const {dataSources: {session}} = ctx
+  const {clients: {session}} = ctx
   if (!sessionOrderFormId || sessionOrderFormId !== orderFormId) {
     // Saving orderFormId on session
-    await session.updateSession('orderFormId', orderFormId)
+    await session.updateSession('orderFormId', orderFormId, [], {})
   }
 }
 

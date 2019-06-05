@@ -1,7 +1,6 @@
-import { AppClient, InstanceOptions, IOContext, RequestConfig } from '@vtex/api'
+import { AppClient, InstanceOptions, IOContext, RequestConfig, SegmentData } from '@vtex/api'
 import { stringify } from 'qs'
 
-import { SegmentData } from '../dataSources/session'
 import { CatalogCrossSellingTypes } from '../resolvers/catalog/utils'
 
 interface AutocompleteArgs {
