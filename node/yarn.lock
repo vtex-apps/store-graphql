@@ -334,10 +334,10 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@vtex/api@^3.15.0":
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.15.0.tgz#ed52ec9bab1558dbc59d4625e625aaf7be7b78d0"
-  integrity sha512-DW7Q4OFIVweln7mEc5R8d5S1hQWlfLaQ3Kt1kpu8FPTO/GnT+mu5v3+t4pQUlJdvYD/la/858vOg0/L8ikk/sw==
+"@vtex/api@^3.21.2":
+  version "3.21.3"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.21.3.tgz#9117e20f12cf1af634b1d1d2ba7894e6a42781bb"
+  integrity sha512-mGRh5d6wRDzfsxvUncd7GRH+wA+ytqGwAOvkP3vBZtBUSJ4JIEx+0cf19IQph+7vpi/6W782pXJnKyYPmdHZRQ==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
@@ -347,6 +347,7 @@
     archiver "^3.0.0"
     axios "^0.18.0"
     axios-retry "^3.1.2"
+    bluebird "^3.5.4"
     co-body "^6.0.0"
     cookie "^0.3.1"
     dataloader "^1.4.0"
@@ -1529,6 +1530,11 @@ bluebird@^3.5.0:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.4.tgz#d6cc661595de30d5b3af5fcedd3c0b3ef6ec5714"
   integrity sha512-FG+nFEZChJrbQ9tIccIfZJBz3J7mLrAhxakAbnrJWn8d7aKOC+LWifa0G+p4ZqKp4y13T7juYvdhq9NzKdsrjw==
+
+bluebird@^3.5.4:
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
+  integrity sha512-5am6HnnfN+urzt4yfg7IgTbotDjIT/u8AJpEt0sIU9FtXfVeezXAPKswrG+xKUCOYAINpSdgZVDU6QFh+cuH3w==
 
 brace-expansion@^1.1.7:
   version "1.1.11"
