@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Increase timeouts for external services like checkout and catalog
+
 ## [2.79.2] - 2019-06-06
 ### Changed
 - Use `session` client from `node-vtex-api`
