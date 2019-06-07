@@ -7,7 +7,7 @@ import {
 
 import { statusToError } from '../utils'
 
-const THREE_SECONDS_TIMEOUT = 3 * 1000
+const FIVE_SECONDS_MS = 5 * 1000
 
 export class ProfileClient extends JanusClient {
   public constructor(context: IOContext, options?: InstanceOptions) {
@@ -17,7 +17,7 @@ export class ProfileClient extends JanusClient {
         ...(options && options.headers),
         VtexIdClientAutCookie: context.authToken,
       },
-      timeout: THREE_SECONDS_TIMEOUT,
+      timeout: FIVE_SECONDS_MS,
     })
   }
 
