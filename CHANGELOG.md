@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.80.1] - 2019-06-10
+
 ### Fixed
 - Corrected query string formats for `productByEan` and `productByReference` catalog client methods 
 
