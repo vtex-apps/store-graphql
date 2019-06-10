@@ -26,7 +26,7 @@ export class Catalog extends AppClient {
   )
 
   public productByEan = (id: string) => this.get<Product[]>(
-    `/pub/products/search?fq=alternateIds_Ean=${id}`,
+    `/pub/products/search?fq=alternateIds_Ean:${id}`,
     {metric: 'catalog-productByEan'}
   )
 
@@ -36,7 +36,7 @@ export class Catalog extends AppClient {
   )
 
   public productByReference = (id: string) => this.get<Product[]>(
-    `/pub/products/search?fq=alternateIds_RefId=${id}`,
+    `/pub/products/search?fq=alternateIds_RefId:${id}`,
     {metric: 'catalog-productByReference'}
   )
 
