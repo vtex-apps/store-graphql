@@ -1,5 +1,5 @@
 import { IOContext } from '@vtex/api'
-import axios from 'axios'
+import axios, { Method } from 'axios'
 import { prop } from 'ramda'
 import parse from 'url-parse'
 
@@ -14,7 +14,7 @@ export type HeadersBuider = (ioContext: IOContext) => Record<string, string>
 export type ResponseMerger = (bodyData: any, responseData: any, response?: any) => any
 
 export interface HttpResolverOptions {
-  method?: string
+  method?: Method
   url: string | URLBuilder
   data?: any | DataBuilder
   headers?: Record<string, string> | HeadersBuider,
