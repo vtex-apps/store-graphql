@@ -32,8 +32,7 @@ import { catalogSlugify, Slugify } from './slug'
 import {
   CatalogCrossSellingTypes,
   findCategoryInTree,
-  getBrandFromSlug,
-  asyncForEach,
+  getBrandFromSlug
 } from './utils'
 
 interface SearchContext {
@@ -74,7 +73,7 @@ interface ProductRecommendationArg {
 }
 
 interface ProductsByIdentifierArgs {
-  field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
+  field: 'id' | 'ean' | 'reference' | 'sku'
   values: [string]
 }
 
@@ -322,54 +321,20 @@ export const queries = {
     } = ctx
 
     let products = [] as Product[]
-    let product = [] as Product[]
     const { field, values } = args
 
     switch (field) {
       case 'id':
-        const idStart = async () => {
-          await asyncForEach(values, async (value: string) => {
-            product = await catalog.productById(value)
-            products.push(...product)
-          })
-        }
-        await idStart();
-        break
-      case 'slug':
-        const slugStart = async () => {
-          await asyncForEach(values, async (value: string) => {
-            product = await catalog.product(value)
-            products.push(...product)
-          })
-        }
-        await slugStart();
+        products = await catalog.productsById(values)
         break
       case 'ean':
-        const eanStart = async () => {
-          await asyncForEach(values, async (value: string) => {
-            product = await catalog.productByEan(value)
-            products.push(...product)
-          })
-        }
-        await eanStart();
+        products = await catalog.productsByEan(values)
         break
       case 'reference':
-        const refStart = async () => {
-          await asyncForEach(values, async (value: string) => {
-            product = await catalog.productByReference(value)
-            products.push(...product)
-          })
-        }
-        await refStart();
+        products = await catalog.productsByReference(values)
         break
       case 'sku':
-        const skuStart = async () => {
-          await asyncForEach(values, async (value: string) => {
-            product = await catalog.productBySku([value])
-            products.push(...product)
-          })
-        }
-        await skuStart();
+        products = await catalog.productBySku(values)
         break
     }
 
