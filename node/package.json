@@ -4,7 +4,7 @@
     "@gocommerce/utils": "^0.5.26",
     "apollo-datasource-rest": "^0.1.5",
     "apollo-server-errors": "^2.0.2",
-    "axios": "0.16.2",
+    "axios": "^0.19.0",
     "bluebird": "^3.5.0",
     "camelcase": "^5.0.0",
     "cookie": "^0.3.1",
