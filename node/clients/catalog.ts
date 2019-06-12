@@ -30,13 +30,28 @@ export class Catalog extends AppClient {
     {metric: 'catalog-productByEan'}
   )
 
+  public productsByEan = (ids: string[]) => this.get<Product[]>(
+    `/pub/products/search?${ids.map(id => `fq=alternateIds_Ean:${id}`).join('&')}`,
+    {metric: 'catalog-productByEan'}
+  )
+
   public productById = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=productId:${id}`,
     {metric: 'catalog-productById'}
   )
 
+  public productsById = (ids: string[]) => this.get<Product[]>(
+    `/pub/products/search?${ids.map(id => `fq=productId:${id}`).join('&')}`,
+    {metric: 'catalog-productById'}
+  )
+
   public productByReference = (id: string) => this.get<Product[]>(
     `/pub/products/search?fq=alternateIds_RefId:${id}`,
+    {metric: 'catalog-productByReference'}
+  )
+  
+  public productsByReference = (ids: string[]) => this.get<Product[]>(
+    `/pub/products/search?${ids.map(id => `fq=alternateIds_RefId:${id}`).join('&')}`,
     {metric: 'catalog-productByReference'}
   )
 
