@@ -34,3 +34,9 @@ export const getBrandFromSlug = async (brandSlug: string, {clients:{catalog}}: C
     toLower(catalogSlugify(brand.name)) === brandSlug || toLower(Slugify(brand.name)) === brandSlug
   )
 }
+
+export async function asyncForEach(array: Array<any>, callback: Function) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}

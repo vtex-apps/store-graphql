@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- productsByIdentifier query and associated resolver to retrieve multiple products from an array of identifiers (EAN, reference code, etc)
+
 ## [2.80.3] - 2019-06-12
 
 ## [2.80.2] - 2019-06-11
