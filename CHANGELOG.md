@@ -6,12 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### Added
-- Add `invoicedDate` into Order type
+
+- `invoicedDate` into Order type
+- `selectedSla` to `LogisticInfo` type
 
 ## [2.85.0] - 2019-06-26
+
 ### Added
-- Add `productCategoryIds` into `OrderItem` type
+
+- `productCategoryIds` into `OrderItem` type
 
 ## [2.84.1] - 2019-06-25
 
