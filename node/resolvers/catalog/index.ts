@@ -363,27 +363,54 @@ export const queries = {
 
     if (args.brand) {
       const brands = await catalog.brands()
-      const compareSlug = (name: string) => toLower(catalogSlugify(name)) === args.brand || toLower(Slugify(name)) === args.brand
-      const found = brands.find(brand => brand.isActive && compareSlug(brand.name))
+
+      const compareBrandSlug = (name: string) =>
+        toLower(catalogSlugify(name)) === args.brand ||
+        toLower(Slugify(name)) === args.brand
+
+      const found = brands.find(
+        brand => brand.isActive && compareBrandSlug(brand.name)
+      )
       response.brand = found ? found.id : null
     }
 
     if (args.department) {
       const departments = await catalog.categories(2)
+
+      const compareGenericSlug = ({
+        entity,
+        url,
+      }: {
+        entity: 'category' | 'department' | 'subcategory'
+        url: string
+      }) => {
+        const slug = args[entity]
+
+        if (!slug) {
+          return false
+        }
+
+        return (
+          url.endsWith(`/${toLower(catalogSlugify(slug))}`) ||
+          url.endsWith(`/${toLower(Slugify(slug))}`)
+        )
+      }
+
       let found
 
-      found = departments.find((department) =>
-        department.url.endsWith(`/${args.department!.toLowerCase()}`)
+      found = departments.find(department =>
+        compareGenericSlug({ entity: 'department', url: department.url })
       )
+
       if (args.category && found) {
         found = found.children.find(category =>
-          category.url.endsWith(`/${args.category!.toLowerCase()}`)
+          compareGenericSlug({ entity: 'category', url: category.url })
         )
       }
 
       if (args.subcategory && found) {
         found = found.children.find(subcategory =>
-          subcategory.url.endsWith(`/${args.subcategory!.toLowerCase()}`)
+          compareGenericSlug({ entity: 'subcategory', url: subcategory.url })
         )
       }
 
