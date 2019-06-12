@@ -1,6 +1,17 @@
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
-import { compose, equals, find, head, last, path, prop, split, test, toLower } from 'ramda'
+import {
+  compose,
+  equals,
+  find,
+  head,
+  last,
+  path,
+  prop,
+  split,
+  test,
+  toLower,
+} from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
@@ -18,7 +29,12 @@ import { resolvers as searchResolvers } from './search'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
 import { catalogSlugify, Slugify } from './slug'
-import { CatalogCrossSellingTypes, findCategoryInTree, getBrandFromSlug } from './utils'
+import {
+  CatalogCrossSellingTypes,
+  findCategoryInTree,
+  getBrandFromSlug,
+  asyncForEach,
+} from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -57,6 +73,11 @@ interface ProductRecommendationArg {
   type?: CrossSellingInput
 }
 
+interface ProductsByIdentifierArgs {
+  field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
+  values: [string]
+}
+
 const inputToCatalogCrossSelling = {
   [CrossSellingInput.buy]: CatalogCrossSellingTypes.whoboughtalsobought,
   [CrossSellingInput.view]: CatalogCrossSellingTypes.whosawalsosaw,
@@ -87,12 +108,17 @@ export const extractSlug = (item: any) => {
 /** Get Category metadata for the search/productSearch query
  *
  */
-const categoryMetaData = async (_: any, args: SearchArgs, ctx: Context): Promise<Metadata> => {
+const categoryMetaData = async (
+  _: any,
+  args: SearchArgs,
+  ctx: Context
+): Promise<Metadata> => {
   const { query } = args
-  const category = findCategoryInTree(
-    await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
-    query.split('/')
-  ) || {}
+  const category =
+    findCategoryInTree(
+      await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
+      query.split('/')
+    ) || {}
   return {
     metaTagDescription: path(['MetaTagDescription'], category),
     titleTag: path(['Title'], category) || path(['Name'], category),
@@ -101,9 +127,13 @@ const categoryMetaData = async (_: any, args: SearchArgs, ctx: Context): Promise
 /** Get brand metadata for the search/productSearch query
  *
  */
-const brandMetaData = async (_: any, args: SearchArgs, ctx: Context): Promise<Metadata> => {
+const brandMetaData = async (
+  _: any,
+  args: SearchArgs,
+  ctx: Context
+): Promise<Metadata> => {
   const brandSlug = toLower(last(args.query.split('/')) || '')
-  const brand = await getBrandFromSlug(brandSlug, ctx) || {}
+  const brand = (await getBrandFromSlug(brandSlug, ctx)) || {}
   return {
     metaTagDescription: path(['metaTagDescription'], brand),
     titleTag: path(['title'], brand) || path(['name'], brand),
@@ -133,7 +163,10 @@ const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
 /** TODO: This method should be removed in the next major.
  * @author Ana Luiza
  */
-async function getProductBySlug(slug: string, catalog: Context['clients']['catalog']) {
+async function getProductBySlug(
+  slug: string,
+  catalog: Context['clients']['catalog']
+) {
   const products = await catalog.product(slug)
   if (products.length > 0) {
     return head(products)
@@ -141,11 +174,14 @@ async function getProductBySlug(slug: string, catalog: Context['clients']['catal
   throw new NotFoundError('No product was found with requested sku')
 }
 
-const translateToStoreDefaultLanguage = async (clients: Context['clients'], term: string): Promise<string> => {
+const translateToStoreDefaultLanguage = async (
+  clients: Context['clients'],
+  term: string
+): Promise<string> => {
   const { segment, messages } = clients
-  const [{cultureInfo: to}, {cultureInfo: from}] = await all([
+  const [{ cultureInfo: to }, { cultureInfo: from }] = await all([
     segment.getSegmentByToken(null),
-    segment.getSegment()
+    segment.getSegment(),
   ])
   return from && from !== to
     ? messages.translate(to, [toSearchTerm(term, from)]).then(head)
@@ -175,7 +211,10 @@ export const queries = {
       clients: { catalog },
       clients,
     } = ctx
-    const translatedTerm = await translateToStoreDefaultLanguage(clients, args.searchTerm)
+    const translatedTerm = await translateToStoreDefaultLanguage(
+      clients,
+      args.searchTerm
+    )
     const { itemsReturned } = await catalog.autocomplete({
       maxRows: args.maxRows,
       searchTerm: translatedTerm,
@@ -186,26 +225,36 @@ export const queries = {
     }
   },
 
-  facets: async (_: any, { facets, query, map, hideUnavailableItems }: FacetsArgs, ctx: Context) => {
+  facets: async (
+    _: any,
+    { facets, query, map, hideUnavailableItems }: FacetsArgs,
+    ctx: Context
+  ) => {
     const {
       clients: { catalog },
       clients,
     } = ctx
     let result
-    const translatedQuery = await translateToStoreDefaultLanguage(clients, query)
+    const translatedQuery = await translateToStoreDefaultLanguage(
+      clients,
+      query
+    )
     const segmentData = ctx.vtex.segment
-    const salesChannel = segmentData && segmentData.channel.toString() || ''
+    const salesChannel = (segmentData && segmentData.channel.toString()) || ''
 
-    const unavailableString =
-       hideUnavailableItems ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1` : ''
+    const unavailableString = hideUnavailableItems
+      ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
+      : ''
     if (facets) {
       result = await catalog.facets(facets)
     } else {
-      result = await catalog.facets(`${translatedQuery}?map=${map}${unavailableString}`)
+      result = await catalog.facets(
+        `${translatedQuery}?map=${map}${unavailableString}`
+      )
     }
     result.queryArgs = {
       query: translatedQuery,
-      map
+      map,
     }
     return result
   },
@@ -219,9 +268,7 @@ export const queries = {
       return getProductBySlug(args.slug, catalog)
     }
     if (!args.identifier) {
-      throw new UserInputError(
-        'No product identifier provided'
-      )
+      throw new UserInputError('No product identifier provided')
     }
 
     const { field, value } = args.identifier
@@ -265,10 +312,78 @@ export const queries = {
     return catalog.products(args)
   },
 
+  productsByIdentifier: async (
+    _: any,
+    args: ProductsByIdentifierArgs,
+    ctx: Context
+  ) => {
+    const {
+      clients: { catalog },
+    } = ctx
+
+    let products = [] as Product[]
+    let product = [] as Product[]
+    const { field, values } = args
+
+    switch (field) {
+      case 'id':
+        const idStart = async () => {
+          await asyncForEach(values, async (value: string) => {
+            product = await catalog.productById(value)
+            products.push(...product)
+          })
+        }
+        await idStart();
+        break
+      case 'slug':
+        const slugStart = async () => {
+          await asyncForEach(values, async (value: string) => {
+            product = await catalog.product(value)
+            products.push(...product)
+          })
+        }
+        await slugStart();
+        break
+      case 'ean':
+        const eanStart = async () => {
+          await asyncForEach(values, async (value: string) => {
+            product = await catalog.productByEan(value)
+            products.push(...product)
+          })
+        }
+        await eanStart();
+        break
+      case 'reference':
+        const refStart = async () => {
+          await asyncForEach(values, async (value: string) => {
+            product = await catalog.productByReference(value)
+            products.push(...product)
+          })
+        }
+        await refStart();
+        break
+      case 'sku':
+        const skuStart = async () => {
+          await asyncForEach(values, async (value: string) => {
+            product = await catalog.productBySku([value])
+            products.push(...product)
+          })
+        }
+        await skuStart();
+        break
+    }
+
+    if (products.length > 0) {
+      return products
+    }
+
+    throw new NotFoundError(`No products were found with requested ${field}`)
+  },
+
   productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
     const {
       clients,
-      clients: { catalog }
+      clients: { catalog },
     } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
@@ -292,7 +407,11 @@ export const queries = {
     }
   },
 
-  brand: async (_: any, { id }: {id?: number}, { clients: { catalog } }: Context) => {
+  brand: async (
+    _: any,
+    { id }: { id?: number },
+    { clients: { catalog } }: Context
+  ) => {
     const brands = await catalog.brands()
     const brand = find(
       compose(
@@ -420,7 +539,11 @@ export const queries = {
     return response
   },
 
-  productRecommendations: async (_: any, { identifier, type }: ProductRecommendationArg, ctx: Context) => {
+  productRecommendations: async (
+    _: any,
+    { identifier, type }: ProductRecommendationArg,
+    ctx: Context
+  ) => {
     if (identifier == null || type == null) {
       throw new UserInputError('Wrong input provided')
     }
@@ -431,5 +554,5 @@ export const queries = {
       productId = product!.productId
     }
     return ctx.clients.catalog.crossSelling(productId, catalogType)
-  }
+  },
 }

@@ -120,6 +120,11 @@ type Query {
     type: CrossSelingInputEnum
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
+  productsByIdentifier(
+    field: ProductUniqueIdentifierField!
+    values: [ID!]
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
   """
   Returns facets category
   """
