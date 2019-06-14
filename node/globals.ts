@@ -57,6 +57,9 @@ declare global {
     isGift: boolean
     parentItemIndex: number
     parentAssemblyBinding: string
+    productCategoryIds: string
+    priceTags: string[]
+    measurementUnit: string
   }
 
   interface UserAddress {
