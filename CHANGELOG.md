@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.83.0] - 2019-06-14
+
 ### Added
 
 - `customData` attachment to type `orderForm`.
