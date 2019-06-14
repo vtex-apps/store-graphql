@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Field `deliveryIds` to ShippingSLA in the shipping Query.
+
 ## [2.81.0] - 2019-06-12
 
 ### Added
