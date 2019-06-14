@@ -109,6 +109,11 @@ export class Catalog extends AppClient {
   public brands = () =>
     this.get<Brand[]>('/pub/brand/list', { metric: 'catalog-brands' })
 
+  public brand = (id: number) => this.get<Brand[]>(
+    `/pub/brand/${id}`,
+    {metric: 'catalog-brands'}
+  )
+
   public categories = (treeLevel: number) =>
     this.get<Category[]>(`/pub/category/tree/${treeLevel}/`, {
       metric: 'catalog-categories',
