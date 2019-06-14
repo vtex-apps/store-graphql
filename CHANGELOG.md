@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `customData` attachment to type `orderForm`.
+- Fields `productCategoryIds`, `priceTags` and `measurementUnit` to type `OrderFormItem`.
+
 ## [2.82.0] - 2019-06-14
 
 ### Added
