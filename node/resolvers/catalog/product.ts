@@ -37,13 +37,21 @@ const removeTrailingSlashes = (str: string) => str.endsWith('/')
 
 const productCategoriesToCategoryTree = (
   {categories, categoriesIds}: {categories: string[], categoriesIds: string[]}
-) => compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
-  reverse,
-  map(([idTree, categoryTree]) => ({
-    id: Number(last(split('/', removeTrailingSlashes(idTree)))),
-    name: String(last(split('/', removeTrailingSlashes(categoryTree)))),
-  }))
-)(zip(categoriesIds, categories))
+) => {
+  /** This is a hotfix for a "cannot get length of undefined" bug.
+  * The actual cause should be properly investigated */
+  try {
+    return compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
+      reverse,
+      map(([idTree, categoryTree]) => ({
+        id: Number(last(split('/', removeTrailingSlashes(idTree)))),
+        name: String(last(split('/', removeTrailingSlashes(categoryTree)))),
+      }))
+    )(zip(categoriesIds, categories))
+  } catch (error) {
+    return []
+  }
+}
 
 export const resolvers = {
   Product: {
