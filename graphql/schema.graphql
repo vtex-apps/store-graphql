@@ -63,6 +63,10 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
+    """
+    Used to search for fields in items, like items with determined specificationFilter regardless of category, collection, etc
+    """
+    filledFields: String = ""
   ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """
@@ -113,6 +117,10 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
+    """
+    Used to search for fields in items, like items with determined specificationFilter regardless of category, collection, etc
+    """
+    filledFields: String = ""
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   productRecommendations(
@@ -252,7 +260,10 @@ type Query {
     Country of postal code
     """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment @withOrderFormId
+  ): ShippingData
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @withOrderFormId
 
   """
   Returns checkout cart details
@@ -438,10 +449,12 @@ type Mutation {
   Cart
   """
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment @withOrderFormId
+    @withSegment
+    @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment @withOrderFormId
+    @withSegment
+    @withOrderFormId
 
   """
   Used to update the CL entity on masterData.
@@ -692,7 +705,12 @@ type Mutation {
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
-  uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
+  uploadAttachment(
+    acronym: String!
+    documentId: String!
+    field: String!
+    file: Upload!
+  ): AttachmentResponse
 
   """
   List

@@ -10,6 +10,7 @@ interface SearchArgs {
   to: number
   map: string
   hideUnavailableItems: boolean
+  filledFields: string
 }
 
 interface Metadata {
@@ -61,4 +62,3 @@ interface Product {
   description: string
   items: any[]
 }
-

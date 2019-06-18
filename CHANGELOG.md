@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- New parameter to products and productSearch query: `filledFields`.
+
 ## [2.83.2] - 2019-06-18
+
 ### Fixed
+
 - Proper fix for bug when trying to get category tree of undefined.
 
 ## [2.83.1] - 2019-06-17
+
 ### Fixed
+
 - Hotfix for "cannot get length of undefined" bug.
 
 ## [2.83.0] - 2019-06-14
@@ -25,31 +33,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.82.0] - 2019-06-14
 
 ### Added
+
 - Field `deliveryIds` to ShippingSLA in the shipping Query.
 
 ## [2.81.0] - 2019-06-12
 
 ### Added
+
 - productsByIdentifier query and associated resolver to retrieve multiple products from an array of identifiers (EAN, reference code, etc)
 
 ## [2.80.3] - 2019-06-12
 
 ## [2.80.2] - 2019-06-11
+
 ### Fixed
+
 - subscribeNewsletter mutation resolver not passing correct params to client.
 
 ## [2.80.1] - 2019-06-10
 
 ### Fixed
-- Corrected query string formats for `productByEan` and `productByReference` catalog client methods 
+
+- Corrected query string formats for `productByEan` and `productByReference` catalog client methods
 
 ## [2.80.0] - 2019-06-07
 
 ### Changed
+
 - Increase timeouts for external services like checkout and catalog
 
 ## [2.79.2] - 2019-06-06
+
 ### Changed
+
 - Use `session` client from `node-vtex-api`
 
 ## [2.79.1] - 2019-06-05
