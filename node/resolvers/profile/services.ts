@@ -197,7 +197,7 @@ export function pickCustomFieldsFromData(customFields: string, data: any) {
     compose(
       values,
       mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields))
+      pick(split(',', customFields)) as any
     )(data)
   )
 }

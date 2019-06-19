@@ -1,7 +1,19 @@
-import { compose, last, map, omit, propOr, reject, reverse, split, toPairs, zip } from 'ramda'
+import {
+  compose,
+  last,
+  map,
+  omit,
+  propOr,
+  reject,
+  reverse,
+  split,
+  toPairs,
+} from 'ramda'
+import { map as bluebirdMap } from 'bluebird'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
+import { Catalog } from '../../clients/catalog'
 
 const objToNameValue = (
   keyName: string,
@@ -31,24 +43,61 @@ const knownNotPG = [
   'productReference',
 ]
 
-const removeTrailingSlashes = (str: string) => str.endsWith('/')
-  ? str.slice(0, str.length-1)
-  : str
+type CategoryMap = Record<string, Category>
 
-const productCategoriesToCategoryTree = (
-  {categories, categoriesIds}: {categories: string[], categoriesIds: string[]}
+/**
+ * We are doing this because the `get category` API is not returning the values
+ * for slug and href. So we get the whole category tree and get that info from
+ * there instead until the Catalog team fixes this issue with the category API.
+ */
+async function getCategoryInfo(catalog: Catalog, id: string, levels: number) {
+  const categories = (await catalog.categories(levels)) as Category[]
+
+  const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
+
+  const category = mapCategories[id] || { url: '' }
+
+  return category
+}
+
+/**
+ * That's a recursive function to fill an object like { [categoryId]: Category }
+ * It will go down the category.children appending its children and so on.
+ */
+function appendToMap(mapCategories: CategoryMap, category: Category) {
+  mapCategories[category.id] = category
+
+  mapCategories = category.children.reduce(appendToMap, mapCategories)
+
+  return mapCategories
+}
+
+const removeTrailingSlashes = (str: string) =>
+  str.endsWith('/') ? str.slice(0, str.length - 1) : str
+
+const productCategoriesToCategoryTree = async (
+  {
+    categories,
+    categoriesIds,
+  }: { categories: string[]; categoriesIds: string[] },
+  _: any,
+  { clients: { catalog } }: Context
 ) => {
   if (!categories || !categoriesIds) {
     return []
   }
-
-  return compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
-    reverse,
-    map(([idTree, categoryTree]) => ({
-      id: Number(last(split('/', removeTrailingSlashes(idTree)))),
-      name: String(last(split('/', removeTrailingSlashes(categoryTree)))),
-    }))
-  )(zip(categoriesIds, categories))
+  const levels = categoriesIds.length
+  const categoryInfos = await bluebirdMap(categoriesIds, async categoryId => {
+    const id = last(split('/', removeTrailingSlashes(categoryId)))
+    if (!id) {
+      return null
+    }
+    const category = await getCategoryInfo(catalog, id, levels).catch(
+      () => null
+    )
+    return category
+  })
+  return reverse(categoryInfos)
 }
 
 export const resolvers = {
@@ -61,16 +110,14 @@ export const resolvers = {
     description: (
       { description, productId }: any,
       _: any,
-      {clients: {segment}}: Context
-    ) =>
-      toProductIOMessage('description')(segment, description, productId),
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('description')(segment, description, productId),
 
     productName: (
       { productName, productId }: any,
       _: any,
-      {clients: {segment}}: Context
-    ) =>
-      toProductIOMessage('name')(segment, productName, productId),
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('name')(segment, productName, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -125,5 +172,5 @@ export const resolvers = {
   },
   OnlyProduct: {
     categoryTree: productCategoriesToCategoryTree,
-  }
+  },
 }
