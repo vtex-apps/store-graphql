@@ -13,7 +13,7 @@ import { map as bluebirdMap } from 'bluebird'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
-import { Catalog } from '../../clients/catalog'
+import { getCategoryInfo } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -42,35 +42,6 @@ const knownNotPG = [
   'linkText',
   'productReference',
 ]
-
-type CategoryMap = Record<string, Category>
-
-/**
- * We are doing this because the `get category` API is not returning the values
- * for slug and href. So we get the whole category tree and get that info from
- * there instead until the Catalog team fixes this issue with the category API.
- */
-async function getCategoryInfo(catalog: Catalog, id: string, levels: number) {
-  const categories = (await catalog.categories(levels)) as Category[]
-
-  const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
-
-  const category = mapCategories[id] || { url: '' }
-
-  return category
-}
-
-/**
- * That's a recursive function to fill an object like { [categoryId]: Category }
- * It will go down the category.children appending its children and so on.
- */
-function appendToMap(mapCategories: CategoryMap, category: Category) {
-  mapCategories[category.id] = category
-
-  mapCategories = category.children.reduce(appendToMap, mapCategories)
-
-  return mapCategories
-}
 
 const removeTrailingSlashes = (str: string) =>
   str.endsWith('/') ? str.slice(0, str.length - 1) : str
