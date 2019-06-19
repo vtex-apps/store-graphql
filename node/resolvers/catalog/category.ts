@@ -1,6 +1,7 @@
 import { compose, last, prop, split } from 'ramda'
 
 import { toCategoryIOMessage } from '../../utils/ioMessage'
+import { getCategoryInfo } from './utils'
 
 const lastSegment = compose<string, string[], string>(
   last,
@@ -20,11 +21,21 @@ export const resolvers = {
   Category: {
     cacheId: prop('id'),
 
-    href: compose(
-      pathToCategoryHref,
-      cleanUrl,
-      prop('url') as any
-    ),
+    href: async (
+      { id, url }: Category,
+      _: any,
+      { clients: { catalog } }: Context
+    ) => {
+      if (url == null) {
+        const category = await getCategoryInfo(catalog, id, 4)
+        url = category.url
+      }
+      const path = cleanUrl(url)
+
+      // If the path is `/clothing`, we know that's a department
+      // But if it is `/clothing/shirts`, it's not.
+      return pathToCategoryHref(path)
+    },
 
     metaTagDescription: prop('MetaTagDescription'),
 
@@ -36,10 +47,30 @@ export const resolvers = {
       return toCategoryIOMessage('name')(segment, name, id)
     },
 
-    slug: async ({ url }: Category, _: any) => {
+    slug: async (
+      { id, url }: Category,
+      _: any,
+      { clients: { catalog } }: Context
+    ) => {
+      if (url == null) {
+        const category = await getCategoryInfo(catalog, id, 4)
+        url = category.url
+      }
       return url ? lastSegment(url) : null
     },
 
     titleTag: prop('Title'),
+
+    children: async (
+      { id, children }: Category,
+      _: any,
+      { clients: { catalog } }: Context
+    ) => {
+      if (children == null) {
+        const category = await getCategoryInfo(catalog, id, 4)
+        children = category.children
+      }
+      return children
+    },
   },
 }
