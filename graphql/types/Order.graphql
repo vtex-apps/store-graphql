@@ -32,6 +32,7 @@ type OrderItem {
   rewardValue: Float
   additionalInfo: OrderItemAdditionalInfo
   preSaleDate: String
+  productCategoryIds: String
   handling: Boolean
   isGift: Boolean
   quantity: Int
