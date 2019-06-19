@@ -9,11 +9,10 @@ import {
   split,
   toPairs,
 } from 'ramda'
-import { map as bluebirdMap } from 'bluebird'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
-import { getCategoryInfo } from './utils'
+import { findCategoryById } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -46,6 +45,12 @@ const knownNotPG = [
 const removeTrailingSlashes = (str: string) =>
   str.endsWith('/') ? str.slice(0, str.length - 1) : str
 
+const parseId = compose(
+  last,
+  split('/'),
+  removeTrailingSlashes
+)
+
 const productCategoriesToCategoryTree = async (
   {
     categories,
@@ -58,16 +63,10 @@ const productCategoriesToCategoryTree = async (
     return []
   }
   const levels = categoriesIds.length
-  const categoryInfos = await bluebirdMap(categoriesIds, async categoryId => {
-    const id = last(split('/', removeTrailingSlashes(categoryId)))
-    if (!id) {
-      return null
-    }
-    const category = await getCategoryInfo(catalog, id, levels).catch(
-      () => null
-    )
-    return category
-  })
+  const categoriesTree = await catalog.categories(levels)
+  const categoryInfos = categoriesIds.map(categoryId =>
+    findCategoryById(categoriesTree, parseId(categoryId))
+  )
   return reverse(categoryInfos)
 }
 

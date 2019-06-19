@@ -56,8 +56,11 @@ export async function getCategoryInfo(
   id: string,
   levels: number
 ) {
-  const categories = (await catalog.categories(levels)) as Category[]
+  const categories = await catalog.categories(levels)
+  return findCategoryById(categories, id)
+}
 
+export function findCategoryById(categories: Category[], id: string) {
   const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
 
   const category = mapCategories[id] || { url: '' }
