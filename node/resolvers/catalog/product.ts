@@ -12,7 +12,7 @@ import {
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
-import { findCategoryById } from './utils'
+import { findCategoriesFromTree } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -46,6 +46,7 @@ const removeTrailingSlashes = (str: string) =>
   str.endsWith('/') ? str.slice(0, str.length - 1) : str
 
 const parseId = compose(
+  Number,
   last,
   split('/'),
   removeTrailingSlashes
@@ -64,10 +65,8 @@ const productCategoriesToCategoryTree = async (
   }
   const levels = categoriesIds.length
   const categoriesTree = await catalog.categories(levels)
-  const categoryInfos = categoriesIds.map(categoryId =>
-    findCategoryById(categoriesTree, parseId(categoryId))
-  )
-  return reverse(categoryInfos)
+  const cleanIds = reverse(categoriesIds.map(parseId))
+  return findCategoriesFromTree(categoriesTree, cleanIds)
 }
 
 export const resolvers = {

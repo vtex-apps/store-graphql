@@ -26,7 +26,7 @@ interface Brand {
 }
 
 interface Category {
-  id: string
+  id: number
   name: string
   url: string
   hasChildren: boolean
