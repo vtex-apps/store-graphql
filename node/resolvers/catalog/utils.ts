@@ -53,14 +53,10 @@ type CategoryMap = Record<string, Category>
  */
 export async function getCategoryInfo(
   catalog: Context['clients']['catalog'],
-  id: string,
+  id: number,
   levels: number
 ) {
   const categories = await catalog.categories(levels)
-  return findCategoryById(categories, id)
-}
-
-export function findCategoryById(categories: Category[], id: string) {
   const mapCategories = categories.reduce(appendToMap, {}) as CategoryMap
 
   const category = mapCategories[id] || { url: '' }
@@ -78,4 +74,15 @@ function appendToMap(mapCategories: CategoryMap, category: Category) {
   mapCategories = category.children.reduce(appendToMap, mapCategories)
 
   return mapCategories
+}
+
+export function findCategoriesFromTree (categoriesTree: Category[], categoryIds: number[]) {
+  const categoriesResult = [] as Category[]
+  let currentArray = categoriesTree
+  categoryIds.forEach(categoryId => {
+    const category = currentArray.find(({ id }) => id === categoryId)
+    categoriesResult.push(category!)
+    currentArray = category!.children || []
+  })
+  return categoriesResult
 }

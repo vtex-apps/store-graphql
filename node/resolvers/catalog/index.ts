@@ -37,7 +37,7 @@ import {
 
 interface SearchContext {
   brand: string | null
-  category: string | null
+  category: string | number | null
   contextKey: string
 }
 

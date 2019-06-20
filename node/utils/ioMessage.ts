@@ -18,7 +18,7 @@ export const toProductIOMessage = (field: string) => (segment: Segment, content:
   `Product-id.${id}::${field}`
 )
 
-export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: number | string) => toIOMessage(
   segment,
   content,
   `Category-id.${id}::${field}`
