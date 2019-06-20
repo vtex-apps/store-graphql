@@ -112,32 +112,21 @@ export const queries = {
     return { id, ...list, items }
   },
 
-  listsByOwner: async (
-    _: any,
-    { owner, page, pageSize }: any,
-    context: Context
-  ) => {
+  listsByOwner: async (_: any, {}: any, context: Context) => {
     const {
-      clients: { masterdata, catalog },
+      clients: { profile },
+      vtex: { currentProfile },
     } = context
 
-    const lists = (await masterdata.searchDocuments<any>(
-      acronymList,
-      fields,
-      `owner=${owner}`,
-      { page, pageSize }
-    )) as any[]
+    const listsId: string[] = await profile
+      .getProfileInfo(currentProfile, 'listsId')
+      .then(profileData => profileData ? profileData.listsId : '') || []
 
-    const listsWithProducts = map(async list => {
-      const items = await getListItems(
-        path(['items'], list) || [],
-        catalog,
-        masterdata
-      )
-      return { ...list, items }
-    }, lists)
+    const lists = Promise.all(
+      map(id => queries.list(_, { id }, context), listsId || [])
+    )
 
-    return Promise.all(listsWithProducts)
+    return lists
   },
 }
 
@@ -148,7 +137,8 @@ export const mutation = {
     context: Context
   ) => {
     const {
-      clients: { masterdata },
+      clients: { masterdata, profile },
+      vtex: { currentProfile },
     } = context
     try {
       const itemsId = await addItems(items, context)
@@ -157,6 +147,11 @@ export const mutation = {
           ...list,
           items: itemsId,
         })) as DocumentResponse
+      const listsId: string[] = await profile
+      .getProfileInfo(currentProfile, 'listsId')
+      .then(profileData => profileData ? profileData.listsId : '') || []
+      console.log(listsId, "AAAAAAAAAAAAa")
+      // await profile.updateProfileInfo(currentProfile, { ...currentProfile, listsId: append(DocumentId, listsId) } )
       return queries.list(_, { id: DocumentId }, context)
     } catch (error) {
       throw new UserInputError(`Cannot create list: ${error}`)

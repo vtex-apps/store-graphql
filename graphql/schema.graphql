@@ -414,10 +414,6 @@ type Query {
   """
   listsByOwner(
     """
-    The list's owner id
-    """
-    owner: ID!
-    """
     The page that will be fetched
     """
     page: Int = 1
@@ -425,7 +421,7 @@ type Query {
     The page size
     """
     pageSize: Int = 15
-  ): [List]
+  ): [List] @withCurrentProfile
 
   """
   Get logged in user's last order

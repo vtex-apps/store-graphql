@@ -192,14 +192,12 @@ export function updateAddress(
 }
 
 export function pickCustomFieldsFromData(customFields: string, data: any) {
-  return (
-    customFields &&
-    compose(
+  return (customFields && pick(split(',', customFields),
+  compose(
       values,
       mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields))
     )(data)
-  )
+  ))
 }
 
 // Aux

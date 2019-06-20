@@ -85,7 +85,7 @@ const setUtmiParams = (publicFields: SessionPublic) => ({
   part: path(['utmi_pc', 'value'], publicFields),
 })
 
-export const sessionFields = (session: Session): SessionFields | {} => {
+export const sessionFields = (session: Session): SessionFields | any => {
   const { namespaces } = session
   return namespaces
     ? {

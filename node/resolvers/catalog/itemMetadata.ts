@@ -72,7 +72,7 @@ const getSimulationPayload = async (segment: Segment, account: string, authToken
   const segmentData = await segment.segment().catch(() => null)
   if (!segmentData) { return null }
 
-  let marketingData = {}
+  let marketingData: any = {}
   try {
     marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
   } catch (e) {

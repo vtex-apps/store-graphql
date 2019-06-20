@@ -120,6 +120,7 @@ declare global {
     addresses?: Address[]
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
+    listsId?: string[]
   }
 
   interface PersonalPreferences {
