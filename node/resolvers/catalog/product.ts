@@ -8,11 +8,12 @@ import {
   reverse,
   split,
   toPairs,
+  length,
 } from 'ramda'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
-import { findCategoriesFromTree } from './utils'
+import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -45,11 +46,21 @@ const knownNotPG = [
 const removeTrailingSlashes = (str: string) =>
   str.endsWith('/') ? str.slice(0, str.length - 1) : str
 
+const removeStartingSlashes = (str: string) =>
+  str.startsWith('/') ? str.slice(1) : str
+
 const parseId = compose(
   Number,
   last,
   split('/'),
   removeTrailingSlashes
+)
+
+const getCategoryLevel = compose(
+  length,
+  split('/'),
+  removeTrailingSlashes,
+  removeStartingSlashes
 )
 
 const productCategoriesToCategoryTree = async (
@@ -63,10 +74,10 @@ const productCategoriesToCategoryTree = async (
   if (!categories || !categoriesIds) {
     return []
   }
-  const levels = categoriesIds.length
-  const categoriesTree = await catalog.categories(levels)
-  const cleanIds = reverse(categoriesIds.map(parseId))
-  return findCategoriesFromTree(categoriesTree, cleanIds)
+  const level = Math.max(...categoriesIds.map(getCategoryLevel))
+  const categoriesTree = await catalog.categories(level)
+  const categoryMap = buildCategoryMap(categoriesTree)
+  return reverse(categoriesIds.map(id => categoryMap[parseId(id)]))
 }
 
 export const resolvers = {
