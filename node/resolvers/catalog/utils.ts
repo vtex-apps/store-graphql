@@ -64,6 +64,10 @@ export async function getCategoryInfo(
   return category
 }
 
+export function buildCategoryMap(categoryTree: Category[]) {
+  return categoryTree.reduce(appendToMap, {}) as CategoryMap
+}
+
 /**
  * That's a recursive function to fill an object like { [categoryId]: Category }
  * It will go down the category.children appending its children and so on.
@@ -74,15 +78,4 @@ function appendToMap(mapCategories: CategoryMap, category: Category) {
   mapCategories = category.children.reduce(appendToMap, mapCategories)
 
   return mapCategories
-}
-
-export function findCategoriesFromTree (categoriesTree: Category[], categoryIds: number[]) {
-  const categoriesResult = [] as Category[]
-  let currentArray = categoriesTree
-  categoryIds.forEach(categoryId => {
-    const category = currentArray.find(({ id }) => id === categoryId)
-    categoriesResult.push(category!)
-    currentArray = category!.children || []
-  })
-  return categoriesResult
 }
