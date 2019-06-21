@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.83.4] - 2019-06-21
+
 ### Fixed
 
 - Fix for products with categories in different trees.
