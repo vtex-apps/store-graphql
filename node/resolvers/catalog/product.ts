@@ -1,7 +1,18 @@
-import { compose, last, map, omit, propOr, reject, reverse, split, toPairs, zip } from 'ramda'
+import {
+  compose,
+  last,
+  map,
+  omit,
+  propOr,
+  reject,
+  reverse,
+  split,
+  toPairs,
+} from 'ramda'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
+import { findCategoriesFromTree } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -31,24 +42,31 @@ const knownNotPG = [
   'productReference',
 ]
 
-const removeTrailingSlashes = (str: string) => str.endsWith('/')
-  ? str.slice(0, str.length-1)
-  : str
+const removeTrailingSlashes = (str: string) =>
+  str.endsWith('/') ? str.slice(0, str.length - 1) : str
 
-const productCategoriesToCategoryTree = (
-  {categories, categoriesIds}: {categories: string[], categoriesIds: string[]}
+const parseId = compose(
+  Number,
+  last,
+  split('/'),
+  removeTrailingSlashes
+)
+
+const productCategoriesToCategoryTree = async (
+  {
+    categories,
+    categoriesIds,
+  }: { categories: string[]; categoriesIds: string[] },
+  _: any,
+  { clients: { catalog } }: Context
 ) => {
   if (!categories || !categoriesIds) {
     return []
   }
-
-  return compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
-    reverse,
-    map(([idTree, categoryTree]) => ({
-      id: Number(last(split('/', removeTrailingSlashes(idTree)))),
-      name: String(last(split('/', removeTrailingSlashes(categoryTree)))),
-    }))
-  )(zip(categoriesIds, categories))
+  const levels = categoriesIds.length
+  const categoriesTree = await catalog.categories(levels)
+  const cleanIds = reverse(categoriesIds.map(parseId))
+  return findCategoriesFromTree(categoriesTree, cleanIds)
 }
 
 export const resolvers = {
@@ -61,16 +79,14 @@ export const resolvers = {
     description: (
       { description, productId }: any,
       _: any,
-      {clients: {segment}}: Context
-    ) =>
-      toProductIOMessage('description')(segment, description, productId),
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('description')(segment, description, productId),
 
     productName: (
       { productName, productId }: any,
       _: any,
-      {clients: {segment}}: Context
-    ) =>
-      toProductIOMessage('name')(segment, productName, productId),
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('name')(segment, productName, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -125,5 +141,5 @@ export const resolvers = {
   },
   OnlyProduct: {
     categoryTree: productCategoriesToCategoryTree,
-  }
+  },
 }
