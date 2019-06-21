@@ -42,6 +42,6 @@
     "prettier": "^1.16.4"
   },
   "scripts": {
-    "lint": "tsc --noEmit && eslint --ext ts ."
+    "lint": "tsc --noEmit && eslint --ext ts . --fix"
   }
 }

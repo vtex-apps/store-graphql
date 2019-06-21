@@ -1,5 +1,5 @@
 import { parse } from 'cookie'
-import { compose, mapObjIndexed, pick, split, values } from 'ramda'
+import { pick } from 'ramda'
 
 import { generateRandomName } from '../../utils'
 import { makeRequest } from '../auth'
@@ -191,15 +191,18 @@ export function updateAddress(
     .then(() => getProfile(context))
 }
 
-export function pickCustomFieldsFromData(customFields: string, data: any) {
-  return (
-    customFields &&
-    compose(
-      values,
-      mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields)) as any
-    )(data)
-  )
+export function pickCustomFieldsFromData(
+  customFields: string,
+  data: any
+): { key: string; value: any }[] {
+  if (!customFields) {
+    return []
+  }
+
+  const onlyCustomFields = pick(customFields.split(','), data)
+
+  return Object.entries(onlyCustomFields)
+    .map(field => ({ key: field[0], value: field[1] }))
 }
 
 // Aux

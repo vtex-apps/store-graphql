@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- TypeScript types.
+
 ## [2.85.0] - 2019-06-26
+
 ### Added
+
 - Add `productCategoryIds` into `OrderItem` type
 
 ## [2.84.1] - 2019-06-25

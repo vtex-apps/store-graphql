@@ -1,4 +1,4 @@
-import { Segment } from '@vtex/api'
+import { Segment, SegmentData } from '@vtex/api'
 import http from 'axios'
 import camelCase from 'camelcase'
 import { both, find, isEmpty, path, pickBy, prop, propEq } from 'ramda'
@@ -14,8 +14,8 @@ const headersWithToken = (authToken: any) => ({
 })
 
 const isTruthy = (val: any) => !!val
-const isUtm = (_: any, key: any) => key.startsWith('utm')
-const isValidUtm = both(isUtm, isTruthy)
+const isUtm = (_: any, key: string) => key.startsWith('utm')
+const isValidUtm = both(isUtm, isTruthy) as (value: any, key: string|number) => boolean
 
 interface FetchPriceInput {
   id: string
@@ -74,19 +74,24 @@ const fetchPrice = async ({
   }
 }
 
+interface MarketingData {
+  utmCampaign?: string
+  utmSource?: string
+  utmiCampaign?: string
+}
+
 const getSimulationPayload = async (
   segment: Segment,
   account: string,
   authToken: string
 ) => {
-  const segmentData = await segment.segment().catch(() => null)
-  if (!segmentData) {
-    return null
-  }
+  const segmentData: SegmentData|null = await segment.segment().catch(() => null)
+  if (!segmentData) { return null }
 
-  let marketingData: any = {}
+  let marketingData: MarketingData = {}
+
   try {
-    marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
+    marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData)) as MarketingData
   } catch (e) {
     // TODO: Log to Splunk
     console.error(e)

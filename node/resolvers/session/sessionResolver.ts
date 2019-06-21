@@ -109,6 +109,6 @@ export const sessionFields = (session: Session): SessionFields | {} => {
         utmiParams: setUtmiParams(namespaces.public),
         orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
         ...setProfileData(namespaces.profile, namespaces.authentication),
-      }
-    : ({} as any)
+      } as SessionFields
+    : {}
 }
