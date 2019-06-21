@@ -17,12 +17,24 @@ export const pathToCategoryHref = (path: string) => {
   return isDepartment ? `${path}/d` : path
 }
 
+/** This type has to be created because the Catlog API to get category by ID does not return the url or children for now.
+ * These fields only come if you get the category from the categroy tree api.
+ */
+interface SafeCategory
+  extends Pick<
+    Category,
+    'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
+  > {
+  url: string | null
+  children: Category[] | null
+}
+
 export const resolvers = {
   Category: {
     cacheId: prop('id'),
 
     href: async (
-      { id, url }: Category,
+      { id, url }: SafeCategory,
       _: any,
       { clients: { catalog } }: Context
     ) => {
@@ -40,7 +52,7 @@ export const resolvers = {
     metaTagDescription: prop('MetaTagDescription'),
 
     name: async (
-      { id, name }: Category,
+      { id, name }: SafeCategory,
       _: any,
       { clients: { segment } }: Context
     ) => {
@@ -48,7 +60,7 @@ export const resolvers = {
     },
 
     slug: async (
-      { id, url }: Category,
+      { id, url }: SafeCategory,
       _: any,
       { clients: { catalog } }: Context
     ) => {
@@ -62,7 +74,7 @@ export const resolvers = {
     titleTag: prop('Title'),
 
     children: async (
-      { id, children }: Category,
+      { id, children }: SafeCategory,
       _: any,
       { clients: { catalog } }: Context
     ) => {
