@@ -18,28 +18,28 @@ const isUtm = (_: any, key: any) => key.startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
 
 interface FetchPriceInput {
-  id: string,
-  priceTable: string,
-  marketingData: any,
-  countryCode: string,
-  seller: string,
-  headers: any,
-  url: string,
+  id: string
+  priceTable: string
+  marketingData: any
+  countryCode: string
+  seller: string
+  headers: any
+  url: string
 }
 
-interface ItemToFetch { 
+interface ItemToFetch {
   id: string
   priceTable: string
   seller: string
 }
 
 interface Parent {
-  items: MetadataItem[],
+  items: MetadataItem[]
 }
 
 interface PriceType {
-  id: string,
-  price: number,
+  id: string
+  price: number
   priceTable: string
 }
 const fetchPrice = async ({
@@ -50,7 +50,7 @@ const fetchPrice = async ({
   marketingData,
   headers,
   url,
-}: FetchPriceInput):Promise<PriceType> => {
+}: FetchPriceInput): Promise<PriceType> => {
   // TODO: optimize this call sending multiple ids and/or priceTable...
   const payload = {
     country: countryCode,
@@ -60,19 +60,31 @@ const fetchPrice = async ({
     ...(isEmpty(marketingData) ? {} : { marketingData }),
   }
   const orderForm = await http.post(url, payload, { headers }).catch(() => null)
-  const shouldCheckTotals = orderForm && path(['data', 'totals', 'length'], orderForm)
+  const shouldCheckTotals =
+    orderForm && path(['data', 'totals', 'length'], orderForm)
   return {
     id,
-    price: shouldCheckTotals? prop('value', find<any>(propEq('id', 'Items'))((orderForm as any).data.totals)) : 0,
+    price: shouldCheckTotals
+      ? prop(
+          'value',
+          find<any>(propEq('id', 'Items'))((orderForm as any).data.totals)
+        )
+      : 0,
     priceTable,
   }
 }
 
-const getSimulationPayload = async (segment: Segment, account: string, authToken: string) => {
+const getSimulationPayload = async (
+  segment: Segment,
+  account: string,
+  authToken: string
+) => {
   const segmentData = await segment.segment().catch(() => null)
-  if (!segmentData) { return null }
+  if (!segmentData) {
+    return null
+  }
 
-  let marketingData = {}
+  let marketingData: any = {}
   try {
     marketingData = renameKeysWith(camelCase, pickBy(isValidUtm, segmentData))
   } catch (e) {
@@ -93,7 +105,9 @@ const getSimulationPayload = async (segment: Segment, account: string, authToken
 
 const buildItemsToFetch = (items: MetadataItem[]) => {
   const itemsToFetch = [] as ItemToFetch[]
-  const itemsWithAssembly = items.filter(item => item.assemblyOptions.length > 0)
+  const itemsWithAssembly = items.filter(
+    item => item.assemblyOptions.length > 0
+  )
   for (const item of itemsWithAssembly) {
     const { assemblyOptions } = item
     for (const assemblyOption of assemblyOptions) {
@@ -111,26 +125,41 @@ const buildItemsToFetch = (items: MetadataItem[]) => {
 
 export const resolvers = {
   ItemMetadata: {
-    priceTable: async ({items}: Parent, _: any, { vtex: { account, authToken }, clients: { segment } }: Context) => {
-      const fetchPayload = await getSimulationPayload(segment, account, authToken)
+    priceTable: async (
+      { items }: Parent,
+      _: any,
+      { vtex: { account, authToken }, clients: { segment } }: Context
+    ) => {
+      const fetchPayload = await getSimulationPayload(
+        segment,
+        account,
+        authToken
+      )
       const itemsToFetch = buildItemsToFetch(items)
       const itemsPromises = itemsToFetch.map(({ id, priceTable, seller }) => {
-        if (!fetchPayload) { return { id, priceTable, price: 0 } }
+        if (!fetchPayload) {
+          return { id, priceTable, price: 0 }
+        }
         return fetchPrice({ ...fetchPayload, id, priceTable, seller })
       })
 
       const priceData = await Promise.all(itemsPromises)
 
-      const prices = priceData.reduce<{ [key: string]: { price: number, id: string }[]}>((prev, curr) => {
+      const prices = priceData.reduce<{
+        [key: string]: { price: number; id: string }[]
+      }>((prev, curr) => {
         const { id, priceTable, price } = curr
         const currentArray = prev[priceTable] || []
         return {
           ...prev,
-          [priceTable]: [...currentArray, { id, price }]
+          [priceTable]: [...currentArray, { id, price }],
         }
       }, {})
 
-      return Object.entries(prices).map(([priceTableName, priceArray]) => ({ type: priceTableName, values: priceArray }))
+      return Object.entries(prices).map(([priceTableName, priceArray]) => ({
+        type: priceTableName,
+        values: priceArray,
+      }))
     },
-  }
+  },
 }
