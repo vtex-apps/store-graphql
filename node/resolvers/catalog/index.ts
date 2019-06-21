@@ -1,13 +1,9 @@
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
 import {
-  compose,
-  equals,
-  find,
   head,
   last,
   path,
-  prop,
   split,
   test,
   toLower,
@@ -377,14 +373,12 @@ export const queries = {
     { id }: { id?: number },
     { clients: { catalog } }: Context
   ) => {
-    const brands = await catalog.brands()
-    const brand = find(
-      compose(
-        equals(id),
-        prop('id') as any
-      ),
-      brands
-    )
+    if (id == null) {
+      throw new ResolverWarning(`No brand ID provided`)
+    }
+
+    const brand = await catalog.brand(id)
+
     if (!brand) {
       throw new NotFoundError(`Brand not found`)
     }
