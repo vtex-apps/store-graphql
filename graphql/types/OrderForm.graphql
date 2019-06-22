@@ -88,7 +88,7 @@ type PriceTags {
   identifier: String
   isPercentual: Boolean
   name: String
-  rawValue: Int
+  rawValue: Float
   value: Int
 }
 
