@@ -93,6 +93,12 @@ export const resolvers = {
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
     categoryTree: productCategoriesToCategoryTree,
+    
+    productName: (
+      { productName, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('name')(segment, productName, productId),
 
     description: (
       { description, productId }: any,
@@ -100,11 +106,29 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => toProductIOMessage('description')(segment, description, productId),
 
-    productName: (
-      { productName, productId }: any,
+    descriptionShort: (
+      { descriptionShort, productId }: any,
       _: any,
       { clients: { segment } }: Context
-    ) => toProductIOMessage('name')(segment, productName, productId),
+    ) => toProductIOMessage('descriptionShort')(segment, descriptionShort, productId),
+
+    keyWords: (
+      { keyWords, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('keyWords')(segment, keyWords, productId),
+
+    title: (
+      { title, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('title')(segment, title, productId),
+
+    metaTagDescription: (
+      { metaTagDescription, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('metaTagDescription')(segment, metaTagDescription, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
