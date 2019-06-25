@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Improvevements on search breadcrumb resolver regarding categories.
+- Decode name of search breadcrumb unit.
+
 ## [2.84.0] - 2019-06-21
+
 ### Added
+
 - `brandId` to `Product` type.
 - `imageUrl` to `Brand` type.
 
