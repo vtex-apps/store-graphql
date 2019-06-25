@@ -59,6 +59,22 @@ export const resolvers = {
       return toCategoryIOMessage('name')(segment, name, id)
     },
 
+    Title: async (
+      { id, Title }: SafeCategory,
+      _: any,
+      { clients: { segment } }: Context
+    ) => {
+      return toCategoryIOMessage('Title')(segment, Title, id)
+    },
+
+    MetaTagDescription: async (
+      { id, MetaTagDescription }: SafeCategory,
+      _: any,
+      { clients: { segment } }: Context
+    ) => {
+      return toCategoryIOMessage('MetaTagDescription')(segment, MetaTagDescription, id)
+    },
+
     slug: async (
       { id, url }: SafeCategory,
       _: any,
