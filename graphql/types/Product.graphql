@@ -26,7 +26,13 @@ type Product {
   """ Product ID """
   productId: ID
   """ Product name """
-  productName: String @translatable
+  productName: IOMessage
+  """ Product short description  """
+  descriptionShort: IOMessage
+  """ Keywords """
+  keyWords: IOMessage
+  """ Title """
+  title: IOMessage
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties  """
@@ -36,7 +42,7 @@ type Product {
   """ Title used by html tag"""
   titleTag: String
   """ Description used by html tag"""
-  metaTagDescription: String
+  metaTagDescription: IOMessage
   """ Related Products """
   recommendations: Recommendation
   """ JSON specification of the product"""
@@ -95,7 +101,7 @@ type Recommendation {
 type SKU {
   itemId: ID
   name: String
-  nameComplete: String
+  nameComplete: IOMessage
   complementName: String
   ean: String
   referenceId: [Reference]

@@ -162,4 +162,21 @@ declare global {
     mimetype: string
     encoding: string
   }
+
+  // interface SKU {
+  //   itemId: ID
+  //   name: String
+  //   nameComplete: IOMessage
+  //   complementName: String
+  //   ean: String
+  //   referenceId: [Reference]
+  //   measurementUnit: String
+  //   unitMultiplier: Float
+  //   kitItems: [KitItem]
+  //   images (quantity: Int = 10) : [Image]
+  //   sellers: [Seller]
+  //   variations: [Property]
+  //   attachments: [Attachment]
+  //   calculatedAttachments: String
+  // }
 }
