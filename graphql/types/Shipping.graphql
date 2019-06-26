@@ -18,6 +18,7 @@ type MessageFields {
 
 type LogisticsInfo {
   itemIndex: String
+  selectedSla: String
   slas: [ShippingSLA]
 }
 
