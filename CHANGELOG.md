@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Removed
+
+- Remove artificial synchronization of orderForm and session in preparation for transparent API support.
+
 ## [2.86.1] - 2019-06-26
 
 ### Fixed

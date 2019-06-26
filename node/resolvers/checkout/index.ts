@@ -11,7 +11,6 @@ import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
 import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
-import { syncCheckoutAndSessionPostChanges, syncCheckoutAndSessionPreCheckout } from './sessionManager'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 
@@ -129,13 +128,10 @@ export const fieldResolvers = {
 const replaceDomain = (host: string) => (cookie: string) => cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
 export const queries: Record<string, Resolver> = {
-  orderForm: async (root, args, ctx) => {
+  orderForm: async (_, __, ctx) => {
     const {clients: {checkout}} = ctx
 
-    const sessionData = await sessionQueries.getSession(root, args, ctx) as SessionFields
-    await syncCheckoutAndSessionPreCheckout(sessionData, ctx)
     const { headers, data: orderForm } = await checkout.orderForm(true)
-    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
 
     const rawHeaders = headers as Record<string, any>
     const responseSetCookies: string[] = rawHeaders && rawHeaders['set-cookie'] || []
@@ -146,7 +142,7 @@ export const queries: Record<string, Resolver> = {
     const cleanCookies = map(parseAndClean, forwardedSetCookies)
     forEach(({ name, value, options }) => ctx.cookies.set(name, value, options), cleanCookies)
 
-    return syncedOrderForm
+    return orderForm
   },
 
   orders: (_, __, {clients: {checkout}}) => {
@@ -235,15 +231,9 @@ export const mutations: Record<string, Resolver> = {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
-  updateOrderFormShipping: async (root, {orderFormId, address}, ctx) => {
+  updateOrderFormShipping: async (_, {orderFormId, address}, ctx) => {
     const {clients: {checkout}} = ctx
-    const [sessionData, orderForm] = await Promise.all([
-      sessionQueries.getSession(root, {}, ctx) as SessionFields,
-      checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] }),
-    ])
-
-    const syncedOrderForm = await syncCheckoutAndSessionPostChanges(sessionData, orderForm, ctx)
-    return syncedOrderForm
+    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] })
   },
 
   addAssemblyOptions: (_, { orderFormId, itemId, assemblyOptionsId, options }, { clients: { checkout }}) => {
