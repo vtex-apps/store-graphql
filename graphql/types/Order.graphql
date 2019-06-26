@@ -9,6 +9,7 @@ type Order {
   lastChange: String
   timeZoneCreationDate: String
   timeZoneLastChange: String
+  invoicedDate: String
   isCompleted: Boolean
   items: [OrderItem]
   sellers: [OrderItemSeller]
