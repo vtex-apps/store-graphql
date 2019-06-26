@@ -7,18 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Scalar type of `rawValue` of `PriceTags` type.
+
 ## [2.86.0] - 2019-06-26
 
 ### Added
 
-- `invoicedDate` into Order type
-- `selectedSla` to `LogisticInfo` type
+- `invoicedDate` into Order type.
+- `selectedSla` to `LogisticInfo` type.
 
 ## [2.85.0] - 2019-06-26
 
 ### Added
 
-- `productCategoryIds` into `OrderItem` type
+- `productCategoryIds` into `OrderItem` type.
 
 ## [2.84.1] - 2019-06-25
 
