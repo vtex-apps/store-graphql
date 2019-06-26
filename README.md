@@ -1,5 +1,5 @@
 # VTEX Store GraphQL
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
 ## Description
 
@@ -92,7 +92,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://github.com/regis-samurai"><img src="https://avatars0.githubusercontent.com/u/38638226?v=4" width="100px;" alt="Reginaldo"/><br /><sub><b>Reginaldo</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=regis-samurai" title="Code">💻</a></td></tr></table>
+<table><tr><td align="center"><a href="https://github.com/regis-samurai"><img src="https://avatars0.githubusercontent.com/u/38638226?v=4" width="100px;" alt="Reginaldo"/><br /><sub><b>Reginaldo</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=regis-samurai" title="Code">💻</a></td><td align="center"><a href="https://github.com/juliomoreira"><img src="https://avatars2.githubusercontent.com/u/1207017?v=4" width="100px;" alt="Julio Moreira"/><br /><sub><b>Julio Moreira</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=juliomoreira" title="Code">💻</a></td></tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
