@@ -163,20 +163,30 @@ declare global {
     encoding: string
   }
 
-  // interface SKU {
-  //   itemId: ID
-  //   name: String
-  //   nameComplete: IOMessage
-  //   complementName: String
-  //   ean: String
-  //   referenceId: [Reference]
-  //   measurementUnit: String
-  //   unitMultiplier: Float
-  //   kitItems: [KitItem]
-  //   images (quantity: Int = 10) : [Image]
-  //   sellers: [Seller]
-  //   variations: [Property]
-  //   attachments: [Attachment]
-  //   calculatedAttachments: String
-  // }
+  interface SKU {
+    itemId: string
+    nameComplete: string
+
+    productName: string
+    productDescription: string
+    skuName: string
+    
+    skuSpecifications: [skuSpecification]
+    productSpecifications: [productSpecification]
+  }
+
+  interface skuSpecification {
+    fieldName: string
+    fieldValues: [number]
+  }
+
+  interface productSpecification {
+    fieldName: string
+    fieldValues: [number]
+  }
+
+  interface Reference {
+    Key: String
+    Value: String
+  }
 }
