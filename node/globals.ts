@@ -100,6 +100,7 @@ declare global {
     addressName?: string
     addressType?: string
     geoCoordinate?: string
+    geoCoordinates?: [number, number]
   }
 
   interface Profile {
