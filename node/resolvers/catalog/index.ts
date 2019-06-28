@@ -161,7 +161,7 @@ const getCategoryMetadata = async (
           { treeLevel: cleanQuery.split('/').length },
           ctx
         ),
-        query.split('/')
+        cleanQuery.split('/')
       ) || {}
     return {
       metaTagDescription: path(['MetaTagDescription'], category),
