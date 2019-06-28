@@ -28,7 +28,8 @@ import { catalogSlugify, Slugify } from './slug'
 import {
   CatalogCrossSellingTypes,
   findCategoryInTree,
-  getBrandFromSlug
+  getBrandFromSlug,
+  translatePageType
 } from './utils'
 
 interface SearchContext {
@@ -52,6 +53,11 @@ interface ProductIndentifier {
 interface ProductArgs {
   slug?: string
   identifier?: ProductIndentifier
+}
+
+interface PageTypeArgs {
+  path: string
+  query: string
 }
 
 enum CrossSellingInput {
@@ -496,6 +502,18 @@ export const queries = {
     }
 
     return response
+  },
+
+  pageType: async (
+    _: any,
+    {path, query}: PageTypeArgs,
+    ctx: Context
+  ) => {
+    const response = await ctx.clients.catalog.pageType(path, query)
+    return {
+      id: response.id,
+      type: translatePageType(response.pageType)
+    }
   },
 
   productRecommendations: async (

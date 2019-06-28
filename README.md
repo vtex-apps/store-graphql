@@ -42,6 +42,7 @@ TODO
 * `categories` - Returns categories tree
 * `brand` - Returns a specified brand
 * `brands` - Returns brands list
+* `pagetype` - Returns the page type based on path and query
 
 ### Logistics 
 * `shipping` - Returns orderForm shipping simulation
