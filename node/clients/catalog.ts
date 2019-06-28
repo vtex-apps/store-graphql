@@ -35,6 +35,10 @@ interface CategoryWithNulls
 interface CatalogPageTypeResponse {
   id: string
   pageType: string
+  name: string
+  url: string
+  title: string | null
+  metaTagDescription: string | null
 }
 
 /** Catalog API
@@ -46,13 +50,9 @@ export class Catalog extends AppClient {
   }
 
   public pageType = (path: string, query: string = '') => {
-    const pageTypePath = path.startsWith('/')
-      ? path.substr(1)
-      : path
+    const pageTypePath = path.startsWith('/') ? path.substr(1) : path
 
-    const pageTypeQuery = !query || query.startsWith('?')
-      ? query
-      : `?${query}`
+    const pageTypeQuery = !query || query.startsWith('?') ? query : `?${query}`
 
     return this.get<CatalogPageTypeResponse>(
       `/pub/portal/pagetype/${pageTypePath}${pageTypeQuery}`,
@@ -129,10 +129,8 @@ export class Catalog extends AppClient {
   public brands = () =>
     this.get<Brand[]>('/pub/brand/list', { metric: 'catalog-brands' })
 
-  public brand = (id: number) => this.get<Brand[]>(
-    `/pub/brand/${id}`,
-    {metric: 'catalog-brands'}
-  )
+  public brand = (id: number) =>
+    this.get<Brand[]>(`/pub/brand/${id}`, { metric: 'catalog-brands' })
 
   public categories = (treeLevel: number) =>
     this.get<Category[]>(`/pub/category/tree/${treeLevel}/`, {

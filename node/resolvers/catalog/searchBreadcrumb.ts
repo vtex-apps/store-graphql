@@ -31,14 +31,13 @@ export const resolvers = {
   SearchBreadcrumb: {
     name: async (obj: BreadcrumbParams, _: any, ctx: Context) => {
       const {
-        clients: { segment },
+        clients: { segment, catalog },
       } = ctx
       const {
         queryUnit,
         mapUnit,
         index,
         queryArray,
-        categories,
         categoriesSearched,
         products,
       } = obj
@@ -50,18 +49,14 @@ export const resolvers = {
         }
       }
       if (isCategoryMap(mapUnit)) {
-        const queryPosition = categoriesSearched.findIndex(
-          cat => cat === queryUnit
-        )
-        const category = findCategoryInTree(
-          categories,
-          categoriesSearched.slice(0, queryPosition + 1)
-        )
-        if (category) {
+        const pagetype = await catalog
+          .pageType(categoriesSearched.slice(0, index + 1).join('/'))
+          .catch(() => null)
+        if (pagetype) {
           return toCategoryIOMessage('name')(
             segment,
-            category.name,
-            category.id
+            pagetype.name,
+            pagetype.id
           )
         }
         // if cant find a category, we should try to see if its a product cluster
@@ -71,8 +66,8 @@ export const resolvers = {
         }
       }
       if (isBrandMap(mapUnit)) {
-        const brand = await getBrandFromSlug(toLower(queryUnit), ctx)
-        return brand ? brand.name : defaultName
+        const pagetype = await catalog.pageType(queryUnit).catch(() => null)
+        return pagetype ? pagetype.name : defaultName
       }
       return defaultName && decodeURI(defaultName)
     },

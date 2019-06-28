@@ -2,11 +2,16 @@ import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
 import {
   head,
-  last,
-  path,
   split,
   test,
   toLower,
+  zip,
+  compose,
+  join,
+  prop,
+  equals,
+  map,
+  filter,
 } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
@@ -25,12 +30,7 @@ import { resolvers as searchResolvers } from './search'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
 import { catalogSlugify, Slugify } from './slug'
-import {
-  CatalogCrossSellingTypes,
-  findCategoryInTree,
-  getBrandFromSlug,
-  translatePageType
-} from './utils'
+import { CatalogCrossSellingTypes, translatePageType } from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -106,40 +106,23 @@ export const extractSlug = (item: any) => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-/** Get Category metadata for the search/productSearch query
- *
- */
-const categoryMetaData = async (
-  _: any,
-  args: SearchArgs,
-  ctx: Context
-): Promise<Metadata> => {
-  const { query } = args
-  const category =
-    findCategoryInTree(
-      await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
-      query.split('/')
-    ) || {}
-  return {
-    metaTagDescription: path(['MetaTagDescription'], category),
-    titleTag: path(['Title'], category) || path(['Name'], category),
-  }
-}
-/** Get brand metadata for the search/productSearch query
- *
- */
-const brandMetaData = async (
-  _: any,
-  args: SearchArgs,
-  ctx: Context
-): Promise<Metadata> => {
-  const brandSlug = toLower(last(args.query.split('/')) || '')
-  const brand = (await getBrandFromSlug(brandSlug, ctx)) || {}
-  return {
-    metaTagDescription: path(['metaTagDescription'], brand),
-    titleTag: path(['title'], brand) || path(['name'], brand),
-  }
-}
+type TupleString = [string, string]
+
+const isTupleMap = compose<TupleString, string, boolean>(
+  equals('c'),
+  prop('1')
+)
+
+const categoriesOnlyQuery = compose<
+  TupleString[],
+  TupleString[],
+  string[],
+  string
+>(
+  join('/'),
+  map(prop('0')),
+  filter(isTupleMap)
+)
 
 /**
  * Get metadata of category/brand APIs
@@ -149,16 +132,31 @@ const brandMetaData = async (
  * @param ctx
  */
 const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
-  const { map } = args
-  const lastMap = last(map.split(','))
+  const { map, query } = args
+  const firstMap = head(map.split(','))
+  let cleanArgs: string = query
+  if (firstMap === 'c') {
+    const queryAndMap: TupleString[] = zip(query.split('/'), map.split(','))
+    // console.log('teste )
+    cleanArgs = categoriesOnlyQuery(queryAndMap)
+  }
+  if (firstMap === 'b') {
+    cleanArgs = head(split('/', query)) as string
+  }
+  console.log('teste cleanArgs: ', cleanArgs)
+  const pagetype = await ctx.clients.catalog
+    .pageType(cleanArgs)
+    .catch(() => null)
+  console.log('teste pagetype: ', pagetype)
 
-  if (lastMap === 'c') {
-    return categoryMetaData(_, args, ctx)
+  if (!pagetype) {
+    return { titleTag: null, metaTagDescription: null }
   }
-  if (lastMap === 'b') {
-    return brandMetaData(_, args, ctx)
+
+  return {
+    titleTag: pagetype.title || pagetype.name,
+    metaTagDescription: pagetype.metaTagDescription,
   }
-  return { titleTag: null, metaTagDescription: null }
 }
 
 /** TODO: This method should be removed in the next major.
@@ -504,15 +502,11 @@ export const queries = {
     return response
   },
 
-  pageType: async (
-    _: any,
-    {path, query}: PageTypeArgs,
-    ctx: Context
-  ) => {
+  pageType: async (_: any, { path, query }: PageTypeArgs, ctx: Context) => {
     const response = await ctx.clients.catalog.pageType(path, query)
     return {
       id: response.id,
-      type: translatePageType(response.pageType)
+      type: translatePageType(response.pageType),
     }
   },
 
