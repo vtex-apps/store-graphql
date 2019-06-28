@@ -124,6 +124,28 @@ const categoriesOnlyQuery = compose<
   filter(isTupleMap)
 )
 
+const getAndParsePagetype = async (path: string, ctx: Context) => {
+  const pagetype = await ctx.clients.catalog.pageType(path).catch(() => null)
+  if (!pagetype) {
+    return { titleTag: null, metaTagDescription: null }
+  }
+  return {
+    titleTag: pagetype.title || pagetype.name,
+    metaTagDescription: pagetype.metaTagDescription,
+  }
+}
+
+const getCategoryMetadata = ({ map, query }: SearchArgs, ctx: Context) => {
+  const queryAndMap: TupleString[] = zip(query.split('/'), map.split(','))
+  const cleanQuery = categoriesOnlyQuery(queryAndMap)
+  return getAndParsePagetype(cleanQuery, ctx)
+}
+
+const getBrandMetadata = ({ query }: SearchArgs, ctx: Context) => {
+  const cleanQuery = head(split('/', query)) as string
+  return getAndParsePagetype(cleanQuery, ctx)
+}
+
 /**
  * Get metadata of category/brand APIs
  *
@@ -132,31 +154,15 @@ const categoriesOnlyQuery = compose<
  * @param ctx
  */
 const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
-  const { map, query } = args
+  const { map } = args
   const firstMap = head(map.split(','))
-  let cleanArgs: string = query
   if (firstMap === 'c') {
-    const queryAndMap: TupleString[] = zip(query.split('/'), map.split(','))
-    // console.log('teste )
-    cleanArgs = categoriesOnlyQuery(queryAndMap)
+    return getCategoryMetadata(args, ctx)
   }
   if (firstMap === 'b') {
-    cleanArgs = head(split('/', query)) as string
+    return getBrandMetadata(args, ctx)
   }
-  console.log('teste cleanArgs: ', cleanArgs)
-  const pagetype = await ctx.clients.catalog
-    .pageType(cleanArgs)
-    .catch(() => null)
-  console.log('teste pagetype: ', pagetype)
-
-  if (!pagetype) {
-    return { titleTag: null, metaTagDescription: null }
-  }
-
-  return {
-    titleTag: pagetype.title || pagetype.name,
-    metaTagDescription: pagetype.metaTagDescription,
-  }
+  return { titleTag: null, metaTagDescription: null }
 }
 
 /** TODO: This method should be removed in the next major.
