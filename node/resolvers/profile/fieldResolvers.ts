@@ -11,7 +11,6 @@ export default {
   Address: {
     cacheId: prop('addressName'),
     id: prop('addressName'),
-    geoCoordinates: prop('geoCoordinate'),
   },
   PaymentProfile: {
     cacheId: prop('id'),
