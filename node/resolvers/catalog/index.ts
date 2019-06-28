@@ -1,4 +1,5 @@
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
+import { Functions } from '@gocommerce/utils'
 import { all } from 'bluebird'
 import {
   head,
@@ -12,6 +13,7 @@ import {
   equals,
   map,
   filter,
+  path,
 } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
@@ -30,7 +32,12 @@ import { resolvers as searchResolvers } from './search'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
 import { catalogSlugify, Slugify } from './slug'
-import { CatalogCrossSellingTypes, translatePageType } from './utils'
+import {
+  CatalogCrossSellingTypes,
+  translatePageType,
+  findCategoryInTree,
+  getBrandFromSlug,
+} from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -135,14 +142,49 @@ const getAndParsePagetype = async (path: string, ctx: Context) => {
   }
 }
 
-const getCategoryMetadata = ({ map, query }: SearchArgs, ctx: Context) => {
+const getCategoryMetadata = async (
+  { map, query }: SearchArgs,
+  ctx: Context
+) => {
+  const {
+    vtex: { account },
+  } = ctx
   const queryAndMap: TupleString[] = zip(query.split('/'), map.split(','))
   const cleanQuery = categoriesOnlyQuery(queryAndMap)
+
+  if (Functions.isGoCommerceAcc(account)) {
+    // GoCommerce does not have pagetype query implemented yet
+    const category =
+      findCategoryInTree(
+        await queries.categories(
+          {},
+          { treeLevel: cleanQuery.split('/').length },
+          ctx
+        ),
+        query.split('/')
+      ) || {}
+    return {
+      metaTagDescription: path(['MetaTagDescription'], category),
+      titleTag: path(['Title'], category) || path(['Name'], category),
+    }
+  }
+
   return getAndParsePagetype(cleanQuery, ctx)
 }
 
-const getBrandMetadata = ({ query }: SearchArgs, ctx: Context) => {
+const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
+  const {
+    vtex: { account },
+  } = ctx
   const cleanQuery = head(split('/', query)) as string
+
+  if (Functions.isGoCommerceAcc(account)) {
+    const brand = (await getBrandFromSlug(cleanQuery, ctx)) || {}
+    return {
+      metaTagDescription: path(['metaTagDescription'], brand),
+      titleTag: path(['title'], brand) || path(['name'], brand),
+    }
+  }
   return getAndParsePagetype(cleanQuery, ctx)
 }
 
