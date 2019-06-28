@@ -1,5 +1,4 @@
-import { toLower, equals } from 'ramda'
-import { findCategoryInTree, getBrandFromSlug } from './utils'
+import { equals } from 'ramda'
 import { toCategoryIOMessage, toClusterIOMessage } from '../../utils/ioMessage'
 
 interface BreadcrumbParams {
