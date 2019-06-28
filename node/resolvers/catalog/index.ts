@@ -176,10 +176,10 @@ const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
   const {
     vtex: { account },
   } = ctx
-  const cleanQuery = head(split('/', query)) as string
+  const cleanQuery = head(split('/', query)) || ''
 
   if (Functions.isGoCommerceAcc(account)) {
-    const brand = (await getBrandFromSlug(cleanQuery, ctx)) || {}
+    const brand = (await getBrandFromSlug(toLower(cleanQuery), ctx)) || {}
     return {
       metaTagDescription: path(['metaTagDescription'], brand),
       titleTag: path(['title'], brand) || path(['name'], brand),
