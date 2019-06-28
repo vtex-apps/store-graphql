@@ -10,6 +10,16 @@ export enum CatalogCrossSellingTypes {
   suggestions = 'suggestions',
 }
 
+const pageTypeMapping: Record<string, string> = {
+  Brand: 'brand',
+  Department: 'department',
+  Category: 'category',
+  SubCategory: 'subcategory',
+  NotFound: 'search',
+  FullText: 'search',
+  Search: 'search',
+}
+
 const lastSegment = compose<string, string[], string>(
   last,
   split('/')
@@ -78,4 +88,8 @@ function appendToMap(mapCategories: CategoryMap, category: Category) {
   mapCategories = category.children.reduce(appendToMap, mapCategories)
 
   return mapCategories
+}
+
+export function translatePageType(catalogPageType: string): string {
+  return pageTypeMapping[catalogPageType] || 'search'
 }
