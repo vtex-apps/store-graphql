@@ -10,6 +10,7 @@ import {
   toPairs,
   length,
 } from 'ramda'
+import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
@@ -69,15 +70,19 @@ const productCategoriesToCategoryTree = async (
     categoriesIds,
   }: { categories: string[]; categoriesIds: string[] },
   _: any,
-  { clients: { catalog } }: Context
+  { clients: { catalog }, vtex: { account } }: Context
 ) => {
   if (!categories || !categoriesIds) {
     return []
   }
-  const level = Math.max(...categoriesIds.map(getCategoryLevel))
+  const reversedIds = reverse(categoriesIds)
+  if (!Functions.isGoCommerceAcc(account)) {
+    return reversedIds.map(categoryId => catalog.category(parseId(categoryId)))
+  }
+  const level = Math.max(...reversedIds.map(getCategoryLevel))
   const categoriesTree = await catalog.categories(level)
   const categoryMap = buildCategoryMap(categoriesTree)
-  return reverse(categoriesIds.map(id => categoryMap[parseId(id)]))
+  return reversedIds.map(id => categoryMap[parseId(id)])
 }
 
 export const resolvers = {
