@@ -32,12 +32,32 @@ interface CategoryWithNulls
   children: null
 }
 
+interface CatalogPageTypeResponse {
+  id: string
+  pageType: string
+}
+
 /** Catalog API
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
 export class Catalog extends AppClient {
   public constructor(ctx: IOContext, opts?: InstanceOptions) {
     super('vtex.catalog-api-proxy', ctx, opts)
+  }
+
+  public pageType = (path: string, query: string = '') => {
+    const pageTypePath = path.startsWith('/')
+      ? path.substr(1)
+      : path
+
+    const pageTypeQuery = !query || query.startsWith('?')
+      ? query
+      : `?${query}`
+
+    return this.get<CatalogPageTypeResponse>(
+      `/pub/portal/pagetype/${pageTypePath}${pageTypeQuery}`,
+      { metric: 'catalog-pagetype' }
+    )
   }
 
   public product = (slug: string) =>

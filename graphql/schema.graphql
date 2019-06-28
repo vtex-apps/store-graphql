@@ -364,7 +364,21 @@ type Query {
     department: String
     category: String
     subcategory: String
-  ): SearchContext
+  ): SearchContext @deprecated(reason: "Use the 'pageType' query")
+
+  """
+  Get search page type
+  """
+  pageType(
+    """
+    URL's pathname
+    """
+    path: String!,
+    """
+    URL's querystring including '?'
+    """
+    query: String
+  ): PageType @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Get logistics information about the store
