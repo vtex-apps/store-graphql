@@ -151,9 +151,6 @@ export function createAddress(context: Context, address: Address) {
   const addressName = generateRandomName()
   addressesData[addressName] = JSON.stringify({
     ...address,
-    geoCoordinate: Array.isArray(address.geoCoordinates)
-      ? `${address.geoCoordinates}`
-      : null,
     addressName,
     userId: currentProfile.userId,
   })
@@ -186,9 +183,6 @@ export function updateAddress(
   const addressesData = {} as any
   addressesData[id] = JSON.stringify({
     ...fields,
-    geoCoordinate: Array.isArray(fields.geoCoordinates)
-      ? `${fields.geoCoordinates}`
-      : null,
     userId: currentProfile.userId,
   })
 
