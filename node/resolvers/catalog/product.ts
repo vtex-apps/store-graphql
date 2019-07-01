@@ -82,7 +82,9 @@ const productCategoriesToCategoryTree = async (
   const level = Math.max(...reversedIds.map(getCategoryLevel))
   const categoriesTree = await catalog.categories(level)
   const categoryMap = buildCategoryMap(categoriesTree)
-  return reversedIds.map(id => categoryMap[parseId(id)])
+  const mappedCategories = reversedIds.map(id => categoryMap[parseId(id)]).filter(Boolean)
+
+  return mappedCategories.length ? mappedCategories : null
 }
 
 export const resolvers = {
