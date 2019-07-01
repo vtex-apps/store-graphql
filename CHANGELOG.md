@@ -7,18 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Improve performace at searchContextFromParams resolver.
+
 ## [2.88.3] - 2019-07-02
 
 ## [2.88.2] - 2019-07-01
 
+### Changed
+
+- Performance improvements for productSearch and product category tree resolver.
+
 ## [2.88.1] - 2019-06-28
 
 ## [2.88.0] - 2019-06-28
+
 ### Added
+
 - New pagetype query to identify by path and query the search page (brand, department..).
 
 ## [2.87.1] - 2019-06-27
+
 ### Fixed
+
 - Fixes geoCoordinates on `createAddress` and `updateAddress` mutations
 
 ## [2.87.0] - 2019-06-26
@@ -30,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.86.1] - 2019-06-26
 
 ### Fixed
+
 - Scalar type of `rawValue` of `PriceTags` type.
 
 ## [2.86.0] - 2019-06-26
