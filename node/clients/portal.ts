@@ -1,7 +1,5 @@
 import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 
-const portalPVT = '/api/portal/pvt'
-
 export class Portal extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -22,10 +20,12 @@ export class Portal extends JanusClient {
     })
 
   private get routes() {
+    const basePVT = '/api/portal/pvt'
+
     return {
-      allSites: () => `${portalPVT}/sites/`,
+      allSites: () => `${basePVT}/sites/`,
       storeConfigs: (activeSite: string) =>
-        `${portalPVT}/sites/${activeSite}/configuration`,
+        `${basePVT}/sites/${activeSite}/configuration`,
     }
   }
 }
