@@ -24,7 +24,6 @@ const lastSegment = compose<string, string[], string>(
   last,
   split('/')
 )
-
 export function findCategoryInTree(
   tree: Category[],
   values: string[],

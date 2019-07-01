@@ -1,12 +1,19 @@
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
+import { Functions } from '@gocommerce/utils'
 import { all } from 'bluebird'
 import {
   head,
-  last,
-  path,
   split,
   test,
   toLower,
+  zip,
+  compose,
+  join,
+  prop,
+  equals,
+  map,
+  filter,
+  path,
 } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
@@ -27,9 +34,9 @@ import { resolvers as skuResolvers } from './sku'
 import { catalogSlugify, Slugify } from './slug'
 import {
   CatalogCrossSellingTypes,
+  translatePageType,
   findCategoryInTree,
   getBrandFromSlug,
-  translatePageType
 } from './utils'
 
 interface SearchContext {
@@ -106,39 +113,79 @@ export const extractSlug = (item: any) => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-/** Get Category metadata for the search/productSearch query
- *
- */
-const categoryMetaData = async (
-  _: any,
-  args: SearchArgs,
-  ctx: Context
-): Promise<Metadata> => {
-  const { query } = args
-  const category =
-    findCategoryInTree(
-      await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
-      query.split('/')
-    ) || {}
+type TupleString = [string, string]
+
+const isTupleMap = compose<TupleString, string, boolean>(
+  equals('c'),
+  prop('1')
+)
+
+const categoriesOnlyQuery = compose<
+  TupleString[],
+  TupleString[],
+  string[],
+  string
+>(
+  join('/'),
+  map(prop('0')),
+  filter(isTupleMap)
+)
+
+const getAndParsePagetype = async (path: string, ctx: Context) => {
+  const pagetype = await ctx.clients.catalog.pageType(path).catch(() => null)
+  if (!pagetype) {
+    return { titleTag: null, metaTagDescription: null }
+  }
   return {
-    metaTagDescription: path(['MetaTagDescription'], category),
-    titleTag: path(['Title'], category) || path(['Name'], category),
+    titleTag: pagetype.title || pagetype.name,
+    metaTagDescription: pagetype.metaTagDescription,
   }
 }
-/** Get brand metadata for the search/productSearch query
- *
- */
-const brandMetaData = async (
-  _: any,
-  args: SearchArgs,
+
+const getCategoryMetadata = async (
+  { map, query }: SearchArgs,
   ctx: Context
-): Promise<Metadata> => {
-  const brandSlug = toLower(last(args.query.split('/')) || '')
-  const brand = (await getBrandFromSlug(brandSlug, ctx)) || {}
-  return {
-    metaTagDescription: path(['metaTagDescription'], brand),
-    titleTag: path(['title'], brand) || path(['name'], brand),
+) => {
+  const {
+    vtex: { account },
+  } = ctx
+  const queryAndMap: TupleString[] = zip(query.split('/'), map.split(','))
+  const cleanQuery = categoriesOnlyQuery(queryAndMap)
+
+  if (Functions.isGoCommerceAcc(account)) {
+    // GoCommerce does not have pagetype query implemented yet
+    const category =
+      findCategoryInTree(
+        await queries.categories(
+          {},
+          { treeLevel: cleanQuery.split('/').length },
+          ctx
+        ),
+        cleanQuery.split('/')
+      ) || {}
+    return {
+      metaTagDescription: path(['MetaTagDescription'], category),
+      titleTag: path(['Title'], category) || path(['Name'], category),
+    }
   }
+
+  return getAndParsePagetype(cleanQuery, ctx)
+}
+
+const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
+  const {
+    vtex: { account },
+  } = ctx
+  const cleanQuery = head(split('/', query)) || ''
+
+  if (Functions.isGoCommerceAcc(account)) {
+    const brand = (await getBrandFromSlug(toLower(cleanQuery), ctx)) || {}
+    return {
+      metaTagDescription: path(['metaTagDescription'], brand),
+      titleTag: path(['title'], brand) || path(['name'], brand),
+    }
+  }
+  return getAndParsePagetype(cleanQuery, ctx)
 }
 
 /**
@@ -150,13 +197,12 @@ const brandMetaData = async (
  */
 const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
   const { map } = args
-  const lastMap = last(map.split(','))
-
-  if (lastMap === 'c') {
-    return categoryMetaData(_, args, ctx)
+  const firstMap = head(map.split(','))
+  if (firstMap === 'c') {
+    return getCategoryMetadata(args, ctx)
   }
-  if (lastMap === 'b') {
-    return brandMetaData(_, args, ctx)
+  if (firstMap === 'b') {
+    return getBrandMetadata(args, ctx)
   }
   return { titleTag: null, metaTagDescription: null }
 }
@@ -504,15 +550,11 @@ export const queries = {
     return response
   },
 
-  pageType: async (
-    _: any,
-    {path, query}: PageTypeArgs,
-    ctx: Context
-  ) => {
+  pageType: async (_: any, { path, query }: PageTypeArgs, ctx: Context) => {
     const response = await ctx.clients.catalog.pageType(path, query)
     return {
       id: response.id,
-      type: translatePageType(response.pageType)
+      type: translatePageType(response.pageType),
     }
   },
 
