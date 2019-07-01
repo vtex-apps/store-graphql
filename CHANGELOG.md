@@ -25,7 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Use a better resolver architecture to fetch assembly options prices and use checkout client instead of axios.
 
+
 ## [2.90.5] - 2019-07-04
+
 ### Added
 - added `teasers` and `discountHighlights` fields in `Product` type. 
 
