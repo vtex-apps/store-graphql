@@ -252,7 +252,10 @@ type Query {
     Country of postal code
     """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment @withOrderFormId
+  ): ShippingData
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @withOrderFormId
 
   """
   Returns checkout cart details
@@ -268,6 +271,11 @@ type Query {
   Returns a specified user order
   """
   order(id: String!): Order @cacheControl(scope: PRIVATE)
+
+  """
+  Returns the specified site configurations
+  """
+  siteConfigs: SiteConfigs @cacheControl(scope: PRIVATE)
 
   """
   Returns user profile details
@@ -466,10 +474,12 @@ type Mutation {
   Cart
   """
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment @withOrderFormId
+    @withSegment
+    @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment @withOrderFormId
+    @withSegment
+    @withOrderFormId
 
   """
   Used to update the CL entity on masterData.
@@ -720,7 +730,12 @@ type Mutation {
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
-  uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
+  uploadAttachment(
+    acronym: String!
+    documentId: String!
+    field: String!
+    file: Upload!
+  ): AttachmentResponse
 
   """
   List
