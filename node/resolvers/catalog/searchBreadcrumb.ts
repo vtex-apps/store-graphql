@@ -1,6 +1,7 @@
-import { toLower, equals } from 'ramda'
-import { findCategoryInTree, getBrandFromSlug } from './utils'
+import { equals, toLower } from 'ramda'
 import { toCategoryIOMessage, toClusterIOMessage } from '../../utils/ioMessage'
+import { findCategoryInTree, getBrandFromSlug } from './utils'
+import { Functions } from '@gocommerce/utils'
 
 interface BreadcrumbParams {
   queryUnit: string
@@ -27,22 +28,44 @@ const isCategoryMap = equals('c')
 const isBrandMap = equals('b')
 const isProductClusterMap = equals('productClusterIds')
 
+const getCategoryInfo = (
+  { categoriesSearched, queryUnit, categories, index }: BreadcrumbParams,
+  isVtex: boolean,
+  ctx: Context
+) => {
+  if (!isVtex) {
+    const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
+    return findCategoryInTree(
+      categories,
+      categoriesSearched.slice(0, queryPosition + 1)
+    )
+  }
+  return ctx.clients.catalog
+    .pageType(categoriesSearched.slice(0, index + 1).join('/'))
+    .catch(() => null)
+}
+
+const getBrandInfo = async (
+  { queryUnit }: BreadcrumbParams,
+  isVtex: boolean,
+  ctx: Context
+) => {
+  if (!isVtex) {
+    return getBrandFromSlug(toLower(queryUnit), ctx)
+  }
+  return ctx.clients.catalog.pageType(queryUnit).catch(() => null)
+}
+
 export const resolvers = {
   SearchBreadcrumb: {
     name: async (obj: BreadcrumbParams, _: any, ctx: Context) => {
       const {
         clients: { segment },
+        vtex: { account },
       } = ctx
-      const {
-        queryUnit,
-        mapUnit,
-        index,
-        queryArray,
-        categories,
-        categoriesSearched,
-        products,
-      } = obj
+      const { queryUnit, mapUnit, index, queryArray, products } = obj
       const defaultName = queryArray[index]
+      const isVtex = !Functions.isGoCommerceAcc(account)
       if (isProductClusterMap(mapUnit)) {
         const clusterName = findClusterNameFromId(products, queryUnit)
         if (clusterName) {
@@ -50,18 +73,12 @@ export const resolvers = {
         }
       }
       if (isCategoryMap(mapUnit)) {
-        const queryPosition = categoriesSearched.findIndex(
-          cat => cat === queryUnit
-        )
-        const category = findCategoryInTree(
-          categories,
-          categoriesSearched.slice(0, queryPosition + 1)
-        )
-        if (category) {
+        const categoryData = await getCategoryInfo(obj, isVtex, ctx)
+        if (categoryData) {
           return toCategoryIOMessage('name')(
             segment,
-            category.name,
-            category.id
+            categoryData.name,
+            categoryData.id
           )
         }
         // if cant find a category, we should try to see if its a product cluster
@@ -71,8 +88,8 @@ export const resolvers = {
         }
       }
       if (isBrandMap(mapUnit)) {
-        const brand = await getBrandFromSlug(toLower(queryUnit), ctx)
-        return brand ? brand.name : defaultName
+        const brandData = await getBrandInfo(obj, isVtex, ctx)
+        return brandData ? brandData.name : defaultName
       }
       return defaultName && decodeURI(defaultName)
     },
