@@ -48,12 +48,12 @@ const getCategoryInfo = (
 const getBrandInfo = async (
   { queryUnit }: BreadcrumbParams,
   isVtex: boolean,
-  ctx: Context
+  { clients: { catalog } }: Context
 ) => {
   if (!isVtex) {
-    return getBrandFromSlug(toLower(queryUnit), ctx)
+    return getBrandFromSlug(toLower(queryUnit), catalog)
   }
-  return ctx.clients.catalog.pageType(queryUnit).catch(() => null)
+  return catalog.pageType(queryUnit).catch(() => null)
 }
 
 export const resolvers = {
