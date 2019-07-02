@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+Added documentSchema query to make it possible for retrieving masterdata schema data
+
 ## [2.89.1] - 2019-07-02
 ### Fixed
 - Slugify brand and category names before calling pagetype query on `searchContextFromParams` resolver.
