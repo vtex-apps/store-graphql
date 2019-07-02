@@ -1,5 +1,7 @@
+import { path } from 'ramda'
+
 import { extractSlug } from '.'
-import { toProductIOMessage, toIOMessage } from '../../utils/ioMessage'
+import { toIOMessage, toProductIOMessage } from '../../utils/ioMessage'
 
 export const resolvers = {
   Items: {
@@ -8,5 +10,9 @@ export const resolvers = {
       : toIOMessage(segment, name, name),
 
     slug: (root: any) => extractSlug(root),
+
+    productId: ({items}: {items?: [{productId?: string}]}) => !!items
+      ? path([0, 'productId'], items)
+      : null,
   }
 }

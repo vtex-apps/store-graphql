@@ -10,4 +10,5 @@ type Items {
   href: String
   criteria: String
   slug: String
+  productId: String
 }
