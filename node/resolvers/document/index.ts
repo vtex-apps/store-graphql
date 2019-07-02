@@ -1,6 +1,7 @@
 import { UserInputError } from '@vtex/api'
 import { compose, map, union, prop, replace } from 'ramda'
 import { parseFieldsToJson } from '../../utils/object'
+import { resolvers as documentSchemaResolvers} from './documentSchema'
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
@@ -33,6 +34,22 @@ export const queries = {
       fields: mapKeyAndStringifiedValues(data),
     }
   },
+
+  documentSchema: async(_: any, args: any, context: Context) => {
+    const { dataentity, schema } = args;
+
+    const {
+      clients: { masterdata },
+    } = context
+
+    const data = await masterdata.getSchema(dataentity, schema);
+
+    return {...data, name: data? args.schema : null}
+  },
+}
+
+export const fieldResolvers = {
+  ...documentSchemaResolvers
 }
 
 export const mutations = {
