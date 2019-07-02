@@ -180,6 +180,35 @@ export const resolvers = {
       )
       return specificationGroups || []
     },
+
+    items: (product: any, _: any, { clients: { segment } }: Context) => {
+      const {allSpecifications, items, productId} = product
+      let productSpecifications = new Array() as [productSpecification]
+
+      allSpecifications.forEach(
+        (specification: string) => {
+          const productSpecification: productSpecification = {
+            fieldName: toProductIOMessage('fieldName')(segment, specification, productId),
+            fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>] 
+          }
+          
+          product[specification].forEach(
+            (value: string) => {
+              productSpecification.fieldValues.push(toProductIOMessage('fieldValue')(segment, value, productId))
+            }
+          )
+
+          productSpecifications.push(productSpecification)
+        }
+      )
+
+      items.forEach(
+        (item: any) => {
+          item.productSpecifications = productSpecifications
+        }
+      )
+      return items
+    }
   },
   OnlyProduct: {
     categoryTree: productCategoriesToCategoryTree,

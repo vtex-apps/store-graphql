@@ -100,7 +100,7 @@ type Recommendation {
 
 type SKU {
   itemId: ID
-  name: String
+  name: IOMessage
   nameComplete: IOMessage
   complementName: String
   ean: String
@@ -118,18 +118,19 @@ type SKU {
   productName: IOMessage
   productDescription: IOMessage
   skuName: IOMessage # We have already "name" up there ... do we really need "skuName" too?
+  
   skuSpecifications: [skuSpecification]
   productSpecifications: [productSpecification]
 }
 
 type skuSpecification {
   fieldName: IOMessage
-  fieldValues: [Float]
+  fieldValues: [IOMessage]
 }
 
 type productSpecification {
   fieldName: IOMessage
-  fieldValues: [Float]
+  fieldValues: [IOMessage]
 }
 
 input ProductUniqueIdentifier {

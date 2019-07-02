@@ -170,19 +170,19 @@ declare global {
     productName: string
     productDescription: string
     skuName: string
-    
+
     skuSpecifications: [skuSpecification]
     productSpecifications: [productSpecification]
   }
 
   interface skuSpecification {
     fieldName: string
-    fieldValues: [number]
+    fieldValues: [string]
   }
 
   interface productSpecification {
-    fieldName: string
-    fieldValues: [number]
+    fieldName: Promise<{ content: string; from: string; id: string; }>
+    fieldValues: [Promise<{ content: string; from: string; id: string; }>]
   }
 
   interface Reference {
