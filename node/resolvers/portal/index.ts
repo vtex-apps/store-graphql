@@ -1,3 +1,9 @@
+interface Site {
+  id: string
+  title: string
+  siteName: string
+}
+
 export const resolvers = {
   siteConfigs: async (_: any, __: any, ctx: Context) => {
     const {
@@ -7,7 +13,7 @@ export const resolvers = {
 
     const sites = await portal.sites()
 
-    const currentSite = sites.find((site: any) => site.siteName === account)
+    const currentSite = sites.find((site: Site) => site.siteName === account)
 
     try {
       return portal.siteConfig(currentSite ? currentSite.id : 'default')
