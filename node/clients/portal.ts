@@ -9,7 +9,6 @@ export class Portal extends JanusClient {
         ...(ctx.authToken ? { VtexIdclientAutCookie: ctx.authToken } : null),
       },
     })
-    console.log(options, 'optionsssss')
   }
 
   public sites = () =>
