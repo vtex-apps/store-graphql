@@ -121,7 +121,7 @@ export const searchContextGetCategory = async (
     .join('/')
   const pageType = await catalog.pageType(url).catch(() => null)
   if (!pageType) {
-    logger.warn(
+    logger.info(
       `category ${url}, args ${JSON.stringify(args)}`,
       'pagetype-category-error'
     )

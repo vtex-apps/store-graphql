@@ -136,10 +136,10 @@ const getBrandId = async (
   if (!isVtex) {
     return brandFromList(brand, catalog)
   }
-  const slugfied = catalogSlugify(brand)
-  const brandPagetype = await catalog.pageType(slugfied).catch(() => null)
+  const slugified = catalogSlugify(brand)
+  const brandPagetype = await catalog.pageType(slugified).catch(() => null)
   if (!brandPagetype) {
-    logger.warn(`brand ${brand}, slug ${slugfied}`, 'pagetype-brand-error')
+    logger.info(`brand ${brand}, slug ${slugified}`, 'pagetype-brand-error')
   }
   if (!brandPagetype || brandPagetype.pageType !== 'Brand') {
     return brandFromList(brand, catalog)
