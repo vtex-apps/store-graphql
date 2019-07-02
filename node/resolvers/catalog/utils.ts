@@ -114,10 +114,13 @@ export const searchContextGetCategory = async (
   if (!department && !category && !subcategory) {
     return null
   }
-  const url = [department, category, subcategory].filter(Boolean).join('/')
+
+  const validParams = [department, category, subcategory].filter(Boolean)
+  const url = validParams.join('/')
   const pageType = await catalog.pageType(url)
 
-  if (!typesPossible.includes(pageType.pageType)) {
+  const correctTypeIndex = validParams.length - 1
+  if (pageType.pageType !== typesPossible[correctTypeIndex]) {
     return getIdFromTree(args, catalog)
   }
   return pageType.id
