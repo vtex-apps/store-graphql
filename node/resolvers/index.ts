@@ -13,15 +13,10 @@ import {
   queries as checkoutQueries,
 } from './checkout'
 import {
-<<<<<<< HEAD
   fieldResolvers as documentFieldResolvers,
-  mutations as documentMutations,
-  queries as documentQueries } from './document'
-=======
   mutations as documentMutations,
   queries as documentQueries,
 } from './document'
->>>>>>> Add siteConfigs query
 import { mutation as listMutations, queries as listQueries } from './list'
 import {
   fieldResolvers as logisticsResolvers,
