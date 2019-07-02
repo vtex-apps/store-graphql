@@ -1,7 +1,22 @@
 import { Functions } from '@gocommerce/utils'
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
-import { compose, equals, filter, head, isEmpty, isNil, join, map, path, prop, split, test, toLower, zip } from 'ramda'
+import {
+  compose,
+  equals,
+  filter,
+  head,
+  isEmpty,
+  isNil,
+  join,
+  map,
+  path,
+  prop,
+  split,
+  test,
+  toLower,
+  zip,
+} from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
@@ -18,7 +33,14 @@ import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
-import { CatalogCrossSellingTypes, findCategoryInTree, getBrandFromSlug, searchContextGetCategory, translatePageType } from './utils'
+import {
+  CatalogCrossSellingTypes,
+  findCategoryInTree,
+  getBrandFromSlug,
+  searchContextGetCategory,
+  translatePageType,
+} from './utils'
+import { catalogSlugify } from './slug'
 
 interface SearchContext {
   brand: string | null
@@ -105,7 +127,8 @@ const brandFromList = async (
 const getBrandId = async (
   brand: string | undefined,
   catalog: Context['clients']['catalog'],
-  isVtex: boolean
+  isVtex: boolean,
+  logger: Context['clients']['logger']
 ) => {
   if (!brand) {
     return null
@@ -113,8 +136,12 @@ const getBrandId = async (
   if (!isVtex) {
     return brandFromList(brand, catalog)
   }
-  const brandPagetype = await catalog.pageType(brand)
-  if (brandPagetype.pageType !== 'Brand') {
+  const slugfied = catalogSlugify(brand)
+  const brandPagetype = await catalog.pageType(slugfied).catch(() => null)
+  if (!brandPagetype) {
+    logger.warn(`brand ${brand}, slug ${slugfied}`, 'pagetype-brand-error')
+  }
+  if (!brandPagetype || brandPagetype.pageType !== 'Brand') {
     return brandFromList(brand, catalog)
   }
   return brandPagetype.id
@@ -308,9 +335,10 @@ export const queries = {
       clients: { catalog },
     } = ctx
 
-    const args = rawArgs && isValidProductIdentifier(rawArgs.identifier)
-      ? rawArgs
-      : { identifier: { field: 'slug', value: rawArgs.slug! } }
+    const args =
+      rawArgs && isValidProductIdentifier(rawArgs.identifier)
+        ? rawArgs
+        : { identifier: { field: 'slug', value: rawArgs.slug! } }
 
     if (!args.identifier) {
       throw new UserInputError('No product identifier provided')
@@ -341,7 +369,9 @@ export const queries = {
       return head(products)
     }
 
-    throw new NotFoundError(`No product was found with requested ${field} ${JSON.stringify(args)}`)
+    throw new NotFoundError(
+      `No product was found with requested ${field} ${JSON.stringify(args)}`
+    )
   },
 
   products: async (_: any, args: any, ctx: Context) => {
@@ -481,7 +511,7 @@ export const queries = {
   searchContextFromParams: async (
     _: any,
     args: SearchContextParams,
-    { clients: { catalog }, vtex: { account } }: Context
+    { clients: { catalog, logger }, vtex: { account } }: Context
   ) => {
     const isVtex = !Functions.isGoCommerceAcc(account)
     const response: SearchContext = {
@@ -491,8 +521,8 @@ export const queries = {
     }
 
     const [brandId, categoryId] = await all([
-      getBrandId(args.brand, catalog, isVtex),
-      searchContextGetCategory(args, catalog, isVtex),
+      getBrandId(args.brand, catalog, isVtex, logger),
+      searchContextGetCategory(args, catalog, isVtex, logger),
     ])
     response.brand = brandId
     response.category = categoryId

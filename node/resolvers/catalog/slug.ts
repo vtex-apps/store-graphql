@@ -1,14 +1,26 @@
 import slugify from 'slugify'
+import { toLower } from 'ramda'
 
 export function Slugify(str: any) {
   return slugify(str, { lower: true, remove: /[*+~.()'"!:@]/g })
 }
 
+const from =
+  'ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆÍÌÎÏŇÑÓÖÒÔÕØŘŔŠŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇíìîïňñóöòôõøðřŕšťúůüùûýÿžþÞĐđßÆa·/_,:;'
+const to =
+  'AAAAAACCCDEEEEEEEEIIIINNOOOOOORRSTUUUUUYYZaaaaaacccdeeeeeeeeiiiinnooooooorrstuuuuuyyzbBDdBAa------'
+const removeAccents = (str: string) => {
+  let newStr = str.slice(0)
+  for (let i = 0; i < from.length; i++) {
+    newStr = newStr.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
+  }
+  return newStr
+}
+
 // Parameter "S. Coifman" should output "s--coifman"
 export function catalogSlugify(str: string) {
   // According to Bacelar, the catalog API uses a legacy method for slugifying strings.
-  // It replaces all dots and spaces with - and then removes special characters.
-  const slugified = slugify(str, { lower: true, remove: /[*+~()'"!:@]/g })
-  // Now replace dots for -
-  return slugified.replace(/\./g, '-')
+  // replaces special characters with dashes, remove accents and lower cases everything
+  const replaced = str.replace(/[*+~.()'"!:@&\[\]'`,/ %$#?{}|]/g, '-')
+  return toLower(removeAccents(replaced))
 }
