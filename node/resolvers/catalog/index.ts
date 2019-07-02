@@ -1,20 +1,7 @@
-import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { Functions } from '@gocommerce/utils'
+import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
-import {
-  head,
-  split,
-  test,
-  toLower,
-  zip,
-  compose,
-  join,
-  prop,
-  equals,
-  map,
-  filter,
-  path,
-} from 'ramda'
+import { compose, equals, filter, head, isEmpty, isNil, join, map, path, prop, split, test, toLower, zip } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
@@ -31,13 +18,7 @@ import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
-import {
-  CatalogCrossSellingTypes,
-  translatePageType,
-  findCategoryInTree,
-  getBrandFromSlug,
-  searchContextGetCategory,
-} from './utils'
+import { CatalogCrossSellingTypes, findCategoryInTree, getBrandFromSlug, searchContextGetCategory, translatePageType } from './utils'
 
 interface SearchContext {
   brand: string | null
@@ -234,20 +215,6 @@ const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
   return { titleTag: null, metaTagDescription: null }
 }
 
-/** TODO: This method should be removed in the next major.
- * @author Ana Luiza
- */
-async function getProductBySlug(
-  slug: string,
-  catalog: Context['clients']['catalog']
-) {
-  const products = await catalog.product(slug)
-  if (products.length > 0) {
-    return head(products)
-  }
-  throw new NotFoundError('No product was found with requested sku')
-}
-
 const translateToStoreDefaultLanguage = async (
   clients: Context['clients'],
   term: string
@@ -278,6 +245,9 @@ export const fieldResolvers = {
   ...breadcrumbResolvers,
   ...productSearchResolvers,
 }
+
+const isValidProductIdentifier = (identifier: ProductIndentifier | undefined) =>
+  !!identifier && !isNil(identifier.value) && !isEmpty(identifier.value)
 
 export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context) => {
@@ -333,14 +303,15 @@ export const queries = {
     return result
   },
 
-  product: async (_: any, args: ProductArgs, ctx: Context) => {
+  product: async (_: any, rawArgs: ProductArgs, ctx: Context) => {
     const {
       clients: { catalog },
     } = ctx
-    // TODO this is only for backwards compatibility. Should be removed in the next major.
-    if (args.slug) {
-      return getProductBySlug(args.slug, catalog)
-    }
+
+    const args = rawArgs && isValidProductIdentifier(rawArgs.identifier)
+      ? rawArgs
+      : { identifier: { field: 'slug', value: rawArgs.slug! } }
+
     if (!args.identifier) {
       throw new UserInputError('No product identifier provided')
     }
@@ -370,7 +341,7 @@ export const queries = {
       return head(products)
     }
 
-    throw new NotFoundError(`No product was found with requested ${field}`)
+    throw new NotFoundError(`No product was found with requested ${field} ${JSON.stringify(args)}`)
   },
 
   products: async (_: any, args: any, ctx: Context) => {
