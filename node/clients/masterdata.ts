@@ -26,8 +26,8 @@ export class MasterData extends ExternalClient {
     })
   }
 
-  public getSchema = <T>(acronym: string, schema: string) =>
-    this.get<T>(this.routes.schema(acronym, schema), {
+  public getSchema = <T>(dataEntity: string, schema: string) =>
+    this.get<T>(this.routes.schema(dataEntity, schema), {
       metric: 'masterdata-getSchema',
     })
 

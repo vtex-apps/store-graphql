@@ -151,6 +151,11 @@ declare global {
     id: string
   }
 
+  interface DocumentSchemaArgs {
+    dataEntity: string,
+    schema: string
+  }
+
   interface DocumentsArgs {
     acronym: string
     fields: string[]
