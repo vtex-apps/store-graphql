@@ -62,6 +62,34 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => toSKUIOMessage('productDescription')(segment, productDescription, itemId),
 
+    skuSpecifications: (
+      sku: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => {
+      const { variations, itemId } = sku
+      let skuSpecifications = new Array() as [skuSpecification]
+
+      (variations || []).forEach(
+        (variation: string) => {
+          let skuSpecification: skuSpecification = {
+            fieldName: toSKUIOMessage('fieldName')(segment, variation, itemId),
+            fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
+          };
+
+          (sku[variation] || []).forEach(
+            (value: string) => {
+              skuSpecification.fieldValues.push(toSKUIOMessage('fieldValue')(segment, value, itemId))
+            }
+          );
+
+          skuSpecifications.push(skuSpecification)
+        },
+      )
+
+      return skuSpecifications
+    },
+
     skuName: (
       { skuName, itemId }: SKU,
       _: any,

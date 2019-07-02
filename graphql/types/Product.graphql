@@ -111,7 +111,9 @@ type SKU {
   images (quantity: Int = 10) : [Image]
   videos: [Video]
   sellers: [Seller]
+
   variations: [Property]
+  
   attachments: [Attachment]
   calculatedAttachments: String
   

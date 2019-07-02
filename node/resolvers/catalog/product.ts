@@ -185,14 +185,14 @@ export const resolvers = {
       const {allSpecifications, items, productId} = product
       let productSpecifications = new Array() as [productSpecification]
 
-      allSpecifications.forEach(
+      (allSpecifications || []).forEach(
         (specification: string) => {
-          const productSpecification: productSpecification = {
+          let productSpecification: productSpecification = {
             fieldName: toProductIOMessage('fieldName')(segment, specification, productId),
             fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>] 
-          }
+          };
           
-          product[specification].forEach(
+          (product[specification] || []).forEach(
             (value: string) => {
               productSpecification.fieldValues.push(toProductIOMessage('fieldValue')(segment, value, productId))
             }
@@ -201,12 +201,14 @@ export const resolvers = {
           productSpecifications.push(productSpecification)
         }
       )
-
-      items.forEach(
-        (item: any) => {
-          item.productSpecifications = productSpecifications
-        }
-      )
+      
+      if(items && items.length > 0) {
+        items.forEach(
+          (item: any) => {
+            item.productSpecifications = productSpecifications
+          }
+        )
+      }
       return items
     }
   },
