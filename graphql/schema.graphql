@@ -342,6 +342,20 @@ type Query {
   ): Document
 
   """
+  Get a document schema
+  """
+  documentSchema(
+    """
+    Data entity name. e.g.: CL, AD
+    """
+    dataEntity: String
+    """
+    MasterData schema name.
+    """
+    schema: String
+  ): DocumentSchema
+
+  """
   Get the benefits associated with a list of products
   """
   benefits(

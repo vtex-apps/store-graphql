@@ -26,6 +26,11 @@ export class MasterData extends ExternalClient {
     })
   }
 
+  public getSchema = <T>(dataEntity: string, schema: string) =>
+    this.get<T>(this.routes.schema(dataEntity, schema), {
+      metric: 'masterdata-getSchema',
+    })
+
   public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
@@ -99,6 +104,7 @@ export class MasterData extends ExternalClient {
         `${acronym}/documents/${id}/${fields}/attachments`,
       document: (acronym: string, id: string) => `${acronym}/documents/${id}`,
       documents: (acronym: string) => `${acronym}/documents`,
+      schema: (acronym: string, schema: string) => `${acronym}/schemas/${schema}`,
       search: (acronym: string) => `${acronym}/search`,
     }
   }
