@@ -35,14 +35,14 @@ export const queries = {
     }
   },
 
-  documentSchema: async(_: any, args: any, context: Context) => {
-    const { dataentity, schema } = args;
+  documentSchema: async(_: any, args: DocumentSchemaArgs, context: Context) => {
+    const { dataEntity, schema } = args;
 
     const {
       clients: { masterdata },
     } = context
 
-    const data = await masterdata.getSchema(dataentity, schema);
+    const data = await masterdata.getSchema(dataEntity, schema);
 
     return {...data, name: data? args.schema : null}
   },
