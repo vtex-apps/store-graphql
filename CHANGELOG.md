@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.89.2] - 2019-07-02
+
 ### Added
 
 Added documentSchema query to make it possible for retrieving masterdata schema data
