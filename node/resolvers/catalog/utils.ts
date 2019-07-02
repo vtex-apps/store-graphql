@@ -100,6 +100,8 @@ interface CategoryArgs {
   subcategory?: string
 }
 
+const typesPossible = ['Department', 'Category', 'SubCategory']
+
 export const searchContextGetCategory = async (
   args: CategoryArgs,
   catalog: Context['clients']['catalog'],
@@ -114,7 +116,11 @@ export const searchContextGetCategory = async (
   }
   const url = [department, category, subcategory].filter(Boolean).join('/')
   const pageType = await catalog.pageType(url)
-  return pageType ? pageType.id : null
+
+  if (!typesPossible.includes(pageType.pageType)) {
+    return getIdFromTree(args, catalog)
+  }
+  return pageType.id
 }
 
 const getIdFromTree = async (
