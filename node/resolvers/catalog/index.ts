@@ -31,12 +31,12 @@ import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
 import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
+import { catalogSlugify, Slugify } from './slug'
 import {
   CatalogCrossSellingTypes,
   translatePageType,
   findCategoryInTree,
   getBrandFromSlug,
-  searchContextGetCategory,
 } from './utils'
 
 interface SearchContext {
@@ -113,32 +113,6 @@ export const extractSlug = (item: any) => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-const brandFromList = async (
-  slug: string,
-  catalog: Context['clients']['catalog']
-) => {
-  const brandFromList = await getBrandFromSlug(toLower(slug), catalog)
-  return brandFromList ? brandFromList.id : null
-}
-
-const getBrandId = async (
-  brand: string | undefined,
-  catalog: Context['clients']['catalog'],
-  isVtex: boolean
-) => {
-  if (!brand) {
-    return null
-  }
-  if (!isVtex) {
-    return brandFromList(brand, catalog)
-  }
-  const brandPagetype = await catalog.pageType(brand)
-  if (brandPagetype.pageType !== 'Brand') {
-    return brandFromList(brand, catalog)
-  }
-  return brandPagetype.id
-}
-
 type TupleString = [string, string]
 
 const isTupleMap = compose<TupleString, string, boolean>(
@@ -201,12 +175,11 @@ const getCategoryMetadata = async (
 const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
   const {
     vtex: { account },
-    clients: { catalog },
   } = ctx
   const cleanQuery = head(split('/', query)) || ''
 
   if (Functions.isGoCommerceAcc(account)) {
-    const brand = (await getBrandFromSlug(toLower(cleanQuery), catalog)) || {}
+    const brand = (await getBrandFromSlug(toLower(cleanQuery), ctx)) || {}
     return {
       metaTagDescription: path(['metaTagDescription'], brand),
       titleTag: path(['title'], brand) || path(['name'], brand),
@@ -510,21 +483,70 @@ export const queries = {
   searchContextFromParams: async (
     _: any,
     args: SearchContextParams,
-    { clients: { catalog }, vtex: { account } }: Context
+    { clients: { catalog } }: Context
   ) => {
-    const isVtex = !Functions.isGoCommerceAcc(account)
     const response: SearchContext = {
       brand: null,
       category: null,
       contextKey: 'search',
     }
 
-    const [brandId, categoryId] = await all([
-      getBrandId(args.brand, catalog, isVtex),
-      searchContextGetCategory(args, catalog, isVtex),
-    ])
-    response.brand = brandId
-    response.category = categoryId
+    if (args.brand) {
+      const brands = await catalog.brands()
+
+      const compareBrandSlug = (name: string) =>
+        toLower(catalogSlugify(name)) === args.brand ||
+        toLower(Slugify(name)) === args.brand
+
+      const found = brands.find(
+        brand => brand.isActive && compareBrandSlug(brand.name)
+      )
+      response.brand = found ? found.id : null
+    }
+
+    if (args.department) {
+      const departments = await catalog.categories(2)
+
+      const compareGenericSlug = ({
+        entity,
+        url,
+      }: {
+        entity: 'category' | 'department' | 'subcategory'
+        url: string
+      }) => {
+        const slug = args[entity]
+
+        if (!slug) {
+          return false
+        }
+
+        return (
+          url.endsWith(`/${toLower(catalogSlugify(slug))}`) ||
+          url.endsWith(`/${toLower(Slugify(slug))}`)
+        )
+      }
+
+      let found
+
+      found = departments.find(department =>
+        compareGenericSlug({ entity: 'department', url: department.url })
+      )
+
+      if (args.category && found) {
+        found = found.children.find(category =>
+          compareGenericSlug({ entity: 'category', url: category.url })
+        )
+      }
+
+      if (args.subcategory && found) {
+        found = found.children.find(subcategory =>
+          compareGenericSlug({ entity: 'subcategory', url: subcategory.url })
+        )
+      }
+
+      response.category = found ? found.id : null
+    }
+
     return response
   },
 

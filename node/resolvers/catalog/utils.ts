@@ -43,14 +43,13 @@ export function findCategoryInTree(
 
 export const getBrandFromSlug = async (
   brandSlug: string,
-  catalog: Context['clients']['catalog']
+  { clients: { catalog } }: Context
 ) => {
   const brands = await catalog.brands()
   return brands.find(
     brand =>
-      brand.isActive &&
-      (toLower(catalogSlugify(brand.name)) === brandSlug ||
-        toLower(Slugify(brand.name)) === brandSlug)
+      toLower(catalogSlugify(brand.name)) === brandSlug ||
+      toLower(Slugify(brand.name)) === brandSlug
   )
 }
 
@@ -92,82 +91,4 @@ function appendToMap(mapCategories: CategoryMap, category: Category) {
 
 export function translatePageType(catalogPageType: string): string {
   return pageTypeMapping[catalogPageType] || 'search'
-}
-
-interface CategoryArgs {
-  department?: string
-  category?: string
-  subcategory?: string
-}
-
-const typesPossible = ['Department', 'Category', 'SubCategory']
-
-export const searchContextGetCategory = async (
-  args: CategoryArgs,
-  catalog: Context['clients']['catalog'],
-  isVtex: boolean
-) => {
-  if (!isVtex) {
-    return getIdFromTree(args, catalog)
-  }
-  const { department, category, subcategory } = args
-  if (!department && !category && !subcategory) {
-    return null
-  }
-  const url = [department, category, subcategory].filter(Boolean).join('/')
-  const pageType = await catalog.pageType(url)
-
-  if (!typesPossible.includes(pageType.pageType)) {
-    return getIdFromTree(args, catalog)
-  }
-  return pageType.id
-}
-
-const getIdFromTree = async (
-  args: CategoryArgs,
-  catalog: Context['clients']['catalog']
-) => {
-  if (args.department) {
-    const departments = await catalog.categories(3)
-
-    const compareGenericSlug = ({
-      entity,
-      url,
-    }: {
-      entity: 'category' | 'department' | 'subcategory'
-      url: string
-    }) => {
-      const slug = args[entity]
-
-      if (!slug) {
-        return false
-      }
-
-      return (
-        url.endsWith(`/${toLower(catalogSlugify(slug))}`) ||
-        url.endsWith(`/${toLower(Slugify(slug))}`)
-      )
-    }
-
-    let found
-
-    found = departments.find(department =>
-      compareGenericSlug({ entity: 'department', url: department.url })
-    )
-
-    if (args.category && found) {
-      found = found.children.find(category =>
-        compareGenericSlug({ entity: 'category', url: category.url })
-      )
-    }
-
-    if (args.subcategory && found) {
-      found = found.children.find(subcategory =>
-        compareGenericSlug({ entity: 'subcategory', url: subcategory.url })
-      )
-    }
-
-    return found ? found.id : null
-  }
-  return null
 }
