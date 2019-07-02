@@ -105,7 +105,8 @@ const typesPossible = ['Department', 'Category', 'SubCategory']
 export const searchContextGetCategory = async (
   args: CategoryArgs,
   catalog: Context['clients']['catalog'],
-  isVtex: boolean
+  isVtex: boolean,
+  logger: Context['clients']['logger']
 ) => {
   if (!isVtex) {
     return getIdFromTree(args, catalog)
@@ -114,10 +115,18 @@ export const searchContextGetCategory = async (
   if (!department && !category && !subcategory) {
     return null
   }
-  const url = [department, category, subcategory].filter(Boolean).join('/')
-  const pageType = await catalog.pageType(url)
-
-  if (!typesPossible.includes(pageType.pageType)) {
+  const url = [department, category, subcategory]
+    .filter(Boolean)
+    .map(str => catalogSlugify(str!))
+    .join('/')
+  const pageType = await catalog.pageType(url).catch(() => null)
+  if (!pageType) {
+    logger.warn(
+      `category ${url}, args ${JSON.stringify(args)}`,
+      'pagetype-category-error'
+    )
+  }
+  if (!pageType || !typesPossible.includes(pageType.pageType)) {
     return getIdFromTree(args, catalog)
   }
   return pageType.id
