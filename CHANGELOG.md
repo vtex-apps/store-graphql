@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.89.1] - 2019-07-02
 ### Fixed
 - Slugify brand and category names before calling pagetype query on `searchContextFromParams` resolver.
 - Reimplement custom slugify method to be closer to the catalog version.
