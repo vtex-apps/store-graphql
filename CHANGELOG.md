@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve performace at searchContextFromParams resolver.
 
 ## [2.88.3] - 2019-07-02
+### Fixed
+- Fix Go Commerce corner case of products without valid categories in tree.
 
 ## [2.88.2] - 2019-07-01
 
