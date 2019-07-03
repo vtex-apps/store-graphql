@@ -183,7 +183,10 @@ const getCategoryMetadata = async (
   const {
     vtex: { account },
   } = ctx
-  const queryAndMap: TupleString[] = zip(query.split('/'), map.split(','))
+  const queryAndMap: TupleString[] = zip(
+    (query || '').split('/'),
+    (map || '').split(',')
+  )
   const cleanQuery = categoriesOnlyQuery(queryAndMap)
 
   if (Functions.isGoCommerceAcc(account)) {
@@ -211,7 +214,7 @@ const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
     vtex: { account },
     clients: { catalog },
   } = ctx
-  const cleanQuery = head(split('/', query)) || ''
+  const cleanQuery = head(split('/', query || '')) || ''
 
   if (Functions.isGoCommerceAcc(account)) {
     const brand = (await getBrandFromSlug(toLower(cleanQuery), catalog)) || {}
@@ -231,7 +234,7 @@ const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
  * @param ctx
  */
 const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
-  const { map } = args
+  const map = args.map || ''
   const firstMap = head(map.split(','))
   if (firstMap === 'c') {
     return getCategoryMetadata(args, ctx)
@@ -337,7 +340,9 @@ export const queries = {
     } = ctx
 
     const args =
-      rawArgs && isValidProductIdentifier(rawArgs.identifier) && !Functions.isGoCommerceAcc(account)
+      rawArgs &&
+      isValidProductIdentifier(rawArgs.identifier) &&
+      !Functions.isGoCommerceAcc(account)
         ? rawArgs
         : { identifier: { field: 'slug', value: rawArgs.slug! } }
 
@@ -433,7 +438,10 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
-    const query = await translateToStoreDefaultLanguage(clients, args.query)
+    const query = await translateToStoreDefaultLanguage(
+      clients,
+      args.query || ''
+    )
     const translatedArgs = {
       ...args,
       query,

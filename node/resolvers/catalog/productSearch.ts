@@ -28,19 +28,19 @@ export const resolvers = {
       _: any,
       { vtex: { account }, clients: { catalog } }: Context
     ) => {
+      const query = translatedArgs.query || ''
+      const map = translatedArgs.map || ''
       const queryAndMap = zip(
-        translatedArgs.query
+        query
           .toLowerCase()
           .split('/')
           .map(decodeURIComponent),
-        translatedArgs.map.split(',')
+        map.split(',')
       )
       const categoriesSearched = queryAndMap
         .filter(([_, m]) => m === 'c')
         .map(([q]) => q)
-      const categoriesCount = translatedArgs.map
-        .split(',')
-        .filter(m => m === 'c').length
+      const categoriesCount = map.split(',').filter(m => m === 'c').length
       const categories =
         !!categoriesCount && Functions.isGoCommerceAcc(account)
           ? await catalog.categories(categoriesCount)
@@ -51,8 +51,8 @@ export const resolvers = {
           queryUnit,
           mapUnit,
           index,
-          queryArray: translatedArgs.query.split('/'),
-          mapArray: translatedArgs.map.split(','),
+          queryArray: query.split('/'),
+          mapArray: map.split(','),
           categories,
           categoriesSearched,
           products,
