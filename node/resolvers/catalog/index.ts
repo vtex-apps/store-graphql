@@ -332,11 +332,12 @@ export const queries = {
 
   product: async (_: any, rawArgs: ProductArgs, ctx: Context) => {
     const {
+      vtex: { account },
       clients: { catalog },
     } = ctx
 
     const args =
-      rawArgs && isValidProductIdentifier(rawArgs.identifier)
+      rawArgs && isValidProductIdentifier(rawArgs.identifier) && !Functions.isGoCommerceAcc(account)
         ? rawArgs
         : { identifier: { field: 'slug', value: rawArgs.slug! } }
 
