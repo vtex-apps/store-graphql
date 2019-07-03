@@ -11,7 +11,7 @@ export const resolvers = {
 
     slug: (root: any) => extractSlug(root),
 
-    productId: ({items}: {items?: [{productId?: string}]}) => !!items
+    productId: ({items}: {items?: [{productId?: string}]}) => items
       ? path([0, 'productId'], items)
       : null,
   }
