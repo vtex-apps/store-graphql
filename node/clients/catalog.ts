@@ -212,15 +212,35 @@ export class Catalog extends AppClient {
       const segmentData = (this.context as CustomIOContext).segment
       salesChannel = (segmentData && segmentData.channel.toString()) || ''
     }
-    return `/pub/products/search/${sanitizedQuery}?${category &&
-      !query &&
-      `&fq=C:/${category}/`}${(specificationFilters &&
-      specificationFilters.length > 0 &&
-      specificationFilters.map(filter => `&fq=${filter}`)) ||
-      ''}${priceRange && `&fq=P:[${priceRange}]`}${collection &&
-      `&fq=productClusterIds:${collection}`}${salesChannel &&
-      `&fq=isAvailablePerSalesChannel_${salesChannel}:1`}${orderBy &&
-      `&O=${orderBy}`}${map && `&map=${map}`}${from > -1 &&
-      `&_from=${from}`}${to > -1 && `&_to=${to}`}`
+    let url = `/pub/products/search/${sanitizedQuery}?`
+    if (category && !query) {
+      url += `&fq=C:/${category}/`
+    }
+    if (specificationFilters && specificationFilters.length > 0) {
+      url += specificationFilters.map(filter => `&fq=${filter}`)
+    }
+    if (priceRange) {
+      url += `&fq=P:[${priceRange}]`
+    }
+    if (collection) {
+      url += `&fq=productClusterIds:${collection}`
+    }
+    if (salesChannel) {
+      url += `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
+    }
+    if (orderBy) {
+      url += `&O=${orderBy}`
+    }
+    if (map) {
+      url += `&map=${map}`
+    }
+    if (from > -1) {
+      url += `&_from=${from}`
+    }
+    if (to > -1) {
+      url += `&_to=${to}`
+    }
+    console.log('teste return url: ', url)
+    return url
   }
 }
