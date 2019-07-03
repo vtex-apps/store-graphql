@@ -21,12 +21,31 @@ const findClusterNameFromId = (products: Product[], clusterId: string) => {
   return productWithCluster && productWithCluster.productClusters[clusterId]
 }
 
+const findSellerFromSellerId = (products: Product[], sellerId: string) => {
+  let sellerName = null
+  for (const product of products) {
+    const { items } = product
+    for (const item of items) {
+      const seller = item.sellers.find(sel => sel.sellerId === sellerId)
+      if (seller) {
+        sellerName = seller.sellerName
+        break
+      }
+    }
+    if (sellerName) {
+      break
+    }
+  }
+  return sellerName
+}
+
 const sliceAndJoin = (array: string[], max: number, joinChar: string) =>
   array.slice(0, max).join(joinChar)
 
 const isCategoryMap = equals('c')
 const isBrandMap = equals('b')
 const isProductClusterMap = equals('productClusterIds')
+const isSellerMap = equals('sellerIds')
 
 const getCategoryInfo = (
   { categoriesSearched, queryUnit, categories, index }: BreadcrumbParams,
@@ -81,10 +100,11 @@ export const resolvers = {
             categoryData.id
           )
         }
-        // if cant find a category, we should try to see if its a product cluster
-        const clusterName = findClusterNameFromId(products, queryUnit)
-        if (clusterName) {
-          return toClusterIOMessage(segment, clusterName, queryUnit)
+      }
+      if (isSellerMap(mapUnit)) {
+        const sellerName = findSellerFromSellerId(products, queryUnit)
+        if (sellerName) {
+          return sellerName
         }
       }
       if (isBrandMap(mapUnit)) {
