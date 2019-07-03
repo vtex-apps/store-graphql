@@ -169,7 +169,7 @@ declare global {
 
     productName: string
     productDescription: string
-    skuName: string
+    name: string
 
     variations: [Property]
 

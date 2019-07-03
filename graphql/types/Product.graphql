@@ -113,13 +113,12 @@ type SKU {
   sellers: [Seller]
 
   variations: [Property]
-  
+
   attachments: [Attachment]
   calculatedAttachments: String
   
   productName: IOMessage
   productDescription: IOMessage
-  skuName: IOMessage # We have already "name" up there ... do we really need "skuName" too?
   
   skuSpecifications: [skuSpecification]
   productSpecifications: [productSpecification]
