@@ -1,15 +1,15 @@
 interface SearchArgs {
-  query: string
-  category: string
-  specificationFilters: string[]
-  priceRange: string
-  collection: string
-  salesChannel: string
-  orderBy: string
-  from: number
-  to: number
-  map: string
-  hideUnavailableItems: boolean
+  query: string | null
+  category: string | null
+  specificationFilters: string[] | null
+  priceRange: string | null
+  collection: string | null
+  salesChannel: string | null
+  orderBy: string | null
+  from: number | null
+  to: number | null
+  map: string | null
+  hideUnavailableItems: boolean | null
 }
 
 interface Metadata {
@@ -61,6 +61,7 @@ interface Product {
   description: string
   items: Item[]
 }
+<<<<<<< HEAD
 
 interface Item {
   itemId: string
@@ -122,3 +123,5 @@ interface Seller {
     CacheVersionUsedToCallCheckout: string
   }
 }
+=======
+>>>>>>> change types to nullable

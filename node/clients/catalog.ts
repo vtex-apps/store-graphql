@@ -207,7 +207,9 @@ export class Catalog extends AppClient {
     map = '',
     hideUnavailableItems = false,
   }: SearchArgs) => {
-    const sanitizedQuery = encodeURIComponent(decodeURIComponent(query).trim())
+    const sanitizedQuery = encodeURIComponent(
+      decodeURIComponent(query || '').trim()
+    )
     if (hideUnavailableItems) {
       const segmentData = (this.context as CustomIOContext).segment
       salesChannel = (segmentData && segmentData.channel.toString()) || ''
@@ -234,13 +236,12 @@ export class Catalog extends AppClient {
     if (map) {
       url += `&map=${map}`
     }
-    if (from > -1) {
+    if (from != null && from > -1) {
       url += `&_from=${from}`
     }
-    if (to > -1) {
+    if (to != null && to > -1) {
       url += `&_to=${to}`
     }
-    console.log('teste return url: ', url)
     return url
   }
 }
