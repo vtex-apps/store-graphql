@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fix
 
-- transform some **Profile** properties (`isCorporate`, `corporateName` and `tradeName`) to fit store-graphql contract and communication with profile system
+- Transform some **Profile** properties(`isCorporate`, `corporateName` and `tradeName`) to fit the needs of store-graphql contract and communication with `profile-system`.
 
 ## [2.90.3] - 2019-07-04
 ### Fixed
