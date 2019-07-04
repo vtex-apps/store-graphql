@@ -61,7 +61,6 @@ interface Product {
   description: string
   items: Item[]
 }
-<<<<<<< HEAD
 
 interface Item {
   itemId: string
@@ -123,5 +122,3 @@ interface Seller {
     CacheVersionUsedToCallCheckout: string
   }
 }
-=======
->>>>>>> change types to nullable
