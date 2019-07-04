@@ -21,16 +21,10 @@ export async function getProfile(context: Context, customFields?: string) {
   if (profileData) {
     return {
       ...profileData,
-      // the next transformations are necessary since the profile system and
-      // this profile graphql mutation were build upon different contracts.
-      // So, now, it would be a breaking change to modify its object structure.
-      // Hopefully, this is temporary and some better solution might come up.
-      corporateDocument: profileData.businessDocument,
-      isCorporate: profileData.isPJ === 'True',
-      tradeName: profileData.fancyName,
       customFields,
     }
   }
+
   return { email: currentProfile.email }
 }
 
@@ -102,7 +96,7 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
-    // Read the comments in getProfile method
+    // Read the comments in Profile in fieldResolvers.ts files
     // to understand these transformations
     businessDocument: profile.corporateDocument,
     isPJ: profile.isCorporate ? 'True' : 'False',
