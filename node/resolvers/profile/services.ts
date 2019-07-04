@@ -98,6 +98,11 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
+    // Read the comments in Profile in fieldResolvers.ts files
+    // to understand the following transformations
+    businessDocument: profile.corporateDocument,
+    isPJ: profile.isCorporate ? 'True' : 'False',
+    fancyName: profile.tradeName,
     ...(extraFields && extraFields.customFieldsObj),
   }
 
