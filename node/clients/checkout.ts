@@ -16,8 +16,6 @@ export interface SimulationData {
   marketingData?: Record<string, string>
 }
 
-// `http://${account}.vtexcommercestable.com.br/api/checkout/pvt/orderForms/simulation?${querystring}`,
-
 export class Checkout extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
