@@ -88,6 +88,10 @@ const productCategoriesToCategoryTree = async (
 }
 
 export const resolvers = {
+  Offer: {
+    teasers: propOr([], 'Teasers'),
+    discountHighlights: propOr([], 'DiscountHighLight')
+  },
   Product: {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
