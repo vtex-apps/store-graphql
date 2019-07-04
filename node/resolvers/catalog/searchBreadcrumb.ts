@@ -22,21 +22,15 @@ const findClusterNameFromId = (products: Product[], clusterId: string) => {
 }
 
 const findSellerFromSellerId = (products: Product[], sellerId: string) => {
-  let sellerName = null
   for (const product of products) {
-    const { items } = product
-    for (const item of items) {
+    for (const item of product.items) {
       const seller = item.sellers.find(sel => sel.sellerId === sellerId)
       if (seller) {
-        sellerName = seller.sellerName
-        break
+        return seller.sellerName
       }
     }
-    if (sellerName) {
-      break
-    }
   }
-  return sellerName
+  return null
 }
 
 const sliceAndJoin = (array: string[], max: number, joinChar: string) =>
