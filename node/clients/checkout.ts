@@ -9,9 +9,14 @@ import { checkoutCookieFormat, statusToError } from '../utils'
 
 export interface SimulationData {
   country: string
-  items: any[]
-  postalCode: string
+  items: { id: string; quantity: number | string; seller: string }[]
+  postalCode?: string
+  isCheckedIn?: boolean
+  priceTables?: string[]
+  marketingData?: Record<string, string>
 }
+
+// `http://${account}.vtexcommercestable.com.br/api/checkout/pvt/orderForms/simulation?${querystring}`,
 
 export class Checkout extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -157,10 +162,14 @@ export class Checkout extends JanusClient {
   public orders = () =>
     this.get(this.routes.orders, { metric: 'checkout-orders' })
 
-  public shipping = (simulation: SimulationData) =>
-    this.post(this.routes.shipping(this.getChannelQueryString()), simulation, {
-      metric: 'checkout-shipping',
-    })
+  public simulation = (simulation: SimulationData) =>
+    this.post(
+      this.routes.simulation(this.getChannelQueryString()),
+      simulation,
+      {
+        metric: 'checkout-simulation',
+      }
+    )
 
   protected get = <T>(url: string, config: RequestConfig = {}) => {
     config.headers = {
@@ -246,7 +255,7 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/checkIn`,
       orderForm: `${base}/orderForm`,
       orders: `${base}/orders`,
-      shipping: (queryString: string) =>
+      simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
     }
   }
