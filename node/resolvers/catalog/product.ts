@@ -14,7 +14,7 @@ import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
-import { buildCategoryMap, DiscountsLabels } from './utils'
+import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -89,34 +89,8 @@ const productCategoriesToCategoryTree = async (
 
 export const resolvers = {
   Offer: {
-    teasers: ({ Teasers }: any) => {
-      const teasers: any = map((teaser: any) => ({
-        name: teaser[DiscountsLabels.name],
-        conditions: {
-          minimumQuantity: teaser[DiscountsLabels.conditions][DiscountsLabels.minimumQuantity],
-          parameters: map((params: any) => ({
-            name: params[DiscountsLabels.name],
-            value: params[DiscountsLabels.value],
-          }))(teaser[DiscountsLabels.conditions][DiscountsLabels.parameters])
-        },
-        effects: {
-          parameters: map((params: any) => ({
-            name: params[DiscountsLabels.name],
-            value: params[DiscountsLabels.value],
-          }))(teaser[DiscountsLabels.effects][DiscountsLabels.parameters])
-        }
-      }))(Teasers)
-
-      return teasers
-    },
-    discountHighlights: ({ DiscountHighLight }: any) => {
-
-      const discountHighlights: any = map((discount: any) => ({
-        name: discount[DiscountsLabels.name]
-      }))(DiscountHighLight);
-
-      return discountHighlights;
-    }
+    teasers: propOr([], 'Teasers'),
+    discountHighlights: propOr([], 'DiscountHighLight')
   },
   Product: {
     benefits: ({ productId }: any, _: any, ctx: Context) =>

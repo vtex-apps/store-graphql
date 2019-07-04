@@ -10,15 +10,6 @@ export enum CatalogCrossSellingTypes {
   suggestions = 'suggestions',
 }
 
-export enum DiscountsLabels {
-  name = '<Name>k__BackingField',
-  conditions = '<Conditions>k__BackingField',
-  minimumQuantity = '<MinimumQuantity>k__BackingField',
-  parameters = '<Parameters>k__BackingField',
-  value = '<Value>k__BackingField',
-  effects = '<Effects>k__BackingField'
-}
-
 const pageTypeMapping: Record<string, string> = {
   Brand: 'brand',
   Department: 'department',
