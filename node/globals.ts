@@ -118,6 +118,7 @@ declare global {
     corporateDocument?: string
     stateRegistration?: string
     addresses?: Address[]
+    tradeName?: string // check this
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
   }

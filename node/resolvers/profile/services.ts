@@ -6,7 +6,7 @@ import { makeRequest } from '../auth'
 import { uploadFile, deleteFile } from '../fileManager/services'
 import paths from '../paths'
 
-export function getProfile(context: Context, customFields?: string) {
+export async function getProfile(context: Context, customFields?: string) {
   const {
     clients: { profile },
     vtex: { currentProfile },
@@ -16,18 +16,23 @@ export function getProfile(context: Context, customFields?: string) {
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
 
-  return profile
+  const profileData = await profile
     .getProfileInfo(currentProfile, extraFields)
-    .then(profileData => {
-      if (profileData) {
-        return {
-          ...profileData,
-          customFields,
-        }
-      }
 
-      return { email: currentProfile.email }
-    })
+  if (profileData) {
+    return {
+      ...profileData,
+      // the next transformations are necessary since the profile system and
+      // this profile graphql mutation were build upon different contracts.
+      // So, now, it would be a breaking change to modify its object structure.
+      // Hopefully, this is temporary and some better solution might come up.
+      corporateDocument: profileData.businessDocument,
+      isCorporate: profileData.isPJ === 'True',
+      tradeName: profileData.fancyName,
+      customFields,
+    }
+  }
+  return { email: currentProfile.email }
 }
 
 export function getPasswordLastUpdate(context: Context) {
@@ -98,6 +103,10 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
+    // Read the comments in getProfile method
+    businessDocument: profile.corporateDocument,
+    isPJ:  profile.isCorporate? 'True' : 'False',
+    fancyName: profile.tradeName, // stil not sure
     ...(extraFields && extraFields.customFieldsObj),
   }
 
