@@ -21,27 +21,40 @@ const findClusterNameFromId = (products: Product[], clusterId: string) => {
   return productWithCluster && productWithCluster.productClusters[clusterId]
 }
 
+const findSellerFromSellerId = (products: Product[], sellerId: string) => {
+  for (const product of products) {
+    for (const item of product.items) {
+      const seller = item.sellers.find(sel => sel.sellerId === sellerId)
+      if (seller) {
+        return seller.sellerName
+      }
+    }
+  }
+  return null
+}
+
 const sliceAndJoin = (array: string[], max: number, joinChar: string) =>
   array.slice(0, max).join(joinChar)
 
 const isCategoryMap = equals('c')
 const isBrandMap = equals('b')
 const isProductClusterMap = equals('productClusterIds')
+const isSellerMap = equals('sellerIds')
 
 const getCategoryInfo = (
-  { categoriesSearched, queryUnit, categories, index }: BreadcrumbParams,
+  { categoriesSearched, queryUnit, categories }: BreadcrumbParams,
   isVtex: boolean,
   ctx: Context
 ) => {
+  const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
   if (!isVtex) {
-    const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
     return findCategoryInTree(
       categories,
       categoriesSearched.slice(0, queryPosition + 1)
     )
   }
   return ctx.clients.catalog
-    .pageType(categoriesSearched.slice(0, index + 1).join('/'))
+    .pageType(categoriesSearched.slice(0, queryPosition + 1).join('/'))
     .catch(() => null)
 }
 
@@ -81,10 +94,11 @@ export const resolvers = {
             categoryData.id
           )
         }
-        // if cant find a category, we should try to see if its a product cluster
-        const clusterName = findClusterNameFromId(products, queryUnit)
-        if (clusterName) {
-          return toClusterIOMessage(segment, clusterName, queryUnit)
+      }
+      if (isSellerMap(mapUnit)) {
+        const sellerName = findSellerFromSellerId(products, queryUnit)
+        if (sellerName) {
+          return sellerName
         }
       }
       if (isBrandMap(mapUnit)) {
