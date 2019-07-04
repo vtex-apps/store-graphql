@@ -16,8 +16,7 @@ export async function getProfile(context: Context, customFields?: string) {
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
 
-  const profileData = await profile
-    .getProfileInfo(currentProfile, extraFields)
+  const profileData = await profile.getProfileInfo(currentProfile, extraFields)
 
   if (profileData) {
     return {
@@ -104,9 +103,10 @@ export async function updateProfile(
   const newData = {
     ...profile,
     // Read the comments in getProfile method
+    // to understand these transformations
     businessDocument: profile.corporateDocument,
-    isPJ:  profile.isCorporate? 'True' : 'False',
-    fancyName: profile.tradeName, // stil not sure
+    isPJ: profile.isCorporate ? 'True' : 'False',
+    fancyName: profile.tradeName,
     ...(extraFields && extraFields.customFieldsObj),
   }
 
