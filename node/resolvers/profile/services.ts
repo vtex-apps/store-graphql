@@ -6,7 +6,7 @@ import { makeRequest } from '../auth'
 import { uploadFile, deleteFile } from '../fileManager/services'
 import paths from '../paths'
 
-export async function getProfile(context: Context, customFields?: string) {
+export function getProfile(context: Context, customFields?: string) {
   const {
     clients: { profile },
     vtex: { currentProfile },
@@ -16,16 +16,18 @@ export async function getProfile(context: Context, customFields?: string) {
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
 
-  const profileData = await profile.getProfileInfo(currentProfile, extraFields)
+  return profile
+    .getProfileInfo(currentProfile, extraFields)
+    .then(profileData => {
+      if (profileData) {
+        return {
+          ...profileData,
+          customFields,
+        }
+      }
 
-  if (profileData) {
-    return {
-      ...profileData,
-      customFields,
-    }
-  }
-
-  return { email: currentProfile.email }
+      return { email: currentProfile.email }
+    })
 }
 
 export function getPasswordLastUpdate(context: Context) {
