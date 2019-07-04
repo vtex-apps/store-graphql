@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fix
+
+- transform some **Profile** to fit store-graphql contract and comunication with profile system
+
 ## [2.90.3] - 2019-07-04
 ### Fixed
 - Protect against null arguments in productSearch.
