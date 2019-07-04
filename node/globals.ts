@@ -118,7 +118,7 @@ declare global {
     corporateDocument?: string
     stateRegistration?: string
     addresses?: Address[]
-    tradeName?: string // check this
+    tradeName?: string
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
   }
@@ -153,7 +153,7 @@ declare global {
   }
 
   interface DocumentSchemaArgs {
-    dataEntity: string,
+    dataEntity: string
     schema: string
   }
 
