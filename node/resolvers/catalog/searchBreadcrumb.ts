@@ -48,19 +48,19 @@ const isProductClusterMap = equals('productClusterIds')
 const isSellerMap = equals('sellerIds')
 
 const getCategoryInfo = (
-  { categoriesSearched, queryUnit, categories, index }: BreadcrumbParams,
+  { categoriesSearched, queryUnit, categories }: BreadcrumbParams,
   isVtex: boolean,
   ctx: Context
 ) => {
+  const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
   if (!isVtex) {
-    const queryPosition = categoriesSearched.findIndex(cat => cat === queryUnit)
     return findCategoryInTree(
       categories,
       categoriesSearched.slice(0, queryPosition + 1)
     )
   }
   return ctx.clients.catalog
-    .pageType(categoriesSearched.slice(0, index + 1).join('/'))
+    .pageType(categoriesSearched.slice(0, queryPosition + 1).join('/'))
     .catch(() => null)
 }
 
