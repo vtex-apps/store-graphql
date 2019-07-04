@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Find seller name for breadcrumb for map "sellerIds".
+- Fix for incorrect breadcrumb name on categories after non-category maps.
 
 ## [2.90.1] - 2019-07-03
 ### Changed
