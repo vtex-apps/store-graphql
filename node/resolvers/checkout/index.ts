@@ -8,16 +8,17 @@ import { queries as sessionQueries } from '../session'
 import { SessionFields } from '../session/sessionResolver'
 
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
-import { addOptionsForItems, buildAssemblyOptionsMap, isParentItem } from './attachmentsHelper'
+import {
+  addOptionsForItems,
+  buildAssemblyOptionsMap,
+  isParentItem,
+} from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 
-const SetCookieWhitelist = [
-  CHECKOUT_COOKIE,
-  '.ASPXAUTH',
-]
+const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
 
 const isWhitelistedSetCookie = (cookie: string) => {
   const [key] = cookie.split('=')
@@ -87,8 +88,11 @@ const shouldUpdateMarketingData = (
   )
 }
 
-type Resolver<TArgs=any, TRoot=any> =
-  (root: TRoot, args: TArgs, context: Context) => Promise<any>
+type Resolver<TArgs = any, TRoot = any> = (
+  root: TRoot,
+  args: TArgs,
+  context: Context
+) => Promise<any>
 
 const mapIndexed = addIndex<any, any, any, any>(map)
 
@@ -100,22 +104,29 @@ export const fieldResolvers = {
     items: (orderForm: any) => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
-      return mapIndexed((item: OrderFormItem, index: number) => ({
-        ...item,
-        assemblyOptionsData: {
-          assemblyOptionsMap,
-          childs,
-          index,
-          orderForm,
-        }
-      }), orderForm.items)
+      return mapIndexed(
+        (item: OrderFormItem, index: number) => ({
+          ...item,
+          assemblyOptionsData: {
+            assemblyOptionsMap,
+            childs,
+            index,
+            orderForm,
+          },
+        }),
+        orderForm.items
+      )
     },
     pickupPointCheckedIn: (orderForm: any, _: any, ctx: any) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
       if (!isCheckedIn || !checkedInPickupPointId) {
         return null
       }
-      return logisticsQueries.pickupPoint({}, { id: checkedInPickupPointId }, ctx)
+      return logisticsQueries.pickupPoint(
+        {},
+        { id: checkedInPickupPointId },
+        ctx
+      )
     },
     value: (orderForm: any) => {
       return convertIntToFloat(orderForm.value)
@@ -125,51 +136,64 @@ export const fieldResolvers = {
   ...orderFormItemResolvers,
 }
 
-const replaceDomain = (host: string) => (cookie: string) => cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
+const replaceDomain = (host: string) => (cookie: string) =>
+  cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
-    const {clients: {checkout}} = ctx
+    const {
+      clients: { checkout },
+    } = ctx
 
     const { headers, data: orderForm } = await checkout.orderForm(true)
 
     const rawHeaders = headers as Record<string, any>
-    const responseSetCookies: string[] = rawHeaders && rawHeaders['set-cookie'] || []
+    const responseSetCookies: string[] =
+      (rawHeaders && rawHeaders['set-cookie']) || []
 
     const host = ctx.get('x-forwarded-host')
-    const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
-    const parseAndClean = compose(parseCookie, replaceDomain(host))
+    const forwardedSetCookies = responseSetCookies.filter(
+      isWhitelistedSetCookie
+    )
+    const parseAndClean = compose(
+      parseCookie,
+      replaceDomain(host)
+    )
     const cleanCookies = map(parseAndClean, forwardedSetCookies)
-    forEach(({ name, value, options }) => ctx.cookies.set(name, value, options), cleanCookies)
+    forEach(
+      ({ name, value, options }) => ctx.cookies.set(name, value, options),
+      cleanCookies
+    )
 
     return orderForm
   },
 
-  orders: (_, __, {clients: {checkout}}) => {
+  orders: (_, __, { clients: { checkout } }) => {
     return checkout.orders()
   },
 
-  shipping: (_, args: any, {clients: {checkout}}) => {
-    return checkout.shipping(args)
+  shipping: (_, args: any, { clients: { checkout } }) => {
+    return checkout.simulation(args)
   },
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (root, {orderFormId, items}, ctx) => {
-    const {clients: {checkout}} = ctx
-    const [{marketingData}, sessionData] = await Promise.all([
+  addItem: async (root, { orderFormId, items }, ctx) => {
+    const {
+      clients: { checkout },
+    } = ctx
+    const [{ marketingData }, sessionData] = await Promise.all([
       checkout.orderForm() as any,
-      sessionQueries.getSession(root, {}, ctx)
-        .catch((err) => {
-          // todo: log error using colossus
-          console.error(err)
-          return {} as SessionFields
-        }) as SessionFields
+      sessionQueries.getSession(root, {}, ctx).catch(err => {
+        // todo: log error using colossus
+        console.error(err)
+        return {} as SessionFields
+      }) as SessionFields,
     ])
 
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
-        ...marketingData || {},
+        ...(marketingData || {}),
         utmCampaign: path(['utmParams', 'campaign'], sessionData),
         utmMedium: path(['utmParams', 'medium'], sessionData),
         utmSource: path(['utmParams', 'source'], sessionData),
@@ -182,15 +206,21 @@ export const mutations: Record<string, Resolver> = {
 
     const cleanItems = items.map(({ options, ...rest }: any) => rest)
     const addItem = await checkout.addItem(orderFormId, cleanItems)
-    const withOptions = items.filter(({ options }: any) => !!options && options.length > 0)
+    const withOptions = items.filter(
+      ({ options }: any) => !!options && options.length > 0
+    )
     await addOptionsForItems(withOptions, checkout, addItem)
 
-    return withOptions.length === 0 ? addItem : (await checkout.orderForm())
+    return withOptions.length === 0 ? addItem : await checkout.orderForm()
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
 
-  cancelOrder: async (_, {orderFormId, reason}, {clients: {checkout}}) => {
+  cancelOrder: async (
+    _,
+    { orderFormId, reason },
+    { clients: { checkout } }
+  ) => {
     await checkout.cancelOrder(orderFormId, reason)
     return true
   },
@@ -211,42 +241,76 @@ export const mutations: Record<string, Resolver> = {
     url: paths.gatewayTokenizePayment,
   }),
 
-  setOrderFormCustomData: (_, {orderFormId, appId, field, value}, {clients: {checkout}}) => {
+  setOrderFormCustomData: (
+    _,
+    { orderFormId, appId, field, value },
+    { clients: { checkout } }
+  ) => {
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, {orderFormId, items}, {clients: {checkout}}) => {
+  updateItems: (_, { orderFormId, items }, { clients: { checkout } }) => {
     return checkout.updateItems(orderFormId, items)
   },
 
-  updateOrderFormIgnoreProfile: (_, {orderFormId, ignoreProfileData}, {clients: {checkout}}) => {
+  updateOrderFormIgnoreProfile: (
+    _,
+    { orderFormId, ignoreProfileData },
+    { clients: { checkout } }
+  ) => {
     return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
   },
 
-  updateOrderFormPayment: (_, {orderFormId, payments}, {clients: {checkout}}) => {
+  updateOrderFormPayment: (
+    _,
+    { orderFormId, payments },
+    { clients: { checkout } }
+  ) => {
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
-  updateOrderFormProfile: (_, {orderFormId, fields}, {clients: {checkout}}) => {
+  updateOrderFormProfile: (
+    _,
+    { orderFormId, fields },
+    { clients: { checkout } }
+  ) => {
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
-  updateOrderFormShipping: async (_, {orderFormId, address}, ctx) => {
-    const {clients: {checkout}} = ctx
-    return checkout.updateOrderFormShipping(orderFormId, { clearAddressIfPostalCodeNotFound: false, selectedAddresses: [address] })
+  updateOrderFormShipping: async (_, { orderFormId, address }, ctx) => {
+    const {
+      clients: { checkout },
+    } = ctx
+    return checkout.updateOrderFormShipping(orderFormId, {
+      clearAddressIfPostalCodeNotFound: false,
+      selectedAddresses: [address],
+    })
   },
 
-  addAssemblyOptions: (_, { orderFormId, itemId, assemblyOptionsId, options }, { clients: { checkout }}) => {
+  addAssemblyOptions: (
+    _,
+    { orderFormId, itemId, assemblyOptionsId, options },
+    { clients: { checkout } }
+  ) => {
     const body = {
       composition: {
         items: options,
       },
       noSplitItem: true,
     }
-    return checkout.addAssemblyOptions(orderFormId, itemId, assemblyOptionsId, body)
+    return checkout.addAssemblyOptions(
+      orderFormId,
+      itemId,
+      assemblyOptionsId,
+      body
+    )
   },
 
-  updateOrderFormCheckin: (_, { orderFormId, checkin }: any, {clients: { checkout }}) => {
+  updateOrderFormCheckin: (
+    _,
+    { orderFormId, checkin }: any,
+    { clients: { checkout } }
+  ) => {
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 }

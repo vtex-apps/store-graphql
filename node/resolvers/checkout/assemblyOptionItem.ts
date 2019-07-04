@@ -1,8 +1,9 @@
 import { values } from 'ramda'
 
-import { buildAddedOptionsForItem, buildRemovedOptions } from './attachmentsHelper'
-
-import { AssemblyOption } from './types'
+import {
+  buildAddedOptionsForItem,
+  buildRemovedOptions,
+} from './attachmentsHelper'
 
 interface Params {
   item: OrderFormItem
@@ -27,5 +28,5 @@ export const resolvers = {
       }
       return buildRemovedOptions(item, orderForm, assemblyOptionsMap)
     },
-  }
+  },
 }

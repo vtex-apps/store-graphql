@@ -26,6 +26,7 @@ import { resolvers as discountResolvers } from './discount'
 import { resolvers as facetsResolvers } from './facets'
 import { resolvers as itemMetadataResolvers } from './itemMetadata'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
+import { resolvers as itemMetadataPriceTableItemResolvers } from './itemMetadataPriceTableItem'
 import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
 import { resolvers as productSearchResolvers } from './productSearch'
@@ -266,6 +267,7 @@ export const fieldResolvers = {
   ...facetsResolvers,
   ...itemMetadataResolvers,
   ...itemMetadataUnitResolvers,
+  ...itemMetadataPriceTableItemResolvers,
   ...offerResolvers,
   ...discountResolvers,
   ...productResolvers,
