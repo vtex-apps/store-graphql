@@ -161,7 +161,7 @@ type Offer {
   DeliverySlaSamples: [DeliverySlaSamples]
   """List of discount highlights"""
   discountHighlights: [Discount!]
-  teasers: [Teaser]
+  teasers: [Teaser!]
 }
 
 type Teaser {
