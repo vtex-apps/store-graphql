@@ -1,4 +1,4 @@
-import { path, zip } from 'ramda'
+import { path, head, zip } from 'ramda'
 import { IOResponse } from '@vtex/api'
 import { Functions } from '@gocommerce/utils'
 
@@ -28,6 +28,7 @@ export const resolvers = {
       _: any,
       { vtex: { account }, clients: { catalog } }: Context
     ) => {
+      console.log(translatedArgs)
       const queryAndMap = zip(
         translatedArgs.query
           .toLowerCase()
@@ -35,6 +36,7 @@ export const resolvers = {
           .map(decodeURIComponent),
         translatedArgs.map.split(',')
       )
+      console.log(queryAndMap)
       const categoriesSearched = queryAndMap
         .filter(([_, m]) => m === 'c')
         .map(([q]) => q)
@@ -45,12 +47,19 @@ export const resolvers = {
         !!categoriesCount && Functions.isGoCommerceAcc(account)
           ? await catalog.categories(categoriesCount)
           : []
+      //console.log(categories)
+      //console.log(translatedArgs)
+      //console.log(head(products))
+      //console.log(queryAndMap)
+      const categoriesIds = head(products)!.categoriesIds[0].split('/').slice(1, -1)
+      //console.log(categoriesIds)
 
-      return queryAndMap.map(
+      const result = queryAndMap.map(
         ([queryUnit, mapUnit]: [string, string], index: number) => ({
           queryUnit,
           mapUnit,
           index,
+          categoryId: categoriesIds[index],
           queryArray: translatedArgs.query.split('/'),
           mapArray: translatedArgs.map.split(','),
           categories,
@@ -58,6 +67,8 @@ export const resolvers = {
           products,
         })
       )
+      console.log(result)
+      return result
     },
   },
 }

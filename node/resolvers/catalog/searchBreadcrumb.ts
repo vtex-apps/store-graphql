@@ -9,6 +9,7 @@ interface BreadcrumbParams {
   index: number
   queryArray: string[]
   mapArray: string[]
+  categoryId: string
   categories: Category[]
   categoriesSearched: string[]
   products: Product[]
@@ -99,21 +100,26 @@ export const resolvers = {
       mapArray,
       mapUnit,
       queryUnit,
+      categoryId = '',
     }: BreadcrumbParams) => {
+      let result = ''
       if (index === 0 && isCategoryMap(mapUnit)) {
-        return `/${queryUnit}/d`
+        return `/${queryUnit}/d/${categoryId}`
       }
-      if (index === 0 && isBrandMap(mapUnit)) {
-        return `/${queryUnit}/b`
+      else if (index === 0 && isBrandMap(mapUnit)) {
+        result = `/${queryUnit}/b/${categoryId}`
       }
-      if (mapArray.every(isCategoryMap)) {
-        return `/${sliceAndJoin(queryArray, index + 1, '/')}`
+      else if (mapArray.every(isCategoryMap)) {
+        result = `/${sliceAndJoin(queryArray, index + 1, '/')}/${mapUnit}/${categoryId}`
+      } else {
+        result = `/${sliceAndJoin(queryArray, index + 1, '/')}/${mapUnit}/${categoryId}?map=${sliceAndJoin(
+          mapArray,
+          index + 1,
+          ','
+        )}`
       }
-      return `/${sliceAndJoin(queryArray, index + 1, '/')}?map=${sliceAndJoin(
-        mapArray,
-        index + 1,
-        ','
-      )}`
+      console.log('The result is ' + result)
+      return result
     },
   },
 }
