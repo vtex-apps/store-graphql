@@ -102,24 +102,21 @@ export const resolvers = {
       queryUnit,
       categoryId = '',
     }: BreadcrumbParams) => {
-      let result = ''
       if (index === 0 && isCategoryMap(mapUnit)) {
         return `/${queryUnit}/d/${categoryId}`
       }
       else if (index === 0 && isBrandMap(mapUnit)) {
-        result = `/${queryUnit}/b/${categoryId}`
+        return `/${queryUnit}/b/${categoryId}`
       }
       else if (mapArray.every(isCategoryMap)) {
-        result = `/${sliceAndJoin(queryArray, index + 1, '/')}/${mapUnit}/${categoryId}`
+        return `/${sliceAndJoin(queryArray, index + 1, '/')}/${mapUnit}/${categoryId}`
       } else {
-        result = `/${sliceAndJoin(queryArray, index + 1, '/')}/${mapUnit}/${categoryId}?map=${sliceAndJoin(
+        return `/${sliceAndJoin(queryArray, index + 1, '/')}/${mapUnit}/${categoryId}?map=${sliceAndJoin(
           mapArray,
           index + 1,
           ','
         )}`
       }
-      console.log('The result is ' + result)
-      return result
     },
   },
 }

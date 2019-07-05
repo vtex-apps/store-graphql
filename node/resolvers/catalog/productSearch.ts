@@ -47,12 +47,7 @@ export const resolvers = {
         !!categoriesCount && Functions.isGoCommerceAcc(account)
           ? await catalog.categories(categoriesCount)
           : []
-      //console.log(categories)
-      //console.log(translatedArgs)
-      //console.log(head(products))
-      //console.log(queryAndMap)
       const categoriesIds = head(products)!.categoriesIds[0].split('/').slice(1, -1)
-      //console.log(categoriesIds)
 
       const result = queryAndMap.map(
         ([queryUnit, mapUnit]: [string, string], index: number) => ({
@@ -67,7 +62,6 @@ export const resolvers = {
           products,
         })
       )
-      console.log(result)
       return result
     },
   },
