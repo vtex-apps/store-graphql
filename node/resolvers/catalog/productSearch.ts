@@ -28,7 +28,6 @@ export const resolvers = {
       _: any,
       { vtex: { account }, clients: { catalog } }: Context
     ) => {
-      console.log(translatedArgs)
       const queryAndMap = zip(
         translatedArgs.query
           .toLowerCase()
@@ -49,7 +48,7 @@ export const resolvers = {
           : []
       const categoriesIds = head(products)!.categoriesIds[0].split('/').slice(1, -1)
 
-      const result = queryAndMap.map(
+      return queryAndMap.map(
         ([queryUnit, mapUnit]: [string, string], index: number) => ({
           queryUnit,
           mapUnit,
@@ -62,7 +61,6 @@ export const resolvers = {
           products,
         })
       )
-      return result
     },
   },
 }
