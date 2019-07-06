@@ -336,48 +336,10 @@ export const queries = {
   product: async (_: any, rawArgs: ProductArgs, ctx: Context) => {
     const {
       vtex: { account },
-      clients: { catalog },
+      // clients: { catalog },
     } = ctx
 
-    const args =
-      rawArgs &&
-      isValidProductIdentifier(rawArgs.identifier) &&
-      !Functions.isGoCommerceAcc(account)
-        ? rawArgs
-        : { identifier: { field: 'slug', value: rawArgs.slug! } }
-
-    if (!args.identifier) {
-      throw new UserInputError('No product identifier provided')
-    }
-
-    const { field, value } = args.identifier
-    let products = [] as Product[]
-
-    switch (field) {
-      case 'id':
-        products = await catalog.productById(value)
-        break
-      case 'slug':
-        products = await catalog.product(value)
-        break
-      case 'ean':
-        products = await catalog.productByEan(value)
-        break
-      case 'reference':
-        products = await catalog.productByReference(value)
-        break
-      case 'sku':
-        products = await catalog.productBySku([value])
-        break
-    }
-
-    if (products.length > 0) {
-      return head(products)
-    }
-
-    throw new NotFoundError(
-      `No product was found with requested ${field} ${JSON.stringify(args)}`
-    )
+    return {productName: "oi", productId: 123}
   },
 
   products: async (_: any, args: any, ctx: Context) => {

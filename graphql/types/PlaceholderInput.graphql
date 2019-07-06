@@ -1,5 +1,0 @@
-input PlaceholderInput {
-  name: String
-  component: String
-  settings: String
-}

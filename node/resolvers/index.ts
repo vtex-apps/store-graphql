@@ -24,7 +24,7 @@ import { mutations as sessionMutations, queries as sessionQueries } from './sess
 Promise = require('bluebird')
 
 export const resolvers = {
-  ...catalogFieldResolvers,
+  // ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
   ...profileFieldResolvers,
   ...checkoutFieldResolvers,
