@@ -1,4 +1,3 @@
-import * as Cookies from "cookies"
 import { parse } from 'cookie'
 import { keys } from 'ramda'
 
@@ -29,7 +28,7 @@ const CHECKOUT_COOKIE = 'checkout.vtex.com'
 
 const checkoutCookieFormat = (orderFormId: string) => `${CHECKOUT_COOKIE}=__ofid=${orderFormId};`
 
-const getOrderFormIdFromCookie = (cookies: Cookies) => {
+const getOrderFormIdFromCookie = (cookies: Context['cookies']) => {
   const cookie = cookies.get(CHECKOUT_COOKIE)
   return cookie && cookie.split('=')[1]
 }
