@@ -35,7 +35,6 @@ export const resolvers = {
           .map(decodeURIComponent),
         translatedArgs.map.split(',')
       )
-      console.log(queryAndMap)
       const categoriesSearched = queryAndMap
         .filter(([_, m]) => m === 'c')
         .map(([q]) => q)
