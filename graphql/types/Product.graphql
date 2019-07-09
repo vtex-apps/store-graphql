@@ -16,7 +16,7 @@ type Product {
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
   """ Product description """
-  description: String! @translatable
+  description: String @translatable
   """ SKU objects of the product """
   items: [SKU]
   """ Product URL """
@@ -26,7 +26,7 @@ type Product {
   """ Product ID """
   productId: ID
   """ Product name """
-  productName: String! @translatable
+  productName: String @translatable
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties  """

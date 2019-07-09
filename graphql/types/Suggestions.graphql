@@ -6,7 +6,7 @@ type Suggestions {
 
 type Items {
   thumb: String
-  name: String! @translatable
+  name: String @translatable
   href: String
   criteria: String
   slug: String
