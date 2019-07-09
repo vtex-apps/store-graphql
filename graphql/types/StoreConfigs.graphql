@@ -9,4 +9,5 @@ type StoreConfigs {
   geolocation: Boolean
   leanShipping: Boolean
   invoiceAddress: Boolean
+  defaultCountry: String
 }

@@ -1,4 +1,11 @@
-import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
+import {
+  InstanceOptions,
+  IOContext,
+  JanusClient,
+  RequestConfig,
+} from '@vtex/api'
+
+import { statusToError } from '../utils'
 
 export class Portal extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -6,18 +13,26 @@ export class Portal extends JanusClient {
       ...options,
       headers: {
         ...(options && options.headers),
-        ...(ctx.authToken ? { VtexIdclientAutCookie: ctx.authToken } : null),
+        VtexIdclientAutCookie: ctx.authToken,
       },
     })
   }
 
   public sites = () =>
-    this.http.get(this.routes.allSites(), { metric: 'portal-sites' })
+    this.get<Site[]>(this.routes.allSites(), { metric: 'portal-sites' })
 
   public storeConfigs = (activeSite: string) =>
-    this.http.get(this.routes.storeConfigs(activeSite), {
+    this.get(this.routes.storeConfigs(activeSite), {
       metric: 'portal-site-config',
     })
+
+  public defaultSalesChannel = () =>
+    this.get<DefaultSalesChannel>(this.routes.scDefault, {
+      metric: 'portal-default-sales-channel',
+    })
+
+  protected get = <T>(url: string, config?: RequestConfig) =>
+    this.http.get<T>(url, config).catch(statusToError)
 
   private get routes() {
     const basePVT = '/api/portal/pvt'
@@ -26,6 +41,36 @@ export class Portal extends JanusClient {
       allSites: () => `${basePVT}/sites/`,
       storeConfigs: (activeSite: string) =>
         `${basePVT}/sites/${activeSite}/configuration`,
+      scDefault: '/api/catalog_system/pub/saleschannel/default',
     }
   }
+}
+
+export type Site = {
+  id: string
+  title: string
+  siteName: string
+}
+
+export type DefaultSalesChannel = {
+  Id: string
+  Name: string
+  IsActive: true
+  ProductClusterId: string | null
+  CountryCode: string
+  CultureInfo: string
+  TimeZone: string
+  CurrencyCode: string
+  CurrencySymbol: string
+  CurrencyLocale: number
+  CurrencyFormatInfo: {
+    CurrencyDecimalDigits: number
+    CurrencyDecimalSeparator: string
+    CurrencyGroupSeparator: string
+    CurrencyGroupSize: number
+    StartsWithCurrencySymbol: boolean
+  }
+  Origin: any
+  Position: number
+  ConditionRule: any
 }

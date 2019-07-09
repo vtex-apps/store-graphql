@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- **defaultCountry** to the `storeConfigs` query.
+
+### Added
+
 - **storeConfigs** query.
 
 ## [2.90.8] - 2019-07-09
