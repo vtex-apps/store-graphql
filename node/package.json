@@ -27,7 +27,7 @@
     "@types/cookie": "^0.3.2",
     "@types/es6-shim": "^0.31.32",
     "@types/form-data": "^2.2.1",
-    "@types/graphql": "^14.0.5",
+    "@types/graphql": "0.13.x",
     "@types/jwt-decode": "^2.2.1",
     "@types/koa": "^2.0.46",
     "@types/node": "10.x",
