@@ -14,14 +14,14 @@ type Facets {
 
 type DepartmentFacet {
   Id: Int @deprecated(reason: "Use 'id' field instead")
-  Name: String! @translatable @deprecated(reason: "Use 'name' field instead")
+  Name: String @translatable @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
   Children: [DepartmentFacet] @deprecated(reason: "Use 'children' field instead")
   id: ID!
   quantity: Int!
-  name: String! @translatable
+  name: String @translatable
   link: String!
   linkEncoded: String!
   map: String
@@ -31,7 +31,7 @@ type DepartmentFacet {
 
 type BrandFacet {
   Id: Int @deprecated(reason: "Use 'id' field instead")
-  Name: String! @translatable @deprecated(reason: "Use 'name' field instead")
+  Name: String @translatable @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
@@ -48,13 +48,13 @@ type BrandFacet {
 
 type PriceRangesFacet {
   Id: Int @deprecated(reason: "Use 'id' field instead")
-  Name: String! @translatable @deprecated(reason: "Use 'name' field instead")
+  Name: String @translatable @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
   Children: [PriceRangesFacet] @deprecated(reason: "Use 'children' field instead")
   quantity: Int!
-  name: String! @translatable
+  name: String @translatable
   link: String!
   linkEncoded: String!
   map: String
@@ -65,14 +65,14 @@ type PriceRangesFacet {
 
 type CategoriesTreeFacet {
   Id: Int @deprecated(reason: "Use 'id' field instead")
-  Name: String! @translatable @deprecated(reason: "Use 'name' field instead")
+  Name: String @translatable @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
   Children: [CategoriesTreeFacet] @deprecated(reason: "Use 'children' field instead")
   id: ID!
   quantity: Int!
-  name: String! @translatable
+  name: String @translatable
   link: String!
   linkEncoded: String!
   """ Contains slugified links according to the store structure. /:department/d, /:category/:subcategory, etc """
@@ -85,13 +85,13 @@ type CategoriesTreeFacet {
 
 type FilterFacet {
   Id: Int @deprecated(reason: "Use 'id' field instead")
-  Name: String! @translatable @deprecated(reason: "Use 'name' field instead")
+  Name: String @translatable @deprecated(reason: "Use 'name' field instead")
   Quantity: Int! @deprecated(reason: "Use 'quantity' field instead")
   Link: String! @deprecated(reason: "Use 'link' field instead")
   Slug: String @deprecated(reason: "Use 'slug' field instead")
   Children: [FilterFacet] @deprecated(reason: "Use 'children' field instead")
   quantity: Int!
-  name: String! @translatable
+  name: String @translatable
   link: String!
   linkEncoded: String!
   map: String
