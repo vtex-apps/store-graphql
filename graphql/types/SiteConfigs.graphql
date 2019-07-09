@@ -1,4 +1,4 @@
-type SiteConfigs {
+type StoreConfigs {
   tagManagerId: String
   siteTitle: String
   kiosk: Boolean
