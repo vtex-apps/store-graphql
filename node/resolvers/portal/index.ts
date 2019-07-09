@@ -5,7 +5,7 @@ interface Site {
 }
 
 export const resolvers = {
-  siteConfigs: async (_: any, __: any, ctx: Context) => {
+  storeConfigs: async (_: any, __: any, ctx: Context) => {
     const {
       clients: { portal },
       vtex: { account },
@@ -16,7 +16,7 @@ export const resolvers = {
     const currentSite = sites.find((site: Site) => site.siteName === account)
 
     try {
-      return portal.siteConfig(currentSite ? currentSite.id : 'default')
+      return portal.storeConfigs(currentSite ? currentSite.id : 'default')
     } catch (e) {
       ctx.clients.logger.info(
         JSON.stringify(currentSite),

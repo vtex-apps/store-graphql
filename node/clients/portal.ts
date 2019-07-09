@@ -16,15 +16,15 @@ export class Portal extends JanusClient {
   public sites = () =>
     this.http.get(this.routes.allSites(), { metric: 'portal-sites' })
 
-  public siteConfig = (activeSite: string) =>
-    this.http.get(this.routes.siteConfig(activeSite), {
+  public storeConfigs = (activeSite: string) =>
+    this.http.get(this.routes.storeConfigs(activeSite), {
       metric: 'portal-site-config',
     })
 
   private get routes() {
     return {
       allSites: () => `${portalPVT}/sites/`,
-      siteConfig: (activeSite: string) =>
+      storeConfigs: (activeSite: string) =>
         `${portalPVT}/sites/${activeSite}/configuration`,
     }
   }

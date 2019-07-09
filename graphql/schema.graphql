@@ -275,7 +275,7 @@ type Query {
   """
   Returns the specified site configurations
   """
-  siteConfigs: SiteConfigs @cacheControl(scope: PRIVATE)
+  storeConfigs: StoreConfigs
 
   """
   Returns user profile details
@@ -395,7 +395,7 @@ type Query {
     """
     URL's pathname
     """
-    path: String!,
+    path: String!
     """
     URL's querystring including '?'
     """
