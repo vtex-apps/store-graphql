@@ -46,13 +46,13 @@ export class Portal extends JanusClient {
   }
 }
 
-export type Site = {
+export interface Site {
   id: string
   title: string
   siteName: string
 }
 
-export type DefaultSalesChannel = {
+export interface DefaultSalesChannel {
   Id: string
   Name: string
   IsActive: true

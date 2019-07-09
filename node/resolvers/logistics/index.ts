@@ -7,18 +7,18 @@ export const fieldResolvers = {
 }
 
 export const queries = {
-  logistics: (_: any, __: any, { dataSources: { logistics } }: Context) =>
+  logistics: (_: any, __: any, { clients: { logistics } }: Context) =>
     logistics.shipping(),
 
   nearPickupPoints: (
     _: any,
     { lat, long, maxDistance }: NearPickupPointsArgs,
-    { dataSources: { logistics } }: Context
+    { clients: { logistics } }: Context
   ) => logistics.nearPickupPoints(lat, long, maxDistance),
 
   pickupPoint: (
     _: any,
     { id }: PickupPointArgs,
-    { dataSources: { logistics } }: Context
+    { clients: { logistics } }: Context
   ) => logistics.pickupById(id),
 }
