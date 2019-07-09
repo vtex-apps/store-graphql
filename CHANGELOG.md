@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.90.7] - 2019-07-09
+
 ## [2.90.6] - 2019-07-08
 ### Fixed
 - Use a better resolver architecture to fetch assembly options prices and use checkout client instead of axios.
