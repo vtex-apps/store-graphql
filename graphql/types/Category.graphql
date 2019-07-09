@@ -8,7 +8,7 @@ type Category {
   """ Category ID """
   id: Int
   """ Category name """
-  name: IOMessage
+  name: String! @translatable
   """ Title used by html tag"""
   titleTag: String
   """ Description used by html tag"""
