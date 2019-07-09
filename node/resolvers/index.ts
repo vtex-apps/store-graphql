@@ -28,7 +28,10 @@ import {
   mutations as profileMutations,
   queries as profileQueries,
 } from './profile'
-import { resolvers as portalResolvers } from './portal'
+import {
+  resolvers as portalResolvers,
+  fieldResolvers as portalFieldResolvers,
+} from './portal'
 import {
   mutations as sessionMutations,
   queries as sessionQueries,
@@ -44,6 +47,7 @@ export const resolvers = {
   ...checkoutFieldResolvers,
   ...documentFieldResolvers,
   ...logisticsResolvers,
+  ...portalFieldResolvers,
   Mutation: {
     ...profileMutations,
     ...checkoutMutations,
