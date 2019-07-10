@@ -1,10 +1,7 @@
-import { resolvers as pickupResolvers } from './PickupPoint'
-
 import { NearPickupPointsArgs, PickupPointArgs } from './types'
+import fieldR from './fieldResolvers'
 
-export const fieldResolvers = {
-  ...pickupResolvers,
-}
+export const fieldResolvers = fieldR
 
 export const queries = {
   logistics: (_: any, __: any, { clients: { logistics } }: Context) =>

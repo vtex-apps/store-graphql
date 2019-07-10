@@ -27,7 +27,7 @@ export class Portal extends JanusClient {
     })
 
   public defaultSalesChannel = () =>
-    this.get<DefaultSalesChannel>(this.routes.scDefault, {
+    this.get<SalesChannel>(this.routes.scDefault, {
       metric: 'portal-default-sales-channel',
     })
 
@@ -52,7 +52,7 @@ export interface Site {
   siteName: string
 }
 
-export interface DefaultSalesChannel {
+export interface SalesChannel {
   Id: string
   Name: string
   IsActive: true

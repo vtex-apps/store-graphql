@@ -1,5 +1,4 @@
 import { Site } from '../../clients/portal'
-import fieldR from './fieldResolvers'
 
 export const resolvers = {
   storeConfigs: async (_: any, __: any, ctx: Context) => {
@@ -25,5 +24,3 @@ export const resolvers = {
     }
   },
 }
-
-export const fieldResolvers = fieldR
