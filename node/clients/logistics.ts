@@ -6,7 +6,10 @@ import {
 } from '@vtex/api'
 
 import { statusToError } from '../utils'
-import { LogisticOuput } from '../resolvers/logistics/types'
+import {
+  LogisticOuput,
+  LogisticPickupPoint,
+} from '../resolvers/logistics/types'
 
 const FOUR_SECONDS = 4 * 1000
 
@@ -23,18 +26,17 @@ export class LogisticsClient extends JanusClient {
   }
 
   public pickupById = (id: string) =>
-    this.get(this.routes.pickUpById(id), {
+    this.get<LogisticPickupPoint>(this.routes.pickUpById(id), {
       metric: 'logistics-pickupById',
     })
 
-  public nearPickupPoints = (
-    lat: string,
-    long: string,
-    maxDistance = 50
-  ): Promise<LogisticOuput | void> =>
-    this.get(this.routes.nearPickupPoints(lat, long, maxDistance), {
-      metric: 'logistics-nearPickupPoints',
-    })
+  public nearPickupPoints = (lat: string, long: string, maxDistance = 50) =>
+    this.get<LogisticOuput>(
+      this.routes.nearPickupPoints(lat, long, maxDistance),
+      {
+        metric: 'logistics-nearPickupPoints',
+      }
+    )
 
   public shipping = () =>
     this.get(this.routes.shipping, {
