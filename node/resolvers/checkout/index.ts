@@ -194,13 +194,21 @@ export const mutations: Record<string, Resolver> = {
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
         ...(marketingData || {}),
-        utmCampaign: path(['utmParams', 'campaign'], sessionData),
-        utmMedium: path(['utmParams', 'medium'], sessionData),
-        utmSource: path(['utmParams', 'source'], sessionData),
-        utmiCampaign: path(['utmiParams', 'campaign'], sessionData),
-        utmiPart: path(['utmiParams', 'part'], sessionData),
-        utmipage: path(['utmiParams', 'page'], sessionData),
       }
+
+      if (sessionData && Object.keys(sessionData).length > 0) {
+        newMarketingData.utmCampaign = path(['utmParams', 'campaign'], sessionData)
+        newMarketingData.utmMedium = path(['utmParams', 'medium'], sessionData)
+        newMarketingData.utmSource = path(['utmParams', 'source'], sessionData)
+        newMarketingData.utmiCampaign = path(['utmiParams', 'campaign'], sessionData)
+        newMarketingData.utmiPart = path(['utmiParams', 'part'], sessionData)
+        newMarketingData.utmipage = path(['utmiParams', 'page'], sessionData)
+      }
+
+      if (newMarketingData.marketingTags == null) {
+        delete newMarketingData.marketingTags
+      }
+
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
     }
 
