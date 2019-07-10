@@ -7,7 +7,6 @@ import {
 
 import { Clients } from './clients'
 import { IdentityDataSource } from './dataSources/identity'
-import { LogisticsDataSource } from './dataSources/logistics'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -32,7 +31,6 @@ declare global {
 
   interface StoreGraphQLDataSources {
     identity: IdentityDataSource
-    logistics: LogisticsDataSource
   }
 
   interface OrderFormItem {

@@ -1,8 +1,4 @@
-interface Site {
-  id: string
-  title: string
-  siteName: string
-}
+import { Site } from '../../clients/portal'
 
 export const resolvers = {
   storeConfigs: async (_: any, __: any, ctx: Context) => {
@@ -13,7 +9,9 @@ export const resolvers = {
 
     const sites = await portal.sites()
 
-    const currentSite = sites.find((site: Site) => site.siteName === account)
+    const currentSite = (sites as Site[]).find(
+      (site: Site) => site.siteName === account
+    )
 
     try {
       return portal.storeConfigs(currentSite ? currentSite.id : 'default')
