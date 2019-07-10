@@ -7,25 +7,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Return the sales channel country as a default country on the `shipsTo` array of countries in **logistics** query.
+- Port LogisticsDataSource to a Janus Client. 
+
 ## [2.92.0] - 2019-07-09
 
 ## [2.91.0] - 2019-07-09
 
 ### Added
 
-- **defaultCountry** to the `storeConfigs` query.
-
-### Added
-
 - **storeConfigs** query.
 
 ## [2.90.8] - 2019-07-09
+
 ### Changed
 - Port OMSDataSource to a Janus Client.
 
 ## [2.90.7] - 2019-07-09
 
 ## [2.90.6] - 2019-07-08
+
 ### Fixed
 - Use a better resolver architecture to fetch assembly options prices and use checkout client instead of axios.
 
