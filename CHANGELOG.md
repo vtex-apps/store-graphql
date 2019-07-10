@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.93.0] - 2019-07-10
+
 ### Changed
 - Return the sales channel country as a default country on the `shipsTo` array of countries in **logistics** query.
 - Port LogisticsDataSource to a Janus Client. 
