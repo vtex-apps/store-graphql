@@ -271,7 +271,7 @@ type Query {
   order(id: String!): Order @cacheControl(scope: PRIVATE)
 
   """
-  Returns the specified site configurations
+  Returns the specified store configurations
   """
   storeConfigs: StoreConfigs
 
