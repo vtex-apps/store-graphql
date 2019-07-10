@@ -30,7 +30,7 @@ type Product {
   """ Product short description  """
   descriptionShort: IOMessage
   """ Keywords """
-  keyWords: IOMessage
+  keywords: IOMessage
   """ Title """
   title: IOMessage
   """ Array of product properties  """

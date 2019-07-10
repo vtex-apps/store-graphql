@@ -50,17 +50,17 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => toSKUIOMessage('nameComplete')(segment, nameComplete, itemId),
 
-    productName: (
-      { productName, itemId }: SKU,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toSKUIOMessage('productName')(segment, productName, itemId),
+    // productName: (
+    //   { productName }: SKU,
+    //   _: any,
+    //   __: Context
+    // ) => productName, 
 
-    productDescription: (
-      { productDescription, itemId }: SKU,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toSKUIOMessage('productDescription')(segment, productDescription, itemId),
+    // productDescription: (
+    //   { productDescription }: SKU,
+    //   _: any,
+    //   __: Context
+    // ) => productDescription,
 
     skuSpecifications: (
       sku: any,
