@@ -25,8 +25,8 @@ const inflightKey = ({ baseURL, url, params, headers }: RequestConfig) => {
 
 interface CategoryWithNulls
   extends Pick<
-    Category,
-    'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
+  Category,
+  'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
   > {
   url: null
   children: null

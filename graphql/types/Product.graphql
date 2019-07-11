@@ -119,6 +119,7 @@ type SKU {
   
   productName: IOMessage
   productDescription: IOMessage
+  brandName: IOMessage
   
   skuSpecifications: [skuSpecification]
   productSpecifications: [productSpecification]

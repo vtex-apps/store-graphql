@@ -165,11 +165,12 @@ declare global {
 
   interface SKU {
     itemId: string
+    name: string
     nameComplete: string
 
     productName: string
     productDescription: string
-    name: string
+    brandName: string
 
     variations: [Property]
 
