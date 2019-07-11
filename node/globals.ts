@@ -167,13 +167,10 @@ declare global {
     itemId: string
     name: string
     nameComplete: string
-
     productName: string
     productDescription: string
     brandName: string
-
     variations: [Property]
-
     skuSpecifications: [skuSpecification]
     productSpecifications: [productSpecification]
   }

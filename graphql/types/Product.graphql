@@ -111,16 +111,12 @@ type SKU {
   images (quantity: Int = 10) : [Image]
   videos: [Video]
   sellers: [Seller]
-
   variations: [Property]
-
   attachments: [Attachment]
   calculatedAttachments: String
-  
   productName: IOMessage
   productDescription: IOMessage
   brandName: IOMessage
-  
   skuSpecifications: [skuSpecification]
   productSpecifications: [productSpecification]
 }
