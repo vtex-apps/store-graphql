@@ -63,6 +63,7 @@ interface Product {
   itemMetadata: {
     items: CatalogMetadataItem[]
   }
+  titleTag: string
 }
 
 interface Item {
