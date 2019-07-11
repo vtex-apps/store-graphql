@@ -38,13 +38,13 @@ type Product {
   """ Product reference """
   productReference: String
   """ Title used by html tag"""
-  titleTag: String
+  titleTag: IOMessage
   """ Description used by html tag"""
   metaTagDescription: IOMessage
   """ Related Products """
   recommendations: Recommendation
   """ JSON specification of the product"""
-  jsonSpecifications: String
+  jsonSpecifications: IOMessage
   """ List of benefits associated with this product """
   benefits: [Benefit]
   itemMetadata: ItemMetadata
@@ -231,8 +231,13 @@ type Video {
 }
 
 type SpecificationGroup {
-  name: String,
-  specifications: [Property]
+  name: IOMessage,
+  specifications: [SpecificationGroupProperty]
+}
+
+type SpecificationGroupProperty {
+  name: IOMessage
+  values: [IOMessage]
 }
 
 type Property {

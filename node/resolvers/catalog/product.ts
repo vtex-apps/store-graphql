@@ -159,7 +159,7 @@ export const resolvers = {
       { productTitle, productId }: any,
       _: any,
       { clients: { segment } }: Context
-    ) => toProductIOMessage('productTitle')(segment, productTitle, productId),
+    ) => toProductIOMessage('titleTag')(segment, productTitle, productId),
 
     specificationGroups: (product: any) => {
       const allSpecificationsGroups = propOr(
