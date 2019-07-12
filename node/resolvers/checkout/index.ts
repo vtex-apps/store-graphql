@@ -17,6 +17,7 @@ import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
+import { UserInputError } from '@vtex/api'
 
 const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
 
@@ -38,7 +39,7 @@ const isWhitelistedSetCookie = (cookie: string) => {
  *
  * @param int An integer number
  */
-const convertIntToFloat = (int: any) => int * 0.01
+const convertIntToFloat = (int: number) => int * 0.01
 
 const getSessionMarketingParams = (sesionData: SessionFields) => ({
   utm_source: path(['utmParams', 'source'], sesionData),
@@ -49,17 +50,13 @@ const getSessionMarketingParams = (sesionData: SessionFields) => ({
   utmi_page: path(['utmiParams', 'page'], sesionData),
 })
 
-interface OrderFormMarketingData {
-  utmCampaign?: string
-  utmMedium?: string
-  utmSource?: string
-  utmiCampaign?: string
-  utmiPart?: string
-  utmipage?: string
+interface AddItemArgs {
+  orderFormId?: string
+  items?: OrderFormItemInput[]
 }
 
 const shouldUpdateMarketingData = (
-  orderFormMarketingTags: OrderFormMarketingData,
+  orderFormMarketingTags: OrderFormMarketingData | null,
   sessionData: SessionFields
 ) => {
   const {
@@ -98,10 +95,10 @@ const mapIndexed = addIndex<any, any, any, any>(map)
 
 export const fieldResolvers = {
   OrderForm: {
-    cacheId: (orderForm: any) => {
+    cacheId: (orderForm: OrderForm) => {
       return orderForm.orderFormId
     },
-    items: (orderForm: any) => {
+    items: (orderForm: OrderForm) => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
       return mapIndexed(
@@ -117,7 +114,7 @@ export const fieldResolvers = {
         orderForm.items
       )
     },
-    pickupPointCheckedIn: (orderForm: any, _: any, ctx: any) => {
+    pickupPointCheckedIn: (orderForm: OrderForm, _: any, ctx: Context) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
       if (!isCheckedIn || !checkedInPickupPointId) {
         return null
@@ -128,7 +125,7 @@ export const fieldResolvers = {
         ctx
       )
     },
-    value: (orderForm: any) => {
+    value: (orderForm: OrderForm) => {
       return convertIntToFloat(orderForm.value)
     },
   },
@@ -145,7 +142,7 @@ export const queries: Record<string, Resolver> = {
       clients: { checkout },
     } = ctx
 
-    const { headers, data: orderForm } = await checkout.orderForm(true)
+    const { headers, data: orderForm } = await checkout.orderFormRaw()
 
     const rawHeaders = headers as Record<string, any>
     const responseSetCookies: string[] =
@@ -178,29 +175,39 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (root, { orderFormId, items }, ctx) => {
+  addItem: async (root, { orderFormId, items }: AddItemArgs, ctx: Context) => {
     const {
       clients: { checkout },
     } = ctx
+    if (orderFormId == null || items == null) {
+      throw new UserInputError('No order form id or items to add provided')
+    }
     const [{ marketingData }, sessionData] = await Promise.all([
-      checkout.orderForm() as any,
+      checkout.orderForm(),
       sessionQueries.getSession(root, {}, ctx).catch(err => {
         // todo: log error using colossus
         console.error(err)
         return {} as SessionFields
       }) as SessionFields,
     ])
-
+    // const a = await checkout.orderForm()
+    // console.log('teste ====a :', JSON.stringify(a))
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
         ...(marketingData || {}),
       }
 
       if (sessionData && Object.keys(sessionData).length > 0) {
-        newMarketingData.utmCampaign = path(['utmParams', 'campaign'], sessionData)
+        newMarketingData.utmCampaign = path(
+          ['utmParams', 'campaign'],
+          sessionData
+        )
         newMarketingData.utmMedium = path(['utmParams', 'medium'], sessionData)
         newMarketingData.utmSource = path(['utmParams', 'source'], sessionData)
-        newMarketingData.utmiCampaign = path(['utmiParams', 'campaign'], sessionData)
+        newMarketingData.utmiCampaign = path(
+          ['utmiParams', 'campaign'],
+          sessionData
+        )
         newMarketingData.utmiPart = path(['utmiParams', 'part'], sessionData)
         newMarketingData.utmipage = path(['utmiParams', 'page'], sessionData)
       }
@@ -212,11 +219,15 @@ export const mutations: Record<string, Resolver> = {
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
     }
 
-    const cleanItems = items.map(({ options, ...rest }: any) => rest)
-    const addItem = await checkout.addItem(orderFormId, cleanItems)
+    const cleanItems = items.map(({ options, ...rest }) => rest)
     const withOptions = items.filter(
-      ({ options }: any) => !!options && options.length > 0
+      ({ options }) => !!options && options.length > 0
     )
+    const addItem = await checkout.addItem(orderFormId, cleanItems)
+
+    // const withOptions = items.filter(
+    //   ({ options }: any) => !!options && options.length > 0
+    // )
     await addOptionsForItems(withOptions, checkout, addItem)
 
     return withOptions.length === 0 ? addItem : await checkout.orderForm()
