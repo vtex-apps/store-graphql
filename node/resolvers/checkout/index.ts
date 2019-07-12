@@ -190,8 +190,7 @@ export const mutations: Record<string, Resolver> = {
         return {} as SessionFields
       }) as SessionFields,
     ])
-    // const a = await checkout.orderForm()
-    // console.log('teste ====a :', JSON.stringify(a))
+
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
         ...(marketingData || {}),
@@ -225,9 +224,6 @@ export const mutations: Record<string, Resolver> = {
     )
     const addItem = await checkout.addItem(orderFormId, cleanItems)
 
-    // const withOptions = items.filter(
-    //   ({ options }: any) => !!options && options.length > 0
-    // )
     await addOptionsForItems(withOptions, checkout, addItem)
 
     return withOptions.length === 0 ? addItem : await checkout.orderForm()
