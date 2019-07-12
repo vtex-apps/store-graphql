@@ -434,7 +434,6 @@ export const queries = {
       clients,
       clients: { catalog },
     } = ctx
-    console.log("<<<<<< " + JSON.stringify(args, null, 2))
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
       throw new UserInputError(
@@ -453,7 +452,6 @@ export const queries = {
       catalog.products(args, true),
       getSearchMetaData(_, translatedArgs, ctx),
     ])
-    
     return {
       translatedArgs,
       searchMetaData,
