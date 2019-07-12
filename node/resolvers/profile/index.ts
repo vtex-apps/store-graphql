@@ -8,6 +8,10 @@ import {
   updateProfilePicture,
 } from './services'
 
+interface SubscribeNewsletterArgs {
+  email: string
+}
+
 export const mutations = {
   createAddress: (_: any, { fields }: any, context: Context) =>
     createAddress(context, fields),
@@ -27,10 +31,9 @@ export const mutations = {
   uploadProfilePicture: (_: any, { file }: { file: any }, context: Context) =>
     updateProfilePicture(context, file),
 
-  subscribeNewsletter: async (_: any, { email }: any, context: Context) => {
-    const profile = context.dataSources.profile
-
-    await profile.updatePersonalPreferences(email, {
+  subscribeNewsletter: async (_: any, { email }: SubscribeNewsletterArgs, context: Context) => {
+    const profile = context.clients.profile
+    await profile.updatePersonalPreferences({ email, userId: '' }, {
       isNewsletterOptIn: 'True',
     })
 
@@ -39,7 +42,7 @@ export const mutations = {
 }
 
 export const queries = {
-  profile: (_: any, { customFields }: any, context: any) =>
+  profile: (_: any, { customFields }: any, context: Context) =>
     getProfile(context, customFields),
 }
 

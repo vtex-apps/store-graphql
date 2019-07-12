@@ -1,19 +1,21 @@
-import { resolvers as pickupResolvers } from './PickupPoint'
-
 import { NearPickupPointsArgs, PickupPointArgs } from './types'
+import fieldR from './fieldResolvers'
 
-export const fieldResolvers = {
-  ...pickupResolvers,
-}
+export const fieldResolvers = fieldR
 
 export const queries = {
-  logistics: (_: any, __: any, {dataSources: {logistics}}: Context) => logistics.shipping(),
+  logistics: (_: any, __: any, { clients: { logistics } }: Context) =>
+    logistics.shipping(),
 
   nearPickupPoints: (
     _: any,
     { lat, long, maxDistance }: NearPickupPointsArgs,
-    {dataSources: {logistics}}: Context
-    ) => logistics.nearPickupPoints(lat, long, maxDistance),
+    { clients: { logistics } }: Context
+  ) => logistics.nearPickupPoints(lat, long, maxDistance),
 
-  pickupPoint: (_: any, { id }: PickupPointArgs, {dataSources: {logistics}}: Context) => logistics.pickupById(id),
+  pickupPoint: (
+    _: any,
+    { id }: PickupPointArgs,
+    { clients: { logistics } }: Context
+  ) => logistics.pickupById(id),
 }

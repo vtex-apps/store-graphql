@@ -3,6 +3,6 @@ type Paging {
   perPage: Int!
   total: Int!
   pages: Int!
-  _from: Int!
-  _to: Int!
+  from: Int!
+  to: Int!
 }

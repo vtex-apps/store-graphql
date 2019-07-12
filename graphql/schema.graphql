@@ -1,5 +1,3 @@
-scalar IOMessage
-
 type Query {
   """
   Returns a specified product
@@ -118,6 +116,11 @@ type Query {
   productRecommendations(
     identifier: ProductUniqueIdentifier
     type: CrossSelingInputEnum
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
+  productsByIdentifier(
+    field: ProductUniqueIdentifierField!
+    values: [ID!]
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """
@@ -247,7 +250,10 @@ type Query {
     Country of postal code
     """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment @withOrderFormId
+  ): ShippingData
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @withOrderFormId
 
   """
   Returns checkout cart details
@@ -263,6 +269,11 @@ type Query {
   Returns a specified user order
   """
   order(id: String!): Order @cacheControl(scope: PRIVATE)
+
+  """
+  Returns the specified store configurations
+  """
+  storeConfigs: StoreConfigs
 
   """
   Returns user profile details
@@ -368,6 +379,20 @@ type Query {
   ): Document
 
   """
+  Get a document schema
+  """
+  documentSchema(
+    """
+    Data entity name. e.g.: CL, AD
+    """
+    dataEntity: String
+    """
+    MasterData schema name.
+    """
+    schema: String
+  ): DocumentSchema
+
+  """
   Get the benefits associated with a list of products
   """
   benefits(
@@ -390,7 +415,21 @@ type Query {
     department: String
     category: String
     subcategory: String
-  ): SearchContext
+  ): SearchContext @deprecated(reason: "Use the 'pageType' query")
+
+  """
+  Get search page type
+  """
+  pageType(
+    """
+    URL's pathname
+    """
+    path: String!
+    """
+    URL's querystring including '?'
+    """
+    query: String
+  ): PageType @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Get logistics information about the store
@@ -464,10 +503,12 @@ type Mutation {
   Cart
   """
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment @withOrderFormId
+    @withSegment
+    @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment @withOrderFormId
+    @withSegment
+    @withOrderFormId
 
   """
   Used to update the CL entity on masterData.
@@ -718,7 +759,12 @@ type Mutation {
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
   updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
-  uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
+  uploadAttachment(
+    acronym: String!
+    documentId: String!
+    field: String!
+    file: Upload!
+  ): AttachmentResponse
 
   """
   List

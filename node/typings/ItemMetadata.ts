@@ -1,8 +1,8 @@
-/**  
+/**
  * Assembly options related types
  */
 
-export interface CompositionItem {
+interface CompositionItem {
   id: string
   minQuantity: number
   maxQuantity: number
@@ -17,13 +17,13 @@ interface Composition {
   items: CompositionItem[]
 }
 
-export interface AssemblyOption {
+interface AssemblyOption {
   id: string
   name: string
   composition: Composition | null
 }
 
-export interface MetadataItem {
+interface MetadataItem {
   id: string
   name: string
   imageUrl: string
@@ -31,7 +31,7 @@ export interface MetadataItem {
   seller: string
   assemblyOptions: AssemblyOption[]
 }
-export interface AddedItem {
+interface AddedItem {
   choiceType: string
   compositionItem: CompositionItem
   extraQuantity: number
@@ -39,7 +39,7 @@ export interface AddedItem {
   normalizedQuantity: number
 }
 
-export interface RemovedItem {
+interface RemovedItem {
   initialQuantity: number
   name: string
   removedQuantity: number

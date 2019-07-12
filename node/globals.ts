@@ -6,12 +6,7 @@ import {
 } from '@vtex/api'
 
 import { Clients } from './clients'
-import { CatalogDataSource } from './dataSources/catalog'
 import { IdentityDataSource } from './dataSources/identity'
-import { LogisticsDataSource } from './dataSources/logistics'
-import { OMSDataSource } from './dataSources/oms'
-import { ProfileDataSource } from './dataSources/profile'
-import { SessionDataSource } from './dataSources/session'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -35,12 +30,7 @@ declare global {
   }
 
   interface StoreGraphQLDataSources {
-    catalog: CatalogDataSource
     identity: IdentityDataSource
-    logistics: LogisticsDataSource
-    profile: ProfileDataSource
-    session: SessionDataSource
-    oms: OMSDataSource
   }
 
   interface OrderFormItem {
@@ -63,6 +53,9 @@ declare global {
     isGift: boolean
     parentItemIndex: number
     parentAssemblyBinding: string
+    productCategoryIds: string
+    priceTags: string[]
+    measurementUnit: string
   }
 
   interface UserAddress {
@@ -121,6 +114,7 @@ declare global {
     corporateDocument?: string
     stateRegistration?: string
     addresses?: Address[]
+    tradeName?: string
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
   }
@@ -152,6 +146,11 @@ declare global {
     acronym: string
     fields: string[]
     id: string
+  }
+
+  interface DocumentSchemaArgs {
+    dataEntity: string
+    schema: string
   }
 
   interface DocumentsArgs {

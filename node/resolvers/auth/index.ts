@@ -1,5 +1,5 @@
 import { ResolverError, UserInputError } from '@vtex/api'
-import http from 'axios'
+import http, { Method } from 'axios'
 import { parse, serialize } from 'cookie'
 import { stringify } from 'querystring'
 
@@ -9,7 +9,13 @@ import paths from '../paths'
 const E_PASS = 'Password does not follow specified format'
 const E_TOKEN = 'VtexSessionToken cookie is null'
 
-export async function makeRequest(ctx: any, url: any, method='POST', vtexIdVersion='store-graphql', cookie: string | null = null) {
+export async function makeRequest(
+  ctx: any,
+  url: any,
+  method: Method = 'POST',
+  vtexIdVersion = 'store-graphql',
+  cookie: string | null = null
+) {
   const composedHeaders = {
     ...authHeaders.profile,
     'Cookie': `VtexIdClientAutCookie=${cookie}`,
@@ -22,17 +28,24 @@ export async function makeRequest(ctx: any, url: any, method='POST', vtexIdVersi
   })
 }
 
-const makeSecureRequest = async (ctx: any, url: any, body: any, method='POST', vtexIdVersion='store-graphql') => http.request({
-  data: stringify(body),
-  headers: withAuthToken({
-    'X-Vtex-Use-Https': 'true',
-    accept: 'application/vnd.vtex.ds.v10+json',
-    'content-type': 'application/x-www-form-urlencoded',
-    'vtex-ui-id-version': vtexIdVersion,
-  })(ctx),
-  method,
-  url,
-})
+const makeSecureRequest = async (
+  ctx: any,
+  url: any,
+  body: any,
+  method: Method = 'POST',
+  vtexIdVersion = 'store-graphql'
+) =>
+  http.request({
+    data: stringify(body),
+    headers: withAuthToken({
+      'X-Vtex-Use-Https': 'true',
+      accept: 'application/vnd.vtex.ds.v10+json',
+      'content-type': 'application/x-www-form-urlencoded',
+      'vtex-ui-id-version': vtexIdVersion,
+    })(ctx),
+    method,
+    url,
+  })
 
 const getSessionToken = async (ioContext: any, redirectUrl?: any) => {
   const { data, status } = await makeRequest(ioContext, paths.sessionToken(ioContext.account, ioContext.account, redirectUrl), 'GET')

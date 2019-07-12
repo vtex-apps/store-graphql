@@ -27,6 +27,11 @@ export class MasterData extends ExternalClient {
     })
   }
 
+  public getSchema = <T>(dataEntity: string, schema: string) =>
+    this.get<T>(this.routes.schema(dataEntity, schema), {
+      metric: 'masterdata-getSchema',
+    })
+
   public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
@@ -70,7 +75,7 @@ export class MasterData extends ExternalClient {
     schema?: string
   ) =>{
     
-    const {headers} = await this.getRaw(this.routes.search(acronym), {
+    const rowData = await this.getRaw(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
       metric: 'masterdata-searchDocuments-with-paging',
       params: {
@@ -80,18 +85,23 @@ export class MasterData extends ExternalClient {
       },
     }) as any
 
-    const resourceHeader = path(["rest-content-range"], headers)
+    const headerData = path(["headers"], rowData) as any
+    const resourceHeader = path(["rest-content-range"], headerData)
     const [ resource, total ] = (resourceHeader as string).split(' ')[1].split('/')
+    
     const [ start, end ] = resource.split('-')
     const perPage = (!pagination || !pagination.pageSize)? 0: pagination.pageSize
 
-    return {
-      total,
-      perPage: pagination ? pagination.pageSize: 0,
-      pages: perPage? Math.ceil(parseInt(total) / perPage) : 0,
-      page: pagination? pagination.page: 1,
-      _from: start,
-      _to: end,
+    return { 
+      data: path(['data'], rowData),
+      pageInfo: {
+        total,
+        perPage: pagination ? pagination.pageSize: 0,
+        pages: perPage? Math.ceil(parseInt(total) / perPage) : 0,
+        page: pagination? pagination.page: 1,
+        from: start,
+        to: end,
+      }
     }
   }
 
@@ -137,6 +147,7 @@ export class MasterData extends ExternalClient {
         `${acronym}/documents/${id}/${fields}/attachments`,
       document: (acronym: string, id: string) => `${acronym}/documents/${id}`,
       documents: (acronym: string) => `${acronym}/documents`,
+      schema: (acronym: string, schema: string) => `${acronym}/schemas/${schema}`,
       search: (acronym: string) => `${acronym}/search`,
     }
   }

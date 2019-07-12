@@ -8,7 +8,7 @@ import paths from '../paths'
 
 export function getProfile(context: Context, customFields?: string) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -52,7 +52,7 @@ export function getPasswordLastUpdate(context: Context) {
 
 export function getAddresses(context: Context) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -61,7 +61,7 @@ export function getAddresses(context: Context) {
 
 export async function getPayments(context: Context) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -90,7 +90,7 @@ export async function updateProfile(
   customFields: CustomField[] | undefined
 ) {
   const {
-    dataSources,
+    clients,
     vtex: { currentProfile },
   } = context
 
@@ -98,10 +98,15 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
+    // Read the comments in Profile in fieldResolvers.ts files
+    // to understand the following transformations
+    businessDocument: profile.corporateDocument,
+    isPJ: profile.isCorporate ? 'True' : 'False',
+    fancyName: profile.tradeName,
     ...(extraFields && extraFields.customFieldsObj),
   }
 
-  return dataSources.profile
+  return clients.profile
     .updateProfileInfo(
       currentProfile,
       newData,
@@ -112,7 +117,7 @@ export async function updateProfile(
 
 export async function updateProfilePicture(context: Context, file: any) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -143,7 +148,7 @@ export async function updateProfilePicture(context: Context, file: any) {
 
 export function createAddress(context: Context, address: Address) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -162,7 +167,7 @@ export function createAddress(context: Context, address: Address) {
 
 export function deleteAddress(context: Context, addressName: string) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -176,7 +181,7 @@ export function updateAddress(
   { id, fields }: UpdateAddressArgs
 ) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -197,7 +202,7 @@ export function pickCustomFieldsFromData(customFields: string, data: any) {
     compose(
       values,
       mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields))
+      pick(split(',', customFields)) as any
     )(data)
   )
 }

@@ -1,7 +1,7 @@
 import { UserInputError } from '@vtex/api'
-import { compose, map, union, prop, replace } from 'ramda'
+import { compose, map, union, prop, replace, path } from 'ramda'
 import { parseFieldsToJson } from '../../utils/object'
-import { all } from 'bluebird';
+import { resolvers as documentSchemaResolvers} from './documentSchema'
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
@@ -26,22 +26,21 @@ export const queries = {
     const { acronym, fields, page, pageSize, where, schema } = args
     const { clients: { masterdata } } = context
     const fieldsWithId = union(fields, ['id'])
-    const [documentsData, pageInfo] = await all([
-      masterdata.searchDocuments(acronym, fieldsWithId, where, {
-        page,
-        pageSize,
-      }, schema) as any,
-      masterdata.searchDocumentRaw(acronym, fieldsWithId, where, {
+    console.log(">>>>> args : "+ JSON.stringify(args))
+    const documentsRow = await masterdata.searchDocumentRaw(acronym, fieldsWithId, where, {
         page,
         pageSize,
       }, schema) as any
-    ])
+
+    const documents = path(['data'], documentsRow) as any
+    const pageInfo = path(['pageInfo'], documentsRow) as any
+    
     return {
       items: map((document: any) =>({
         cacheId: document.id,
         id: document.id,
         fields: mapKeyAndStringifiedValues(document)
-        }))(documentsData),
+        }))(documents),
       paging: pageInfo
     }
   },
@@ -58,6 +57,22 @@ export const queries = {
       fields: mapKeyAndStringifiedValues(data),
     }
   },
+
+  documentSchema: async(_: any, args: DocumentSchemaArgs, context: Context) => {
+    const { dataEntity, schema } = args;
+
+    const {
+      clients: { masterdata },
+    } = context
+
+    const data = await masterdata.getSchema(dataEntity, schema);
+
+    return {...data, name: data? args.schema : null}
+  },
+}
+
+export const fieldResolvers = {
+  ...documentSchemaResolvers
 }
 
 export const mutations = {

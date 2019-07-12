@@ -36,3 +36,24 @@ type DocumentsPage {
   items: [Document]
   paging: Paging
 }
+
+type DocProperty {
+  name: String,
+  type: String,
+  optional: Boolean
+}
+
+type VSecurity {
+  allowGetAll: Boolean,
+  publicRead: [String],
+  publicWrite: [String],
+  publicFilter: [String]
+}
+
+type DocumentSchema {
+  name: String
+  properties: [DocProperty],
+  indexed: [String],
+  security: VSecurity,
+  cache: Boolean
+}
