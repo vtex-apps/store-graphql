@@ -1,4 +1,10 @@
-import { InstanceOptions, IOContext, JanusClient, RequestConfig } from '@vtex/api'
+import {
+  InstanceOptions,
+  IOContext,
+  JanusClient,
+  RequestConfig,
+  IOResponse,
+} from '@vtex/api'
 import { checkoutCookieFormat, statusToError } from '../utils'
 
 export interface SimulationData {
@@ -41,7 +47,7 @@ export class Checkout extends JanusClient {
   }
 
   public addItem = (orderFormId: string, items: any) =>
-    this.post(
+    this.post<OrderForm>(
       this.routes.addItem(orderFormId, this.getChannelQueryString()),
       { orderItems: items },
       { metric: 'checkout-addItem' }
@@ -116,7 +122,7 @@ export class Checkout extends JanusClient {
 
   public addAssemblyOptions = async (
     orderFormId: string,
-    itemId: string,
+    itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
@@ -128,7 +134,7 @@ export class Checkout extends JanusClient {
 
   public removeAssemblyOptions = async (
     orderFormId: string,
-    itemId: string,
+    itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
@@ -142,9 +148,16 @@ export class Checkout extends JanusClient {
       metric: 'checkout-updateOrderFormCheckin',
     })
 
-  public orderForm = (useRaw?: boolean) => {
-    const method = useRaw ? this.postRaw : this.post
-    return method(
+  public orderForm = () => {
+    return this.post<OrderForm>(
+      this.routes.orderForm,
+      { expectedOrderFormSections: ['items'] },
+      { metric: 'checkout-orderForm' }
+    )
+  }
+
+  public orderFormRaw = () => {
+    return this.postRaw<OrderForm>(
       this.routes.orderForm,
       { expectedOrderFormSections: ['items'] },
       { metric: 'checkout-orderForm' }
@@ -168,18 +181,20 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.get<T>(url, config).catch(statusToError)
+    return this.http.get<T>(url, config).catch(statusToError) as Promise<T>
   }
 
-  protected post = (url: string, data?: any, config: RequestConfig = {}) => {
+  protected post = <T>(url: string, data?: any, config: RequestConfig = {}) => {
     config.headers = {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.post<any>(url, data, config).catch(statusToError)
+    return this.http.post<T>(url, data, config).catch(statusToError) as Promise<
+      T
+    >
   }
 
-  protected postRaw = async (
+  protected postRaw = async <T>(
     url: string,
     data?: any,
     config: RequestConfig = {}
@@ -188,7 +203,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.postRaw<any>(url, data, config).catch(statusToError)
+    return this.http
+      .postRaw<T>(url, data, config)
+      .catch(statusToError) as Promise<IOResponse<T>>
   }
 
   protected delete = <T>(url: string, config: RequestConfig = {}) => {
@@ -196,7 +213,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.delete<T>(url, config).catch(statusToError)
+    return this.http.delete<T>(url, config).catch(statusToError) as Promise<
+      IOResponse<T>
+    >
   }
 
   protected patch = <T>(
@@ -208,7 +227,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.patch<T>(url, data, config).catch(statusToError)
+    return this.http
+      .patch<T>(url, data, config)
+      .catch(statusToError) as Promise<T>
   }
 
   protected put = <T>(url: string, data?: any, config: RequestConfig = {}) => {
@@ -216,7 +237,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.put<T>(url, data, config).catch(statusToError)
+    return this.http.put<T>(url, data, config).catch(statusToError) as Promise<
+      T
+    >
   }
 
   private get routes() {
@@ -239,7 +262,7 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/attachments/${field}`,
       assemblyOptions: (
         orderFormId: string,
-        itemId: string,
+        itemId: string | number,
         assemblyOptionsId: string
       ) =>
         `${base}/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,

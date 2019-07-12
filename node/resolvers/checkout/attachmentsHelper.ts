@@ -6,13 +6,6 @@ export const CHOICE_TYPES = {
   TOGGLE: 'TOGGLE',
 }
 
-interface OptionsType {
-  id: string
-  quantity: number
-  assemblyId: string
-  seller: string
-}
-
 interface OptionRequestParam {
   id: string
   seller: string
@@ -22,19 +15,11 @@ interface OptionRequestAddParam extends OptionRequestParam {
   quantity: number
 }
 
-interface ItemsToAdd {
-  id: string
-  quantity: number
-  seller: string
-  index?: number
-  options?: OptionsType[]
-}
-
 interface AddOptionsLogicInput {
   checkout: Context['clients']['checkout']
   orderFormId: string
-  itemIndex: string
-  options?: OptionsType[]
+  itemIndex: string | number
+  options?: AssemblyOptionInput[]
 }
 
 const addAssemblyBody = (items: OptionRequestAddParam[]) => ({
@@ -54,7 +39,7 @@ const removeQuantity = (
   options: OptionRequestAddParam[]
 ): OptionRequestParam[] => options.map(({ seller, id }) => ({ seller, id }))
 
-const joinOptionsWithType = (options: OptionsType[]) => {
+const joinOptionsWithType = (options: AssemblyOptionInput[]) => {
   return options.reduce<{ [key: string]: OptionRequestAddParam[] }>(
     (prev, curr) => {
       const { assemblyId, ...rest } = curr
@@ -72,8 +57,8 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   if (!options || options.length === 0) {
     return
   }
-  const isRemove = (option: OptionsType) => option.quantity === 0
-  const [toRemove, toAdd] = partition<OptionsType>(isRemove, options)
+  const isRemove = (option: AssemblyOptionInput) => option.quantity === 0
+  const [toRemove, toAdd] = partition<AssemblyOptionInput>(isRemove, options)
   const joinedToAdd = joinOptionsWithType(toAdd)
   const joinedToRemove = joinOptionsWithType(toRemove)
   for (const [assemblyId, parsedOptions] of Object.entries(joinedToAdd)) {
@@ -107,16 +92,16 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
  */
 
 export const addOptionsForItems = async (
-  items: ItemsToAdd[],
+  items: OrderFormItemInput[],
   checkout: Context['clients']['checkout'],
-  orderForm: any
+  orderForm: OrderForm
 ) => {
   for (const item of items) {
     if (!item.options || item.options.length === 0) {
       continue
     }
     const parentIndex = orderForm.items.findIndex(
-      (cartItem: any) => cartItem.id.toString() === item.id.toString()
+      cartItem => cartItem.id.toString() === item.id!.toString()
     )
     if (parentIndex < 0) {
       continue
@@ -133,7 +118,7 @@ export const addOptionsForItems = async (
 const filterCompositionNull = (assemblyOptions: AssemblyOption[]) =>
   assemblyOptions.filter(({ composition }) => !!composition)
 
-export const buildAssemblyOptionsMap = (orderForm: any) => {
+export const buildAssemblyOptionsMap = (orderForm: OrderForm) => {
   const metadataItems = pathOr(
     [],
     ['itemMetadata', 'items'],
@@ -239,7 +224,7 @@ const findInitialItemOnCart = (initialItem: InitialItem) => (
 
 const isInitialItemMissing = (
   parentCartItem: OrderFormItem,
-  orderForm: any
+  orderForm: OrderForm
 ) => (initialItem: InitialItem): RemovedItem | null => {
   const orderFormItem = find(
     findInitialItemOnCart(initialItem),
@@ -275,7 +260,7 @@ interface InitialItem extends CompositionItem {
 
 export const buildRemovedOptions = (
   item: OrderFormItem,
-  orderForm: any,
+  orderForm: OrderForm,
   assemblyOptionsMap: Record<string, AssemblyOption[]>
 ): RemovedItem[] => {
   const assemblyOptions = assemblyOptionsMap[item.id]
