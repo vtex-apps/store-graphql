@@ -140,7 +140,7 @@ export class Checkout extends JanusClient {
   ) =>
     this.delete(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
-      { metric: 'checkout-removeAssemblyOptions', params: body }
+      { metric: 'checkout-removeAssemblyOptions', data: body }
     )
 
   public updateOrderFormCheckin = (orderFormId: string, checkinPayload: any) =>
