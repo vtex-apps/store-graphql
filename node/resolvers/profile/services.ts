@@ -1,16 +1,14 @@
-import { makeRequest } from './../auth/index'
-
+import { parse } from 'cookie'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
-import { uploadAttachment } from '../document/attachment'
+import { makeRequest } from '../auth'
+import { uploadFile, deleteFile } from '../fileManager/services'
 import paths from '../paths'
-
-import { parse } from 'cookie'
 
 export function getProfile(context: Context, customFields?: string) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -19,7 +17,7 @@ export function getProfile(context: Context, customFields?: string) {
     : `profilePicture,id`
 
   return profile
-    .getProfileInfo(currentProfile.email, extraFields)
+    .getProfileInfo(currentProfile, extraFields)
     .then(profileData => {
       if (profileData) {
         return {
@@ -33,33 +31,41 @@ export function getProfile(context: Context, customFields?: string) {
 }
 
 export function getPasswordLastUpdate(context: Context) {
-  const { request: { headers: { cookie } }, vtex: { account } } = context
+  const {
+    request: {
+      headers: { cookie },
+    },
+    vtex: { account },
+  } = context
   const url = paths.getUser(account)
   const parsedCookies = parse(cookie)
   const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
-  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then((response: any) => {
-    return response.data.passwordLastUpdate
-  })
+
+  if (!userCookie) return null
+
+  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then(
+    (response: any) => {
+      return response.data.passwordLastUpdate
+    }
+  )
 }
 
 export function getAddresses(context: Context) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  return profile
-    .getUserAddresses(currentProfile.email)
-    .then(mapAddressesObjToList)
+  return profile.getUserAddresses(currentProfile).then(mapAddressesObjToList)
 }
 
 export async function getPayments(context: Context) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  const paymentsRawData = await profile.getUserPayments(currentProfile.email)
+  const paymentsRawData = await profile.getUserPayments(currentProfile)
 
   if (!paymentsRawData) {
     return null
@@ -84,7 +90,7 @@ export async function updateProfile(
   customFields: CustomField[] | undefined
 ) {
   const {
-    dataSources,
+    clients,
     vtex: { currentProfile },
   } = context
 
@@ -92,37 +98,47 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
-    ...extraFields && extraFields.customFieldsObj,
+    // Read the comments in Profile in fieldResolvers.ts files
+    // to understand the following transformations
+    businessDocument: profile.corporateDocument,
+    isPJ: profile.isCorporate ? 'True' : 'False',
+    fancyName: profile.tradeName,
+    ...(extraFields && extraFields.customFieldsObj),
   }
 
-  return dataSources.profile
+  return clients.profile
     .updateProfileInfo(
-      currentProfile.email,
+      currentProfile,
       newData,
       extraFields && extraFields.customFieldsStr
     )
     .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
 }
 
-export async function updateProfilePicture(context: Context, file: string) {
+export async function updateProfilePicture(context: Context, file: any) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  const field = 'profilePicture'
-
-  const { id } = await profile.getProfileInfo(currentProfile.email, 'id')
-
-  await profile.updateProfileInfo(
-    currentProfile.email,
-    { profilePicture: '' },
+  const { profilePicture } = await profile.getProfileInfo(
+    currentProfile,
     'profilePicture'
   )
 
-  await uploadAttachment(
-    { acronym: 'CL', documentId: id, field, file },
-    context
+  const bucket = 'image'
+
+  if (profilePicture) {
+    await deleteFile(context.vtex, { path: profilePicture, bucket })
+  }
+
+  const result = await uploadFile(context.vtex, { file, bucket })
+
+  const fileUrl = result.fileUrl.split('image/')[1]
+  await profile.updateProfileInfo(
+    currentProfile,
+    { profilePicture: fileUrl },
+    'profilePicture'
   )
 
   return getProfile(context)
@@ -132,7 +148,7 @@ export async function updateProfilePicture(context: Context, file: string) {
 
 export function createAddress(context: Context, address: Address) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -145,18 +161,18 @@ export function createAddress(context: Context, address: Address) {
   })
 
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .updateAddress(currentProfile, addressesData)
     .then(() => getProfile(context))
 }
 
 export function deleteAddress(context: Context, addressName: string) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
   return profile
-    .deleteAddress(currentProfile.email, addressName)
+    .deleteAddress(currentProfile, addressName)
     .then(() => getProfile(context))
 }
 
@@ -165,7 +181,7 @@ export function updateAddress(
   { id, fields }: UpdateAddressArgs
 ) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -176,7 +192,7 @@ export function updateAddress(
   })
 
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .updateAddress(currentProfile, addressesData)
     .then(() => getProfile(context))
 }
 
@@ -186,7 +202,7 @@ export function pickCustomFieldsFromData(customFields: string, data: any) {
     compose(
       values,
       mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields))
+      pick(split(',', customFields)) as any
     )(data)
   )
 }

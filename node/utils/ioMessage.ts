@@ -18,7 +18,7 @@ export const toProductIOMessage = (field: string) => (segment: Segment, content:
   `Product-id.${id}::${field}`
 )
 
-export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+export const toCategoryIOMessage = (field: string) => (segment: Segment, content: string, id: number | string) => toIOMessage(
   segment,
   content,
   `Category-id.${id}::${field}`
@@ -28,6 +28,12 @@ export const toFacetIOMessage = (segment: Segment, content: string, id: string) 
   segment,
   content,
   `SpecificationFilter-id.${id}::${content}`
+)
+
+export const toClusterIOMessage = (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `ProductCluster-id.${id}::${content}`
 )
 
 export const toSearchTerm = (term: string, from: string, description: string = '') => ({

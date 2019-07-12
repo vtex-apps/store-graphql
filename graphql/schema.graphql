@@ -1,5 +1,3 @@
-scalar IOMessage
-
 type Query {
   """
   Returns a specified product
@@ -113,6 +111,16 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
+  productRecommendations(
+    identifier: ProductUniqueIdentifier
+    type: CrossSelingInputEnum
+  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
+  productsByIdentifier(
+    field: ProductUniqueIdentifierField!
+    values: [ID!]
   ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
   """
@@ -242,22 +250,30 @@ type Query {
     Country of postal code
     """
     country: String
-  ): ShippingData @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+  ): ShippingData
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @withOrderFormId
 
   """
   Returns checkout cart details
   """
-  orderForm: OrderForm @cacheControl(scope: PRIVATE)
+  orderForm: OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 
   """
   Returns user orders details
   """
-  orders: [Order] @cacheControl(scope: PRIVATE)
+  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
 
   """
   Returns a specified user order
   """
   order(id: String!): Order @cacheControl(scope: PRIVATE)
+
+  """
+  Returns the specified store configurations
+  """
+  storeConfigs: StoreConfigs
 
   """
   Returns user profile details
@@ -307,6 +323,10 @@ type Query {
     Filters the results. eg.: _where=email=my@email.com
     """
     where: String
+    """
+    Defines the Master Data schema to be used
+    """
+    schema: String
   ): [Document]
 
   """
@@ -326,6 +346,20 @@ type Query {
     """
     id: String
   ): Document
+
+  """
+  Get a document schema
+  """
+  documentSchema(
+    """
+    Data entity name. e.g.: CL, AD
+    """
+    dataEntity: String
+    """
+    MasterData schema name.
+    """
+    schema: String
+  ): DocumentSchema
 
   """
   Get the benefits associated with a list of products
@@ -350,7 +384,21 @@ type Query {
     department: String
     category: String
     subcategory: String
-  ): SearchContext
+  ): SearchContext @deprecated(reason: "Use the 'pageType' query")
+
+  """
+  Get search page type
+  """
+  pageType(
+    """
+    URL's pathname
+    """
+    path: String!
+    """
+    URL's querystring including '?'
+    """
+    query: String
+  ): PageType @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Get logistics information about the store
@@ -425,9 +473,11 @@ type Mutation {
   """
   addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
     @withSegment
-  cancelOrder(orderFormId: String, reason: String): Boolean
+    @withOrderFormId
+  cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
     @withSegment
+    @withOrderFormId
 
   """
   Used to update the CL entity on masterData.
@@ -516,39 +566,39 @@ type Mutation {
   updateOrderFormProfile(
     orderFormId: String
     fields: OrderFormProfileInput
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   updateOrderFormShipping(
     orderFormId: String
     address: OrderFormAddressInput
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   updateOrderFormPayment(
     orderFormId: String
     payments: [OrderFormPaymentInput]
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   updateOrderFormIgnoreProfile(
     orderFormId: String
     ignoreProfileData: Boolean
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   addOrderFormPaymentToken(
     orderFormId: String
     paymentToken: OrderFormPaymentTokenInput
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   setOrderFormCustomData(
     orderFormId: String
     appId: String
     field: String
     value: String
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   addAssemblyOptions(
     orderFormId: String
     itemId: String
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
-  ): OrderForm
+  ): OrderForm @withOrderFormId
   updateOrderFormCheckin(
     orderFormId: String
     checkin: OrderFormCheckinInput
-  ): OrderForm
+  ): OrderForm @withOrderFormId
 
   """
   Payment

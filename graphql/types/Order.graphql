@@ -9,6 +9,7 @@ type Order {
   lastChange: String
   timeZoneCreationDate: String
   timeZoneLastChange: String
+  invoicedDate: String
   isCompleted: Boolean
   items: [OrderItem]
   sellers: [OrderItemSeller]
@@ -32,6 +33,7 @@ type OrderItem {
   rewardValue: Float
   additionalInfo: OrderItemAdditionalInfo
   preSaleDate: String
+  productCategoryIds: String
   handling: Boolean
   isGift: Boolean
   quantity: Int

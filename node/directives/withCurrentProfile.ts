@@ -11,14 +11,20 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
     field.resolve = async (root, args, context, info) => {
-      const currentProfile: CurrentProfile | null = await (getCurrentProfileFromSession(context)
-        .catch(() => getCurrentProfileFromCookies(context))).catch(() => null)
+      const currentProfile: CurrentProfile | null = await getCurrentProfileFromSession(
+        context
+      )
+        .catch(() => getCurrentProfileFromCookies(context))
+        .catch(() => null)
 
       if (!isLogged(currentProfile)) {
         return null
       }
 
-      context.vtex.currentProfile = await validatedProfile(context, currentProfile as CurrentProfile)
+      context.vtex.currentProfile = await validatedProfile(
+        context,
+        currentProfile as CurrentProfile
+      )
 
       return resolve(root, args, context, info)
     }
@@ -42,9 +48,9 @@ function getCurrentProfileFromSession(
 
     return profile
       ? ({
-        email: profile && profile.email,
-        userId: profile && profile.id,
-      } as CurrentProfile)
+          email: profile && profile.email,
+          userId: profile && profile.id,
+        } as CurrentProfile)
       : null
   })
 }
@@ -53,17 +59,17 @@ async function getCurrentProfileFromCookies(
   context: Context
 ): Promise<CurrentProfile | null> {
   const {
-    dataSources: { profile, identity },
-    vtex: { account },
+    dataSources: { identity },
+    clients: { profile },
+    vtex: { adminUserAuthToken, storeUserAuthToken },
     request: {
       headers: { cookie },
     },
   } = context
-
   const parsedCookies = parseCookie(cookie || '')
 
-  const userToken = parsedCookies[`VtexIdclientAutCookie_${account}`]
-  const adminToken = parsedCookies[`VtexIdclientAutCookie`]
+  const userToken = storeUserAuthToken
+  const adminToken = adminUserAuthToken
 
   if (userToken) {
     return identity
@@ -84,23 +90,35 @@ async function getCurrentProfileFromCookies(
     const customerEmail = parsedCookies['vtex-impersonated-customer-email']
 
     return profile
-      .getProfileInfo(customerEmail)
+      .getProfileInfo({ email: customerEmail, userId: '' })
       .then(({ email, userId }) => ({ email, userId }))
   }
 
   return null
 }
 
-async function validatedProfile(context: Context, currentProfile: CurrentProfile): Promise<CurrentProfile> {
+async function validatedProfile(
+  context: Context,
+  currentProfile: CurrentProfile
+): Promise<CurrentProfile> {
   const {
-    dataSources: { profile },
+    clients: { profile },
   } = context
 
-  const { id, userId } = await profile.getProfileInfo(currentProfile.email, 'id')
+  const { id, userId } = (await profile
+    .getProfileInfo(currentProfile, 'id')
+    .catch(() => {})) || { id: '', userId: '' } // 404 case.
 
   if (!id) {
     // doesn't have a profile, create one
-    await profile.updateProfileInfo(currentProfile.email, { email: currentProfile.email, userId })
+    return profile
+      .createProfile({
+        email: currentProfile.email,
+        userId,
+      })
+      .then(({ profileId }: any) =>
+        profile.getProfileInfo({ userId: profileId, email: '' })
+      )
   }
 
   return { userId, email: currentProfile.email }
@@ -108,13 +126,13 @@ async function validatedProfile(context: Context, currentProfile: CurrentProfile
 
 function isValidCallcenterOperator(context: Context, email: string) {
   const {
-    dataSources: { callcenterOperator, licenseManager },
+    clients: { callCenterOperator, licenseManager },
   } = context
 
   return licenseManager
-    .getAccountId()
-    .then(id =>
-      callcenterOperator.isValidCallcenterOperator({ email, accountId: id })
+    .getAccountData()
+    .then(({ id }: any) =>
+      callCenterOperator.isValidCallcenterOperator({ email, accountId: id })
     )
 }
 

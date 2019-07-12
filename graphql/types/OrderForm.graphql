@@ -2,6 +2,7 @@ type OrderForm {
   """ orderFormId is used as cacheId """
   cacheId: ID
   orderFormId: String
+  customData: CustomData
   value: Float
   items: [OrderFormItem]
   salesChannel: String
@@ -21,6 +22,18 @@ type OrderForm {
   checkedInPickupPointId: String
   pickupPointCheckedIn: PickupPoint
 }
+
+type CustomData {
+  customApps: [CustomApp]
+}
+
+scalar CustomFields
+type CustomApp {
+  fields: CustomFields
+  id: String
+  major: Int
+}
+
 
 type StorePreferencesData {
   countryCode: String
@@ -63,6 +76,20 @@ type OrderFormItem {
   seller: String
   """ Item index on cart """
   cartIndex: Int
+  """ Category ids on orderFormItem """
+  productCategoryIds: String
+  """ Price tags on orderFormItem """
+  priceTags: [PriceTags]
+  """ measurementUnit on orderFormItem """
+  measurementUnit: String
+}
+
+type PriceTags {
+  identifier: String
+  isPercentual: Boolean
+  name: String
+  rawValue: Float
+  value: Int
 }
 
 type AssemblyOptionItem {

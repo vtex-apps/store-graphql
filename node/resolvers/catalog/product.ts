@@ -1,7 +1,20 @@
-import { compose, last, map, omit, propOr, reject, reverse, split, toPairs, zip } from 'ramda'
+import {
+  compose,
+  last,
+  map,
+  omit,
+  propOr,
+  reject,
+  reverse,
+  split,
+  toPairs,
+  length,
+} from 'ramda'
+import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toProductIOMessage } from './../../utils/ioMessage'
+import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -31,21 +44,54 @@ const knownNotPG = [
   'productReference',
 ]
 
-const removeTrailingSlashes = (str: string) => str.endsWith('/')
-  ? str.slice(0, str.length-1)
-  : str
+const removeTrailingSlashes = (str: string) =>
+  str.endsWith('/') ? str.slice(0, str.length - 1) : str
 
-const productCategoriesToCategoryTree = (
-  {categories, categoriesIds}: {categories: string[], categoriesIds: string[]}
-) => compose<[string, string][], {id: number, name: string}[], {id: number, name: string}[]>(
-  reverse,
-  map(([idTree, categoryTree]) => ({
-    id: Number(last(split('/', removeTrailingSlashes(idTree)))),
-    name: String(last(split('/', removeTrailingSlashes(categoryTree)))),
-  }))
-)(zip(categoriesIds, categories))
+const removeStartingSlashes = (str: string) =>
+  str.startsWith('/') ? str.slice(1) : str
+
+const parseId = compose(
+  Number,
+  last,
+  split('/'),
+  removeTrailingSlashes
+)
+
+const getCategoryLevel = compose(
+  length,
+  split('/'),
+  removeTrailingSlashes,
+  removeStartingSlashes
+)
+
+const productCategoriesToCategoryTree = async (
+  {
+    categories,
+    categoriesIds,
+  }: { categories: string[]; categoriesIds: string[] },
+  _: any,
+  { clients: { catalog }, vtex: { account } }: Context
+) => {
+  if (!categories || !categoriesIds) {
+    return []
+  }
+  const reversedIds = reverse(categoriesIds)
+  if (!Functions.isGoCommerceAcc(account)) {
+    return reversedIds.map(categoryId => catalog.category(parseId(categoryId)))
+  }
+  const level = Math.max(...reversedIds.map(getCategoryLevel))
+  const categoriesTree = await catalog.categories(level)
+  const categoryMap = buildCategoryMap(categoriesTree)
+  const mappedCategories = reversedIds.map(id => categoryMap[parseId(id)]).filter(Boolean)
+
+  return mappedCategories.length ? mappedCategories : null
+}
 
 export const resolvers = {
+  Offer: {
+    teasers: propOr([], 'Teasers'),
+    discountHighlights: propOr([], 'DiscountHighLight')
+  },
   Product: {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
@@ -55,16 +101,14 @@ export const resolvers = {
     description: (
       { description, productId }: any,
       _: any,
-      {clients: {segment}}: Context
-    ) =>
-      toProductIOMessage('description')(segment, description, productId),
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('description')(segment, description, productId),
 
     productName: (
       { productName, productId }: any,
       _: any,
-      {clients: {segment}}: Context
-    ) =>
-      toProductIOMessage('name')(segment, productName, productId),
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('name')(segment, productName, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -119,5 +163,5 @@ export const resolvers = {
   },
   OnlyProduct: {
     categoryTree: productCategoriesToCategoryTree,
-  }
+  },
 }

@@ -1,16 +1,21 @@
+import { Functions } from '@gocommerce/utils'
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
 import { all } from 'bluebird'
 import {
   compose,
   equals,
-  find,
+  filter,
   head,
-  last,
+  isEmpty,
+  isNil,
+  join,
+  map,
   path,
   prop,
   split,
   test,
   toLower,
+  zip,
 } from 'ramda'
 
 import { toSearchTerm } from '../../utils/ioMessage'
@@ -21,24 +26,77 @@ import { resolvers as discountResolvers } from './discount'
 import { resolvers as facetsResolvers } from './facets'
 import { resolvers as itemMetadataResolvers } from './itemMetadata'
 import { resolvers as itemMetadataUnitResolvers } from './itemMetadataUnit'
+import { resolvers as itemMetadataPriceTableItemResolvers } from './itemMetadataPriceTableItem'
 import { resolvers as offerResolvers } from './offer'
 import { resolvers as productResolvers } from './product'
+import { resolvers as productSearchResolvers } from './productSearch'
 import { resolvers as recommendationResolvers } from './recommendation'
 import { resolvers as searchResolvers } from './search'
+import { resolvers as breadcrumbResolvers } from './searchBreadcrumb'
 import { resolvers as skuResolvers } from './sku'
-import { Slugify } from './slug'
+import {
+  CatalogCrossSellingTypes,
+  findCategoryInTree,
+  getBrandFromSlug,
+  searchContextGetCategory,
+  translatePageType,
+} from './utils'
+import { catalogSlugify } from './slug'
 
 interface SearchContext {
   brand: string | null
-  category: string | null
+  category: string | number | null
   contextKey: string
 }
 
 interface SearchContextParams {
-  brand: string
-  department: string
-  category: string
-  subcategory: string
+  brand?: string
+  department?: string
+  category?: string
+  subcategory?: string
+}
+
+interface ProductIndentifier {
+  field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
+  value: string
+}
+
+interface ProductArgs {
+  slug?: string
+  identifier?: ProductIndentifier
+}
+
+interface PageTypeArgs {
+  path: string
+  query: string
+}
+
+enum CrossSellingInput {
+  view = 'view',
+  buy = 'buy',
+  similars = 'similars',
+  viewAndBought = 'viewAndBought',
+  suggestions = 'suggestions',
+  accessories = 'accessories',
+}
+
+interface ProductRecommendationArg {
+  identifier?: ProductIndentifier
+  type?: CrossSellingInput
+}
+
+interface ProductsByIdentifierArgs {
+  field: 'id' | 'ean' | 'reference' | 'sku'
+  values: [string]
+}
+
+const inputToCatalogCrossSelling = {
+  [CrossSellingInput.buy]: CatalogCrossSellingTypes.whoboughtalsobought,
+  [CrossSellingInput.view]: CatalogCrossSellingTypes.whosawalsosaw,
+  [CrossSellingInput.similars]: CatalogCrossSellingTypes.similars,
+  [CrossSellingInput.viewAndBought]: CatalogCrossSellingTypes.whosawalsobought,
+  [CrossSellingInput.accessories]: CatalogCrossSellingTypes.accessories,
+  [CrossSellingInput.suggestions]: CatalogCrossSellingTypes.suggestions,
 }
 
 /**
@@ -59,56 +117,114 @@ export const extractSlug = (item: any) => {
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
-const lastSegment = compose<string, string[], string>(
-  last,
-  split('/')
+const brandFromList = async (
+  slug: string,
+  catalog: Context['clients']['catalog']
+) => {
+  const brandFromList = await getBrandFromSlug(toLower(slug), catalog)
+  return brandFromList ? brandFromList.id : null
+}
+
+const getBrandId = async (
+  brand: string | undefined,
+  catalog: Context['clients']['catalog'],
+  isVtex: boolean,
+  logger: Context['clients']['logger']
+) => {
+  if (!brand) {
+    return null
+  }
+  if (!isVtex) {
+    return brandFromList(brand, catalog)
+  }
+  const slugified = catalogSlugify(brand)
+  const brandPagetype = await catalog.pageType(slugified).catch(() => null)
+  if (!brandPagetype) {
+    logger.info(`brand ${brand}, slug ${slugified}`, 'pagetype-brand-error')
+  }
+  if (!brandPagetype || brandPagetype.pageType !== 'Brand') {
+    return brandFromList(brand, catalog)
+  }
+  return brandPagetype.id
+}
+
+type TupleString = [string, string]
+
+const isTupleMap = compose<TupleString, string, boolean>(
+  equals('c'),
+  prop('1')
 )
 
-function findInTree(tree: Category[], values: string[], index = 0): any {
-  for (const node of tree) {
-    const slug = lastSegment(node.url)
-    if (slug.toUpperCase() === values[index].toUpperCase()) {
-      if (index === values.length - 1) {
-        return node
-      }
-      return findInTree(node.children, values, index + 1)
+const categoriesOnlyQuery = compose<
+  TupleString[],
+  TupleString[],
+  string[],
+  string
+>(
+  join('/'),
+  map(prop('0')),
+  filter(isTupleMap)
+)
+
+const getAndParsePagetype = async (path: string, ctx: Context) => {
+  const pagetype = await ctx.clients.catalog.pageType(path).catch(() => null)
+  if (!pagetype) {
+    return { titleTag: null, metaTagDescription: null }
+  }
+  return {
+    titleTag: pagetype.title || pagetype.name,
+    metaTagDescription: pagetype.metaTagDescription,
+  }
+}
+
+const getCategoryMetadata = async (
+  { map, query }: SearchArgs,
+  ctx: Context
+) => {
+  const {
+    vtex: { account },
+  } = ctx
+  const queryAndMap: TupleString[] = zip(
+    (query || '').split('/'),
+    (map || '').split(',')
+  )
+  const cleanQuery = categoriesOnlyQuery(queryAndMap)
+
+  if (Functions.isGoCommerceAcc(account)) {
+    // GoCommerce does not have pagetype query implemented yet
+    const category =
+      findCategoryInTree(
+        await queries.categories(
+          {},
+          { treeLevel: cleanQuery.split('/').length },
+          ctx
+        ),
+        cleanQuery.split('/')
+      ) || {}
+    return {
+      metaTagDescription: path(['MetaTagDescription'], category),
+      titleTag: path(['Title'], category) || path(['Name'], category),
     }
   }
-  return {}
+
+  return getAndParsePagetype(cleanQuery, ctx)
 }
-/** Get Category metadata for the search/productSearch query
- *
- */
-const categoryMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
-  const { query } = args
-  const category = findInTree(
-    await queries.categories(_, { treeLevel: query.split('/').length }, ctx),
-    query.split('/')
-  )
-  return {
-    metaTagDescription: path(['MetaTagDescription'], category),
-    titleTag: path(['Title'], category) || path(['Name'], category),
+
+const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
+  const {
+    vtex: { account },
+    clients: { catalog },
+  } = ctx
+  const cleanQuery = head(split('/', query || '')) || ''
+
+  if (Functions.isGoCommerceAcc(account)) {
+    const brand = (await getBrandFromSlug(toLower(cleanQuery), catalog)) || {}
+    return {
+      metaTagDescription: path(['metaTagDescription'], brand),
+      titleTag: path(['title'], brand) || path(['name'], brand),
+    }
   }
-}
-/** Get brand metadata for the search/productSearch query
- *
- */
-const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Metadata> => {
-  const brands = await queries.brands(_, { ...args }, ctx)
-  const brandName = toLower(last(args.query.split('/')) || '')
-  const brand = find(
-    compose(
-      equals(brandName),
-      toLower,
-      Slugify,
-      prop('name') as any
-    ),
-    brands
-  ) || {}
-  return {
-    metaTagDescription: path(['metaTagDescription'], brand),
-    titleTag: path(['title'], brand) || path(['name'], brand),
-  }
+  return getAndParsePagetype(cleanQuery, ctx)
 }
 
 /**
@@ -118,35 +234,26 @@ const brandMetaData = async (_: any, args: ProductsArgs, ctx: any): Promise<Meta
  * @param args
  * @param ctx
  */
-const searchMetaData = async (_: any, args: ProductsArgs, ctx: any) => {
-  const { map } = args
-  const lastMap = last(map.split(','))
-
-  if (lastMap === 'c') {
-    return categoryMetaData(_, args, ctx)
+const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
+  const map = args.map || ''
+  const firstMap = head(map.split(','))
+  if (firstMap === 'c') {
+    return getCategoryMetadata(args, ctx)
   }
-  if (lastMap === 'b') {
-    return brandMetaData(_, args, ctx)
+  if (firstMap === 'b') {
+    return getBrandMetadata(args, ctx)
   }
   return { titleTag: null, metaTagDescription: null }
 }
 
-/** TODO: This method should be removed in the next major.
- * @author Ana Luiza
- */
-async function getProductBySlug(slug: string, catalog: any) {
-  const products = await catalog.product(slug)
-  if (products.length > 0) {
-    return head(products)
-  }
-  throw new NotFoundError('No product was found with requested sku')
-}
-
-const translateToStoreDefaultLanguage = async (clients: Context['clients'], term: string): Promise<string> => {
+const translateToStoreDefaultLanguage = async (
+  clients: Context['clients'],
+  term: string
+): Promise<string> => {
   const { segment, messages } = clients
-  const [{cultureInfo: to}, {cultureInfo: from}] = await all([
+  const [{ cultureInfo: to }, { cultureInfo: from }] = await all([
     segment.getSegmentByToken(null),
-    segment.getSegment()
+    segment.getSegment(),
   ])
   return from && from !== to
     ? messages.translate(to, [toSearchTerm(term, from)]).then(head)
@@ -160,21 +267,30 @@ export const fieldResolvers = {
   ...facetsResolvers,
   ...itemMetadataResolvers,
   ...itemMetadataUnitResolvers,
+  ...itemMetadataPriceTableItemResolvers,
   ...offerResolvers,
   ...discountResolvers,
   ...productResolvers,
   ...recommendationResolvers,
   ...searchResolvers,
   ...skuResolvers,
+  ...breadcrumbResolvers,
+  ...productSearchResolvers,
 }
+
+const isValidProductIdentifier = (identifier: ProductIndentifier | undefined) =>
+  !!identifier && !isNil(identifier.value) && !isEmpty(identifier.value)
 
 export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
       clients,
     } = ctx
-    const translatedTerm = await translateToStoreDefaultLanguage(clients, args.searchTerm)
+    const translatedTerm = await translateToStoreDefaultLanguage(
+      clients,
+      args.searchTerm
+    )
     const { itemsReturned } = await catalog.autocomplete({
       maxRows: args.maxRows,
       searchTerm: translatedTerm,
@@ -185,41 +301,59 @@ export const queries = {
     }
   },
 
-  facets: async (_: any, { facets, query, map, hideUnavailableItems }: FacetsArgs, ctx: Context) => {
+  facets: async (
+    _: any,
+    { facets, query, map, hideUnavailableItems }: FacetsArgs,
+    ctx: Context
+  ) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
       clients,
     } = ctx
     let result
-    const translatedQuery = await translateToStoreDefaultLanguage(clients, query)
+    const translatedQuery = await translateToStoreDefaultLanguage(
+      clients,
+      query
+    )
     const segmentData = ctx.vtex.segment
-    const salesChannel = segmentData && segmentData.channel.toString() || ''
+    const salesChannel = (segmentData && segmentData.channel.toString()) || ''
 
-    const unavailableString =
-       hideUnavailableItems ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1` : ''
+    const unavailableString = hideUnavailableItems
+      ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
+      : ''
     if (facets) {
       result = await catalog.facets(facets)
     } else {
-      result = await catalog.facets(`${translatedQuery}?map=${map}${unavailableString}`)
+      result = await catalog.facets(
+        `${translatedQuery}?map=${map}${unavailableString}`
+      )
     }
     result.queryArgs = {
       query: translatedQuery,
-      map
+      map,
     }
     return result
   },
 
-  product: async (_: any, args: any, ctx: Context) => {
+  product: async (_: any, rawArgs: ProductArgs, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      vtex: { account },
+      clients: { catalog },
     } = ctx
-    // TODO this is only for backwards compatibility. Should be removed in the next major.
-    if (args.slug) {
-      return getProductBySlug(args.slug, catalog)
+
+    const args =
+      rawArgs &&
+      isValidProductIdentifier(rawArgs.identifier) &&
+      !Functions.isGoCommerceAcc(account)
+        ? rawArgs
+        : { identifier: { field: 'slug', value: rawArgs.slug! } }
+
+    if (!args.identifier) {
+      throw new UserInputError('No product identifier provided')
     }
 
     const { field, value } = args.identifier
-    let products = []
+    let products = [] as Product[]
 
     switch (field) {
       case 'id':
@@ -243,12 +377,14 @@ export const queries = {
       return head(products)
     }
 
-    throw new NotFoundError(`No product was found with requested ${field}`)
+    throw new NotFoundError(
+      `No product was found with requested ${field} ${JSON.stringify(args)}`
+    )
   },
 
   products: async (_: any, args: any, ctx: Context) => {
     const {
-      dataSources: { catalog },
+      clients: { catalog },
     } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
@@ -259,55 +395,97 @@ export const queries = {
     return catalog.products(args)
   },
 
-  productSearch: async (_: any, args: ProductsArgs, ctx: Context) => {
+  productsByIdentifier: async (
+    _: any,
+    args: ProductsByIdentifierArgs,
+    ctx: Context
+  ) => {
     const {
-      dataSources: { catalog },
-      clients,
+      clients: { catalog },
     } = ctx
-    const query = await translateToStoreDefaultLanguage(clients, args.query)
+
+    let products = [] as Product[]
+    const { field, values } = args
+
+    switch (field) {
+      case 'id':
+        products = await catalog.productsById(values)
+        break
+      case 'ean':
+        products = await catalog.productsByEan(values)
+        break
+      case 'reference':
+        products = await catalog.productsByReference(values)
+        break
+      case 'sku':
+        products = await catalog.productBySku(values)
+        break
+    }
+
+    if (products.length > 0) {
+      return products
+    }
+
+    throw new NotFoundError(`No products were found with requested ${field}`)
+  },
+
+  productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
+    const {
+      clients,
+      clients: { catalog },
+    } = ctx
+    console.log("<<<<<< " + JSON.stringify(args, null, 2))
+    const queryTerm = args.query
+    if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
+      throw new UserInputError(
+        `The query term contains invalid characters. query=${queryTerm}`
+      )
+    }
+    const query = await translateToStoreDefaultLanguage(
+      clients,
+      args.query || ''
+    )
     const translatedArgs = {
       ...args,
       query,
     }
-    const products = await queries.products(_, translatedArgs, ctx)
-    const pagingInfo = await catalog.productsPaging(translatedArgs)
-    const { titleTag, metaTagDescription } = await searchMetaData(
-      _,
-      translatedArgs,
-      ctx
-    )
-
+    const [productsRaw, searchMetaData] = await all([
+      catalog.products(args, true),
+      getSearchMetaData(_, translatedArgs, ctx),
+    ])
+    
     return {
-      titleTag,
-      metaTagDescription,
-      products,
-      recordsFiltered: pagingInfo.total,
-      paging: pagingInfo
+      translatedArgs,
+      searchMetaData,
+      productsRaw,
+      pageInfo: { from: args.from, to: args.to }
     }
   },
 
-  brand: async (_: any, { id }: {id?: number}, { dataSources: { catalog } }: Context) => {
-    const brands = await catalog.brands()
-    const brand = find(
-      compose(
-        equals(id),
-        prop('id') as any
-      ),
-      brands
-    )
+  brand: async (
+    _: any,
+    { id }: { id?: number },
+    { clients: { catalog } }: Context
+  ) => {
+    if (id == null) {
+      throw new ResolverWarning(`No brand ID provided`)
+    }
+
+    const brand = await catalog.brand(id)
+
     if (!brand) {
       throw new NotFoundError(`Brand not found`)
     }
     return brand
   },
 
-  brands: async (_: any, __: any, { dataSources: { catalog } }: Context) =>
+  brands: async (_: any, __: any, { clients: { catalog } }: Context) =>
     catalog.brands(),
 
   category: async (
     _: any,
     { id }: { id?: number },
-    { dataSources: { catalog } }: Context
+    { clients: { catalog } }: Context
   ) => {
     if (id == null) {
       throw new ResolverWarning(`No category ID provided`)
@@ -318,7 +496,7 @@ export const queries = {
   categories: async (
     _: any,
     { treeLevel }: { treeLevel: number },
-    { dataSources: { catalog } }: Context
+    { clients: { catalog } }: Context
   ) => catalog.categories(treeLevel),
 
   /** TODO: This method should be removed in the next major.
@@ -331,7 +509,7 @@ export const queries = {
       throw new UserInputError('Search query/map cannot be null')
     }
 
-    const { titleTag, metaTagDescription }: any = await searchMetaData(
+    const { titleTag, metaTagDescription }: any = await getSearchMetaData(
       _,
       args,
       ctx
@@ -347,42 +525,46 @@ export const queries = {
   searchContextFromParams: async (
     _: any,
     args: SearchContextParams,
-    { dataSources: { catalog } }: Context
+    { clients: { catalog, logger }, vtex: { account } }: Context
   ) => {
+    const isVtex = !Functions.isGoCommerceAcc(account)
     const response: SearchContext = {
       brand: null,
       category: null,
       contextKey: 'search',
     }
 
-    if (args.brand) {
-      const brands = await catalog.brands()
-      const found = brands.find(brand => brand.isActive && Slugify(brand.name) === args.brand)
-      response.brand = found ? found.id : null
-    }
-
-    if (args.department) {
-      const departments = await catalog.categories(2)
-      let found
-
-      found = departments.find((department) =>
-        department.url.endsWith(`/${args.department.toLowerCase()}`)
-      )
-      if (args.category && found) {
-        found = found.children.find(category =>
-          category.url.endsWith(`/${args.category.toLowerCase()}`)
-        )
-      }
-
-      if (args.subcategory && found) {
-        found = found.children.find(subcategory =>
-          subcategory.url.endsWith(`/${args.subcategory.toLowerCase()}`)
-        )
-      }
-
-      response.category = found ? found.id : null
-    }
-
+    const [brandId, categoryId] = await all([
+      getBrandId(args.brand, catalog, isVtex, logger),
+      searchContextGetCategory(args, catalog, isVtex, logger),
+    ])
+    response.brand = brandId
+    response.category = categoryId
     return response
+  },
+
+  pageType: async (_: any, { path, query }: PageTypeArgs, ctx: Context) => {
+    const response = await ctx.clients.catalog.pageType(path, query)
+    return {
+      id: response.id,
+      type: translatePageType(response.pageType),
+    }
+  },
+
+  productRecommendations: async (
+    _: any,
+    { identifier, type }: ProductRecommendationArg,
+    ctx: Context
+  ) => {
+    if (identifier == null || type == null) {
+      throw new UserInputError('Wrong input provided')
+    }
+    const catalogType = inputToCatalogCrossSelling[type]
+    let productId = identifier.value
+    if (identifier.field !== 'id') {
+      const product = await queries.product(_, { identifier }, ctx)
+      productId = product!.productId
+    }
+    return ctx.clients.catalog.crossSelling(productId, catalogType)
   },
 }

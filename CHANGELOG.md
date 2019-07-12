@@ -7,35 +7,374 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.73.3] - 2019-05-14
+## [2.93.1] - 2019-07-10
 ### Fixed
+- Avoid breaking call to `updateOrderFormMarketingData` if `marketingTags` is `null`.
+
+## [2.93.0] - 2019-07-10
+
+### Changed
+- Return the sales channel country as a default country on the `shipsTo` array of countries in **logistics** query.
+- Port LogisticsDataSource to a Janus Client. 
+
+## [2.92.0] - 2019-07-09
+
+## [2.91.0] - 2019-07-09
+
+### Added
+
+- **storeConfigs** query.
+
+## [2.90.8] - 2019-07-09
+
+### Changed
+- Port OMSDataSource to a Janus Client.
+
+## [2.90.7] - 2019-07-09
+
+## [2.90.6] - 2019-07-08
+
+### Fixed
+- Use a better resolver architecture to fetch assembly options prices and use checkout client instead of axios.
+
+## [2.90.5] - 2019-07-04
+
+### Added
+- added `teasers` and `discountHighlights` fields in `Product` type. 
+
+## [2.90.4] - 2019-07-04
+
+### Fix
+
+- Transform some **Profile** properties(`isCorporate`, `corporateName` and `tradeName`) to fit the needs of store-graphql contract and communication with `profile-system`.
+
+## [2.90.3] - 2019-07-04
+### Fixed
+- Protect against null arguments in productSearch.
+
+## [2.90.2] - 2019-07-04
+### Fixed
+- Find seller name for breadcrumb for map "sellerIds".
+- Fix for incorrect breadcrumb name on categories after non-category maps.
+
+## [2.90.1] - 2019-07-03
+### Changed
+- Uses slug in GoCommerce
+
+## [2.90.0] - 2019-07-02
+### Added
+- `productId` field to `Items` type
+
+## [2.89.2] - 2019-07-02
+
+### Added
+
+Added documentSchema query to make it possible for retrieving masterdata schema data
+
+## [2.89.1] - 2019-07-02
+### Fixed
+- Slugify brand and category names before calling pagetype query on `searchContextFromParams` resolver.
+- Reimplement custom slugify method to be closer to the catalog version.
+
+## [2.89.0] - 2019-07-02
+### Changed
+- Prefers `ProductUniqueIdentifier` over `slug` in product query
+
+## [2.88.4] - 2019-07-02
+
+### Changed
+
+- Improve performace at searchContextFromParams resolver.
+
+## [2.88.3] - 2019-07-02
+### Fixed
+- Fix Go Commerce corner case of products without valid categories in tree.
+
+## [2.88.2] - 2019-07-01
+
+### Changed
+
+- Performance improvements for productSearch and product category tree resolver.
+
+## [2.88.1] - 2019-06-28
+
+## [2.88.0] - 2019-06-28
+
+### Added
+
+- New pagetype query to identify by path and query the search page (brand, department..).
+
+## [2.87.1] - 2019-06-27
+
+### Fixed
+
+- Fixes geoCoordinates on `createAddress` and `updateAddress` mutations
+
+## [2.87.0] - 2019-06-26
+
+### Removed
+
+- Remove artificial synchronization of orderForm and session in preparation for transparent API support.
+
+## [2.86.1] - 2019-06-26
+
+### Fixed
+
+- Scalar type of `rawValue` of `PriceTags` type.
+
+## [2.86.0] - 2019-06-26
+
+### Added
+
+- `invoicedDate` into Order type.
+- `selectedSla` to `LogisticInfo` type.
+
+## [2.85.0] - 2019-06-26
+
+### Added
+
+- `productCategoryIds` into `OrderItem` type.
+
+## [2.84.1] - 2019-06-25
+
+### Fixed
+
+- Improvevements on search breadcrumb resolver regarding categories.
+- Decode name of search breadcrumb unit.
+
+## [2.84.0] - 2019-06-21
+
+### Added
+
+- `brandId` to `Product` type.
+- `imageUrl` to `Brand` type.
+
+## [2.83.4] - 2019-06-21
+
+### Fixed
+
+- Fix for products with categories in different trees.
+
+## [2.83.3] - 2019-06-21
+
+### Fixed
+
+- Problems in product/categoryTree resolver if there were / on the name of the cateogry.
+
+## [2.83.2] - 2019-06-18
+
+### Fixed
+
+- Proper fix for bug when trying to get category tree of undefined.
+
+## [2.83.1] - 2019-06-17
+
+### Fixed
+
+- Hotfix for "cannot get length of undefined" bug.
+
+## [2.83.0] - 2019-06-14
+
+### Added
+
+- `customData` attachment to type `orderForm`.
+- Fields `productCategoryIds`, `priceTags` and `measurementUnit` to type `OrderFormItem`.
+
+## [2.82.0] - 2019-06-14
+
+### Added
+
+- Field `deliveryIds` to ShippingSLA in the shipping Query.
+
+## [2.81.0] - 2019-06-12
+
+### Added
+
+- productsByIdentifier query and associated resolver to retrieve multiple products from an array of identifiers (EAN, reference code, etc)
+
+## [2.80.3] - 2019-06-12
+
+## [2.80.2] - 2019-06-11
+
+### Fixed
+
+- subscribeNewsletter mutation resolver not passing correct params to client.
+
+## [2.80.1] - 2019-06-10
+
+### Fixed
+
+- Corrected query string formats for `productByEan` and `productByReference` catalog client methods
+
+## [2.80.0] - 2019-06-07
+
+### Changed
+
+- Increase timeouts for external services like checkout and catalog
+
+## [2.79.2] - 2019-06-06
+
+### Changed
+
+- Use `session` client from `node-vtex-api`
+
+## [2.79.1] - 2019-06-05
+
+## [2.79.0] - 2019-06-04
+
+### Changed
+
+- Port `profile` datasource to an **JanusClient** and incresead it's timeout to 3 seconds.
+
+## [2.78.0] - 2019-06-04
+
+### Changed
+
+- Ports catalog datasource to client
+
+## [2.77.1] - 2019-05-29
+
+### Fixed
+
+- **profile** query creation when the profile doesn't exist already. Treating for emails with non uri char's like '+'.
+
+## [2.77.0] - 2019-05-24
+
+### Addded
+
+- `productRecommendations` query.
+
+### Fixed
+
+- Minor type fixes (removing `any`s).
+
+## [2.76.2] - 2019-05-23
+
+### Fixed
+
+- `createList` mutation not creating the documents in list's resolver.
+- `updateList` mutation not updating the documents in list's resolver.
+
+## [2.76.1] - 2019-05-23
+
+### Fixed
+
+- Eliminate two queries to catalog at the productSearch for products and recordFiltered.
+
+## [2.76.0] - 2019-05-22
+
+### Fixed
+
+- UTM and UTMI params in orderform.
+
+### Added
+
+- New field `utmParams` to query `getSession`.
+- New field `utmiParams` to query `getSession`.
+
+## [2.75.3] - 2019-05-22
+
+### Fixed
+
+- Throw error in `updateDocument` resolver if `id` field is null
+
+## [2.75.2] - 2019-05-21
+
+### Fixed
+
+- Use both slugify methods to find brand data on catalog queries.
+
+## [2.75.1] - 2019-05-21
+
+### Changed
+
+- Ported CallCenterOpDataSource to CallCenterOp IOClient.
+
+## [2.75.0] - 2019-05-20
+
+### Changed
+
+- Use better resolver architecture at productSearch query.
+
+### Added
+
+- breadcrum resolver at productSearch.
+
+## [2.74.4] - 2019-05-20
+
+### Fixed
+
+- **_updateProfilePicture_** mutation.
+
+## [2.74.3] - 2019-05-17
+
+## [2.74.2] - 2019-05-16
+
+### Fixed
+
+- Fix `orders` and `shipping` routes in Checkout Client.
+
+## [2.74.1] - 2019-05-16
+
+## Added
+
+- Check when user is impersonated in `getPasswordLastUpdate`
+
+## [2.74.0] - 2019-05-16
+
+### Fixed
+
+- `document` resolvers working according to the graphql schema.
+
+### Changed
+
+- Ported DocumentDataSource to MasterData IOClient
+- Ported CheckoutDataSource to Checkout IOClient
+
+## [2.73.3] - 2019-05-14
+
+### Fixed
+
 - Use filter for availability on facets query as well.
 
 ## [2.73.2] - 2019-05-14
+
 ### Fixed
+
 - Search metadata for Brands.
 
 ## [2.73.1] - 2019-05-13
+
 ### Fixed
+
 - Adds missing facets fields back after schema breaking change
 
 ## [2.73.0] - 2019-05-13
+
 ### Changed
+
 - Translate terms (with `Messages`) before sending them to search api for `productSearch` and `facets` resolvers
 
 ## [2.72.2] - 2019-05-10
+
 ### Fixed
+
 - Remove comma from invalid characters of product search.
 
 ## [2.72.1] - 2019-05-09
+
 ### Fixed
+
 - Remove slugify on facets when computing selected property.
 
 ## [2.72.0] - 2019-05-09
+
 ### Added
+
 - Autocomplete field resolvers for internationalization
 
 ### Changed
+
 - scope from SEGMENT to PUBLIC for Brand related queries
 - Splits Deparment, Brand etc types from Facets
 - Product id as translation provider id
@@ -51,6 +390,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Slugify facets when checking if is selected.
+  ]
 
 ## [2.71.1] - 2019-05-07
 

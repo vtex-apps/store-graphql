@@ -3,5 +3,11 @@ type ProductSearch {
   recordsFiltered: Int
   titleTag: String
   metaTagDescription: String
+  breadcrumb: [SearchBreadcrumb]
   paging: Paging
+}
+
+type SearchBreadcrumb {
+  name: String @translatable
+  href: String
 }

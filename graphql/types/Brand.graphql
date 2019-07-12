@@ -3,6 +3,8 @@ type Brand {
   cacheId: ID
   """ Brand id """
   id: Int
+  """ Brand logo """
+  imageUrl: String
   """ Text link"""
   slug: String
   """ Name of brand """

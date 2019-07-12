@@ -18,6 +18,7 @@ type MessageFields {
 
 type LogisticsInfo {
   itemIndex: String
+  selectedSla: String
   slas: [ShippingSLA]
 }
 
@@ -27,6 +28,15 @@ type ShippingSLA {
   price: Float
   shippingEstimate: String
   shippingEstimateDate: String
+  deliveryIds: [DeliveryIds]
+}
+
+type DeliveryIds {
+  courierId: String
+  warehouseId: String
+  dockId: String
+  courierName: String
+  quantity: Int
 }
 
 input ShippingItem {
