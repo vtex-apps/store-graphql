@@ -26,7 +26,7 @@ export const queries = {
     const { acronym, fields, page, pageSize, where, schema } = args
     const { clients: { masterdata } } = context
     const fieldsWithId = union(fields, ['id'])
-    console.log(">>>>> args : "+ JSON.stringify(args))
+
     const documentsRow = await masterdata.searchDocumentRaw(acronym, fieldsWithId, where, {
         page,
         pageSize,
