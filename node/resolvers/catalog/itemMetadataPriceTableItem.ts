@@ -25,7 +25,7 @@ export const resolvers = {
         priceTables: [priceTable],
         ...(isEmpty(marketingData) ? {} : { marketingData }),
       }
-      const orderForm = await checkout.simulation(payload)
+      const orderForm = (await checkout.simulation(payload)) as any
       const shouldCheckTotals =
         orderForm && path(['totals', 'length'], orderForm)
       return shouldCheckTotals

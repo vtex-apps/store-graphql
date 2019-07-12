@@ -10,7 +10,7 @@ interface Params {
   childs: OrderFormItem[]
   index: number
   assemblyOptionsMap: Record<string, AssemblyOption[]>
-  orderForm: any
+  orderForm: OrderForm
 }
 
 export const resolvers = {

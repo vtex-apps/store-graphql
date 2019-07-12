@@ -30,6 +30,10 @@ interface MetadataItem {
   detailUrl: string
   seller: string
   assemblyOptions: AssemblyOption[]
+  skuName: string
+  productId: string
+  refId: string
+  ean: string | null
 }
 interface AddedItem {
   choiceType: string

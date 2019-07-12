@@ -3,7 +3,7 @@ interface Params extends OrderFormItem {
     childs: OrderFormItem[]
     index: number
     assemblyOptionsMap: Record<string, AssemblyOption[]>
-    orderForm: any
+    orderForm: OrderForm
   }
 }
 
