@@ -214,7 +214,7 @@ export class Catalog extends AppClient {
       const segmentData = (this.context as CustomIOContext).segment
       salesChannel = (segmentData && segmentData.channel.toString()) || ''
     }
-    let url = `/pub/products/search/${sanitizedQuery}?compSpecs=true`
+    let url = `/pub/products/search/${sanitizedQuery}`
     if (category && !query) {
       url += `&fq=C:/${category}/`
     }
