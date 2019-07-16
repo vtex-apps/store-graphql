@@ -204,8 +204,8 @@ export const resolvers = {
         items.forEach(
           (item: any) => {
             item.productSpecifications = productSpecifications
-            item.productName = toProductIOMessage('productName')(segment, productName, productId)
-            item.productDescription = toProductIOMessage('productDescription')(segment, productDescription, productId)
+            item.productName = toProductIOMessage('name')(segment, productName, productId)
+            item.productDescription = toProductIOMessage('description')(segment, productDescription, productId)
             item.brandName = toProductIOMessage('brandName')(segment, brandName, productId)
           }
         )
