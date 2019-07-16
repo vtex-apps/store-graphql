@@ -144,16 +144,26 @@ export const resolvers = {
     titleTag: ({ productTitle }: any) => productTitle,
 
     specificationGroups: (product: any) => {
+      console.log(`------> product`, JSON.stringify([product], null, 2))
       const allSpecificationsGroups = propOr(
         [],
         'allSpecificationsGroups',
         product
       ).concat(['allSpecifications'])
+
+      const completeSpecifications = propOr([], 'completeSpecifications', product) as Record<string, string>[]
+      const specificationNameToId: Record<string, string> = {} 
+      completeSpecifications.forEach(({Name, FieldId}) => specificationNameToId[Name] = FieldId)
+
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,
           specifications: map(
-            (name: string) => ({ name, values: product[name] }),
+            (name: string) => ({
+              id: specificationNameToId[name],
+              name,
+              values: product[name],
+            }),
             product[groupName] || []
           ),
         })

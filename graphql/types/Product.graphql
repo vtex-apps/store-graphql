@@ -205,11 +205,12 @@ type Image {
 }
 
 type SpecificationGroup {
-  name: String,
+  name: String
   specifications: [Property]
 }
 
 type Property {
+  id: ID
   name: String
   values: [String]
 }

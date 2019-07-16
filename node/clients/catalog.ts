@@ -62,12 +62,12 @@ export class Catalog extends AppClient {
 
   public product = (slug: string) =>
     this.get<Product[]>(
-      `/pub/products/search/${slug && slug.toLowerCase()}/p`,
+      `/pub/products/search/${slug && slug.toLowerCase()}/p?compSpecs=true`,
       { metric: 'catalog-product' }
     )
 
   public productByEan = (id: string) =>
-    this.get<Product[]>(`/pub/products/search?fq=alternateIds_Ean:${id}`, {
+    this.get<Product[]>(`/pub/products/search?fq=alternateIds_Ean:${id}&compSpecs=true`, {
       metric: 'catalog-productByEan',
     })
 
@@ -75,23 +75,23 @@ export class Catalog extends AppClient {
     this.get<Product[]>(
       `/pub/products/search?${ids
         .map(id => `fq=alternateIds_Ean:${id}`)
-        .join('&')}`,
+        .join('&')}${ids.length > 0 ? '&' : ''}compSpecs=true`,
       { metric: 'catalog-productByEan' }
     )
 
   public productById = (id: string) =>
-    this.get<Product[]>(`/pub/products/search?fq=productId:${id}`, {
+    this.get<Product[]>(`/pub/products/search?fq=productId:${id}&compSpecs=true`, {
       metric: 'catalog-productById',
     })
 
   public productsById = (ids: string[]) =>
     this.get<Product[]>(
-      `/pub/products/search?${ids.map(id => `fq=productId:${id}`).join('&')}`,
+      `/pub/products/search?${ids.map(id => `fq=productId:${id}`).join('&')}${ids.length > 0 ? '&' : ''}compSpecs=true`,
       { metric: 'catalog-productById' }
     )
 
   public productByReference = (id: string) =>
-    this.get<Product[]>(`/pub/products/search?fq=alternateIds_RefId:${id}`, {
+    this.get<Product[]>(`/pub/products/search?fq=alternateIds_RefId:${id}&compSpecs=true`, {
       metric: 'catalog-productByReference',
     })
 
@@ -99,7 +99,7 @@ export class Catalog extends AppClient {
     this.get<Product[]>(
       `/pub/products/search?${ids
         .map(id => `fq=alternateIds_RefId:${id}`)
-        .join('&')}`,
+        .join('&')}${ids.length > 0 ? '&' : ''}compSpecs=true`,
       { metric: 'catalog-productByReference' }
     )
 
@@ -107,7 +107,7 @@ export class Catalog extends AppClient {
     this.get<Product[]>(
       `/pub/products/search?${skuIds
         .map(skuId => `fq=skuId:${skuId}`)
-        .join('&')}`,
+        .join('&')}${skuIds.length > 0 ? '&' : ''}compSpecs=true`,
       { metric: 'catalog-productBySku' }
     )
 
@@ -214,7 +214,7 @@ export class Catalog extends AppClient {
       const segmentData = (this.context as CustomIOContext).segment
       salesChannel = (segmentData && segmentData.channel.toString()) || ''
     }
-    let url = `/pub/products/search/${sanitizedQuery}?`
+    let url = `/pub/products/search/${sanitizedQuery}?compSpecs=true`
     if (category && !query) {
       url += `&fq=C:/${category}/`
     }
