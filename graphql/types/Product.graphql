@@ -1,6 +1,6 @@
 type Product {
   """ Brand of the product """
-  brand: String
+  brand: IOMessage
   """ Id of the brand of the product """
   brandId: Int
   """ linkText is used as cacheId """
