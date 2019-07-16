@@ -13,7 +13,7 @@ import {
 import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toProductIOMessage } from './../../utils/ioMessage'
+import { toProductIOMessage, toBrandIOMessage } from './../../utils/ioMessage'
 import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
@@ -180,7 +180,7 @@ export const resolvers = {
     },
 
     items: (product: any, _: any, { clients: { segment } }: Context) => {
-      const { allSpecifications, items, productId, productName, description: productDescription, brand: brandName } = product
+      const { allSpecifications, items, productId, productName, description: productDescription, brand: brandName, brandId } = product
       let productSpecifications = new Array() as [productSpecification]
 
       (allSpecifications || []).forEach(
@@ -206,7 +206,7 @@ export const resolvers = {
             item.productSpecifications = productSpecifications
             item.productName = toProductIOMessage('name')(segment, productName, productId)
             item.productDescription = toProductIOMessage('description')(segment, productDescription, productId)
-            item.brandName = toProductIOMessage('brandName')(segment, brandName, productId)
+            item.brandName = toBrandIOMessage('name')(segment, brandName, brandId)
           }
         )
       }
