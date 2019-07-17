@@ -128,7 +128,7 @@ export const queries = {
       { page, pageSize }
     )) as any[]
 
-    const listsWithProducts = map(async list =>
+    const listsWithProducts = map(list =>
       queries.list(_, { id: list.id }, context), lists)
 
     return Promise.all(listsWithProducts)
