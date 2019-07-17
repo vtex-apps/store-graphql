@@ -163,7 +163,7 @@ type Offer {
   discountHighlights: [Discount!]
   teasers: [Teaser!]
   """List of gifts associated with the product"""
-  GiftSkuIds: [String]
+  giftSkuIds: [String]
 }
 
 type Teaser {
