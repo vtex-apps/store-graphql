@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Add `GiftSkuIds` field to the `Offer` schema
+- Add `giftSkuIds` field to the `Offer` schema
 
 ## [2.93.2] - 2019-07-12
 ### Added
