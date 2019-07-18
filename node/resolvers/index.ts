@@ -22,7 +22,10 @@ import {
   fieldResolvers as logisticsResolvers,
   queries as logisticsQueries,
 } from './logistics'
-import { queries as omsQueries } from './oms'
+import { 
+  queries as omsQueries,
+  fieldResolvers as omsFieldResolvers,
+} from './oms'
 import {
   fieldResolvers as profileFieldResolvers,
   mutations as profileMutations,
@@ -44,6 +47,7 @@ export const resolvers = {
   ...checkoutFieldResolvers,
   ...documentFieldResolvers,
   ...logisticsResolvers,
+  ...omsFieldResolvers,
   Mutation: {
     ...profileMutations,
     ...checkoutMutations,
