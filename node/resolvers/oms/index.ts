@@ -1,3 +1,4 @@
+import { propOr } from 'ramda'
 import { isUserLoggedIn } from '../../utils'
 
 export const queries = {
@@ -6,5 +7,12 @@ export const queries = {
     return isUserLoggedIn(ctx) ? oms.userLastOrder() : null
   },
 
-  order: (_: any, {id}: {id: string}, {clients: {oms}}: Context) => oms.order(id)
+  order: (_: any, { id }: { id: string }, { clients: { oms } }: Context) => oms.order(id)
+}
+
+export const fieldResolvers = {
+  OrderItemPaymentConnectorResponse: {
+    meoWalletReference: propOr(null, 'mb.reference'),
+    meoWalletEntity: propOr(null, 'mb.entity'),
+  }
 }
