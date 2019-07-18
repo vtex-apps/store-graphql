@@ -92,6 +92,8 @@ type OrderItemPaymentConnectorResponse {
   tid: String
   returnCode: String
   message: String
+  meoWalletReference: String
+  meoWalletEntity: String
 }
 
 type OrderItemShippingData {
