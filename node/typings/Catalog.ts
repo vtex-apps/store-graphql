@@ -103,7 +103,7 @@ interface Seller {
       Name: string
     }[]
     DiscountHighLight: any[]
-    GiftSkuIds: any[]
+    GiftSkuIds: string[]
     Teasers: any[]
     BuyTogether: any[]
     ItemMetadataAttachment: any[]
