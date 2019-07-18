@@ -118,24 +118,18 @@ export const queries = {
     context: Context
   ) => {
     const {
-      clients: { masterdata, catalog },
+      clients: { masterdata },
     } = context
 
     const lists = (await masterdata.searchDocuments<any>(
       acronymList,
-      fields,
+      ['id'],
       `owner=${owner}`,
       { page, pageSize }
     )) as any[]
 
-    const listsWithProducts = map(async list => {
-      const items = await getListItems(
-        path(['items'], list) || [],
-        catalog,
-        masterdata
-      )
-      return { ...list, items }
-    }, lists)
+    const listsWithProducts = map(list =>
+      queries.list(_, { id: list.id }, context), lists)
 
     return Promise.all(listsWithProducts)
   },
