@@ -92,9 +92,11 @@ type OrderItemPaymentConnectorResponse {
   tid: String
   returnCode: String
   message: String
-  meoWalletReference: String
-  meoWalletEntity: String
+  """Payment Connector Additional Data Response"""
+  additionalData: ConnectorAdditionalData
 }
+
+scalar ConnectorAdditionalData
 
 type OrderItemShippingData {
   logisticsInfo: [LogisticsInfo]

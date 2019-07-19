@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Add `mb.reference` and `mb.entity` in `connectorResponses` in `order`.
+- Add `additionalData` in `connectorResponses` in `order`.
 
 ## [2.97.1] - 2019-07-29
 ### Fixed
