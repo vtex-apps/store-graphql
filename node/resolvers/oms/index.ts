@@ -11,7 +11,7 @@ export const queries = {
 
 export const fieldResolvers = {
   OrderItemPaymentConnectorResponse: {
-    additionalData: ({ tid, returnCode, message, ...rest }) => rest
+    additionalData: ({ tid=null, returnCode=null, message=null, ...rest }) => rest
   }
 }
 
