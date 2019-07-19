@@ -57,6 +57,7 @@ type OrderFormItem {
   detailUrl: String
   imageUrl: String
   skuName: String
+  productRefId: String
   quantity: Float
   uniqueId: String
   productId: String
