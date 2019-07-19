@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Field `producRefId` to `OrderFormItem`.
 - Field `productCategories` to `OrderFormItem`.
+- Field `additionalInfo` to `OrderFormItem`.
 
 ## [2.95.0] - 2019-07-18
 ### Fixed

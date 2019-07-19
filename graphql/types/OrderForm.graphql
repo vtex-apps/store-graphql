@@ -74,6 +74,7 @@ type OrderFormItem {
   isGift: Boolean
   parentItemIndex: Int
   parentAssemblyBinding: String
+  additionalInfo: ItemAdditionalInfo
   """
   Informations related to assembly options children of this item
   """
@@ -99,6 +100,10 @@ type OrderFormItem {
   measurementUnit on orderFormItem
   """
   measurementUnit: String
+}
+
+type ItemAdditionalInfo {
+  brandName: String
 }
 
 type PriceTags {
