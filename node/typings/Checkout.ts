@@ -28,6 +28,7 @@ interface OrderFormItem {
   name: string
   detailUrl: string
   imageUrl: string
+  productRefId: string
   skuName: string
   quantity: number
   uniqueId: string
