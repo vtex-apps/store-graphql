@@ -51,6 +51,8 @@ type CurrencyFormatInfo {
   startsWithCurrencySymbol: Boolean
 }
 
+scalar ProductCategories
+
 type OrderFormItem {
   id: ID
   name: String
@@ -88,6 +90,7 @@ type OrderFormItem {
   Category ids on orderFormItem
   """
   productCategoryIds: String
+  productCategories: ProductCategories
   """
   Price tags on orderFormItem
   """
