@@ -1,4 +1,3 @@
-import { propOr } from 'ramda'
 import { isUserLoggedIn } from '../../utils'
 
 export const queries = {
@@ -12,7 +11,7 @@ export const queries = {
 
 export const fieldResolvers = {
   OrderItemPaymentConnectorResponse: {
-    meoWalletReference: propOr(null, 'mb.reference'),
-    meoWalletEntity: propOr(null, 'mb.entity'),
+    additionalData: ({ tid, returnCode, message, ...rest }) => rest
   }
 }
+
