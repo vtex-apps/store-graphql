@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Capability of adding recursive assembly options on addItems mutation.
+
+### Fixed
+- Check only on recently added items to add assembly options, preventing to add options to wrong father.
 
 ## [2.96.0] - 2019-07-19
 ### Added
