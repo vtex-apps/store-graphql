@@ -10,6 +10,7 @@ type ItemPriceTable {
 
 type PriceTableItem {
   id: String
+  assemblyId: String
   price: Int
 }
 
@@ -53,4 +54,5 @@ input AssemblyOptionInput {
   quantity: Int!
   assemblyId: String!
   seller: String!
+  options: [AssemblyOptionInput!]
 }

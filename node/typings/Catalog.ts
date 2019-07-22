@@ -60,6 +60,9 @@ interface Product {
   link: string
   description: string
   items: Item[]
+  itemMetadata: {
+    items: MetadataItem[]
+  }
 }
 
 interface Item {

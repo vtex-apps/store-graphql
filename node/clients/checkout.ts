@@ -7,15 +7,6 @@ import {
 } from '@vtex/api'
 import { checkoutCookieFormat, statusToError } from '../utils'
 
-export interface SimulationData {
-  country: string
-  items: { id: string; quantity: number | string; seller: string }[]
-  postalCode?: string
-  isCheckedIn?: boolean
-  priceTables?: string[]
-  marketingData?: Record<string, string>
-}
-
 export class Checkout extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -126,19 +117,18 @@ export class Checkout extends JanusClient {
     assemblyOptionsId: string,
     body: any
   ) =>
-    this.post(
+    this.post<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
       body,
       { metric: 'checkout-addAssemblyOptions' }
     )
-
   public removeAssemblyOptions = async (
     orderFormId: string,
     itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
-    this.delete(
+    this.delete<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
       { metric: 'checkout-removeAssemblyOptions', data: body }
     )
@@ -167,8 +157,8 @@ export class Checkout extends JanusClient {
   public orders = () =>
     this.get(this.routes.orders, { metric: 'checkout-orders' })
 
-  public simulation = (simulation: SimulationData) =>
-    this.post(
+  public simulation = (simulation: SimulationPayload) =>
+    this.post<OrderForm>(
       this.routes.simulation(this.getChannelQueryString()),
       simulation,
       {

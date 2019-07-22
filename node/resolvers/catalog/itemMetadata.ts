@@ -41,10 +41,11 @@ const getSimulationPayload = async (
 type PriceTableMap = Record<
   string,
   {
-    id: string
-    priceTable: string
-    seller: string
+    compositionItem: CompositionItem
     simulationPayload: SimulationPayload
+    items: MetadataItem[]
+    father: MetadataItem
+    assemblyOption: AssemblyOption
   }[]
 >
 
@@ -60,15 +61,22 @@ export const resolvers = {
         item => item.assemblyOptions.length > 0
       )
       const priceTableMap: PriceTableMap = {}
+
       for (const item of itemsWithAssembly) {
         const { assemblyOptions } = item
         for (const assemblyOption of assemblyOptions) {
           const { composition } = assemblyOption
           if (composition && composition.items) {
             for (const compItem of composition.items) {
-              const { id, priceTable, seller } = compItem
+              const { priceTable } = compItem
               const currentArray = priceTableMap[priceTable] || []
-              currentArray.push({ id, priceTable, seller, simulationPayload })
+              currentArray.push({
+                compositionItem: compItem,
+                simulationPayload,
+                items: itemsWithAssembly,
+                father: item,
+                assemblyOption,
+              })
               priceTableMap[priceTable] = currentArray
             }
           }
