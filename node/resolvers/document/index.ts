@@ -22,7 +22,7 @@ export const queries = {
     )(data)
   },
 
-  documentsWithPaging: async (_: any, args: DocumentsArgs, context: Context) => {
+  documentsWithPagination: async (_: any, args: DocumentsArgs, context: Context) => {
     const { acronym, fields, page, pageSize, where, schema } = args
     const { clients: { masterdata } } = context
     const fieldsWithId = union(fields, ['id'])
@@ -41,7 +41,7 @@ export const queries = {
         id: document.id,
         fields: mapKeyAndStringifiedValues(document)
         }))(documents),
-      paging: pageInfo
+      pagination: pageInfo
     }
   },
 

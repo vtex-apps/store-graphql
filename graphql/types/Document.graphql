@@ -34,7 +34,7 @@ input DocumentInput {
 
 type DocumentsPage {
   items: [Document]
-  paging: Paging
+  pagination: Pagination
 }
 
 type DocProperty {

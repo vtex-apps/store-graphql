@@ -333,7 +333,7 @@ type Query {
     """
   Search documents with pagination
   """
-  documentsWithPaging(
+  documentsWithPagination(
     """
     Schema name. e.g.: CL, AD
     """

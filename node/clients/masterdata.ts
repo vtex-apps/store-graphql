@@ -87,20 +87,14 @@ export class MasterData extends ExternalClient {
 
     const headerData = path(["headers"], rowData) as any
     const resourceHeader = path(["rest-content-range"], headerData)
-    const [ resource, total ] = (resourceHeader as string).split(' ')[1].split('/')
+    const pagingInfoSplitted = (resourceHeader as string).split(' ')[1].split('/')
     
-    const [ start, end ] = resource.split('-')
-    const perPage = (!pagination || !pagination.pageSize)? 0: pagination.pageSize
-
     return { 
       data: path(['data'], rowData),
       pageInfo: {
-        total,
+        total: pagingInfoSplitted && pagingInfoSplitted.length > 1? pagingInfoSplitted[1]: 0,
         perPage: pagination ? pagination.pageSize: 0,
-        pages: perPage? Math.ceil(parseInt(total) / perPage) : 0,
         page: pagination? pagination.page: 1,
-        from: start,
-        to: end,
       }
     }
   }
