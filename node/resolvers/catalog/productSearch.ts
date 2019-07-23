@@ -26,7 +26,7 @@ export const resolvers = {
       const quantity = resources.split('/')[1]
       return parseInt(quantity, 10)
     },
-    paging: ({ productsRaw, pageInfo }: ProductSearchParent) => {
+    pagination: ({ productsRaw, pageInfo }: ProductSearchParent) => {
       const {
         headers: { resources },
       } = productsRaw
@@ -34,17 +34,13 @@ export const resolvers = {
       const from = pageInfo && pageInfo.from? pageInfo.from: 0
       const to = pageInfo && pageInfo.to? pageInfo.to: 0
 
-      const [ resource, total ] = resources.split('/')
-      const [ start, end ] = resource.split('-')
+      const total = resources.split('/')
       const perPage = (to > from)? to - from + 1: 0
   
        return {
-        total,
+        total: total && total.length > 1? total[1]: 0,
         perPage,
-        pages: perPage? Math.ceil(total / perPage) : 0,
         page: perPage? Math.ceil(from / perPage) + 1 : 0,
-        from: (!from && from !== 0)? start: from,
-        to: (!to && to !== 0)? end: to,
       }
     },
     products: path(['productsRaw', 'data']),

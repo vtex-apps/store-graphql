@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Added pagination information along with product search
+- Pagination info along with product search
 
 ## [2.93.1] - 2019-07-10
 ### Fixed

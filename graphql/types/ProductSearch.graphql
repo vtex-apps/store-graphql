@@ -4,7 +4,7 @@ type ProductSearch {
   titleTag: String
   metaTagDescription: String
   breadcrumb: [SearchBreadcrumb]
-  paging: Paging
+  pagination: Pagination
 }
 
 type SearchBreadcrumb {
