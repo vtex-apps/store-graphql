@@ -2,7 +2,4 @@ type Pagination {
   page: Int!
   perPage: Int!
   total: Int!
-  pages: Int!
-  from: Int!
-  to: Int!
 }
