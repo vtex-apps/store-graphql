@@ -90,7 +90,9 @@ const getSimulationPayloadItemsForMultipleFromTree = (
     quantity: 1,
     seller: father.seller,
   }
+
   const basicItemQuantity = childCompositionItem.minQuantity || 1
+  const familyMinimum = assemblyOption.composition!.minQuantity
   const basicChildItem = {
     id: childCompositionItem.id,
     seller: childCompositionItem.seller,
@@ -98,6 +100,12 @@ const getSimulationPayloadItemsForMultipleFromTree = (
     parentItemIndex: 0,
     parentAssemblyBinding: assemblyOption.id,
   }
+
+  // Corner case that can be easily solved: when a single child can fill alone the whole group
+  if (childCompositionItem.maxQuantity >= familyMinimum) {
+    return [fatherPayloadItem, { ...basicChildItem, quantity: familyMinimum }]
+  }
+
   const siblings = fatherBasicTree.filter(
     ({ parentAssemblyBinding, parentItemIndex }) =>
       parentAssemblyBinding === assemblyOption.id && parentItemIndex === 0
@@ -201,6 +209,15 @@ export const resolvers = {
       for (const fatherAssemblyOption of father.assemblyOptions) {
         const assemblyId = fatherAssemblyOption.id
         if (!fatherAssemblyOption.composition) {
+          continue
+        }
+        const groupMinimum = fatherAssemblyOption.composition!.minQuantity
+        const itemsInitialsSum = fatherAssemblyOption.composition!.items.reduce(
+          (sum, item) => sum + item.initialQuantity,
+          0
+        )
+        // The basic tree will not contain children of this group
+        if (groupMinimum !== itemsInitialsSum) {
           continue
         }
         for (const compItem of fatherAssemblyOption.composition!.items) {

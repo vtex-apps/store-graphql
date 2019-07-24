@@ -9,6 +9,8 @@ import {
   omit,
   eqProps,
   map,
+  compose,
+  equals,
 } from 'ramda'
 
 export const CHOICE_TYPES = {
@@ -107,6 +109,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   const idsToAdd = Object.keys(joinedToAdd)
   const idsToRemove = Object.keys(joinedToRemove)
   let recentOrderForm = orderForm
+
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
     recentOrderForm = await checkout
@@ -118,6 +121,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
       )
       .catch(() => recentOrderForm)
   }
+
   for (const assemblyId of idsToRemove) {
     const parsedOptions = joinedToRemove[assemblyId]
     const response = await checkout
@@ -130,6 +134,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
       .catch(() => ({ data: recentOrderForm }))
     recentOrderForm = response.data
   }
+
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
     const itemsWithRecursiveOptions = parsedOptions.filter(
@@ -348,6 +353,11 @@ interface InitialItem extends CompositionItem {
   parentAssemblyBinding: string
 }
 
+const isAssemblyOptionToggle = compose<AssemblyOption, string, boolean>(
+  equals(CHOICE_TYPES.TOGGLE),
+  getItemChoiceType
+)
+
 export const buildRemovedOptions = (
   item: OrderFormItem,
   orderForm: OrderForm,
@@ -357,8 +367,11 @@ export const buildRemovedOptions = (
   if (!assemblyOptions) {
     return []
   }
+  // For now, it makes sense it should only work for toggle type of assembly options
+  const onlyToggleAssemblies = assemblyOptions.filter(isAssemblyOptionToggle)
+
   const itemsWithInitials: InitialItem[] = []
-  for (const assemblyOption of assemblyOptions) {
+  for (const assemblyOption of onlyToggleAssemblies) {
     if (assemblyOption.composition) {
       for (const compItem of assemblyOption.composition.items) {
         if (compItem.initialQuantity > 0) {
