@@ -8,19 +8,19 @@ interface Params {
     countryCode: string
   }
   items: MetadataItem[]
-  father: MetadataItem
+  parent: MetadataItem
   assemblyOption: AssemblyOption
 }
 
 // Generate a valid simulation list with this child, considering its a single item type
 const getSimulationPayloadItemsForSingleFromTree = (
-  father: MetadataItem,
+  parent: MetadataItem,
   childId: string,
   seller: string,
   parentAssemblyBinding: string
 ) => {
   return [
-    { id: father.id, quantity: 1, seller: father.seller },
+    { id: parent.id, quantity: 1, seller: parent.seller },
     {
       id: childId,
       seller,
@@ -33,16 +33,16 @@ const getSimulationPayloadItemsForSingleFromTree = (
 
 // Generate a valid simulation list with this child, considering its a TOGGLE item type
 const getSimulationPayloadItemsForToggleFromTree = (
-  father: MetadataItem,
+  parent: MetadataItem,
   childId: string,
   seller: string,
   assemblyOption: AssemblyOption,
-  fatherBasicTree: PayloadItem[]
+  parentBasicTree: PayloadItem[]
 ) => {
-  const fatherPayloadItem = {
-    id: father.id,
+  const parentPayloadItem = {
+    id: parent.id,
     quantity: 1,
-    seller: father.seller,
+    seller: parent.seller,
   }
   const basicChildItem = {
     id: childId,
@@ -51,13 +51,13 @@ const getSimulationPayloadItemsForToggleFromTree = (
     parentItemIndex: 0,
     parentAssemblyBinding: assemblyOption.id,
   }
-  const siblings = fatherBasicTree.filter(
+  const siblings = parentBasicTree.filter(
     ({ parentAssemblyBinding }) => parentAssemblyBinding === assemblyOption.id
   )
   const siblingCount = siblings.length
   // See if we can add this item, considering the group max quantity
   if (siblingCount < assemblyOption.composition!.maxQuantity) {
-    return [fatherPayloadItem, basicChildItem]
+    return [parentPayloadItem, basicChildItem]
   }
 
   // If there are siblings on the basic tree, remove it and add this child
@@ -70,25 +70,25 @@ const getSimulationPayloadItemsForToggleFromTree = (
   if (!brotherToBeRemoved) {
     return []
   }
-  const withoutBrother = fatherBasicTree.filter(
+  const withoutBrother = parentBasicTree.filter(
     ({ id, parentAssemblyBinding }) =>
       id !== brotherToBeRemoved.id &&
       parentAssemblyBinding !== brotherToBeRemoved.parentAssemblyBinding
   )
-  return [fatherPayloadItem, ...withoutBrother, basicChildItem]
+  return [parentPayloadItem, ...withoutBrother, basicChildItem]
 }
 
 // Generate a valid simulation list with this child, considering its a MULTIPLE item type
 const getSimulationPayloadItemsForMultipleFromTree = (
-  father: MetadataItem,
+  parent: MetadataItem,
   assemblyOption: AssemblyOption,
-  fatherBasicTree: PayloadItem[],
+  parentBasicTree: PayloadItem[],
   childCompositionItem: CompositionItem
 ) => {
-  const fatherPayloadItem = {
-    id: father.id,
+  const parentPayloadItem = {
+    id: parent.id,
     quantity: 1,
-    seller: father.seller,
+    seller: parent.seller,
   }
 
   const basicItemQuantity = childCompositionItem.minQuantity || 1
@@ -103,10 +103,10 @@ const getSimulationPayloadItemsForMultipleFromTree = (
 
   // Corner case that can be easily solved: when a single child can fill alone the whole group
   if (childCompositionItem.maxQuantity >= familyMinimum) {
-    return [fatherPayloadItem, { ...basicChildItem, quantity: familyMinimum }]
+    return [parentPayloadItem, { ...basicChildItem, quantity: familyMinimum }]
   }
 
-  const siblings = fatherBasicTree.filter(
+  const siblings = parentBasicTree.filter(
     ({ parentAssemblyBinding, parentItemIndex }) =>
       parentAssemblyBinding === assemblyOption.id && parentItemIndex === 0
   )
@@ -114,7 +114,7 @@ const getSimulationPayloadItemsForMultipleFromTree = (
   const siblingCount = siblings.reduce((sum, sib) => sum + sib.quantity, 0)
   const siblingsAllowed = assemblyOption.composition!.maxQuantity - siblingCount
   if (basicItemQuantity <= siblingsAllowed) {
-    return [fatherPayloadItem, ...siblings, basicChildItem]
+    return [parentPayloadItem, ...siblings, basicChildItem]
   }
 
   let currentSiblingCount = siblingCount
@@ -135,7 +135,7 @@ const getSimulationPayloadItemsForMultipleFromTree = (
   }
 
   const nonEmptySiblings = siblings.filter(({ quantity }) => quantity > 0)
-  return [fatherPayloadItem, ...nonEmptySiblings, basicChildItem]
+  return [parentPayloadItem, ...nonEmptySiblings, basicChildItem]
 }
 
 const simulateAndGetPrice = async (
@@ -189,7 +189,7 @@ export const resolvers = {
     assemblyId: path(['assemblyOption', 'id']),
     id: path(['compositionItem', 'id']),
     price: async (
-      { father, simulationPayload, assemblyOption, compositionItem }: Params,
+      { parent, simulationPayload, assemblyOption, compositionItem }: Params,
       _: any,
       { clients: { checkout } }: Context
     ) => {
@@ -202,11 +202,11 @@ export const resolvers = {
         ...(isEmpty(marketingData) ? {} : { marketingData }),
       }
 
-      const fatherBasicTree = [
-        { id: father.id, seller: father.seller, quantity: 1 },
+      const parentBasicTree = [
+        { id: parent.id, seller: parent.seller, quantity: 1 },
       ] as PayloadItem[]
 
-      for (const fatherAssemblyOption of father.assemblyOptions) {
+      for (const fatherAssemblyOption of parent.assemblyOptions) {
         const assemblyId = fatherAssemblyOption.id
         if (!fatherAssemblyOption.composition) {
           continue
@@ -222,7 +222,7 @@ export const resolvers = {
         }
         for (const compItem of fatherAssemblyOption.composition!.items) {
           if (compItem.initialQuantity > 0) {
-            fatherBasicTree.push({
+            parentBasicTree.push({
               id: compItem.id,
               quantity: compItem.initialQuantity,
               seller: compItem.seller,
@@ -233,14 +233,14 @@ export const resolvers = {
         }
       }
 
-      const itemInTree = fatherBasicTree.find(
+      const itemInTree = parentBasicTree.find(
         item =>
           id === item.id && assemblyOption.id === item.parentAssemblyBinding
       )
       // If item is already in tree, just simulate and return the price
       if (itemInTree) {
         return simulateAndGetPrice(
-          { ...payload, items: fatherBasicTree },
+          { ...payload, items: parentBasicTree },
           checkout,
           id,
           assemblyOption.id
@@ -251,8 +251,8 @@ export const resolvers = {
       const newSimulationPayloadItems = getSimulationPayloadItems(
         assemblyOption,
         compositionItem,
-        father,
-        fatherBasicTree
+        parent,
+        parentBasicTree
       )
       return simulateAndGetPrice(
         { ...payload, items: newSimulationPayloadItems },

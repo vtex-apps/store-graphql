@@ -44,7 +44,7 @@ type PriceTableMap = Record<
     compositionItem: CompositionItem
     simulationPayload: SimulationPayload
     items: MetadataItem[]
-    father: MetadataItem
+    parent: MetadataItem
     assemblyOption: AssemblyOption
   }[]
 >
@@ -74,7 +74,7 @@ export const resolvers = {
                 compositionItem: compItem,
                 simulationPayload,
                 items: itemsWithAssembly,
-                father: item,
+                parent: item,
                 assemblyOption,
               })
               priceTableMap[priceTable] = currentArray
