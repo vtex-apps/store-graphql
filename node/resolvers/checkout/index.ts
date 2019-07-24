@@ -225,10 +225,8 @@ export const mutations: Record<string, Resolver> = {
     const withOptions = items.filter(
       ({ options }) => !!options && options.length > 0
     )
-    // console.log('teste ADDING:', JSON.stringify(items))
-    // console.log('teste ADDING:', JSON.stringify(cleanItems))
+
     const addItem = await checkout.addItem(orderFormId, cleanItems)
-    // console.log('teste ad item worked: add', addItem)
 
     await addOptionsForItems(withOptions, checkout, addItem, previousItems)
 
