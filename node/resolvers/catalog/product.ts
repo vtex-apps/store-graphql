@@ -168,7 +168,7 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => toProductIOMessage('titleTag')(segment, productTitle, productId),
 
-    specificationGroups: (product: any) => {
+    specificationGroups: (product: any, _: any, { clients: { segment } }: Context) => {
       const allSpecificationsGroups = propOr(
         [],
         'allSpecificationsGroups',
@@ -176,11 +176,15 @@ export const resolvers = {
       ).concat(['allSpecifications'])
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
-          name: groupName,
-          specifications: map(
-            (name: string) => ({ name, values: product[name] }),
-            product[groupName] || []
-          ),
+          name: toSpecificationIOMessage('groupName')(segment, groupName, hashMD5(groupName)),
+          specifications: (product[groupName] || []).map(
+            (name: string) => ({ 
+              name: toSpecificationIOMessage('specificationName')(segment, name, hashMD5(name)), 
+              values: (product[name] || []).map(
+                (value: string) => toSpecificationIOMessage('specificationValue')(segment, value, hashMD5(value))
+              ) 
+            })
+          )
         })
       )
       return specificationGroups || []
