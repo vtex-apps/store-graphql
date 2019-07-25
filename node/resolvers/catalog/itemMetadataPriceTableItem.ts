@@ -103,7 +103,7 @@ const getSimulationPayloadItemsForMultipleFromTree = (
 
   // Corner case that can be easily solved: when a single child can fill alone the whole group
   if (childCompositionItem.maxQuantity >= familyMinimum) {
-    return [parentPayloadItem, { ...basicChildItem, quantity: familyMinimum }]
+    return [parentPayloadItem, basicChildItem]
   }
 
   const siblings = parentBasicTree.filter(
