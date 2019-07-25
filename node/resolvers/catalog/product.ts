@@ -11,9 +11,10 @@ import {
   length,
 } from 'ramda'
 import { Functions } from '@gocommerce/utils'
+import crypto from 'crypto'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toProductIOMessage, toBrandIOMessage } from './../../utils/ioMessage'
+import { toBrandIOMessage, toProductIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
 import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
@@ -191,14 +192,16 @@ export const resolvers = {
 
       (allSpecifications || []).forEach(
         (specification: string) => {
+          const hash1 = crypto.createHash('md5');
           let productSpecification: productSpecification = {
-            fieldName: toProductIOMessage('fieldName')(segment, specification, productId),
+            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hash1.update(specification).digest('hex')),
             fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
           };
 
+          const hash2 = crypto.createHash('md5');
           (product[specification] || []).forEach(
             (value: string) => {
-              productSpecification.fieldValues.push(toProductIOMessage('fieldValue')(segment, value, productId))
+              productSpecification.fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hash2.update(value).digest('hex'))) 
             }
           )
 

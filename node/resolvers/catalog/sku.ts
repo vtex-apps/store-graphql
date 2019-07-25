@@ -1,6 +1,7 @@
 import { find, head, map, replace, slice } from 'ramda'
+import crypto from 'crypto'
 
-import { toSKUIOMessage } from './../../utils/ioMessage'
+import { toSKUIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
 
 export const resolvers = {
   SKU: {
@@ -55,19 +56,21 @@ export const resolvers = {
       _: any,
       { clients: { segment } }: Context
     ) => {
-      const { variations, itemId } = sku
+      const { variations } = sku
       let skuSpecifications = new Array() as [skuSpecification]
 
       (variations || []).forEach(
         (variation: string) => {
+          const hash1 = crypto.createHash('md5');
           let skuSpecification: skuSpecification = {
-            fieldName: toSKUIOMessage('fieldName')(segment, variation, itemId),
+            fieldName: toSpecificationIOMessage('fieldName')(segment, variation, hash1.update(variation).digest('hex') ), 
             fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
           };
 
+          const hash2 = crypto.createHash('md5');
           (sku[variation] || []).forEach(
             (value: string) => {
-              skuSpecification.fieldValues.push(toSKUIOMessage('fieldValue')(segment, value, itemId))
+              skuSpecification.fieldValues.push(toSpecificationIOMessage(`fieldValue`)(segment, value, hash2.update(value).digest('hex')))
             }
           );
 

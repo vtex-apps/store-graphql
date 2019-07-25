@@ -48,6 +48,12 @@ export const toBrandIOMessage = (field: string) => (segment: Segment, content: s
   `Brand-id.${id}::${field}`
 )
 
+export const toSpecificationIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `Specification-id.${id}::${field}`
+)
+
 export const toSearchTerm = (term: string, from: string, description: string = '') => ({
   id: `Search::${Slugify(term)}`,
   description,
