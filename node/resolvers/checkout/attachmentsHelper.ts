@@ -110,18 +110,6 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   const idsToRemove = Object.keys(joinedToRemove)
   let recentOrderForm = orderForm
 
-  for (const assemblyId of idsToAdd) {
-    const parsedOptions = joinedToAdd[assemblyId]
-    recentOrderForm = await checkout
-      .addAssemblyOptions(
-        orderForm.orderFormId,
-        itemIndex,
-        assemblyId,
-        addAssemblyBody(parsedOptions)
-      )
-      .catch(() => recentOrderForm)
-  }
-
   for (const assemblyId of idsToRemove) {
     const parsedOptions = joinedToRemove[assemblyId]
     const response = await checkout
@@ -133,6 +121,18 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
       )
       .catch(() => ({ data: recentOrderForm }))
     recentOrderForm = response.data
+  }
+
+  for (const assemblyId of idsToAdd) {
+    const parsedOptions = joinedToAdd[assemblyId]
+    recentOrderForm = await checkout
+      .addAssemblyOptions(
+        orderForm.orderFormId,
+        itemIndex,
+        assemblyId,
+        addAssemblyBody(parsedOptions)
+      )
+      .catch(() => recentOrderForm)
   }
 
   for (const assemblyId of idsToAdd) {
