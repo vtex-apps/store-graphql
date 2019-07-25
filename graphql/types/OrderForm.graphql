@@ -104,6 +104,9 @@ type OrderFormItem {
   Selling price of item summing with all of its children items selling prices.
   """
   sellingPriceWithAssemblies: Float
+  """
+  unitMultiplier on orderFormItem
+  """
   unitMultiplier: Float
 }
 
