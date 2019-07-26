@@ -182,7 +182,10 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null || items == null) {
       throw new UserInputError('No order form id or items to add provided')
     }
-    const [{ marketingData }, sessionData] = await Promise.all([
+    const [
+      { marketingData, items: previousItems },
+      sessionData,
+    ] = await Promise.all([
       checkout.orderForm(),
       sessionQueries.getSession(root, {}, ctx).catch(err => {
         // todo: log error using colossus
@@ -222,9 +225,10 @@ export const mutations: Record<string, Resolver> = {
     const withOptions = items.filter(
       ({ options }) => !!options && options.length > 0
     )
+
     const addItem = await checkout.addItem(orderFormId, cleanItems)
 
-    await addOptionsForItems(withOptions, checkout, addItem)
+    await addOptionsForItems(withOptions, checkout, addItem, previousItems)
 
     return withOptions.length === 0 ? addItem : await checkout.orderForm()
   },

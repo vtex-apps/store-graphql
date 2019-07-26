@@ -100,6 +100,10 @@ type OrderFormItem {
   measurementUnit on orderFormItem
   """
   measurementUnit: String
+  """
+  Selling price of item summing with all of its children items selling prices.
+  """
+  sellingPriceWithAssemblies: Float
 }
 
 type ItemAdditionalInfo {
