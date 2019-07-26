@@ -113,18 +113,6 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => toBrandIOMessage('name')(segment, brand, brandId),
 
-    descriptionShort: (
-      { descriptionShort, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('descriptionShort')(segment, descriptionShort, productId),
-
-    keywords: (
-      { keywords, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('keywords')(segment, keywords, productId),
-
     metaTagDescription: (
       { metaTagDescription, productId }: any,
       _: any,

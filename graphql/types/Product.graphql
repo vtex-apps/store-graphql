@@ -27,10 +27,6 @@ type Product {
   productId: ID
   """ Product name """
   productName: IOMessage
-  """ Product short description  """
-  descriptionShort: IOMessage
-  """ Keywords """
-  keywords: IOMessage
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties  """
