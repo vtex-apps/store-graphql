@@ -184,18 +184,17 @@ export const resolvers = {
 
       (allSpecifications || []).forEach(
         (specification: string) => {
-          let productSpecification: ProductSpecification = {
-            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)),
-            fieldValues: new Array() as [Promise<TranslatableMessage>]
-          };
-
+          let fieldValues = new Array() as [Promise<TranslatableMessage>]
           (product[specification] || []).forEach(
             (value: string) => {
-              productSpecification.fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hashMD5(value))) 
+              fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hashMD5(value))) 
             }
           )
-
-          productSpecifications.push(productSpecification)
+          
+          productSpecifications.push({
+            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)), 
+            fieldValues
+          })
         }
       )
 

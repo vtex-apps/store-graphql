@@ -61,18 +61,17 @@ export const resolvers = {
 
       (variations || []).forEach(
         (variation: string) => {
-          let skuSpecification: SkuSpecification = {
-            fieldName: toSpecificationIOMessage('fieldName')(segment, variation, hashMD5(variation)), 
-            fieldValues: new Array() as [Promise<TranslatableMessage>]
-          };
-
+          let fieldValues = new Array() as [Promise<TranslatableMessage>]
           (sku[variation] || []).forEach(
             (value: string) => {
-              skuSpecification.fieldValues.push(toSpecificationIOMessage(`fieldValue`)(segment, value, hashMD5(value)))
+              fieldValues.push(toSpecificationIOMessage(`fieldValue`)(segment, value, hashMD5(value)))
             }
           );
 
-          skuSpecifications.push(skuSpecification)
+          skuSpecifications.push({
+            fieldName: toSpecificationIOMessage('fieldName')(segment, variation, hashMD5(variation)), 
+            fieldValues
+          })
         },
       )
 
