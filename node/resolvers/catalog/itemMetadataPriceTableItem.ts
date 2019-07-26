@@ -7,14 +7,14 @@ interface Params {
     marketingData: Record<string, string>
     countryCode: string
   }
-  items: MetadataItem[]
-  parent: MetadataItem
+  items: CatalogMetadataItem[]
+  parent: CatalogMetadataItem
   assemblyOption: AssemblyOption
 }
 
 // Generate a valid simulation list with this child, considering its a single item type
 const getSimulationPayloadItemsForSingleFromTree = (
-  parent: MetadataItem,
+  parent: CatalogMetadataItem,
   childId: string,
   seller: string,
   parentAssemblyBinding: string
@@ -33,7 +33,7 @@ const getSimulationPayloadItemsForSingleFromTree = (
 
 // Generate a valid simulation list with this child, considering its a TOGGLE item type
 const getSimulationPayloadItemsForToggleFromTree = (
-  parent: MetadataItem,
+  parent: CatalogMetadataItem,
   childId: string,
   seller: string,
   assemblyOption: AssemblyOption,
@@ -80,7 +80,7 @@ const getSimulationPayloadItemsForToggleFromTree = (
 
 // Generate a valid simulation list with this child, considering its a MULTIPLE item type
 const getSimulationPayloadItemsForMultipleFromTree = (
-  parent: MetadataItem,
+  parent: CatalogMetadataItem,
   assemblyOption: AssemblyOption,
   parentBasicTree: PayloadItem[],
   childCompositionItem: CompositionItem
@@ -154,14 +154,14 @@ const simulateAndGetPrice = async (
 const getSimulationPayloadItems = (
   assemblyOption: AssemblyOption,
   compositionItem: CompositionItem,
-  father: MetadataItem,
+  parent: CatalogMetadataItem,
   fatherBasicTree: PayloadItem[]
 ) => {
   const assemblyType = getItemChoiceType(assemblyOption)
 
   if (assemblyType === CHOICE_TYPES.SINGLE) {
     return getSimulationPayloadItemsForSingleFromTree(
-      father,
+      parent,
       compositionItem.id,
       compositionItem.seller,
       assemblyOption.id
@@ -169,7 +169,7 @@ const getSimulationPayloadItems = (
   }
   if (assemblyType === CHOICE_TYPES.TOGGLE) {
     return getSimulationPayloadItemsForToggleFromTree(
-      father,
+      parent,
       compositionItem.id,
       compositionItem.seller,
       assemblyOption,
@@ -177,7 +177,7 @@ const getSimulationPayloadItems = (
     )
   }
   return getSimulationPayloadItemsForMultipleFromTree(
-    father,
+    parent,
     assemblyOption,
     fatherBasicTree,
     compositionItem

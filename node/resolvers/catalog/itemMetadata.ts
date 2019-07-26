@@ -8,7 +8,7 @@ const isUtm = (_: any, key: string | number) => String(key).startsWith('utm')
 const isValidUtm = both(isUtm, isTruthy)
 
 interface Parent {
-  items: MetadataItem[]
+  items: CatalogMetadataItem[]
 }
 
 interface SimulationPayload {
@@ -43,8 +43,8 @@ type PriceTableMap = Record<
   {
     compositionItem: CompositionItem
     simulationPayload: SimulationPayload
-    items: MetadataItem[]
-    parent: MetadataItem
+    items: CatalogMetadataItem[]
+    parent: CatalogMetadataItem
     assemblyOption: AssemblyOption
   }[]
 >

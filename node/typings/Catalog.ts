@@ -61,7 +61,7 @@ interface Product {
   description: string
   items: Item[]
   itemMetadata: {
-    items: MetadataItem[]
+    items: CatalogMetadataItem[]
   }
 }
 
