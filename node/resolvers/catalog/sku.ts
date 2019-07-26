@@ -63,7 +63,7 @@ export const resolvers = {
         (variation: string) => {
           let skuSpecification: SkuSpecification = {
             fieldName: toSpecificationIOMessage('fieldName')(segment, variation, hashMD5(variation)), 
-            fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
+            fieldValues: new Array() as [Promise<TranslatableMessage>]
           };
 
           (sku[variation] || []).forEach(

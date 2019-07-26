@@ -186,7 +186,7 @@ export const resolvers = {
         (specification: string) => {
           let productSpecification: ProductSpecification = {
             fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)),
-            fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
+            fieldValues: new Array() as [Promise<TranslatableMessage>]
           };
 
           (product[specification] || []).forEach(
