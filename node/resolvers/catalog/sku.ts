@@ -57,11 +57,11 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => {
       const { variations } = sku
-      let skuSpecifications = new Array() as [skuSpecification]
+      let skuSpecifications = new Array() as [SkuSpecification]
 
       (variations || []).forEach(
         (variation: string) => {
-          let skuSpecification: skuSpecification = {
+          let skuSpecification: SkuSpecification = {
             fieldName: toSpecificationIOMessage('fieldName')(segment, variation, hashMD5(variation)), 
             fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
           };

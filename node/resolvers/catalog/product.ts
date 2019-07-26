@@ -180,11 +180,11 @@ export const resolvers = {
 
     items: (product: any, _: any, { clients: { segment } }: Context) => {
       const { allSpecifications, items, productId, productName, description: productDescription, brand: brandName, brandId } = product
-      let productSpecifications = new Array() as [productSpecification]
+      let productSpecifications = new Array() as [ProductSpecification]
 
       (allSpecifications || []).forEach(
         (specification: string) => {
-          let productSpecification: productSpecification = {
+          let productSpecification: ProductSpecification = {
             fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)),
             fieldValues: new Array() as [Promise<{ content: string; from: string; id: string; }>]
           };
