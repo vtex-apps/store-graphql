@@ -8,11 +8,11 @@ type Brand {
   """ Text link"""
   slug: String
   """ Name of brand """
-  name: IOMessage
+  name: String @translatable
   """ Title used by html tag"""
-  title: IOMessage
+  title: String @translatable
   """ Description used by html tag"""
-  metaTagDescription: IOMessage
+  metaTagDescription: String @translatable
   """ Brand is active """
   active: Boolean
 }

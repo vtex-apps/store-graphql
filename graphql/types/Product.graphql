@@ -1,6 +1,6 @@
 type Product {
   """ Brand of the product """
-  brand: IOMessage
+  brand: String @translatable
   """ Id of the brand of the product """
   brandId: Int
   """ linkText is used as cacheId """
@@ -26,7 +26,7 @@ type Product {
   """ Product ID """
   productId: ID
   """ Product name """
-  productName: IOMessage
+  productName: String @translatable
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties  """
@@ -34,13 +34,13 @@ type Product {
   """ Product reference """
   productReference: String
   """ Title used by html tag"""
-  titleTag: IOMessage
+  titleTag: String @translatable
   """ Description used by html tag"""
-  metaTagDescription: IOMessage
+  metaTagDescription: String @translatable
   """ Related Products """
   recommendations: Recommendation
   """ JSON specification of the product"""
-  jsonSpecifications: IOMessage
+  jsonSpecifications: String @translatable
   """ List of benefits associated with this product """
   benefits: [Benefit]
   itemMetadata: ItemMetadata
@@ -94,8 +94,8 @@ type Recommendation {
 
 type SKU {
   itemId: ID
-  name: IOMessage
-  nameComplete: IOMessage
+  name: String @translatable
+  nameComplete: String @translatable
   complementName: String
   ean: String
   referenceId: [Reference]
@@ -108,21 +108,21 @@ type SKU {
   variations: [Property]
   attachments: [Attachment]
   calculatedAttachments: String
-  productName: IOMessage
-  productDescription: IOMessage
-  brandName: IOMessage
+  productName: String @translatable
+  productDescription: String @translatable
+  brandName: String @translatable
   skuSpecifications: [skuSpecification]
   productSpecifications: [productSpecification]
 }
 
 type skuSpecification {
-  fieldName: IOMessage
-  fieldValues: [IOMessage]
+  fieldName: String @translatable
+  fieldValues: [String] @translatable
 }
 
 type productSpecification {
-  fieldName: IOMessage
-  fieldValues: [IOMessage]
+  fieldName: String @translatable
+  fieldValues: [String] @translatable
 }
 
 input ProductUniqueIdentifier {
@@ -227,13 +227,13 @@ type Video {
 }
 
 type SpecificationGroup {
-  name: IOMessage,
+  name: String @translatable,
   specifications: [SpecificationGroupProperty]
 }
 
 type SpecificationGroupProperty {
-  name: IOMessage
-  values: [IOMessage]
+  name: String @translatable
+  values: [String] @translatable
 }
 
 type Property {
