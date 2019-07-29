@@ -22,7 +22,7 @@ import {
   fieldResolvers as logisticsResolvers,
   queries as logisticsQueries,
 } from './logistics'
-import { 
+import {
   queries as omsQueries,
   fieldResolvers as omsFieldResolvers,
 } from './oms'
