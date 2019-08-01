@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.98.1] - 2019-08-01
+
 ## [2.98.0] - 2019-07-29
 ### Added
 - `additionalData` in `connectorResponses` in `order`.
