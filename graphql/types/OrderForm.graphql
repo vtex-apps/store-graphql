@@ -173,6 +173,7 @@ input OrderFormItemInput {
 }
 
 input OrderFormAddressInput {
+  addressId: String
   addressType: String
   postalCode: String
   country: String
