@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Field `unitMultiplier` to `OrderFormItem`.
+- Field `addressId` to `OrderFormItemInput`.
 
 ## [2.99.0] - 2019-08-06
 ### Added
