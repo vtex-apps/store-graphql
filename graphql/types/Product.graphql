@@ -40,7 +40,7 @@ type Product {
   """ Related Products """
   recommendations: Recommendation
   """ JSON specification of the product"""
-  jsonSpecifications: String @translatable
+  jsonSpecifications: String
   """ List of benefits associated with this product """
   benefits: [Benefit]
   itemMetadata: ItemMetadata

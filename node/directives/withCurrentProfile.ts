@@ -127,10 +127,11 @@ async function validatedProfile(
 function isValidCallcenterOperator(context: Context, email: string) {
   const {
     clients: { callCenterOperator, licenseManager },
+    vtex: { authToken }
   } = context
 
   return licenseManager
-    .getAccountData()
+    .getAccountData(authToken)
     .then(({ id }: any) =>
       callCenterOperator.isValidCallcenterOperator({ email, accountId: id })
     )
