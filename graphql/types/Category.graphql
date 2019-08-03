@@ -1,4 +1,5 @@
 type Category {
+  vrn: String
   """ id is used as cacheId """
   cacheId: ID
   """ URI of category """

@@ -18,6 +18,7 @@ interface Metadata {
 }
 
 interface Brand {
+  vrn: string
   id: string
   name: string
   isActive: boolean
@@ -26,6 +27,7 @@ interface Brand {
 }
 
 interface Category {
+  vrn: string
   id: number
   name: string
   url: string
@@ -43,6 +45,7 @@ interface FacetsArgs {
 }
 
 interface Product {
+  vrn: string
   productId: string
   productName: string
   brand: string

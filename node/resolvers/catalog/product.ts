@@ -13,7 +13,7 @@ import {
 import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toProductIOMessage } from './../../utils/ioMessage'
+import { toIOMessage } from './../../utils/ioMessage'
 import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
@@ -100,16 +100,16 @@ export const resolvers = {
     categoryTree: productCategoriesToCategoryTree,
 
     description: (
-      { description, productId }: any,
+      { description, vrn }: any,
       _: any,
       { clients: { segment } }: Context
-    ) => toProductIOMessage('description')(segment, description, productId),
+    ) => toIOMessage('description', segment, description, vrn),
 
     productName: (
-      { productName, productId }: any,
+      { productName, vrn }: any,
       _: any,
       { clients: { segment } }: Context
-    ) => toProductIOMessage('name')(segment, productName, productId),
+    ) => toIOMessage('name', segment, productName, vrn),
 
     cacheId: ({ linkText }: any) => linkText,
 

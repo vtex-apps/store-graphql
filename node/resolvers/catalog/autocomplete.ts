@@ -1,6 +1,6 @@
 import { path, split } from 'ramda'
 
-import { toIOMessage, toProductIOMessage } from '../../utils/ioMessage'
+import { toIOMessage, toProductProvider } from '../../utils/ioMessage'
 
 /**
  * It will extract the slug from the HREF in the item
@@ -28,8 +28,8 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) =>
       id != null
-        ? toProductIOMessage('name')(segment, name, id)
-        : toIOMessage(segment, name, name),
+        ? toIOMessage('name', segment, name, toProductProvider(id))
+        : toIOMessage('',segment, name, name),
 
     slug: (root: any) => extractSlug(root),
 

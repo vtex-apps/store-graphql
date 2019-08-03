@@ -1,6 +1,6 @@
 import { map, prop, toPairs, zip } from 'ramda'
 
-import { toCategoryIOMessage, toFacetIOMessage } from '../../utils/ioMessage'
+import { toFacetProvider, toIOMessage } from '../../utils/ioMessage'
 import { pathToCategoryHref } from './category'
 
 const objToNameValue = (
@@ -73,7 +73,8 @@ export const resolvers = {
 
     name: async ({Map, Name}: any, _: any, { clients: { segment } }: Context) => {
       const [, id] = Map.split('_')
-      return toFacetIOMessage(segment, Name, id)
+      const vrn = toFacetProvider(id)
+      return toIOMessage(Name, segment, Name, vrn)
     },
 
     Name: (root: any, args: any, ctx: Context) => resolvers.FilterFacet.name(root, args, ctx),
@@ -112,7 +113,7 @@ export const resolvers = {
     },
 
     name: ({Id, Name}: {Id: string, Name: string}, _: any, { clients: { segment } }: Context) =>
-      toCategoryIOMessage('name')(segment, Name, Id),
+      toIOMessage('name', segment, Name, Id),
 
     Name: (root: any, args: any, ctx: Context) =>
       resolvers.CategoriesTreeFacet.name(root, args, ctx),

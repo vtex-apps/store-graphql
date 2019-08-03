@@ -18,7 +18,7 @@ import {
   zip,
 } from 'ramda'
 
-import { toSearchTerm } from '../../utils/ioMessage'
+import { toSearchTerm, toProductProvider, toBrandProvider, toCategoryProvider } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
@@ -42,6 +42,7 @@ import {
   translatePageType,
 } from './utils'
 import { catalogSlugify } from './slug'
+import { COPYFILE_FICLONE } from 'constants';
 
 interface SearchContext {
   brand: string | null
@@ -354,9 +355,12 @@ export const queries = {
         products = await catalog.productBySku([value])
         break
     }
-
     if (products.length > 0) {
-      return head(products)
+      const product = head(products)
+      return {
+        ...product,
+        vrn: toProductProvider(value)
+      }
     }
 
     throw new NotFoundError(
@@ -374,7 +378,20 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
-    return catalog.products(args)
+
+    let products = await catalog.products(args)
+
+    const productsWithVrn = map(
+      (product) => {
+        console.log('productID', product.productId,{product})
+        return{
+          ...product,
+          vrn: toProductProvider(product.productId),
+        }
+      },
+      products
+    )
+    return productsWithVrn
   },
 
   productsByIdentifier: async (
@@ -405,9 +422,17 @@ export const queries = {
     }
 
     if (products.length > 0) {
-      return products
+    const productsWithVrn =  (products).map(
+      (product,i) => {
+        console.log({i})
+        return{
+          ...product,
+          vrn: toProductProvider(values[i]),
+        }
+      }
+      )
+      return productsWithVrn
     }
-
     throw new NotFoundError(`No products were found with requested ${field}`)
   },
 
@@ -434,10 +459,19 @@ export const queries = {
       catalog.products(args, true),
       getSearchMetaData(_, translatedArgs, ctx),
     ])
+    const productsRawWithVrn = map(
+      (product)=>{
+        return{
+          ...product,
+          vrn: toProductProvider(product.productId)
+        }
+      },
+      productsRaw
+    )
     return {
       translatedArgs,
       searchMetaData,
-      productsRaw,
+      productsRawWithVrn,
     }
   },
 
@@ -455,11 +489,25 @@ export const queries = {
     if (!brand) {
       throw new NotFoundError(`Brand not found`)
     }
-    return brand
+    return {
+      ...brand,
+      vrn: toBrandProvider(id)
+    }
   },
 
-  brands: async (_: any, __: any, { clients: { catalog } }: Context) =>
-    catalog.brands(),
+  brands: async (_: any, __: any, { clients: { catalog } }: Context) =>{
+    const allBrands = await catalog.brands()
+    const brandsWithVrn = map(
+      (brand)=>{
+        return {
+          ...brand,
+          vrn: brand.id
+        }
+      },
+      allBrands
+    )
+    return brandsWithVrn
+  },
 
   category: async (
     _: any,
@@ -469,14 +517,30 @@ export const queries = {
     if (id == null) {
       throw new ResolverWarning(`No category ID provided`)
     }
-    return catalog.category(id)
+    const category = await catalog.category(id)
+    return {
+      ...category,
+      vrn: toCategoryProvider(id)
+    }
   },
 
   categories: async (
     _: any,
     { treeLevel }: { treeLevel: number },
     { clients: { catalog } }: Context
-  ) => catalog.categories(treeLevel),
+  ) => {
+    const categories = await catalog.categories(treeLevel)
+    const categoriesWithVrn = map(
+      (category)=>{
+        return {
+          ...category,
+          vrn: toCategoryProvider(category.id)
+        }
+      },
+      categories
+    )
+    return categoriesWithVrn
+  },
 
   /** TODO: This method should be removed in the next major.
    * @author Bruno Dias

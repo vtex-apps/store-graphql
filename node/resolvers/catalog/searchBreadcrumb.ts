@@ -1,5 +1,6 @@
+import { toCategoryProvider, toIOMessage } from './../../utils/ioMessage';
 import { equals, toLower } from 'ramda'
-import { toCategoryIOMessage, toClusterIOMessage } from '../../utils/ioMessage'
+import { toClusterProvider } from '../../utils/ioMessage'
 import { findCategoryInTree, getBrandFromSlug } from './utils'
 import { Functions } from '@gocommerce/utils'
 
@@ -82,16 +83,18 @@ export const resolvers = {
       if (isProductClusterMap(mapUnit)) {
         const clusterName = findClusterNameFromId(products, queryUnit)
         if (clusterName) {
-          return toClusterIOMessage(segment, clusterName, queryUnit)
+          const vrn = toClusterProvider(queryUnit)
+          return toIOMessage(clusterName, segment, clusterName, vrn)
         }
       }
       if (isCategoryMap(mapUnit)) {
         const categoryData = await getCategoryInfo(obj, isVtex, ctx)
         if (categoryData) {
-          return toCategoryIOMessage('name')(
+          const vrn =  toCategoryProvider(categoryData.id)
+          return toIOMessage('name',
             segment,
             categoryData.name,
-            categoryData.id
+            vrn
           )
         }
       }
