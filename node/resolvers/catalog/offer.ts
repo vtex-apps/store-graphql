@@ -1,4 +1,4 @@
-import { comparator, filter, gte, head, lte, prop, sort } from 'ramda'
+import { comparator, filter, gte, head, lte, propOr, sort } from 'ramda'
 
 const InstallmentsCriteria = {
   ALL: 'ALL',
@@ -20,6 +20,8 @@ export const resolvers = {
       const byNumberOfInstallments = comparator((previous: any, next) => compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments))
       return [head(sort(byNumberOfInstallments, filteredInstallments))]
     },
-    discountHighlights: prop('DiscountHighLight')
+    teasers: propOr([], 'Teasers'),
+    giftSkuIds: propOr([], 'GiftSkuIds'),
+    discountHighlights: propOr([], 'DiscountHighLight'),
   }
 }
