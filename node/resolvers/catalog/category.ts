@@ -1,6 +1,6 @@
 import { compose, last, prop, split } from 'ramda'
 
-import { toIOMessage } from '../../utils/ioMessage'
+import { localeFromDefaultSalesChannel } from '../../utils/ioMessage'
 import { getCategoryInfo } from './utils'
 
 const lastSegment = compose<string, string[], string>(
@@ -56,7 +56,12 @@ export const resolvers = {
       _: any,
       { clients: { segment } }: Context
     ) => {
-      return toIOMessage('name',segment, name, vrn)
+      return {
+        field: 'name',
+        from: await localeFromDefaultSalesChannel(segment),
+        content: name,
+        vrn: vrn
+      }
     },
 
     slug: async (

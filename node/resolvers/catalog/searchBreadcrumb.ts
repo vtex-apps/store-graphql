@@ -1,4 +1,4 @@
-import { toCategoryProvider, toIOMessage } from './../../utils/ioMessage';
+import { toCategoryProvider, localeFromDefaultSalesChannel } from './../../utils/ioMessage';
 import { equals, toLower } from 'ramda'
 import { toClusterProvider } from '../../utils/ioMessage'
 import { findCategoryInTree, getBrandFromSlug } from './utils'
@@ -84,18 +84,24 @@ export const resolvers = {
         const clusterName = findClusterNameFromId(products, queryUnit)
         if (clusterName) {
           const vrn = toClusterProvider(queryUnit)
-          return toIOMessage(clusterName, segment, clusterName, vrn)
+          return {
+            field: clusterName,
+            from: await localeFromDefaultSalesChannel(segment),
+            content: clusterName,
+            vrn: vrn
+          }
         }
       }
       if (isCategoryMap(mapUnit)) {
         const categoryData = await getCategoryInfo(obj, isVtex, ctx)
         if (categoryData) {
           const vrn =  toCategoryProvider(categoryData.id)
-          return toIOMessage('name',
-            segment,
-            categoryData.name,
-            vrn
-          )
+          return {
+            field: 'name',
+            from: await localeFromDefaultSalesChannel(segment),
+            content: categoryData.name,
+            vrn: vrn
+          }
         }
       }
       if (isSellerMap(mapUnit)) {

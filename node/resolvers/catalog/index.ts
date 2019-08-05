@@ -378,12 +378,9 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
-
-    let products = await catalog.products(args)
-
+    const products = await catalog.products(args)
     const productsWithVrn = map(
       (product) => {
-        console.log('productID', product.productId,{product})
         return{
           ...product,
           vrn: toProductProvider(product.productId),
