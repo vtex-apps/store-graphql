@@ -139,6 +139,10 @@ type SessionProfile {
   User phone number
   """
   phone: String
+  """
+  Price tables
+  """
+  priceTables: [String]
 }
 
 type Address {
