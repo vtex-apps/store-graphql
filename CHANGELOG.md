@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Field `unitMultiplier` to `OrderFormItem`.
+- Field `addressId` to `OrderFormItemInput`.
 
 ## [2.99.0] - 2019-08-06
 ### Added
