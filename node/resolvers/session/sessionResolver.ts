@@ -8,6 +8,7 @@ interface ProfileFields {
   isAuthenticatedAsCustomer?: boolean
   lastName?: string
   phone?: string
+  priceTables: string[]
 }
 
 export interface SessionFields {
@@ -44,6 +45,12 @@ interface UtmiParams {
 
 const convertToBool = (str: any) => !!str && toLower(str) === 'true'
 
+const priceTables = (profile: SessionProfile): string[] => {
+  const priceTables =
+    profile && profile.priceTables && profile.priceTables.value
+  return priceTables ? priceTables.split(',') : []
+}
+
 const profileFields = (
   profile: SessionProfile,
   user: SessionImpersonate | SessionAuthentication
@@ -59,6 +66,7 @@ const profileFields = (
   ),
   lastName: path(['lastName', 'value'], profile),
   phone: path(['phone', 'value'], profile),
+  priceTables: priceTables(profile),
 })
 
 const setProfileData = (
