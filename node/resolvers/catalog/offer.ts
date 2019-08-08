@@ -17,11 +17,16 @@ export const resolvers = {
         : filter(({ InterestRate }) => !InterestRate, Installments)
 
       const compareFunc = criteria === InstallmentsCriteria.MAX ? gte : lte
-      const byNumberOfInstallments = comparator((previous: any, next) => compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments))
-      return [head(sort(byNumberOfInstallments, filteredInstallments))]
+      const byNumberOfInstallments = comparator((previous: any, next) =>
+        compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments)
+      )
+      const installments = head(
+        sort(byNumberOfInstallments, filteredInstallments)
+      )
+      return installments ? [installments] : null
     },
     teasers: propOr([], 'Teasers'),
     giftSkuIds: propOr([], 'GiftSkuIds'),
     discountHighlights: propOr([], 'DiscountHighLight'),
-  }
+  },
 }
