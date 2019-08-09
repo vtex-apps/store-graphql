@@ -162,4 +162,42 @@ declare global {
     mimetype: string
     encoding: string
   }
+
+  interface SKU {
+    itemId: string
+    name: string
+    nameComplete: string
+    productName: string
+    productDescription: string
+    brandName: string
+    variations: [Property]
+    skuSpecifications: [SkuSpecification]
+    productSpecifications: [ProductSpecification]
+  }
+
+  interface Property {
+    name: string
+    values: [string]
+  }
+
+  interface SkuSpecification {
+    fieldName: Promise<TranslatableMessage>
+    fieldValues: [Promise<TranslatableMessage>]
+  }
+
+  interface ProductSpecification {
+    fieldName: Promise<TranslatableMessage>
+    fieldValues: [Promise<TranslatableMessage>]
+  }
+
+  interface TranslatableMessage {
+    content: string
+    from: string
+    id: string
+  }
+
+  interface Reference {
+    Key: String
+    Value: String
+  }
 }

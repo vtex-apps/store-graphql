@@ -22,8 +22,8 @@ export const pathToCategoryHref = (path: string) => {
  */
 interface SafeCategory
   extends Pick<
-    Category,
-    'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
+  Category,
+  'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
   > {
   url: string | null
   children: Category[] | null
@@ -49,14 +49,28 @@ export const resolvers = {
       return pathToCategoryHref(path)
     },
 
-    metaTagDescription: prop('MetaTagDescription'),
-
     name: async (
       { id, name }: SafeCategory,
       _: any,
       { clients: { segment } }: Context
     ) => {
       return toCategoryIOMessage('name')(segment, name, id)
+    },
+
+    metaTagDescription: async (
+      { id, MetaTagDescription }: SafeCategory,
+      _: any,
+      { clients: { segment } }: Context
+    ) => {
+      return toCategoryIOMessage('metaTagDescription')(segment, MetaTagDescription, id)
+    },
+
+    titleTag: async (
+      { id, Title }: SafeCategory,
+      _: any,
+      { clients: { segment } }: Context
+    ) => {
+      return toCategoryIOMessage('titleTag')(segment, Title, id)
     },
 
     slug: async (
@@ -70,8 +84,6 @@ export const resolvers = {
       }
       return url ? lastSegment(url) : null
     },
-
-    titleTag: prop('Title'),
 
     children: async (
       { id, children }: SafeCategory,

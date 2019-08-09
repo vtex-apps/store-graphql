@@ -36,6 +36,24 @@ export const toClusterIOMessage = (segment: Segment, content: string, id: string
   `ProductCluster-id.${id}::${content}`
 )
 
+export const toSKUIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `SKU-id.${id}::${field}`
+)
+
+export const toBrandIOMessage = (field: string) => (segment: Segment, content: string, id: number | string) => toIOMessage(
+  segment,
+  content,
+  `Brand-id.${id}::${field}`
+)
+
+export const toSpecificationIOMessage = (field: string) => (segment: Segment, content: string, id: string) => toIOMessage(
+  segment,
+  content,
+  `Specification-id.${id}::${field}`
+)
+
 export const toSearchTerm = (term: string, from: string, description: string = '') => ({
   id: `Search::${Slugify(term)}`,
   description,

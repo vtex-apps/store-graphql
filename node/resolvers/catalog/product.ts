@@ -10,11 +10,12 @@ import {
   toPairs,
   length,
 } from 'ramda'
+
 import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toProductIOMessage } from './../../utils/ioMessage'
-import { buildCategoryMap } from './utils'
+import { toBrandIOMessage, toProductIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
+import { buildCategoryMap, hashMD5 } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -94,17 +95,29 @@ export const resolvers = {
 
     categoryTree: productCategoriesToCategoryTree,
 
+    productName: (
+      { productName, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('name')(segment, productName, productId),
+
     description: (
       { description, productId }: any,
       _: any,
       { clients: { segment } }: Context
     ) => toProductIOMessage('description')(segment, description, productId),
 
-    productName: (
-      { productName, productId }: any,
+    brand: (
+      { brand, brandId }: any,
       _: any,
       { clients: { segment } }: Context
-    ) => toProductIOMessage('name')(segment, productName, productId),
+    ) => toBrandIOMessage('name')(segment, brand, brandId),
+
+    metaTagDescription: (
+      { metaTagDescription, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('metaTagDescription')(segment, metaTagDescription, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -137,9 +150,13 @@ export const resolvers = {
 
     recommendations: (product: any) => product,
 
-    titleTag: ({ productTitle }: any) => productTitle,
+    titleTag: (
+      { productTitle, productId }: any,
+      _: any,
+      { clients: { segment } }: Context
+    ) => toProductIOMessage('titleTag')(segment, productTitle, productId),
 
-    specificationGroups: (product: any) => {
+    specificationGroups: (product: any, _: any, { clients: { segment } }: Context) => {
       const allSpecificationsGroups = propOr(
         [],
         'allSpecificationsGroups',
@@ -147,16 +164,54 @@ export const resolvers = {
       ).concat(['allSpecifications'])
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
-          name: groupName,
-          specifications: map(
-            (name: string) => ({ name, values: product[name] }),
-            product[groupName] || []
-          ),
+          name: toSpecificationIOMessage('groupName')(segment, groupName, hashMD5(groupName)),
+          specifications: (product[groupName] || []).map(
+            (name: string) => ({ 
+              name: toSpecificationIOMessage('specificationName')(segment, name, hashMD5(name)), 
+              values: (product[name] || []).map(
+                (value: string) => toSpecificationIOMessage('specificationValue')(segment, value, hashMD5(value))
+              ) 
+            })
+          )
         })
       )
       return specificationGroups || []
     },
+
+    items: (product: any, _: any, { clients: { segment } }: Context) => {
+      const { allSpecifications, items, productId, productName, description: productDescription, brand: brandName, brandId } = product
+      let productSpecifications = new Array() as [ProductSpecification]
+
+      (allSpecifications || []).forEach(
+        (specification: string) => {
+          let fieldValues = new Array() as [Promise<TranslatableMessage>]
+          (product[specification] || []).forEach(
+            (value: string) => {
+              fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hashMD5(value))) 
+            }
+          )
+          
+          productSpecifications.push({
+            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)), 
+            fieldValues
+          })
+        }
+      )
+
+      if (items && items.length > 0) {
+        items.forEach(
+          (item: any) => {
+            item.productSpecifications = productSpecifications
+            item.productName = toProductIOMessage('name')(segment, productName, productId)
+            item.productDescription = toProductIOMessage('description')(segment, productDescription, productId)
+            item.brandName = toBrandIOMessage('name')(segment, brandName, brandId)
+          }
+        )
+      }
+      return items
+    }
   },
+
   OnlyProduct: {
     categoryTree: productCategoriesToCategoryTree,
   },

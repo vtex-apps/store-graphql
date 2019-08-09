@@ -1,6 +1,6 @@
 type Product {
   """ Brand of the product """
-  brand: String
+  brand: String @translatable
   """ Id of the brand of the product """
   brandId: Int
   """ linkText is used as cacheId """
@@ -34,9 +34,9 @@ type Product {
   """ Product reference """
   productReference: String
   """ Title used by html tag"""
-  titleTag: String
+  titleTag: String @translatable
   """ Description used by html tag"""
-  metaTagDescription: String
+  metaTagDescription: String @translatable
   """ Related Products """
   recommendations: Recommendation
   """ JSON specification of the product"""
@@ -94,8 +94,8 @@ type Recommendation {
 
 type SKU {
   itemId: ID
-  name: String
-  nameComplete: String
+  name: String @translatable
+  nameComplete: String @translatable
   complementName: String
   ean: String
   referenceId: [Reference]
@@ -108,6 +108,21 @@ type SKU {
   variations: [Property]
   attachments: [Attachment]
   calculatedAttachments: String
+  productName: String @translatable
+  productDescription: String @translatable
+  brandName: String @translatable
+  skuSpecifications: [skuSpecification]
+  productSpecifications: [productSpecification]
+}
+
+type skuSpecification {
+  fieldName: String @translatable
+  fieldValues: [String] @translatable
+}
+
+type productSpecification {
+  fieldName: String @translatable
+  fieldValues: [String] @translatable
 }
 
 input ProductUniqueIdentifier {
@@ -212,8 +227,13 @@ type Video {
 }
 
 type SpecificationGroup {
-  name: String,
-  specifications: [Property]
+  name: String @translatable,
+  specifications: [SpecificationGroupProperty]
+}
+
+type SpecificationGroupProperty {
+  name: String @translatable
+  values: [String] @translatable
 }
 
 type Property {
