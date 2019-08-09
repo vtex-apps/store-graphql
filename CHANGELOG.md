@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Field `videos` to `Items`
+
 ## [2.100.1] - 2019-08-08
 ### Fixed
 - Returning an array of installments with `[null]`.

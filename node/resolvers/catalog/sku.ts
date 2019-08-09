@@ -31,5 +31,11 @@ export const resolvers = {
       (name: string) => ({ name, values: sku[name] }),
       sku.variations || []
     ),
+    videos: ({ Videos }: any) => map(
+      (video: string) => ({
+        videoUrl: video,
+      }),
+      Videos
+    ),
   }
 }
