@@ -83,7 +83,7 @@ interface Item {
     imageText: string
   }[]
   videos: {
-    videoUri: string
+    videoUrl: string
   }[]
   variations: string[]
   sellers: Seller[]

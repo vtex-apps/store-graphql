@@ -208,7 +208,7 @@ type Image {
 }
 
 type Video {
-  videoUri: String
+  videoUrl: String
 }
 
 type SpecificationGroup {

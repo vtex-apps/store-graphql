@@ -33,7 +33,7 @@ export const resolvers = {
     ),
     videos: ({ Videos }: any) => map(
       (video: string) => ({
-        videoUri: video,
+        videoUrl: video,
       }),
       Videos
     ),
