@@ -11,11 +11,11 @@ export const resolvers = {
       { clients: { segment } }: Context
     ) => toBrandIOMessage('name')(segment, name, id),
 
-    title: (
+    titleTag: (
       { title, id }: any,
       _: any,
       { clients: { segment } }: Context
-    ) => toBrandIOMessage('title')(segment, title, id),
+    ) => toBrandIOMessage('titleTag')(segment, title, id),
 
     metaTagDescription: (
       { metaTagDescription, id }: any,

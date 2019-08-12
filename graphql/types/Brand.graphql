@@ -10,7 +10,7 @@ type Brand {
   """ Name of brand """
   name: String @translatable
   """ Title used by html tag"""
-  title: String @translatable
+  titleTag: String @translatable
   """ Description used by html tag"""
   metaTagDescription: String @translatable
   """ Brand is active """

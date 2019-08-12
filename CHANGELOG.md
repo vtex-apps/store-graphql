@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix `titleTag` prop of the `Brand` type that was removed in the last release.
 
 ## [2.102.0] - 2019-08-09
 ### Added
@@ -79,7 +81,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Return the sales channel country as a default country on the `shipsTo` array of countries in **logistics** query.
-- Port LogisticsDataSource to a Janus Client. 
+- Port LogisticsDataSource to a Janus Client.
 
 ## [2.92.0] - 2019-07-09
 
@@ -104,7 +106,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.90.5] - 2019-07-04
 
 ### Added
-- added `teasers` and `discountHighlights` fields in `Product` type. 
+- added `teasers` and `discountHighlights` fields in `Product` type.
 
 ## [2.90.4] - 2019-07-04
 
