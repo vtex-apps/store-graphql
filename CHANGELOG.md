@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.102.1] - 2019-08-29
+### Changed
+- Translate terms with `messagesGraphQL` client(instead of `messages` client) before sending them to search api for `productSearch` and `facets` resolvers.
+
 ## [2.104.0] - 2019-08-28
 
 ## [2.103.1] - 2019-08-27
