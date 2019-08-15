@@ -24,13 +24,17 @@ export const queries = {
   },
 }
 
+interface ImpersonateArg {
+  email: string
+}
+
 export const mutations = {
   /**
    * Impersonate a customer and set clientProfileData in OrderForm
    * @param args this mutation receives email and orderFormId
    * @return Session
    */
-  impersonate: async (_: any, args: any, ctx: Context) => {
+  impersonate: async (_: any, args: ImpersonateArg, ctx: Context) => {
     const {
       clients: { session },
     } = ctx
