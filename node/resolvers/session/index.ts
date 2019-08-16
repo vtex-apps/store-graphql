@@ -1,4 +1,4 @@
-import { serialize, parse } from 'cookie'
+import { serialize } from 'cookie'
 import { identity } from 'ramda'
 import { sessionFields } from './sessionResolver'
 const VTEX_SESSION = 'vtex_session'
@@ -6,12 +6,6 @@ const VTEX_SESSION = 'vtex_session'
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
 const VTEXID_EXPIRES = 86400
-
-const getSessionToken = ({
-  request: {
-    headers: { cookie },
-  },
-}: Context) => parse(cookie)[VTEX_SESSION]
 
 // Disclaimer: These queries and mutations assume that vtex_session was passed in cookies.
 export const queries = {
@@ -22,11 +16,12 @@ export const queries = {
   getSession: async (_: any, __: any, ctx: Context) => {
     const {
       clients: { session },
+      cookies,
     } = ctx
-    // TODO: See if there is a way to get session token in a better way
-    const { sessionData } = await session.getSession(getSessionToken(ctx), [
-      '*',
-    ])
+    const { sessionData } = await session.getSession(
+      cookies.get(VTEX_SESSION)!,
+      ['*']
+    )
     return sessionFields(sessionData)
   },
 }
@@ -39,13 +34,14 @@ export const mutations = {
   impersonate: async (_: any, { email }: ImpersonateArg, ctx: Context) => {
     const {
       clients: { session },
+      cookies,
     } = ctx
 
     await session.updateSession(
       IMPERSONATED_EMAIL,
       email,
       [],
-      getSessionToken(ctx)
+      cookies.get(VTEX_SESSION)!
     )
     ctx.response.set(
       'Set-Cookie',
@@ -61,12 +57,13 @@ export const mutations = {
   depersonify: async (_: any, __: any, ctx: Context) => {
     const {
       clients: { session },
+      cookies,
     } = ctx
     await session.updateSession(
       IMPERSONATED_EMAIL,
       '',
       [],
-      getSessionToken(ctx)
+      cookies.get(VTEX_SESSION)!
     )
     ctx.response.set(
       'Set-Cookie',
