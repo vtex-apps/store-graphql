@@ -14,6 +14,9 @@ const TEN_SECONDS_MS = 10 * 1000
 
 // Segments are small and immutable.
 const MAX_SEGMENT_CACHE = 10000
+const SMALL_CACHE = 1000
+
+const appsCache = new LRUCache<string, any>({ max: SMALL_CACHE })
 const segmentCache = new LRUCache<string, any>({ max: MAX_SEGMENT_CACHE })
 const catalogCache = new LRUCache<string, any>({max: 4000})
 const messagesCache = new LRUCache<string, any>({max: 2000})

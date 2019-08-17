@@ -1,4 +1,9 @@
-type Product {
+interface Entiy {
+  canonicaRoute: String
+  systemRoute: String
+}
+
+type Product implements Entity {
   """ Brand of the product """
   brand: String @translatable
   """ Id of the brand of the product """

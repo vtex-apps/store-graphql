@@ -17,6 +17,8 @@ import { queries as benefitsQueries } from '../benefits'
 import { toBrandIOMessage, toProductIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
 import { buildCategoryMap, hashMD5 } from './utils'
 
+const ROUTES_JSON_PATH = '/dist/vtex.store-graphql/build.json'
+
 const objToNameValue = (
   keyName: string,
   valueName: string,
@@ -90,6 +92,14 @@ const productCategoriesToCategoryTree = async (
 
 export const resolvers = {
   Product: {
+    canonicalRoutes: ({ productName }: any, _: any, {clients: { apps }}: Context ) => {
+      // Pegar rotas
+      // parsear (traduzido)
+    },
+    systemRoutes: ({ productName }: any, _: any, {clients: { apps }}: Context ) => {
+      // Pegar rotas
+      // parsear
+    },
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
@@ -166,11 +176,11 @@ export const resolvers = {
         (groupName: string) => ({
           name: toSpecificationIOMessage('groupName')(segment, groupName, hashMD5(groupName)),
           specifications: (product[groupName] || []).map(
-            (name: string) => ({ 
-              name: toSpecificationIOMessage('specificationName')(segment, name, hashMD5(name)), 
+            (name: string) => ({
+              name: toSpecificationIOMessage('specificationName')(segment, name, hashMD5(name)),
               values: (product[name] || []).map(
                 (value: string) => toSpecificationIOMessage('specificationValue')(segment, value, hashMD5(value))
-              ) 
+              )
             })
           )
         })
@@ -187,12 +197,12 @@ export const resolvers = {
           let fieldValues = new Array() as [Promise<TranslatableMessage>]
           (product[specification] || []).forEach(
             (value: string) => {
-              fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hashMD5(value))) 
+              fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hashMD5(value)))
             }
           )
-          
+
           productSpecifications.push({
-            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)), 
+            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)),
             fieldValues
           })
         }
