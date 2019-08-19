@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [2.102.1] - 2019-08-12
+### Added
+- Routes fetching and parsing framework
+- Routes resolver for Product
+- Routes resolver for Brand 
+
+## [2.102.1] - 2019-08-12
 ### Fixed
 - Fix `titleTag` prop of the `Brand` type that was removed in the last release.
 
