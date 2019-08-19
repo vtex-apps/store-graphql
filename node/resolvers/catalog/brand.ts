@@ -30,14 +30,14 @@ export const resolvers = {
 
     slug: (brand: any) => Slugify(brand.name),
 
-    canonicalRoute: (brand: any, _: any, {clients: {apps}}: Context ) =>
-      getRoute(apps, 'brand', 'canonical', {
+    canonicalRoute: (brand: any, _: any, ctx: Context ) =>
+      getRoute(ctx, 'brand', 'canonical', {
         ...brand,
         brand: Slugify(brand.name),
       }),
 
-    internalRoute: async (brand: any, _: any, {clients: {apps}}: Context ) =>
-      getRoute(apps, 'brand', 'internal', {
+    internalRoute: async (brand: any, _: any, ctx: Context ) =>
+      getRoute(ctx, 'brand', 'internal', {
         ...brand,
         brand: Slugify(brand.name),
       }),

@@ -92,14 +92,14 @@ const productCategoriesToCategoryTree = async (
 
 export const resolvers = {
   Product: {
-    canonicalRoute: async (product: any, _: any, {clients: {apps}}: Context ) =>
-      getRoute(apps, 'product', 'canonical', {
+    canonicalRoute: async (product: any, _: any, ctx: Context ) =>
+      getRoute(ctx, 'product', 'canonical', {
         ...product,
         slug: Slugify(product.productName),
       }),
 
-    internalRoute: async (product: any, _: any, {clients: {apps}}: Context ) =>
-      getRoute(apps, 'product', 'internal', {
+    internalRoute: async (product: any, _: any, ctx: Context ) =>
+      getRoute(ctx, 'product', 'internal', {
         ...product,
         slug: Slugify(product.productName),
         id: product.productId,
