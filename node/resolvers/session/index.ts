@@ -33,7 +33,7 @@ interface ImpersonateArg {
 export const mutations = {
   impersonate: async (_: any, { email }: ImpersonateArg, ctx: Context) => {
     const {
-      clients: { session },
+      clients: { session, checkout },
       cookies,
     } = ctx
 
@@ -43,6 +43,19 @@ export const mutations = {
       [],
       cookies.get(VTEX_SESSION)!
     )
+
+    const orderForm = await checkout.orderForm()
+    const clientProfileData = orderForm && orderForm.clientProfileData
+      ? orderForm.clientProfileData
+      : {}
+
+    if (clientProfileData.email !== email && orderForm.orderFormId) {
+      await checkout.updateOrderFormProfile(
+        orderForm.orderFormId,
+        { ...clientProfileData, email }
+      )
+    }
+
     ctx.response.set(
       'Set-Cookie',
       serialize(IMPERSONATED_EMAIL, email, {
@@ -51,20 +64,30 @@ export const mutations = {
         path: '/',
       })
     )
+
     return queries.getSession({}, {}, ctx)
   },
 
   depersonify: async (_: any, __: any, ctx: Context) => {
     const {
-      clients: { session },
+      clients: { session, checkout },
       cookies,
     } = ctx
+
     await session.updateSession(
       IMPERSONATED_EMAIL,
       '',
       [],
       cookies.get(VTEX_SESSION)!
     )
+
+    try {
+      await checkout.changeToAnonymousUser()
+    } catch (e) {
+      // This Checkout API triggers a redirect (302).
+      // That's fine.
+    }
+
     ctx.response.set(
       'Set-Cookie',
       serialize(IMPERSONATED_EMAIL, '', {
@@ -72,6 +95,7 @@ export const mutations = {
         path: '/',
       })
     )
+
     return true
   },
 }
