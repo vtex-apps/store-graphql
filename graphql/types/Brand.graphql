@@ -1,4 +1,4 @@
-type Brand {
+type Brand implements RoutesEntity {
   """ slug is used as cacheId """
   cacheId: ID
   """ Brand id """
@@ -15,4 +15,7 @@ type Brand {
   metaTagDescription: String @translatable
   """ Brand is active """
   active: Boolean
+  """ Routes """
+  canonicalRoute: String
+  internalRoute: String
 }

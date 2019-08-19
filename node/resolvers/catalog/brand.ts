@@ -2,6 +2,7 @@ import { prop } from 'ramda'
 
 import { Slugify } from './slug'
 import { toBrandIOMessage } from './../../utils/ioMessage'
+import { getRoute } from './../../utils/routes'
 
 export const resolvers = {
   Brand: {
@@ -29,5 +30,16 @@ export const resolvers = {
 
     slug: (brand: any) => Slugify(brand.name),
 
+    canonicalRoute: (brand: any, _: any, {clients: {apps}}: Context ) =>
+      getRoute(apps, 'brand', 'canonical', {
+        ...brand,
+        brand: Slugify(brand.name),
+      }),
+
+    internalRoute: async (brand: any, _: any, {clients: {apps}}: Context ) =>
+      getRoute(apps, 'brand', 'internal', {
+        ...brand,
+        brand: Slugify(brand.name),
+      }),
   }
 }
