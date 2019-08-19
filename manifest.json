@@ -147,6 +147,9 @@
         "host": "portal.vtexcommercestable.com.br",
         "path": "/api/profile-system/*"
       }
+    },
+    {
+      "name": "read-workspace-apps"
     }
   ],
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"

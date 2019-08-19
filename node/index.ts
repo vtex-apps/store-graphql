@@ -11,6 +11,7 @@ const TWO_SECONDS_MS = 2 * 1000
 const THREE_SECONDS_MS = 3 * 1000
 const SIX_SECONDS_MS = 6 * 1000
 const TEN_SECONDS_MS = 10 * 1000
+const ONE_HALF_SECOND_MS = 1500
 
 // Segments are small and immutable.
 const MAX_SEGMENT_CACHE = 10000
@@ -31,6 +32,12 @@ export default new Service<Clients, void, CustomContext>({
   clients: {
     implementation: Clients,
     options: {
+      apps: {
+        concurrency: 20,
+        memoryCache: appsCache,
+        retries: 1,
+        timeout: ONE_HALF_SECOND_MS,
+      },
       checkout: {
         concurrency: 10,
         timeout: TEN_SECONDS_MS,
