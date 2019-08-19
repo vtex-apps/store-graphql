@@ -12,12 +12,12 @@ import {
 } from 'ramda'
 
 import { Functions } from '@gocommerce/utils'
+import { Slugify } from './slug'
 
 import { queries as benefitsQueries } from '../benefits'
 import { toBrandIOMessage, toProductIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
 import { buildCategoryMap, hashMD5 } from './utils'
-
-const ROUTES_JSON_PATH = '/dist/vtex.store-graphql/build.json'
+import { getRoute } from './../../utils/routes'
 
 const objToNameValue = (
   keyName: string,
@@ -92,14 +92,19 @@ const productCategoriesToCategoryTree = async (
 
 export const resolvers = {
   Product: {
-    canonicalRoutes: ({ productName }: any, _: any, {clients: { apps }}: Context ) => {
-      // Pegar rotas
-      // parsear (traduzido)
-    },
-    systemRoutes: ({ productName }: any, _: any, {clients: { apps }}: Context ) => {
-      // Pegar rotas
-      // parsear
-    },
+    canonicalRoute: async (product: any, _: any, {clients: {apps}}: Context ) =>
+      getRoute(apps, 'product', 'canonical', {
+        ...product,
+        slug: Slugify(product.productName),
+      }),
+
+    internalRoute: async (product: any, _: any, {clients: {apps}}: Context ) =>
+      getRoute(apps, 'product', 'internal', {
+        ...product,
+        slug: Slugify(product.productName),
+        id: product.productId,
+      }),
+
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 

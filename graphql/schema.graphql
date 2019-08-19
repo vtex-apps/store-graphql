@@ -1,3 +1,15 @@
+interface RoutesEntity {
+  """
+  Canonical Route
+  """
+  canonicalRoute: String
+
+  """
+  Internal, system route
+  """
+  internalRoute: String
+}
+
 type Query {
   """
   Returns a specified product

@@ -1,9 +1,4 @@
-interface Entiy {
-  canonicaRoute: String
-  systemRoute: String
-}
-
-type Product implements Entity {
+type Product implements RoutesEntity {
   """ Brand of the product """
   brand: String @translatable
   """ Id of the brand of the product """
@@ -51,6 +46,9 @@ type Product implements Entity {
   itemMetadata: ItemMetadata
    """ Array of product SpecificationGroup """
   specificationGroups: [SpecificationGroup]
+  """ Routes """
+  canonicalRoute: String
+  internalRoute: String
 }
 
 type OnlyProduct {
