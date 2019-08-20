@@ -46,7 +46,7 @@ export const resolvers = {
 
       // If the path is `/clothing`, we know that's a department
       // But if it is `/clothing/shirts`, it's not.
-      return pathToCategoryHref(path)
+      return path
     },
 
     name: async (
