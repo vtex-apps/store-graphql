@@ -26,7 +26,7 @@ export class Checkout extends JanusClient {
     return {
       Cookie: `${checkoutCookie}vtex_segment=${
         this.context.segmentToken
-      };vtex_session=${this.context.sessionToken};`,
+        };vtex_session=${this.context.sessionToken};`,
     }
   }
 
@@ -154,6 +154,19 @@ export class Checkout extends JanusClient {
     )
   }
 
+  public changeToAnonymousUser = () => {
+    const { orderFormId } = this.context as CustomIOContext
+
+    if (!orderFormId) {
+      throw new Error('Missing orderFormId. Use withOrderFormId directive.')
+    }
+
+    return this.get(
+      this.routes.changeToAnonymousUser(orderFormId),
+      { metric: 'checkout-change-to-anonymous' }
+    )
+  }
+
   public orders = () =>
     this.get(this.routes.orders, { metric: 'checkout-orders' })
 
@@ -262,6 +275,8 @@ export class Checkout extends JanusClient {
       orders: `${base}/orders`,
       simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
+      changeToAnonymousUser: (orderFormId: string) =>
+        `/checkout/changeToAnonymousUser/${orderFormId}`
     }
   }
 }
