@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
   
-## [2.102.2] - 2019-08-20
+## [2.103.0] - 2019-08-20
 ### Changed 
 - Made `searchBreadcrum` and `categoryTree` use canonical routes
 
