@@ -114,10 +114,7 @@ export const resolvers = {
       mapUnit,
       queryUnit,
     }: BreadcrumbParams) => {
-      if (index === 0 && isCategoryMap(mapUnit)) {
-        return `/${queryUnit}`
-      }
-      if (index === 0 && isBrandMap(mapUnit)) {
+      if (index === 0 && (isCategoryMap(mapUnit) || isBrandMap(mapUnit))) {
         return `/${queryUnit}`
       }
       if (mapArray.every(isCategoryMap)) {
