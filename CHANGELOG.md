@@ -6,15 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-<<<<<<< HEAD
-
-## [2.103.0] - 2019-08-23
-  
-## [2.103.0] - 2019-08-20
-### Changed 
-- Made `searchBreadcrum` and `categoryTree` use canonical routes
-=======
->>>>>>> parent of b88a7a4... Merge pull request #391 from vtex-apps/feature/remove-old-routing
 
 ## [2.102.2] - 2019-08-20
 ### Fixed
