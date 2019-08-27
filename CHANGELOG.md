@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.103.1] - 2019-08-27
+
 ## [2.102.2] - 2019-08-20
 ### Fixed
 - impersonate and depersonify mutations to affect orderForm
