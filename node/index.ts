@@ -15,14 +15,12 @@ const TEN_SECONDS_MS = 10 * 1000
 // Segments are small and immutable.
 const MAX_SEGMENT_CACHE = 10000
 const segmentCache = new LRUCache<string, any>({ max: MAX_SEGMENT_CACHE })
-const catalogCache = new LRUCache<string, any>({max: 4000})
-const messagesCache = new LRUCache<string, any>({max: 2000})
+const catalogCache = new LRUCache<string, any>({max: 3000})
+const messagesCache = new LRUCache<string, any>({max: 3000})
 
 metrics.trackCache('segment', segmentCache)
 metrics.trackCache('catalog', catalogCache)
 metrics.trackCache('messages', messagesCache)
-
-export { Runtime } from '@vtex/api'
 
 export default new Service<Clients, void, CustomContext>({
   clients: {
