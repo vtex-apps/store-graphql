@@ -232,13 +232,13 @@ const translateToStoreDefaultLanguage = async (
   clients: Context['clients'],
   term: string
 ): Promise<string> => {
-  const { segment, messages } = clients
+  const { segment, messagesGraphQL } = clients
   const [{ cultureInfo: to }, { cultureInfo: from }] = await all([
     segment.getSegmentByToken(null),
     segment.getSegment(),
   ])
   return from && from !== to
-    ? messages.translate(to, [toSearchTerm(term, from)]).then(head)
+    ? messagesGraphQL.translate(toSearchTerm(term, from, to) as any).then(head)
     : term
 }
 

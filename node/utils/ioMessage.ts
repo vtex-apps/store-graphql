@@ -54,9 +54,15 @@ export const toSpecificationIOMessage = (field: string) => (segment: Segment, co
   `Specification-id.${id}::${field}`
 )
 
-export const toSearchTerm = (term: string, from: string, description: string = '') => ({
-  id: `Search::${Slugify(term)}`,
-  description,
-  content: term,
+export const toSearchTerm = (term: string, from: string, to: string, description: string = '') => ({
+  messages:[{
+    provider: 'Search',
+    messages: [{
+      id: Slugify(term),
+      content: term,
+      description
+    }]
+  }],
   from,
+  to
 })

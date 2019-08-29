@@ -347,10 +347,10 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@vtex/api@^3.40.0":
-  version "3.41.1"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.41.1.tgz#5c5b4bb54e7a9929f7111335a63f029dac8b3932"
-  integrity sha512-E8ZZKbEe23uz5EVfSxWwQ35Dv+4CiByb7PIY40Uaje//EEIcMe76jxCUIOfOz0J30e6FEYH4wZrWQRcPmE9EnA==
+"@vtex/api@^3.41.0":
+  version "3.46.0"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-3.46.0.tgz#f43a58ce15e08dfa366daf44a4c2ec4928527236"
+  integrity sha512-Dqlu/LE6mn1oUIb744bjj+RgNbb+xMSB0C6H6RcUvVGOQPJgY4OfqNY11jae6qjInWXIVVyBkRKFwnFpUNqfxA==
   dependencies:
     "@types/koa" "^2.0.48"
     "@types/koa-compose" "^3.2.3"
