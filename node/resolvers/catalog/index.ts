@@ -561,7 +561,7 @@ export const queries = {
 
   searchMetadata: async (
     _: any,
-    args: { query?: string | null; map?: string | null },
+    args: SearchMetadataArgs,
     ctx: Context
   ) => {
     const { clients } = ctx
