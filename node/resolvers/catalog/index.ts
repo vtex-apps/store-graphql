@@ -56,6 +56,11 @@ interface SearchContextParams {
   subcategory?: string
 }
 
+interface SearchMetadataArgs {
+  query?: string | null
+  map?: string | null
+}
+
 interface ProductIndentifier {
   field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
   value: string
@@ -160,7 +165,7 @@ const getAndParsePagetype = async (path: string, ctx: Context) => {
 }
 
 const getCategoryMetadata = async (
-  { map, query }: SearchArgs,
+  { map, query }: SearchMetadataArgs,
   ctx: Context
 ) => {
   const {
@@ -192,7 +197,10 @@ const getCategoryMetadata = async (
   return getAndParsePagetype(cleanQuery, ctx)
 }
 
-const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
+const getBrandMetadata = async (
+  { query }: SearchMetadataArgs,
+  ctx: Context
+) => {
   const {
     vtex: { account },
     clients: { catalog },
@@ -216,7 +224,11 @@ const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
  * @param args
  * @param ctx
  */
-const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
+const getSearchMetaData = async (
+  _: any,
+  args: SearchMetadataArgs,
+  ctx: Context
+) => {
   const map = args.map || ''
   const firstMap = head(map.split(','))
   if (firstMap === 'c') {
@@ -545,5 +557,28 @@ export const queries = {
       productId = product!.productId
     }
     return ctx.clients.catalog.crossSelling(productId, catalogType)
+  },
+
+  searchMetadata: async (
+    _: any,
+    args: { query?: string | null; map?: string | null },
+    ctx: Context
+  ) => {
+    const { clients } = ctx
+    const queryTerm = args.query
+    if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
+      throw new UserInputError(
+        `The query term contains invalid characters. query=${queryTerm}`
+      )
+    }
+    const query = await translateToStoreDefaultLanguage(
+      clients,
+      args.query || ''
+    )
+    const translatedArgs = {
+      ...args,
+      query,
+    }
+    return getSearchMetaData(_, translatedArgs, ctx)
   },
 }

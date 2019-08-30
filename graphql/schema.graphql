@@ -63,6 +63,17 @@ type Query {
     hideUnavailableItems: Boolean = false
   ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
+  searchMetadata(
+    """
+    Terms that is used in search e.g.: eletronics/samsung
+    """
+    query: String = ""
+    """
+    Defines terms types: Brand, Category, Department e.g.: c,b
+    """
+    map: String = ""
+  ): SearchMetadata @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
   """
   Returns products list filtered and ordered
   """
