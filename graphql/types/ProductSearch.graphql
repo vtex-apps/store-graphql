@@ -10,3 +10,8 @@ type SearchBreadcrumb {
   name: String @translatable
   href: String
 }
+
+type SearchMetadata {
+  titleTag: String
+  metaTagDescription: String
+}
