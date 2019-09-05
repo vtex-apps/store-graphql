@@ -15,6 +15,7 @@ import {
 } from './attachmentsHelper'
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
+import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 import { UserInputError } from '@vtex/api'
@@ -131,6 +132,7 @@ export const fieldResolvers = {
   },
   ...assemblyOptionsItemResolvers,
   ...orderFormItemResolvers,
+  ...shippingFieldResolvers,
 }
 
 const replaceDomain = (host: string) => (cookie: string) =>

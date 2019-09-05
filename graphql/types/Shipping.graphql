@@ -1,12 +1,12 @@
 type ShippingData {
-  logisticsInfo: [LogisticsInfo],
+  logisticsInfo: [LogisticsInfo]
   messages: [MessageInfo]
 }
 
 type MessageInfo {
-  code: String,
-  text: String,
-  status: String,
+  code: String
+  text: String
+  status: String
   fields: MessageFields
 }
 
@@ -29,6 +29,7 @@ type ShippingSLA {
   shippingEstimate: String
   shippingEstimateDate: String
   deliveryIds: [DeliveryIds]
+  friendlyName: String
 }
 
 type DeliveryIds {
@@ -40,7 +41,7 @@ type DeliveryIds {
 }
 
 input ShippingItem {
-  id: String,
-  quantity: String,
+  id: String
+  quantity: String
   seller: String
 }
