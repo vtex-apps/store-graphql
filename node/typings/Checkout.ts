@@ -84,37 +84,7 @@ interface OrderForm {
       selectedSla: string
       selectedDeliveryChannel: string
       addressId: string
-      slas: {
-        id: string
-        deliveryChannel: string
-        name: string
-        deliveryIds: {
-          courierId: string
-          warehouseId: string
-          dockId: string
-          courierName: string
-          quantity: number
-        }[]
-        shippingEstimate: string
-        shippingEstimateDate: string | null
-        lockTTL: string | null
-        availableDeliveryWindows: any[]
-        deliveryWindow: string | null
-        price: number
-        listPrice: number
-        tax: number
-        pickupStoreInfo: {
-          isPickupStore: boolean
-          friendlyName: string | null
-
-          address: CheckoutAddress | null
-          additionalInfo: any | null
-          dockId: string | null
-        }
-        pickupPointId: string | null
-        pickupDistance: number
-        polygonName: string | null
-      }[]
+      slas: SLA[]
       shipsTo: string[]
       itemId: string
       deliveryChannels: { id: string }[]
@@ -259,4 +229,35 @@ interface SimulationPayload {
   isCheckedIn?: boolean
   priceTables?: string[]
   marketingData?: Record<string, string>
+}
+
+interface SLA {
+  id: string
+  deliveryChannel: string
+  name: string
+  deliveryIds: {
+    courierId: string
+    warehouseId: string
+    dockId: string
+    courierName: string
+    quantity: number
+  }[]
+  shippingEstimate: string
+  shippingEstimateDate: string | null
+  lockTTL: string | null
+  availableDeliveryWindows: any[]
+  deliveryWindow: string | null
+  price: number
+  listPrice: number
+  tax: number
+  pickupStoreInfo: {
+    isPickupStore: boolean
+    friendlyName: string | null
+    address: CheckoutAddress | null
+    additionalInfo: any | null
+    dockId: string | null
+  }
+  pickupPointId: string | null
+  pickupDistance: number
+  polygonName: string | null
 }
