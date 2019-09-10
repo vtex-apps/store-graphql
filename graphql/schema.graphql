@@ -63,6 +63,17 @@ type Query {
     hideUnavailableItems: Boolean = false
   ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 
+  searchMetadata(
+    """
+    Terms that is used in search e.g.: eletronics/samsung
+    """
+    query: String = ""
+    """
+    Defines terms types: Brand, Category, Department e.g.: c,b
+    """
+    map: String = ""
+  ): SearchMetadata @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
   """
   Returns products list filtered and ordered
   """
@@ -746,12 +757,12 @@ type Mutation {
     The email which will be used to impersonate a user
     """
     email: String!
-  ): Session
+  ): Session @withOrderFormId
 
   """
   Depersonify a customer
   """
-  depersonify: Boolean
+  depersonify: Boolean @withOrderFormId
 
   """
   Document

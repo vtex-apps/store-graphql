@@ -33,31 +33,6 @@ declare global {
     identity: IdentityDataSource
   }
 
-  interface OrderFormItem {
-    id: string
-    name: string
-    detailUrl: string
-    imageUrl: string
-    skuName: string
-    quantity: number
-    uniqueId: string
-    productId: string
-    refId: string
-    ean: string
-    priceValidUntil: string
-    price: number
-    tax: number
-    listPrice: number
-    sellingPrice: number
-    rewardValue: number
-    isGift: boolean
-    parentItemIndex: number
-    parentAssemblyBinding: string
-    productCategoryIds: string
-    priceTags: string[]
-    measurementUnit: string
-  }
-
   interface UserAddress {
     id: string
     addressName: string
@@ -186,5 +161,43 @@ declare global {
     filename: string
     mimetype: string
     encoding: string
+  }
+
+  interface SKU {
+    itemId: string
+    name: string
+    nameComplete: string
+    productName: string
+    productDescription: string
+    brandName: string
+    variations: [Property]
+    skuSpecifications: [SkuSpecification]
+    productSpecifications: [ProductSpecification]
+  }
+
+  interface Property {
+    name: string
+    values: [string]
+  }
+
+  interface SkuSpecification {
+    fieldName: Promise<TranslatableMessage>
+    fieldValues: [Promise<TranslatableMessage>]
+  }
+
+  interface ProductSpecification {
+    fieldName: Promise<TranslatableMessage>
+    fieldValues: [Promise<TranslatableMessage>]
+  }
+
+  interface TranslatableMessage {
+    content: string
+    from: string
+    id: string
+  }
+
+  interface Reference {
+    Key: String
+    Value: String
   }
 }

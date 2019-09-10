@@ -10,11 +10,11 @@ type Category {
   """ Category name """
   name: String @translatable
   """ Title used by html tag"""
-  titleTag: String
+  titleTag: String @translatable
   """ Description used by html tag"""
   hasChildren: Boolean
   """ Has children categories """
-  metaTagDescription: String
+  metaTagDescription: String @translatable
   """ Categories children """
   children: [Category]
 }

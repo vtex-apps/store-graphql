@@ -56,6 +56,11 @@ interface SearchContextParams {
   subcategory?: string
 }
 
+interface SearchMetadataArgs {
+  query?: string | null
+  map?: string | null
+}
+
 interface ProductIndentifier {
   field: 'id' | 'slug' | 'ean' | 'reference' | 'sku'
   value: string
@@ -97,24 +102,6 @@ const inputToCatalogCrossSelling = {
   [CrossSellingInput.viewAndBought]: CatalogCrossSellingTypes.whosawalsobought,
   [CrossSellingInput.accessories]: CatalogCrossSellingTypes.accessories,
   [CrossSellingInput.suggestions]: CatalogCrossSellingTypes.suggestions,
-}
-
-/**
- * It will extract the slug from the HREF in the item
- * passed as parameter.
- *
- * That is needed once the API provide only the old link
- * (from CMS portal) to access the product page, nothing
- * more.
- *
- * HREF provided:
- * https://portal.vtexcommercestable.com.br/:slug/p
- *
- * @param item The item to extract the information
- */
-export const extractSlug = (item: any) => {
-  const href = split('/', item.href)
-  return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 
 const brandFromList = async (
@@ -178,7 +165,7 @@ const getAndParsePagetype = async (path: string, ctx: Context) => {
 }
 
 const getCategoryMetadata = async (
-  { map, query }: SearchArgs,
+  { map, query }: SearchMetadataArgs,
   ctx: Context
 ) => {
   const {
@@ -210,7 +197,10 @@ const getCategoryMetadata = async (
   return getAndParsePagetype(cleanQuery, ctx)
 }
 
-const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
+const getBrandMetadata = async (
+  { query }: SearchMetadataArgs,
+  ctx: Context
+) => {
   const {
     vtex: { account },
     clients: { catalog },
@@ -234,7 +224,11 @@ const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
  * @param args
  * @param ctx
  */
-const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
+const getSearchMetaData = async (
+  _: any,
+  args: SearchMetadataArgs,
+  ctx: Context
+) => {
   const map = args.map || ''
   const firstMap = head(map.split(','))
   if (firstMap === 'c') {
@@ -250,13 +244,13 @@ const translateToStoreDefaultLanguage = async (
   clients: Context['clients'],
   term: string
 ): Promise<string> => {
-  const { segment, messages } = clients
+  const { segment, messagesGraphQL } = clients
   const [{ cultureInfo: to }, { cultureInfo: from }] = await all([
     segment.getSegmentByToken(null),
     segment.getSegment(),
   ])
   return from && from !== to
-    ? messages.translate(to, [toSearchTerm(term, from)]).then(head)
+    ? messagesGraphQL.translate(toSearchTerm(term, from, to) as any).then(head)
     : term
 }
 
@@ -563,5 +557,28 @@ export const queries = {
       productId = product!.productId
     }
     return ctx.clients.catalog.crossSelling(productId, catalogType)
+  },
+
+  searchMetadata: async (
+    _: any,
+    args: SearchMetadataArgs,
+    ctx: Context
+  ) => {
+    const { clients } = ctx
+    const queryTerm = args.query
+    if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
+      throw new UserInputError(
+        `The query term contains invalid characters. query=${queryTerm}`
+      )
+    }
+    const query = await translateToStoreDefaultLanguage(
+      clients,
+      args.query || ''
+    )
+    const translatedArgs = {
+      ...args,
+      query,
+    }
+    return getSearchMetaData(_, translatedArgs, ctx)
   },
 }

@@ -1,5 +1,7 @@
 type OrderForm {
-  """ orderFormId is used as cacheId """
+  """
+  orderFormId is used as cacheId
+  """
   cacheId: ID
   orderFormId: String
   customData: CustomData
@@ -34,7 +36,6 @@ type CustomApp {
   major: Int
 }
 
-
 type StorePreferencesData {
   countryCode: String
   currencyCode: String
@@ -50,12 +51,15 @@ type CurrencyFormatInfo {
   startsWithCurrencySymbol: Boolean
 }
 
+scalar ProductCategories
+
 type OrderFormItem {
   id: ID
   name: String
   detailUrl: String
   imageUrl: String
   skuName: String
+  productRefId: String
   quantity: Float
   uniqueId: String
   productId: String
@@ -70,18 +74,44 @@ type OrderFormItem {
   isGift: Boolean
   parentItemIndex: Int
   parentAssemblyBinding: String
-  """ Informations related to assembly options children of this item """
+  additionalInfo: ItemAdditionalInfo
+  """
+  Informations related to assembly options children of this item
+  """
   assemblyOptions: AssemblyOptionItem
-  """ ID of item's seller """
+  """
+  ID of item's seller
+  """
   seller: String
-  """ Item index on cart """
+  """
+  Item index on cart
+  """
   cartIndex: Int
-  """ Category ids on orderFormItem """
+  """
+  Category ids on orderFormItem
+  """
   productCategoryIds: String
-  """ Price tags on orderFormItem """
+  productCategories: ProductCategories
+  """
+  Price tags on orderFormItem
+  """
   priceTags: [PriceTags]
-  """ measurementUnit on orderFormItem """
+  """
+  measurementUnit on orderFormItem
+  """
   measurementUnit: String
+  """
+  Selling price of item summing with all of its children items selling prices.
+  """
+  sellingPriceWithAssemblies: Float
+  """
+  unitMultiplier on orderFormItem
+  """
+  unitMultiplier: Float
+}
+
+type ItemAdditionalInfo {
+  brandName: String
 }
 
 type PriceTags {
@@ -93,11 +123,17 @@ type PriceTags {
 }
 
 type AssemblyOptionItem {
-  """ Assembly options added to parent OrderFormItem """
+  """
+  Assembly options added to parent OrderFormItem
+  """
   added: [AddedOptionItem]!
-  """ Assembly options removed from parent OrderFormItem """
+  """
+  Assembly options removed from parent OrderFormItem
+  """
   removed: [RemovedOptionItem]!
-  """ Selling price of parent item """
+  """
+  Selling price of parent item
+  """
   parentPrice: Float
 }
 
@@ -137,6 +173,7 @@ input OrderFormItemInput {
 }
 
 input OrderFormAddressInput {
+  addressId: String
   addressType: String
   postalCode: String
   country: String
@@ -186,23 +223,39 @@ input OrderFormCheckinInput {
 }
 
 type RemovedOptionItem {
-  """ The initialQuantity of the assembly option CompositionItem """
+  """
+  The initialQuantity of the assembly option CompositionItem
+  """
   initialQuantity: Int
-  """ The amount that the user removed of this assembly option """
+  """
+  The amount that the user removed of this assembly option
+  """
   removedQuantity: Int
-  """ The name of this assembly option """
+  """
+  The name of this assembly option
+  """
   name: String
 }
 
 type AddedOptionItem {
-  """ The OrderFormItem of this assembly options, as appering on cart """
+  """
+  The OrderFormItem of this assembly options, as appering on cart
+  """
   item: OrderFormItem
-  """ Composition item of assembly option, as it appears on ItemMetadata of OrderForm """
+  """
+  Composition item of assembly option, as it appears on ItemMetadata of OrderForm
+  """
   compositionItem: CompositionItem
-  """ The quantity of this assembly option per parent unit, so childQuantity / parentQuantity """
+  """
+  The quantity of this assembly option per parent unit, so childQuantity / parentQuantity
+  """
   normalizedQuantity: Int
-  """ The choice type of this assembly option (MULTIPLE, SINGLE or TOGGLE) """
+  """
+  The choice type of this assembly option (MULTIPLE, SINGLE or TOGGLE)
+  """
   choiceType: String
-  """ The real quantity added by user, so quantity in cart minus the item's initialQuantity """
+  """
+  The real quantity added by user, so quantity in cart minus the item's initialQuantity
+  """
   extraQuantity: Int
 }

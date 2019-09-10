@@ -1,4 +1,6 @@
 import { compose, last, split, toLower } from 'ramda'
+import crypto from 'crypto'
+
 import { catalogSlugify, Slugify } from './slug'
 
 export enum CatalogCrossSellingTypes {
@@ -24,6 +26,12 @@ const lastSegment = compose<string, string[], string>(
   last,
   split('/')
 )
+
+export function hashMD5(text: string) {
+  const hash = crypto.createHash('md5')
+  return hash.update(text).digest('hex')
+}
+
 export function findCategoryInTree(
   tree: Category[],
   values: string[],

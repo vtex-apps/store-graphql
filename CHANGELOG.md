@@ -9,6 +9,99 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added document search with pagination information 
 
+## [2.105.1] - 2019-09-05
+### Added
+- Create friendly name resolver to ShippingSLA type.
+
+## [2.105.0] - 2019-09-02
+### Added
+- Create query for search metadata.
+
+## [2.104.2] - 2019-08-29
+
+## [2.104.1] - 2019-08-29
+
+## [2.102.1] - 2019-08-29
+### Changed
+- Translate terms with `messagesGraphQL` client(instead of `messages` client) before sending them to search api for `productSearch` and `facets` resolvers.
+
+## [2.104.0] - 2019-08-28
+
+## [2.103.1] - 2019-08-27
+
+## [2.102.2] - 2019-08-20
+### Fixed
+- impersonate and depersonify mutations to affect orderForm
+- Use session client instead of making requests directly
+
+## [2.102.1] - 2019-08-12
+### Fixed
+- Fix `titleTag` prop of the `Brand` type that was removed in the last release.
+
+## [2.102.0] - 2019-08-09
+### Added
+- Add more translatable fields for catalog members.
+
+## [2.101.0] - 2019-08-09
+
+### Added
+- Field `videos` to `Items`
+
+## [2.100.1] - 2019-08-08
+### Fixed
+- Returning an array of installments with `[null]`.
+
+## [2.100.0] - 2019-08-06
+### Added
+- Field `unitMultiplier` to `OrderFormItem`.
+- Field `addressId` to `OrderFormItemInput`.
+
+## [2.99.0] - 2019-08-06
+### Added
+- Add `priceTables` to `SessionProfile`.
+
+## [2.98.2] - 2019-08-05
+### Fixed
+- Fix issue where Offer resolver was not being applied.
+
+## [2.98.1] - 2019-08-01
+
+## [2.98.0] - 2019-07-29
+### Added
+- `additionalData` in `connectorResponses` in `order`.
+
+## [2.97.1] - 2019-07-29
+### Fixed
+- Bug on fetching price of assembly options, on some corner cases of assembly tree building.
+
+## [2.97.0] - 2019-07-26
+### Added
+- Capability of adding recursive assembly options on addItems mutation.
+
+### Fixed
+- Check only on recently added items to add assembly options, preventing to add options to wrong father.
+
+## [2.96.0] - 2019-07-19
+### Added
+- Field `producRefId` to `OrderFormItem`.
+- Field `productCategories` to `OrderFormItem`.
+- Field `additionalInfo` to `OrderFormItem`.
+
+## [2.95.0] - 2019-07-18
+### Fixed
+- `listsByOwner` query not returning the list information updated.
+
+## [2.94.0] - 2019-07-18
+### Fixed
+- Add `giftSkuIds` field to the `Offer` schema
+
+## [2.93.2] - 2019-07-12
+### Added
+- Code improvement. More types in Checkout files.
+
+### Fixed
+- Remove assembly option client method: send delete body correctly.
+
 ## [2.93.1] - 2019-07-10
 ### Fixed
 - Avoid breaking call to `updateOrderFormMarketingData` if `marketingTags` is `null`.
@@ -17,7 +110,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Return the sales channel country as a default country on the `shipsTo` array of countries in **logistics** query.
-- Port LogisticsDataSource to a Janus Client. 
+- Port LogisticsDataSource to a Janus Client.
 
 ## [2.92.0] - 2019-07-09
 
@@ -42,7 +135,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.90.5] - 2019-07-04
 
 ### Added
-- added `teasers` and `discountHighlights` fields in `Product` type. 
+- added `teasers` and `discountHighlights` fields in `Product` type.
 
 ## [2.90.4] - 2019-07-04
 

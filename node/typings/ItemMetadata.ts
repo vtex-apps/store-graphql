@@ -23,6 +23,18 @@ interface AssemblyOption {
   composition: Composition | null
 }
 
+interface CatalogMetadataItem {
+  Name: string
+  NameComplete: string
+  MainImage: string
+  BrandName: string
+  CategoryId: number
+  ProductId: number
+  id: string
+  seller: string
+  assemblyOptions: AssemblyOption[]
+}
+
 interface MetadataItem {
   id: string
   name: string
@@ -30,6 +42,10 @@ interface MetadataItem {
   detailUrl: string
   seller: string
   assemblyOptions: AssemblyOption[]
+  skuName: string
+  productId: string
+  refId: string
+  ean: string | null
 }
 interface AddedItem {
   choiceType: string
