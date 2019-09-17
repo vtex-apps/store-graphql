@@ -11,6 +11,7 @@ export default {
   Address: {
     cacheId: prop('addressName'),
     id: prop('addressName'),
+    geoCoordinates: prop('geoCoordinate'),
   },
   PaymentProfile: {
     cacheId: prop('id'),
@@ -30,9 +31,7 @@ export default {
     payments: (_: any, __: any, context: any) => getPayments(context),
     profilePicture: (obj: any, _: any, context: any) =>
       obj.profilePicture &&
-      `https://${
-        context.vtex.account
-      }.vteximg.com.br/assets/vtex.store-graphql/image/${obj.profilePicture}`,
+      `https://${context.vtex.account}.vteximg.com.br/assets/vtex.store-graphql/image/${obj.profilePicture}`,
     // the next transformations are necessary since the profile system and
     // this profile graphql query (the same applies to mutations) were built upon different contracts.
     corporateDocument: (obj: any, _: any, __: any) => obj.businessDocument,

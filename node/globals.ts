@@ -70,7 +70,7 @@ declare global {
     reference?: string
     addressName?: string
     addressType?: string
-    geoCoordinate?: string
+    geoCoordinates?: string
   }
 
   interface Profile {
@@ -197,7 +197,7 @@ declare global {
   }
 
   interface Reference {
-    Key: String
-    Value: String
+    Key: string
+    Value: string
   }
 }
