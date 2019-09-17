@@ -154,8 +154,11 @@ export function createAddress(context: Context, address: Address) {
 
   const addressesData = {} as any
   const addressName = generateRandomName()
+  const { geoCoordinates, ...addr } = address
+
   addressesData[addressName] = JSON.stringify({
-    ...address,
+    ...addr,
+    geoCoordinate: geoCoordinates,
     addressName,
     userId: currentProfile.userId,
   })
