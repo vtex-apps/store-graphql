@@ -146,7 +146,10 @@ export async function updateProfilePicture(context: Context, file: any) {
 
 // CRUD Address
 
-export function createAddress(context: Context, address: Address) {
+export function createAddress(
+  context: Context,
+  address: Address & { geoCoordinates: [number, number] }
+) {
   const {
     clients: { profile },
     vtex: { currentProfile },
