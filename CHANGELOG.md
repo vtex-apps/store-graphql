@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Transform `geoCoordinates` prop passed to `createAddress` into `geocoordinate`.
+- Transform `geoCoordinates` prop passed to `createAddress` into `geoCoordinate`.
 
 ## [2.105.2] - 2019-09-16
 ### Changed
