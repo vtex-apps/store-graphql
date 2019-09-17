@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Transform `geoCoordinates` prop passed to `updateAddress` into `geoCoordinate`.
+
 ## [2.105.3] - 2019-09-17
 
 ### Fixed

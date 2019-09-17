@@ -146,10 +146,7 @@ export async function updateProfilePicture(context: Context, file: any) {
 
 // CRUD Address
 
-export function createAddress(
-  context: Context,
-  address: Address & { geoCoordinates: [number, number] }
-) {
+export function createAddress(context: Context, address: Address) {
   const {
     clients: { profile },
     vtex: { currentProfile },
@@ -184,7 +181,7 @@ export function deleteAddress(context: Context, addressName: string) {
 
 export function updateAddress(
   context: Context,
-  { id, fields }: UpdateAddressArgs
+  { id, fields: { geoCoordinates, ...addressFields } }: UpdateAddressArgs
 ) {
   const {
     clients: { profile },
@@ -193,7 +190,8 @@ export function updateAddress(
 
   const addressesData = {} as any
   addressesData[id] = JSON.stringify({
-    ...fields,
+    ...addressFields,
+    geoCoordinate: geoCoordinates,
     userId: currentProfile.userId,
   })
 
