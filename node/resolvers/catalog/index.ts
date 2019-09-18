@@ -304,6 +304,11 @@ export const queries = {
       clients: { catalog },
       clients,
     } = ctx
+
+    if (facets && facets.includes('undefined')) {
+      throw new UserInputError('Bad facets parameter provided')
+    }
+
     let result
     const translatedQuery = await translateToStoreDefaultLanguage(
       clients,
@@ -559,11 +564,7 @@ export const queries = {
     return ctx.clients.catalog.crossSelling(productId, catalogType)
   },
 
-  searchMetadata: async (
-    _: any,
-    args: SearchMetadataArgs,
-    ctx: Context
-  ) => {
+  searchMetadata: async (_: any, args: SearchMetadataArgs, ctx: Context) => {
     const { clients } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
