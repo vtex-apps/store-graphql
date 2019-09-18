@@ -381,7 +381,7 @@ export const queries = {
     )
   },
 
-  products: async (_: any, args: any, ctx: Context) => {
+  products: async (_: any, args: SearchArgs, ctx: Context) => {
     const {
       clients: { catalog },
     } = ctx
@@ -391,6 +391,13 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
+
+    if (args.to && args.to > 2500) {
+      throw new UserInputError(
+        `The maximum value allowed for the 'to' argument is 2500`
+      )
+    }
+
     return catalog.products(args)
   },
 
@@ -439,6 +446,13 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
+
+    if (args.to && args.to > 2500) {
+      throw new UserInputError(
+        `The maximum value allowed for the 'to' argument is 2500`
+      )
+    }
+
     const query = await translateToStoreDefaultLanguage(
       clients,
       args.query || ''
