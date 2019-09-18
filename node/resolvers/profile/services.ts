@@ -181,7 +181,7 @@ export function deleteAddress(context: Context, addressName: string) {
 
 export function updateAddress(
   context: Context,
-  { id, fields }: UpdateAddressArgs
+  { id, fields: { geoCoordinates, ...addressFields } }: UpdateAddressArgs
 ) {
   const {
     clients: { profile },
@@ -190,7 +190,8 @@ export function updateAddress(
 
   const addressesData = {} as any
   addressesData[id] = JSON.stringify({
-    ...fields,
+    ...addressFields,
+    geoCoordinate: geoCoordinates,
     userId: currentProfile.userId,
   })
 
