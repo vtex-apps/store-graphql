@@ -203,6 +203,7 @@ interface OrderFormItemInput {
   index?: number
   quantity?: number
   seller?: string
+  inputValues: Record<string, string>
   options?: AssemblyOptionInput[]
 }
 
@@ -211,6 +212,7 @@ interface AssemblyOptionInput {
   quantity: number
   assemblyId: string
   seller: string
+  inputValues: Record<string, string>
   options?: AssemblyOptionInput[]
 }
 
