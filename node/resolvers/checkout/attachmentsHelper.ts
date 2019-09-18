@@ -71,7 +71,6 @@ const addAssemblyBody = (option: OptionRequestUnit) => {
 
   if (option.inputValues) {
     body.inputValues = option.inputValues
-    body.inputValues['Glossy print'] = 'true'
   }
 
   return body
