@@ -1,3 +1,5 @@
+scalar Upload
+
 type Profile {
   """
   email is used as cacheId
