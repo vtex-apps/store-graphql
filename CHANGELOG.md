@@ -6,13 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Revert scalar Upload.
 
 ## [2.105.9] - 2019-09-19
 ### Fixed
 - Protect against bad marketing tag argument when updating order form marketing data.
 - Remove unnecessary scalar.
 
-## [2.105.8] - 2019-09-19
+## [2.105.8] - 2019-09-19 [YANKED]
 ### Fixed
 - Add missing scalar.
 
