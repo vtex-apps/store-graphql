@@ -218,6 +218,10 @@ export const mutations: Record<string, Resolver> = {
 
       if (newMarketingData.marketingTags == null) {
         delete newMarketingData.marketingTags
+      } else if (Array.isArray(newMarketingData.marketingTags)) {
+        newMarketingData.marketingTags = newMarketingData.marketingTags.filter(
+          Boolean
+        )
       }
 
       await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
