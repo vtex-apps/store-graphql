@@ -72,23 +72,13 @@ const addAssemblyBody = (option: OptionRequestUnit) => {
   if (option.inputValues) {
     body.inputValues = Object.keys(option.inputValues)
       .reduce<Record<string, string>>((acc, key) => {
-        const value = fromBooleanToString(option.inputValues[key])
-        acc[key] = value
+        // Transforming boolean values to string
+        acc[key] = `${option.inputValues[key]}`
         return acc
       }, {})
   }
 
   return body
-}
-
-function fromBooleanToString(value: string | boolean) {
-  if (value !== true && value !== false) {
-    return value
-  }
-
-  return value === true
-    ? 'true'
-    : 'false'
 }
 
 const removeAssemblyBody = (option: OptionRequestUnit) => ({
