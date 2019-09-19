@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.105.7] - 2019-09-19
+
 ## [2.105.6] - 2019-09-18
 ### Fixed
 - Throw errors on `products` and `productSearch` queries when the `to` arg is greater than 2500.
