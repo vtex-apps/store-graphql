@@ -5,7 +5,7 @@ interface OrderFormMarketingData {
   utmiCampaign?: string
   utmiPart?: string
   utmipage?: string
-  marketingTags?: string
+  marketingTags?: string | string[]
 }
 
 interface CheckoutAddress {
