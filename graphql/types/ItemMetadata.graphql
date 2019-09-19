@@ -50,9 +50,10 @@ type CompositionItem {
 }
 
 input AssemblyOptionInput {
-  id: ID!
-  quantity: Int!
   assemblyId: String!
-  seller: String!
+  id: ID
+  quantity: Int
+  seller: String
+  inputValues: InputValues
   options: [AssemblyOptionInput!]
 }

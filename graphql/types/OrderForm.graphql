@@ -164,11 +164,14 @@ type OrderFormShippingData {
   selectedAddresses: [Address]!
 }
 
+scalar InputValues
+
 input OrderFormItemInput {
   id: Int
   index: Int
   quantity: Int
   seller: ID
+  inputValues: InputValues
   options: [AssemblyOptionInput]
 }
 
