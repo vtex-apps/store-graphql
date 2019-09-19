@@ -36,7 +36,7 @@ type OptionItems = Omit<AssemblyOptionInput, 'assemblyId'>[]
 
 interface OptionRequestUnit {
   items: OptionItems,
-  inputValues: Record<string, string>
+  inputValues: Record<string, string | boolean>
 }
 
 interface AddOptionsLogicInput {
@@ -70,10 +70,25 @@ const addAssemblyBody = (option: OptionRequestUnit) => {
   }
 
   if (option.inputValues) {
-    body.inputValues = option.inputValues
+    body.inputValues = Object.keys(option.inputValues)
+      .reduce<Record<string, string>>((acc, key) => {
+        const value = fromBooleanToString(option.inputValues[key])
+        acc[key] = value
+        return acc
+      }, {})
   }
 
   return body
+}
+
+function fromBooleanToString(value: string | boolean) {
+  if (value !== true && value !== false) {
+    return value
+  }
+
+  return value === true
+    ? 'true'
+    : 'false'
 }
 
 const removeAssemblyBody = (option: OptionRequestUnit) => ({
