@@ -2,7 +2,7 @@
   "stack": "nodejs",
   "memory": 1536,
   "ttl": 30,
-  "timeout": 20,
-  "minReplicas": 10,
+  "timeout": 40,
+  "minReplicas": 20,
   "maxReplicas": 100
 }
