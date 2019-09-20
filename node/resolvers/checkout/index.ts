@@ -1,4 +1,4 @@
-import { addIndex, compose, forEach, map, reject, path } from 'ramda'
+import { addIndex, compose, forEach, map, reject, path, pathOr } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -6,6 +6,7 @@ import { queries as logisticsQueries } from '../logistics/index'
 import paths from '../paths'
 import { queries as sessionQueries } from '../session'
 import { SessionFields } from '../session/sessionResolver'
+import { fieldResolvers as slasResolvers } from './checkoutSLA'
 
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
 import {
@@ -54,6 +55,18 @@ const getSessionMarketingParams = (sesionData: SessionFields) => ({
 interface AddItemArgs {
   orderFormId?: string
   items?: OrderFormItemInput[]
+}
+
+interface SkuPickupSlAArgs {
+  itemId: string
+  seller: string
+  lat: string
+  long: string
+  country: string
+}
+
+interface SkuPickupSLAArgs extends SkuPickupSlAArgs {
+  pickupId: string
 }
 
 const shouldUpdateMarketingData = (
@@ -133,6 +146,7 @@ export const fieldResolvers = {
   ...assemblyOptionsItemResolvers,
   ...orderFormItemResolvers,
   ...shippingFieldResolvers,
+  ...slasResolvers,
 }
 
 const replaceDomain = (host: string) => (cookie: string) =>
@@ -173,6 +187,55 @@ export const queries: Record<string, Resolver> = {
 
   shipping: (_, args: any, { clients: { checkout } }) => {
     return checkout.simulation(args)
+  },
+
+  skuPickupSLAs: async (
+    _: any,
+    { itemId, seller, lat, long, country }: SkuPickupSlAArgs,
+    ctx: Context
+  ) => {
+    const simulation = await ctx.clients.checkout.simulation({
+      items: [
+        {
+          id: itemId,
+          seller,
+          quantity: 1,
+        },
+      ],
+      country,
+      shippingData: {
+        selectedAddresses: [
+          {
+            geoCoordinates: [long, lat],
+            country,
+          },
+        ],
+      },
+    })
+
+    const slas = pathOr<SLA[], []>(
+      [],
+      ['logisticsInfo', '0', 'slas'],
+      simulation
+    )
+
+    return slas.filter(sla => sla.deliveryChannel === 'pickup-in-point')
+  },
+
+  skuPickupSLA: async (
+    _: any,
+    { itemId, seller, lat, long, country, pickupId }: SkuPickupSLAArgs,
+    ctx: Context
+  ) => {
+    const slas = (await queries.skuPickupSLAs(
+      {},
+      { itemId, seller, lat, long, country },
+      ctx
+    )) as SLA[]
+
+    return slas.find(
+      s => path(['pickupStoreInfo', 'address', 'addressId'], s) === pickupId
+    )
   },
 }
 

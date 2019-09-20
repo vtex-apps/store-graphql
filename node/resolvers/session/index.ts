@@ -1,11 +1,23 @@
 import { serialize } from 'cookie'
 import { identity } from 'ramda'
 import { sessionFields } from './sessionResolver'
+import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
+
 const VTEX_SESSION = 'vtex_session'
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
 const VTEXID_EXPIRES = 86400
+
+const convertCheckoutAddressToProfile = (
+  checkoutAddress: CheckoutAddress | null
+) => {
+  if (!checkoutAddress) {
+    return checkoutAddress
+  }
+  const { geoCoordinates, ...rest } = checkoutAddress
+  return { ...rest, geoCoordinate: geoCoordinates }
+}
 
 // Disclaimer: These queries and mutations assume that vtex_session was passed in cookies.
 export const queries = {
@@ -45,15 +57,16 @@ export const mutations = {
     )
 
     const orderForm = await checkout.orderForm()
-    const clientProfileData = orderForm && orderForm.clientProfileData
-      ? orderForm.clientProfileData
-      : {}
+    const clientProfileData =
+      orderForm && orderForm.clientProfileData
+        ? orderForm.clientProfileData
+        : {}
 
     if (clientProfileData.email !== email && orderForm.orderFormId) {
-      await checkout.updateOrderFormProfile(
-        orderForm.orderFormId,
-        { ...clientProfileData, email }
-      )
+      await checkout.updateOrderFormProfile(orderForm.orderFormId, {
+        ...clientProfileData,
+        email,
+      })
     }
 
     ctx.response.set(
@@ -98,4 +111,25 @@ export const mutations = {
 
     return true
   },
+
+  savePickupInSession: async (_: any, args: any, ctx: Context) => {
+    const { address, name } = args
+    const {
+      clients: { session },
+      cookies,
+    } = ctx
+
+    await session.updateSession(
+      'favoritePickup',
+      { address: convertCheckoutAddressToProfile(address), name },
+      [],
+      cookies.get(VTEX_SESSION)!
+    )
+
+    return queries.getSession({}, {}, ctx)
+  },
+}
+
+export const fieldResolvers = {
+  ...sessionPickupResolvers,
 }

@@ -26,7 +26,7 @@ export class Checkout extends JanusClient {
     return {
       Cookie: `${checkoutCookie}vtex_segment=${
         this.context.segmentToken
-        };vtex_session=${this.context.sessionToken};`,
+      };vtex_session=${this.context.sessionToken};`,
     }
   }
 
@@ -161,17 +161,16 @@ export class Checkout extends JanusClient {
       throw new Error('Missing orderFormId. Use withOrderFormId directive.')
     }
 
-    return this.get(
-      this.routes.changeToAnonymousUser(orderFormId),
-      { metric: 'checkout-change-to-anonymous' }
-    )
+    return this.get(this.routes.changeToAnonymousUser(orderFormId), {
+      metric: 'checkout-change-to-anonymous',
+    })
   }
 
   public orders = () =>
     this.get(this.routes.orders, { metric: 'checkout-orders' })
 
   public simulation = (simulation: SimulationPayload) =>
-    this.post<OrderForm>(
+    this.post<SimulationOrderForm>(
       this.routes.simulation(this.getChannelQueryString()),
       simulation,
       {
@@ -276,7 +275,7 @@ export class Checkout extends JanusClient {
       simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
       changeToAnonymousUser: (orderFormId: string) =>
-        `/checkout/changeToAnonymousUser/${orderFormId}`
+        `/checkout/changeToAnonymousUser/${orderFormId}`,
     }
   }
 }

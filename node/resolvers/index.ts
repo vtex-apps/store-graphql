@@ -35,6 +35,7 @@ import { resolvers as portalResolvers } from './portal'
 import {
   mutations as sessionMutations,
   queries as sessionQueries,
+  fieldResolvers as sessionResolvers,
 } from './session'
 
 // eslint-disable-next-line no-global-assign
@@ -48,6 +49,7 @@ export const resolvers = {
   ...documentFieldResolvers,
   ...logisticsResolvers,
   ...omsFieldResolvers,
+  ...sessionResolvers,
   Mutation: {
     ...profileMutations,
     ...checkoutMutations,

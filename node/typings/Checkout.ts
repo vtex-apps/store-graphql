@@ -79,16 +79,7 @@ interface OrderForm {
   totalizers: { id: string; name: string; value: number }[]
   shippingData: {
     address: CheckoutAddress
-    logisticsInfo: {
-      itemIndex: number
-      selectedSla: string
-      selectedDeliveryChannel: string
-      addressId: string
-      slas: SLA[]
-      shipsTo: string[]
-      itemId: string
-      deliveryChannels: { id: string }[]
-    }[]
+    logisticsInfo: LogisticsInfo[]
     selectedAddresses: CheckoutAddress[]
     availableAddresses: CheckoutAddress[]
     pickupPoints: {
@@ -231,6 +222,53 @@ interface SimulationPayload {
   isCheckedIn?: boolean
   priceTables?: string[]
   marketingData?: Record<string, string>
+  geoCoordinates?: [string | number, string | number]
+  shippingData?: any
+}
+
+interface LogisticsInfo {
+  itemIndex: number
+  selectedSla: string | null
+  selectedDeliveryChannel: string | null
+  addressId: string
+  slas: {
+    id: string
+    deliveryChannel: string
+    name: string
+    deliveryIds: {
+      courierId: string
+      warehouseId: string
+      dockId: string
+      courierName: string
+      quantity: number
+    }[]
+    shippingEstimate: string
+    shippingEstimateDate: string | null
+    lockTTL: string | null
+    availableDeliveryWindows: any[]
+    deliveryWindow: string | null
+    price: number
+    listPrice: number
+    tax: number
+    pickupStoreInfo: {
+      isPickupStore: boolean
+      friendlyName: string | null
+
+      address: CheckoutAddress | null
+      additionalInfo: any | null
+      dockId: string | null
+    }
+    pickupPointId: string | null
+    pickupDistance: number
+    polygonName: string | null
+  }[]
+  shipsTo: string[]
+  itemId: string
+  deliveryChannels: { id: string }[]
+}
+
+interface SimulationOrderForm extends OrderForm {
+  logisticsInfo?: LogisticsInfo[]
 }
 
 interface SLA {
