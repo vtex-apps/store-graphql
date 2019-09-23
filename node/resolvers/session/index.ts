@@ -9,6 +9,11 @@ const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
 const VTEXID_EXPIRES = 86400
 
+interface SavePickupArgs {
+  name: string
+  address: CheckoutAddress
+}
+
 const convertCheckoutAddressToProfile = (
   checkoutAddress: CheckoutAddress | null
 ) => {
@@ -112,7 +117,7 @@ export const mutations = {
     return true
   },
 
-  savePickupInSession: async (_: any, args: any, ctx: Context) => {
+  savePickupInSession: async (_: any, args: SavePickupArgs, ctx: Context) => {
     const { address, name } = args
     const {
       clients: { session },
