@@ -57,7 +57,7 @@ interface AddItemArgs {
   items?: OrderFormItemInput[]
 }
 
-interface SkuPickupSlAListArgs {
+interface SkuPickupSLAListArgs {
   itemId: string
   seller: string
   lat: string
@@ -65,7 +65,7 @@ interface SkuPickupSlAListArgs {
   country: string
 }
 
-interface SkuPickupSLAArgs extends SkuPickupSlAListArgs {
+interface SkuPickupSLAArgs extends SkuPickupSLAListArgs {
   pickupId: string
 }
 
@@ -191,7 +191,7 @@ export const queries: Record<string, Resolver> = {
 
   skuPickupSLAs: async (
     _: any,
-    { itemId, seller, lat, long, country }: SkuPickupSlAListArgs,
+    { itemId, seller, lat, long, country }: SkuPickupSLAListArgs,
     ctx: Context
   ) => {
     const simulation = await ctx.clients.checkout.simulation({
