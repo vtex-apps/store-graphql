@@ -421,11 +421,11 @@ type Query {
   """
   nearPickupPoints(
     """
-    Desired latitude coordinate, for example: -22.4321
+    Desired latitude coordinate, for example: -22.944370
     """
     lat: String!
     """
-    Desired longitude coordinate, for example: 44.10101
+    Desired longitude coordinate, for example: -43.182553
     """
     long: String!
     """
@@ -433,6 +433,23 @@ type Query {
     """
     maxDistance: Int = 50
   ): NearPickupPointQueryResponse
+
+  skuPickupSLAs(
+    itemId: String
+    seller: String
+    lat: String
+    long: String
+    country: String
+  ): [CheckoutSLA]
+
+  skuPickupSLA(
+    itemId: String
+    seller: String
+    lat: String
+    long: String
+    country: String
+    pickupId: String
+  ): CheckoutSLA
 
   """
   Get pickup point by its id
@@ -758,4 +775,6 @@ type Mutation {
   """
   updateList(id: ID!, list: ListInput): List
   deleteList(id: ID!): List
+
+  savePickupInSession(address: OrderFormAddressInput, name: String): Session
 }

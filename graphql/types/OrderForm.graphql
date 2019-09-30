@@ -262,3 +262,19 @@ type AddedOptionItem {
   """
   extraQuantity: Int
 }
+
+type CheckoutSLA {
+  cacheId: ID
+  id: String
+  deliveryChannel: String
+  name: String
+  shippingEstimate: String
+  pickupStoreInfo: PickupStoreInfo
+  pickupPointId: String
+  pickupDistance: Float
+}
+
+type PickupStoreInfo {
+  friendlyName: String
+  address: Address
+}

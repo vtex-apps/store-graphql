@@ -26,7 +26,7 @@ export default {
         addressId: id,
         addressType: 'pickup',
         country: country.acronym,
-        geoCoordinates: [location.longitude, location.latitude],
+        geoCoordinate: [location.longitude, location.latitude],
         id,
       }
     },

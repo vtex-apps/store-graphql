@@ -15,6 +15,7 @@ export interface SessionFields {
   adminUserEmail?: string
   adminUserId?: string
   id?: string
+  cacheId?: string
   impersonable?: boolean
   impersonate?: { profile: ProfileFields }
   orderFormId?: string
@@ -22,6 +23,7 @@ export interface SessionFields {
   profile?: ProfileFields
   utmParams?: UtmParams
   utmiParams?: UtmiParams
+  favoritePickup?: { address: CheckoutAddress; name: string }
   public?: {
     [key: string]: {
       value: string
@@ -107,6 +109,7 @@ export const sessionFields = (session: Session): SessionFields | {} => {
           namespaces
         ),
         id: session.id,
+        cacheId: session.id,
         impersonable: convertToBool(
           path(['impersonate', 'canImpersonate', 'value'], namespaces)
         ),
@@ -116,6 +119,7 @@ export const sessionFields = (session: Session): SessionFields | {} => {
         utmParams: setUtmParams(namespaces.public),
         utmiParams: setUtmiParams(namespaces.public),
         orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
+        favoritePickup: path(['public', 'favoritePickup', 'value'], namespaces),
         ...setProfileData(namespaces.profile, namespaces.authentication),
       }
     : ({} as any)
