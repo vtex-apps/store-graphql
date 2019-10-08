@@ -161,38 +161,23 @@ const getSession = (ctx: Context) => {
   }) as SessionFields
 }
 
-const shouldUpdateClientPreferencesData = (
-  orderFormClientPreferencesData: OrderFormClientPreferencesData,
-  sessionData: SessionFields,
-) => {
-  const sesssionLocale = path(['store', 'cultureInfo'], sessionData)
-  const locale = orderFormClientPreferencesData ? orderFormClientPreferencesData.locale : undefined
-
-  // OrderForm locale should be updated
-  if (sesssionLocale && locale && sesssionLocale !== locale) {
-    return true
-  }
-
-  return false
-}
-
 async function syncWithStoreLocale(
   orderForm: OrderForm,
-  sessionData: SessionFields,
+  cultureInfo: string,
   checkout: Checkout
 ) {
   const clientPreferencesData = orderForm.clientPreferencesData || {
-    locale: pathOr('en-US', ['store', 'cultureInfo'], sessionData)
+    locale: cultureInfo,
   }
 
-  if (shouldUpdateClientPreferencesData(clientPreferencesData, sessionData)) {
+  const shouldUpdateClientPreferencesData = cultureInfo && clientPreferencesData.locale && cultureInfo !== clientPreferencesData.locale
+
+  if (shouldUpdateClientPreferencesData) {
     const newClientPreferencesData = {
       ...clientPreferencesData,
     }
 
-    if (sessionData && Object.keys(sessionData).length > 0) {
-      newClientPreferencesData.locale = path(['store', 'cultureInfo'], sessionData) as string
-    }
+    newClientPreferencesData.locale = cultureInfo
 
     try {
       return await checkout.updateOrderFormClientPreferencesData(orderForm.orderFormId, newClientPreferencesData)
@@ -209,17 +194,12 @@ export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
       clients: { checkout },
+      vtex: { segment },
     } = ctx
 
-    const [
-      { headers, data },
-      sessionData,
-    ] = await Promise.all([
-      checkout.orderFormRaw(),
-      getSession(ctx),
-    ])
+    const { headers, data } = await checkout.orderFormRaw()
 
-    const orderForm = await syncWithStoreLocale(data, sessionData, checkout)
+    const orderForm = await syncWithStoreLocale(data, segment!.cultureInfo, checkout)
 
     const rawHeaders = headers as Record<string, any>
     const responseSetCookies: string[] =

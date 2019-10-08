@@ -269,7 +269,7 @@ type Query {
   """
   Returns checkout cart details
   """
-  orderForm: OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
+  orderForm: OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId @withSegment
 
   """
   Returns user orders details

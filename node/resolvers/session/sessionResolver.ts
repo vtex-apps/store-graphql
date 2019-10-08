@@ -23,17 +23,12 @@ export interface SessionFields {
   profile?: ProfileFields
   utmParams?: UtmParams
   utmiParams?: UtmiParams
-  store?: StoreFields,
   favoritePickup?: { address: CheckoutAddress; name: string }
   public?: {
     [key: string]: {
       value: string
     }
   }
-}
-
-interface StoreFields {
-  cultureInfo: string
 }
 
 interface UtmParams {
@@ -100,10 +95,6 @@ const setUtmiParams = (publicFields: SessionPublic) => ({
   part: path(['utmi_pc', 'value'], publicFields),
 })
 
-const setStore = (storeFields: SessionStore) => ({
-  cultureInfo: path(['cultureInfo', 'value'], storeFields),
-})
-
 export const sessionFields = (session: Session): SessionFields | {} => {
   const { namespaces } = session
   return namespaces
@@ -125,7 +116,6 @@ export const sessionFields = (session: Session): SessionFields | {} => {
       impersonate: {
         ...setProfileData(namespaces.profile, namespaces.impersonate),
       },
-      store: setStore(namespaces.store),
       utmParams: setUtmParams(namespaces.public),
       utmiParams: setUtmiParams(namespaces.public),
       orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
