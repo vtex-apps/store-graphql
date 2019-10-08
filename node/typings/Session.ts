@@ -5,6 +5,7 @@ interface Session {
     impersonate: SessionImpersonate
     authentication: SessionAuthentication
     public: SessionPublic
+    store: SessionStore
   }
 }
 
@@ -21,6 +22,10 @@ interface SessionProfile {
 interface SessionImpersonate {
   storeUserEmail?: ObjValue
   storeUserId?: ObjValue
+}
+
+interface SessionStore {
+  cultureInfo?: ObjValue
 }
 
 interface SessionAuthentication {

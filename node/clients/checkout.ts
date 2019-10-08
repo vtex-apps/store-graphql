@@ -111,6 +111,22 @@ export class Checkout extends JanusClient {
       { metric: 'checkout-updateOrderFormMarketingData' }
     )
 
+  public updateOrderFormClientPreferencesData = (
+    orderFormId: string,
+    clientPreferencesData: OrderFormClientPreferencesData,
+  ) => {
+    // The API default value of `optinNewsLetter` is `null`, but it doesn't accept a POST with its value as `null`
+    const filteredClientPreferencesData = clientPreferencesData.optinNewsLetter === null
+      ? { locale: clientPreferencesData.locale }
+      : clientPreferencesData
+
+    return this.post(
+      this.routes.attachmentsData(orderFormId, 'clientPreferencesData'),
+      filteredClientPreferencesData,
+      { metric: 'checkout-updateOrderFormClientPreferencesData' }
+    )
+  }
+
   public addAssemblyOptions = async (
     orderFormId: string,
     itemId: string | number,

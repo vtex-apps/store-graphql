@@ -23,12 +23,17 @@ export interface SessionFields {
   profile?: ProfileFields
   utmParams?: UtmParams
   utmiParams?: UtmiParams
+  store?: StoreFields,
   favoritePickup?: { address: CheckoutAddress; name: string }
   public?: {
     [key: string]: {
       value: string
     }
   }
+}
+
+interface StoreFields {
+  cultureInfo: string
 }
 
 interface UtmParams {
@@ -95,32 +100,37 @@ const setUtmiParams = (publicFields: SessionPublic) => ({
   part: path(['utmi_pc', 'value'], publicFields),
 })
 
+const setStore = (storeFields: SessionStore) => ({
+  cultureInfo: path(['cultureInfo', 'value'], storeFields),
+})
+
 export const sessionFields = (session: Session): SessionFields | {} => {
   const { namespaces } = session
   return namespaces
     ? {
-        address: path(['public', 'address', 'value'], namespaces),
-        adminUserEmail: path(
-          ['authentication', 'adminUserEmail', 'value'],
-          namespaces
-        ),
-        adminUserId: path(
-          ['authentication', 'adminUserId', 'value'],
-          namespaces
-        ),
-        id: session.id,
-        cacheId: session.id,
-        impersonable: convertToBool(
-          path(['impersonate', 'canImpersonate', 'value'], namespaces)
-        ),
-        impersonate: {
-          ...setProfileData(namespaces.profile, namespaces.impersonate),
-        },
-        utmParams: setUtmParams(namespaces.public),
-        utmiParams: setUtmiParams(namespaces.public),
-        orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
-        favoritePickup: path(['public', 'favoritePickup', 'value'], namespaces),
-        ...setProfileData(namespaces.profile, namespaces.authentication),
-      }
+      address: path(['public', 'address', 'value'], namespaces),
+      adminUserEmail: path(
+        ['authentication', 'adminUserEmail', 'value'],
+        namespaces
+      ),
+      adminUserId: path(
+        ['authentication', 'adminUserId', 'value'],
+        namespaces
+      ),
+      id: session.id,
+      cacheId: session.id,
+      impersonable: convertToBool(
+        path(['impersonate', 'canImpersonate', 'value'], namespaces)
+      ),
+      impersonate: {
+        ...setProfileData(namespaces.profile, namespaces.impersonate),
+      },
+      store: setStore(namespaces.store),
+      utmParams: setUtmParams(namespaces.public),
+      utmiParams: setUtmiParams(namespaces.public),
+      orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
+      favoritePickup: path(['public', 'favoritePickup', 'value'], namespaces),
+      ...setProfileData(namespaces.profile, namespaces.authentication),
+    }
     : ({} as any)
 }

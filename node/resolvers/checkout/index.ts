@@ -20,6 +20,7 @@ import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 import { UserInputError } from '@vtex/api'
+import { Checkout } from '../../clients/checkout'
 
 const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
 
@@ -152,13 +153,73 @@ export const fieldResolvers = {
 const replaceDomain = (host: string) => (cookie: string) =>
   cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
+const getSession = (ctx: Context) => {
+  return sessionQueries.getSession({}, {}, ctx).catch(err => {
+    // todo: log error using colossus
+    console.error(err)
+    return {} as SessionFields
+  }) as SessionFields
+}
+
+const shouldUpdateClientPreferencesData = (
+  orderFormClientPreferencesData: OrderFormClientPreferencesData,
+  sessionData: SessionFields,
+) => {
+  const sesssionLocale = path(['store', 'cultureInfo'], sessionData)
+  const locale = orderFormClientPreferencesData ? orderFormClientPreferencesData.locale : undefined
+
+  // OrderForm locale should be updated
+  if (sesssionLocale && locale && sesssionLocale !== locale) {
+    return true
+  }
+
+  return false
+}
+
+async function syncWithStoreLocale(
+  orderForm: OrderForm,
+  sessionData: SessionFields,
+  checkout: Checkout
+) {
+  const clientPreferencesData = orderForm.clientPreferencesData || {
+    locale: pathOr('en-US', ['store', 'cultureInfo'], sessionData)
+  }
+
+  if (shouldUpdateClientPreferencesData(clientPreferencesData, sessionData)) {
+    const newClientPreferencesData = {
+      ...clientPreferencesData,
+    }
+
+    if (sessionData && Object.keys(sessionData).length > 0) {
+      newClientPreferencesData.locale = path(['store', 'cultureInfo'], sessionData) as string
+    }
+
+    try {
+      return await checkout.updateOrderFormClientPreferencesData(orderForm.orderFormId, newClientPreferencesData)
+    } catch (e) {
+      console.error(e)
+      return orderForm
+    }
+  }
+
+  return orderForm
+}
+
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
       clients: { checkout },
     } = ctx
 
-    const { headers, data: orderForm } = await checkout.orderFormRaw()
+    const [
+      { headers, data },
+      sessionData,
+    ] = await Promise.all([
+      checkout.orderFormRaw(),
+      getSession(ctx),
+    ])
+
+    const orderForm = await syncWithStoreLocale(data, sessionData, checkout)
 
     const rawHeaders = headers as Record<string, any>
     const responseSetCookies: string[] =
@@ -240,7 +301,7 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (root, { orderFormId, items }: AddItemArgs, ctx: Context) => {
+  addItem: async (_, { orderFormId, items }: AddItemArgs, ctx: Context) => {
     const {
       clients: { checkout },
     } = ctx
@@ -252,11 +313,7 @@ export const mutations: Record<string, Resolver> = {
       sessionData,
     ] = await Promise.all([
       checkout.orderForm(),
-      sessionQueries.getSession(root, {}, ctx).catch(err => {
-        // todo: log error using colossus
-        console.error(err)
-        return {} as SessionFields
-      }) as SessionFields,
+      getSession(ctx),
     ])
 
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
