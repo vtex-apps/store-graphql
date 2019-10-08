@@ -20,7 +20,6 @@ import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 import { UserInputError } from '@vtex/api'
-import { Checkout } from '../../clients/checkout'
 
 const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
 
@@ -164,7 +163,7 @@ const getSession = (ctx: Context) => {
 async function syncWithStoreLocale(
   orderForm: OrderForm,
   cultureInfo: string,
-  checkout: Checkout
+  checkout: Context['clients']['checkout']
 ) {
   const clientPreferencesData = orderForm.clientPreferencesData || {
     locale: cultureInfo,
