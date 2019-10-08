@@ -39,14 +39,20 @@ export class MasterData extends ExternalClient {
       },
     })
 
-  public createDocument = (acronym: string, fields: object) =>
+  public createDocument = (acronym: string, fields: object, schema?: string) =>
     this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
+      params: {
+        ...schema? {_schema: schema} : null
+      }
     })
 
-  public updateDocument = (acronym: string, id: string, fields: object) =>
+  public updateDocument = (acronym: string, id: string, fields: object, schema?: string) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
+      params: {
+        ...schema? {_schema: schema} : null
+      }
     })
 
   public searchDocuments = <T>(
