@@ -46,5 +46,6 @@
   "scripts": {
     "test": "vtex-test-tools test",
     "lint": "tsc --noEmit && eslint --ext ts ."
-  }
+  },
+  "version": "2.108.1"
 }
