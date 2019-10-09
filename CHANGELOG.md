@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Argument **schema** on mutations `createDocument` and `updateDocument`.
 ## [2.108.0] - 2019-09-30
 
 ## [2.107.1] - 2019-09-26

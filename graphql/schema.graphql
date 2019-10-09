@@ -753,8 +753,8 @@ type Mutation {
   """
   Document
   """
-  createDocument(acronym: String!, document: DocumentInput): DocumentResponse
-  updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  createDocument(acronym: String!, document: DocumentInput, schema: String): DocumentResponse
+  updateDocument(acronym: String!, document: DocumentInput, schema: String): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(
     acronym: String!

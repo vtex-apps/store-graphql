@@ -140,11 +140,13 @@ declare global {
   interface CreateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
   }
 
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
   }
 
   interface DeleteDocumentArgs {
