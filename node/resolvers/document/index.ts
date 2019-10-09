@@ -61,13 +61,15 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
+      schema
     } = args
     const {
       clients: { masterdata },
     } = context
     const response = (await masterdata.createDocument(
       acronym,
-      parseFieldsToJson(fields)
+      parseFieldsToJson(fields),
+      schema
     )) as DocumentResponse
 
     const documentId = removeAcronymFromId(acronym, response)

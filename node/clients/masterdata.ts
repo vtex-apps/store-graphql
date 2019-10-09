@@ -47,6 +47,7 @@ export class MasterData extends ExternalClient {
       }
     })
 
+
   public updateDocument = (acronym: string, id: string, fields: object, schema?: string) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
