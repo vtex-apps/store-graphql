@@ -18,7 +18,6 @@ import {
   zip,
 } from 'ramda'
 
-import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
@@ -250,7 +249,17 @@ const translateToStoreDefaultLanguage = async (
     segment.getSegment(),
   ])
   return from && from !== to
-    ? messagesGraphQL.translate(toSearchTerm(term, from, to) as any).then(head)
+    ? messagesGraphQL
+        .translateV2({
+          indexedByFrom: [
+            {
+              from,
+              messages: [{ content: term }],
+            },
+          ],
+          to,
+        })
+        .then(head)
     : term
 }
 
