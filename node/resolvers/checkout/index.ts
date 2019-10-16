@@ -152,12 +152,14 @@ export const fieldResolvers = {
 const replaceDomain = (host: string) => (cookie: string) =>
   cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
-const getSession = (ctx: Context) => {
-  return sessionQueries.getSession({}, {}, ctx).catch(err => {
+const getSession = async (ctx: Context): Promise<SessionFields> => {
+  try {
+    return sessionQueries.getSession({}, {}, ctx)
+  } catch (err) {
     // todo: log error using colossus
     console.error(err)
-    return {} as SessionFields
-  }) as SessionFields
+    return {}
+  }
 }
 
 async function syncWithStoreLocale(
@@ -169,7 +171,10 @@ async function syncWithStoreLocale(
     locale: cultureInfo,
   }
 
-  const shouldUpdateClientPreferencesData = cultureInfo && clientPreferencesData.locale && cultureInfo !== clientPreferencesData.locale
+  const shouldUpdateClientPreferencesData =
+    cultureInfo &&
+    clientPreferencesData.locale &&
+    cultureInfo !== clientPreferencesData.locale
 
   if (shouldUpdateClientPreferencesData) {
     const newClientPreferencesData = {
@@ -179,7 +184,10 @@ async function syncWithStoreLocale(
     newClientPreferencesData.locale = cultureInfo
 
     try {
-      return await checkout.updateOrderFormClientPreferencesData(orderForm.orderFormId, newClientPreferencesData)
+      return await checkout.updateOrderFormClientPreferencesData(
+        orderForm.orderFormId,
+        newClientPreferencesData
+      )
     } catch (e) {
       console.error(e)
       return orderForm
@@ -198,7 +206,11 @@ export const queries: Record<string, Resolver> = {
 
     const { headers, data } = await checkout.orderFormRaw()
 
-    const orderForm = await syncWithStoreLocale(data, segment!.cultureInfo, checkout)
+    const orderForm = await syncWithStoreLocale(
+      data,
+      segment!.cultureInfo,
+      checkout
+    )
 
     const rawHeaders = headers as Record<string, any>
     const responseSetCookies: string[] =
@@ -290,10 +302,7 @@ export const mutations: Record<string, Resolver> = {
     const [
       { marketingData, items: previousItems },
       sessionData,
-    ] = await Promise.all([
-      checkout.orderForm(),
-      getSession(ctx),
-    ])
+    ] = await Promise.all([checkout.orderForm(), getSession(ctx)])
 
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
