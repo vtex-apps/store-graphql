@@ -153,10 +153,7 @@ interface OrderForm {
     name: string
     logo: string
   }[]
-  clientPreferencesData: {
-    locale: string
-    optinNewsLetter: any | null
-  }
+  clientPreferencesData: OrderFormClientPreferencesData
   commercialConditionData: any | null
   storePreferencesData: {
     countryCode: string
@@ -187,6 +184,11 @@ interface OrderForm {
   }
   subscriptionData: any | null
   itemsOrdination: any | null
+}
+
+interface OrderFormClientPreferencesData {
+  locale: string
+  optinNewsLetter: boolean | null
 }
 
 interface OrderFormItemInput {

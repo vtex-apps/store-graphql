@@ -152,13 +152,65 @@ export const fieldResolvers = {
 const replaceDomain = (host: string) => (cookie: string) =>
   cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
+const getSession = async (ctx: Context): Promise<SessionFields> => {
+  try {
+    return sessionQueries.getSession({}, {}, ctx)
+  } catch (err) {
+    // todo: log error using colossus
+    console.error(err)
+    return {}
+  }
+}
+
+async function syncWithStoreLocale(
+  orderForm: OrderForm,
+  cultureInfo: string,
+  checkout: Context['clients']['checkout']
+) {
+  const clientPreferencesData = orderForm.clientPreferencesData || {
+    locale: cultureInfo,
+  }
+
+  const shouldUpdateClientPreferencesData =
+    cultureInfo &&
+    clientPreferencesData.locale &&
+    cultureInfo !== clientPreferencesData.locale
+
+  if (shouldUpdateClientPreferencesData) {
+    const newClientPreferencesData = {
+      ...clientPreferencesData,
+    }
+
+    newClientPreferencesData.locale = cultureInfo
+
+    try {
+      return await checkout.updateOrderFormClientPreferencesData(
+        orderForm.orderFormId,
+        newClientPreferencesData
+      )
+    } catch (e) {
+      console.error(e)
+      return orderForm
+    }
+  }
+
+  return orderForm
+}
+
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
       clients: { checkout },
+      vtex: { segment },
     } = ctx
 
-    const { headers, data: orderForm } = await checkout.orderFormRaw()
+    const { headers, data } = await checkout.orderFormRaw()
+
+    const orderForm = await syncWithStoreLocale(
+      data,
+      segment!.cultureInfo,
+      checkout
+    )
 
     const rawHeaders = headers as Record<string, any>
     const responseSetCookies: string[] =
@@ -240,7 +292,7 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (root, { orderFormId, items }: AddItemArgs, ctx: Context) => {
+  addItem: async (_, { orderFormId, items }: AddItemArgs, ctx: Context) => {
     const {
       clients: { checkout },
     } = ctx
@@ -250,14 +302,7 @@ export const mutations: Record<string, Resolver> = {
     const [
       { marketingData, items: previousItems },
       sessionData,
-    ] = await Promise.all([
-      checkout.orderForm(),
-      sessionQueries.getSession(root, {}, ctx).catch(err => {
-        // todo: log error using colossus
-        console.error(err)
-        return {} as SessionFields
-      }) as SessionFields,
-    ])
+    ] = await Promise.all([checkout.orderForm(), getSession(ctx)])
 
     if (shouldUpdateMarketingData(marketingData, sessionData)) {
       const newMarketingData = {
