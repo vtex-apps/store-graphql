@@ -55,10 +55,10 @@ scalar ProductCategories
 
 type OrderFormItem {
   id: ID
-  name: String
+  name: String @translatableV2
   detailUrl: String
   imageUrl: String
-  skuName: String
+  skuName: String @translatableV2
   productRefId: String
   quantity: Float
   uniqueId: String

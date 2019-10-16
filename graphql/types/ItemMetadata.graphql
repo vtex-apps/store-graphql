@@ -16,8 +16,8 @@ type PriceTableItem {
 
 type ItemMetadataUnit {
   id: ID
-  name: String
-  skuName: String
+  name: String @translatableV2
+  skuName: String @translatableV2
   productId: String
   refId: String
   ean: String
@@ -29,7 +29,7 @@ type ItemMetadataUnit {
 
 type AssemblyOption {
   id: ID
-  name: String
+  name: String @translatableV2
   required: Boolean
   composition: CompositionType
 }
