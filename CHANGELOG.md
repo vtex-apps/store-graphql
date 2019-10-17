@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.108.4] - 2019-10-17
+
 ## [2.108.3] - 2019-10-16
 ### Fixed
 - Sync OrderForm locale with the locale currently being used by the store.
