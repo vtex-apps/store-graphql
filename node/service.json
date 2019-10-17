@@ -5,5 +5,5 @@
   "timeout": 40,
   "minReplicas": 10,
   "maxReplicas": 100,
-  "cpu": 50
+  "cpu": 30
 }
