@@ -30,16 +30,16 @@ export class Checkout extends JanusClient {
     }
   }
 
-  private getChannelQueryString = () => {
+  private getChannelQueryString = (salesChannel?: string) => {
     const { segment } = this.context as CustomIOContext
-    const channel = segment && segment.channel
+    const channel = salesChannel || (segment && segment.channel)
     const queryString = channel ? `?sc=${channel}` : ''
     return queryString
   }
 
-  public addItem = (orderFormId: string, items: any) =>
+  public addItem = (orderFormId: string, items: any, salesChannel?: string) =>
     this.post<OrderForm>(
-      this.routes.addItem(orderFormId, this.getChannelQueryString()),
+      this.routes.addItem(orderFormId, this.getChannelQueryString(salesChannel)),
       { orderItems: items },
       { metric: 'checkout-addItem' }
     )

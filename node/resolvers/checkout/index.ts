@@ -55,6 +55,7 @@ const getSessionMarketingParams = (sesionData: SessionFields) => ({
 interface AddItemArgs {
   orderFormId?: string
   items?: OrderFormItemInput[]
+  salesChannel?: string
 }
 
 interface SkuPickupSLAListArgs {
@@ -292,7 +293,11 @@ export const queries: Record<string, Resolver> = {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, { orderFormId, items }: AddItemArgs, ctx: Context) => {
+  addItem: async (
+    _,
+    { orderFormId, items, salesChannel }: AddItemArgs,
+    ctx: Context
+  ) => {
     const {
       clients: { checkout },
     } = ctx
@@ -340,7 +345,11 @@ export const mutations: Record<string, Resolver> = {
       ({ options }) => !!options && options.length > 0
     )
 
-    const addItem = await checkout.addItem(orderFormId, cleanItems)
+    const addItem = await checkout.addItem(
+      orderFormId,
+      cleanItems,
+      salesChannel
+    )
 
     await addOptionsForItems(withOptions, checkout, addItem, previousItems)
 

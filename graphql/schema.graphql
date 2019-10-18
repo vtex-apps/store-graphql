@@ -269,7 +269,10 @@ type Query {
   """
   Returns checkout cart details
   """
-  orderForm: OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId @withSegment
+  orderForm: OrderForm
+    @cacheControl(scope: PRIVATE)
+    @withOrderFormId
+    @withSegment
 
   """
   Returns user orders details
@@ -499,9 +502,20 @@ type Mutation {
   """
   Cart
   """
-  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment
-    @withOrderFormId
+  addItem(
+    """
+    Id of the order form you want to mutate.
+    """
+    orderFormId: String
+    """
+    List of items to be added to the cart.
+    """
+    items: [OrderFormItemInput]
+    """
+    Only pass this if you want to send this param to checkout. If not provided, the sales channel from segment is used.
+    """
+    salesChannel: String
+  ): OrderForm @withSegment @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
     @withSegment
@@ -753,8 +767,16 @@ type Mutation {
   """
   Document
   """
-  createDocument(acronym: String!, document: DocumentInput, schema: String): DocumentResponse
-  updateDocument(acronym: String!, document: DocumentInput, schema: String): DocumentResponse
+  createDocument(
+    acronym: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse
+  updateDocument(
+    acronym: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(
     acronym: String!
