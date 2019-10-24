@@ -1,6 +1,5 @@
 import { map, prop, toPairs, zip } from 'ramda'
 
-import { toCategoryIOMessage, toFacetIOMessage } from '../../utils/ioMessage'
 import { pathToCategoryHref } from './category'
 
 const objToNameValue = (
@@ -71,23 +70,14 @@ export const resolvers = {
   FilterFacet: {
     ...baseFacetResolvers,
 
-    name: async ({Map, Name}: any, _: any, { clients: { segment } }: Context) => {
-      const [, id] = Map.split('_')
-      return toFacetIOMessage(segment, Name, id)
-    },
-
-    Name: (root: any, args: any, ctx: Context) => resolvers.FilterFacet.name(root, args, ctx),
+    name: prop('Name'),
   },
   DepartmentFacet: {
     ...baseFacetResolvers,
 
     id: prop('Id'),
 
-    name: (root: any, args: any, ctx: Context) =>
-      resolvers.CategoriesTreeFacet.name(root, args, ctx),
-
-    Name: (root: any, args: any, ctx: Context) =>
-      resolvers.CategoriesTreeFacet.name(root, args, ctx),
+    name: prop('Name'),
   },
   BrandFacet: {
     ...baseFacetResolvers,
@@ -111,11 +101,7 @@ export const resolvers = {
       return pathToCategoryHref(linkPath)
     },
 
-    name: ({Id, Name}: {Id: string, Name: string}, _: any, { clients: { segment } }: Context) =>
-      toCategoryIOMessage('name')(segment, Name, Id),
-
-    Name: (root: any, args: any, ctx: Context) =>
-      resolvers.CategoriesTreeFacet.name(root, args, ctx),
+    name: prop('Name'),
   },
   Facets: {
     Departments: ({ Departments = [], queryArgs = {} }: any) => {
