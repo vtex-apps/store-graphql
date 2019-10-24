@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Deprecated
+- Deprecate the queries: `products`, `productSearch`, `product`, `searchMetadata`, `facets` and `autocomplete`. They were moved to the `search-graphql` app.
 
 ## [2.108.4] - 2019-10-17
 

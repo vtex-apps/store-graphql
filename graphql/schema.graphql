@@ -11,7 +11,10 @@ type Query {
     Product identifier
     """
     identifier: ProductUniqueIdentifier
-  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): Product
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Returns products list filtered and ordered
@@ -61,7 +64,10 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
-  ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): ProductSearch
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   searchMetadata(
     """
@@ -72,7 +78,10 @@ type Query {
     Defines terms types: Brand, Category, Department e.g.: c,b
     """
     map: String = ""
-  ): SearchMetadata @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): SearchMetadata
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Returns products list filtered and ordered
@@ -122,17 +131,26 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Product]
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   productRecommendations(
     identifier: ProductUniqueIdentifier
     type: CrossSelingInputEnum
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Product]
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   productsByIdentifier(
     field: ProductUniqueIdentifierField!
     values: [ID!]
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Product]
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Returns facets category
@@ -155,7 +173,10 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel.
     """
     hideUnavailableItems: Boolean = false
-  ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+  ): Facets
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b')
@@ -308,7 +329,10 @@ type Query {
     Terms that is used in search e.g.: iphone
     """
     searchTerm: String
-  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+  ): Suggestions
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Search documents
