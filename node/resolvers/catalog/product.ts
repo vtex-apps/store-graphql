@@ -1,6 +1,8 @@
+import { Functions } from '@gocommerce/utils'
 import {
   compose,
   last,
+  length,
   map,
   omit,
   propOr,
@@ -8,14 +10,10 @@ import {
   reverse,
   split,
   toPairs,
-  length,
 } from 'ramda'
 
-import { Functions } from '@gocommerce/utils'
-
 import { queries as benefitsQueries } from '../benefits'
-import { toBrandIOMessage, toProductIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
-import { buildCategoryMap, hashMD5 } from './utils'
+import { buildCategoryMap } from './utils'
 
 const objToNameValue = (
   keyName: string,
@@ -95,30 +93,6 @@ export const resolvers = {
 
     categoryTree: productCategoriesToCategoryTree,
 
-    productName: (
-      { productName, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('name')(segment, productName, productId),
-
-    description: (
-      { description, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('description')(segment, description, productId),
-
-    brand: (
-      { brand, brandId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toBrandIOMessage('name')(segment, brand, brandId),
-
-    metaTagDescription: (
-      { metaTagDescription, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('metaTagDescription')(segment, metaTagDescription, productId),
-
     cacheId: ({ linkText }: any) => linkText,
 
     clusterHighlights: ({ clusterHighlights = {} }) =>
@@ -150,13 +124,7 @@ export const resolvers = {
 
     recommendations: (product: any) => product,
 
-    titleTag: (
-      { productTitle, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('titleTag')(segment, productTitle, productId),
-
-    specificationGroups: (product: any, _: any, { clients: { segment } }: Context) => {
+    specificationGroups: (product: any) => {
       const allSpecificationsGroups = propOr(
         [],
         'allSpecificationsGroups',
@@ -164,13 +132,11 @@ export const resolvers = {
       ).concat(['allSpecifications'])
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
-          name: toSpecificationIOMessage('groupName')(segment, groupName, hashMD5(groupName)),
+          name: groupName,
           specifications: (product[groupName] || []).map(
-            (name: string) => ({ 
-              name: toSpecificationIOMessage('specificationName')(segment, name, hashMD5(name)), 
-              values: (product[name] || []).map(
-                (value: string) => toSpecificationIOMessage('specificationValue')(segment, value, hashMD5(value))
-              ) 
+            (name: string) => ({
+              name,
+              values: (product[name] || [])
             })
           )
         })
@@ -178,22 +144,22 @@ export const resolvers = {
       return specificationGroups || []
     },
 
-    items: (product: any, _: any, { clients: { segment } }: Context) => {
-      const { allSpecifications, items, productId, productName, description: productDescription, brand: brandName, brandId } = product
-      let productSpecifications = new Array() as [ProductSpecification]
+    items: (product: any) => {
+      const { allSpecifications, items, productName, description: productDescription, brand: brandName } = product
+      let productSpecifications: ProductSpecification[] = [];
 
       (allSpecifications || []).forEach(
         (specification: string) => {
-          let fieldValues = new Array() as [Promise<TranslatableMessage>]
+          let fieldValues: string[] = [];
           (product[specification] || []).forEach(
             (value: string) => {
-              fieldValues.push(toSpecificationIOMessage('fieldValue')(segment, value, hashMD5(value))) 
+              fieldValues.push(value)
             }
           )
-          
+
           productSpecifications.push({
-            fieldName: toSpecificationIOMessage('fieldName')(segment, specification, hashMD5(specification)), 
-            fieldValues
+            fieldName: specification,
+            fieldValues,
           })
         }
       )
@@ -202,9 +168,9 @@ export const resolvers = {
         items.forEach(
           (item: any) => {
             item.productSpecifications = productSpecifications
-            item.productName = toProductIOMessage('name')(segment, productName, productId)
-            item.productDescription = toProductIOMessage('description')(segment, productDescription, productId)
-            item.brandName = toBrandIOMessage('name')(segment, brandName, brandId)
+            item.productName = productName
+            item.productDescription = productDescription
+            item.brandName = brandName
           }
         )
       }

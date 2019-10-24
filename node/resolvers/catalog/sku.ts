@@ -1,8 +1,5 @@
 import { find, head, map, replace, slice } from 'ramda'
 
-import { toSKUIOMessage, toSpecificationIOMessage } from './../../utils/ioMessage'
-import { hashMD5 } from './utils'
-
 export const resolvers = {
   SKU: {
     attachments: ({ attachments = [] }: any) => map(
@@ -45,43 +42,29 @@ export const resolvers = {
       Videos
     ),
 
-    nameComplete: (
-      { nameComplete, itemId }: SKU,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toSKUIOMessage('nameComplete')(segment, nameComplete, itemId),
-
     skuSpecifications: (
       sku: any,
-      _: any,
-      { clients: { segment } }: Context
     ) => {
       const { variations } = sku
-      let skuSpecifications = new Array() as [SkuSpecification]
+      const skuSpecifications: SkuSpecification[] = [];
 
       (variations || []).forEach(
         (variation: string) => {
-          let fieldValues = new Array() as [Promise<TranslatableMessage>]
+          const fieldValues: string[] = [];
           (sku[variation] || []).forEach(
             (value: string) => {
-              fieldValues.push(toSpecificationIOMessage(`fieldValue`)(segment, value, hashMD5(value)))
+              fieldValues.push(value)
             }
           );
 
           skuSpecifications.push({
-            fieldName: toSpecificationIOMessage('fieldName')(segment, variation, hashMD5(variation)), 
-            fieldValues
+            fieldName: variation,
+            fieldValues,
           })
         },
       )
 
       return skuSpecifications
     },
-
-    name: (
-      { name, itemId }: SKU,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toSKUIOMessage('name')(segment, name, itemId),
   }
 }

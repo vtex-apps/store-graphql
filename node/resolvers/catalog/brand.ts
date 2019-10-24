@@ -1,27 +1,12 @@
 import { prop } from 'ramda'
 
 import { Slugify } from './slug'
-import { toBrandIOMessage } from './../../utils/ioMessage'
 
 export const resolvers = {
   Brand: {
-    name: (
-      { name, id }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toBrandIOMessage('name')(segment, name, id),
+    titleTag: prop('title'),
 
-    titleTag: (
-      { title, id }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toBrandIOMessage('titleTag')(segment, title, id),
-
-    metaTagDescription: (
-      { metaTagDescription, id }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toBrandIOMessage('metaTagDescription')(segment, metaTagDescription, id),
+    metaTagDescription: prop('metaTagDescription'),
 
     active: prop('isActive'),
 

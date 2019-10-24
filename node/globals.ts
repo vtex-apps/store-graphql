@@ -183,19 +183,13 @@ declare global {
   }
 
   interface SkuSpecification {
-    fieldName: Promise<TranslatableMessage>
-    fieldValues: [Promise<TranslatableMessage>]
+    fieldName: string
+    fieldValues: string[]
   }
 
   interface ProductSpecification {
-    fieldName: Promise<TranslatableMessage>
-    fieldValues: [Promise<TranslatableMessage>]
-  }
-
-  interface TranslatableMessage {
-    content: string
-    from: string
-    id: string
+    fieldName: string
+    fieldValues: string[]
   }
 
   interface Reference {
