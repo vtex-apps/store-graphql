@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.109.0] - 2019-10-24
+
 ## [2.108.5] - 2019-10-24
 ### Deprecated
 - Deprecate the queries: `products`, `productSearch`, `product`, `searchMetadata`, `facets` and `autocomplete`. They were moved to the `search-graphql` app.
