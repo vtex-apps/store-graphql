@@ -25,9 +25,12 @@ export class OMS extends JanusClient {
   )
 
   protected get = <T>(url: string, config: RequestConfig = {}) => {
+    const { segmentToken, sessionToken } = this.context as CustomIOContext
+    const segmentTokenCookie = segmentToken ? `vtex_segment=${segmentToken};` : ''
+    const sessionTokenCookie = sessionToken ? `vtex_session=${sessionToken};` : ''
     config.headers = {
       ...config.headers,
-      Cookie: `vtex_segment=${this.context.segmentToken};vtex_session=${this.context.sessionToken};`,
+      Cookie: `${segmentTokenCookie}${sessionTokenCookie}`,
     }
     return this.http.get<T>(url, config).catch(statusToError)
   }

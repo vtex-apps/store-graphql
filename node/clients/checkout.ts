@@ -21,12 +21,12 @@ export class Checkout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId } = this.context as CustomIOContext
+    const { orderFormId, segmentToken, sessionToken } = this.context as CustomIOContext
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
+    const segmentTokenCookie = segmentToken ? `vtex_segment=${segmentToken};` : ''
+    const sessionTokenCookie = sessionToken ? `vtex_session=${sessionToken};` : ''
     return {
-      Cookie: `${checkoutCookie}vtex_segment=${
-        this.context.segmentToken
-      };vtex_session=${this.context.sessionToken};`,
+      Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
     }
   }
 

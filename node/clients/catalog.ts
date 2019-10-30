@@ -15,11 +15,13 @@ interface AutocompleteArgs {
 }
 
 const inflightKey = ({ baseURL, url, params, headers }: RequestConfig) => {
+  const segmentToken = headers['x-vtex-segment']
+  const segmentQs = segmentToken ? `&segmentToken=${segmentToken}` : ''
   return (
     baseURL! +
     url! +
     stringify(params, { arrayFormat: 'repeat', addQueryPrefix: true }) +
-    `&segmentToken=${headers['x-vtex-segment']}`
+    segmentQs
   )
 }
 
