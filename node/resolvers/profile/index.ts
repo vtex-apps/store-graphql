@@ -31,11 +31,18 @@ export const mutations = {
   uploadProfilePicture: (_: any, { file }: { file: any }, context: Context) =>
     updateProfilePicture(context, file),
 
-  subscribeNewsletter: async (_: any, { email }: SubscribeNewsletterArgs, context: Context) => {
+  subscribeNewsletter: async (
+    _: any,
+    { email }: SubscribeNewsletterArgs,
+    context: Context
+  ) => {
     const profile = context.clients.profile
-    await profile.updatePersonalPreferences({ email, userId: '' }, {
-      isNewsletterOptIn: 'True',
-    })
+    await profile.updatePersonalPreferences(
+      { email, userId: '' },
+      {
+        isNewsletterOptIn: 'True',
+      }
+    )
 
     return true
   },

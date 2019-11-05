@@ -290,7 +290,10 @@ type Query {
   """
   Returns checkout cart details
   """
-  orderForm: OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId @withSegment
+  orderForm: OrderForm
+    @cacheControl(scope: PRIVATE)
+    @withOrderFormId
+    @withSegment
 
   """
   Returns user orders details
@@ -777,8 +780,16 @@ type Mutation {
   """
   Document
   """
-  createDocument(acronym: String!, document: DocumentInput, schema: String): DocumentResponse
-  updateDocument(acronym: String!, document: DocumentInput, schema: String): DocumentResponse
+  createDocument(
+    acronym: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse
+  updateDocument(
+    acronym: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(
     acronym: String!
