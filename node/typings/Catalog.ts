@@ -143,7 +143,6 @@ interface SalesChannelAvailable {
   CurrencySymbol: string
   CurrencyLocale: number
   CurrencyFormatInfo: unknown
-  Origin: null
   Position: number
   ConditionRule: string | null
   CurrencyDecimalDigits: null | number
