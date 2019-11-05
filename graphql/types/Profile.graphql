@@ -229,6 +229,10 @@ input ProfileInput {
   isCorporate: Boolean
 }
 
+type UserCondition {
+  allowed: Boolean
+}
+
 input AddressInput {
   receiverName: String
   complement: String
