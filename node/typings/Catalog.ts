@@ -130,3 +130,21 @@ interface Seller {
     CacheVersionUsedToCallCheckout: string
   }
 }
+
+interface SalesChannelAvailable {
+  Id: number
+  Name: string
+  IsActive: boolean
+  ProductClusterId: string | null
+  CountryCode: string
+  CultureInfo: string
+  TimeZone: string
+  CurrencyCode: string
+  CurrencySymbol: string
+  CurrencyLocale: number
+  CurrencyFormatInfo: unknown
+  Origin: null
+  Position: number
+  ConditionRule: string | null
+  CurrencyDecimalDigits: null | number
+}

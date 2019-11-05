@@ -520,6 +520,8 @@ type Query {
   Get logged in user's last order
   """
   userLastOrder: Order @cacheControl(scope: PRIVATE)
+
+  checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
 }
 
 type Mutation {
