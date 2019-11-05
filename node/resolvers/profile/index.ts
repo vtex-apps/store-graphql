@@ -72,16 +72,17 @@ export const queries = {
     )
 
     if (!email) {
-      return { allowed: null }
+      return { allowed: false }
     }
 
     const availableSalesChannels = await catalog
       .salesChannelAvailable(email)
       .catch(() => [])
 
+    // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
     const available = availableSalesChannels.find(sc => sc.Id == salesChannel)
 
-    return { allowed: !!available }
+    return { allowed: Boolean(available) }
   },
 }
 
