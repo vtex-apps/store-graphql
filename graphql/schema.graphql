@@ -249,7 +249,7 @@ type Query {
     Category tree level. Default: 3
     """
     treeLevel: Int = 3
-  ): [Category] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+  ): [Category] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Returns a specified brand
