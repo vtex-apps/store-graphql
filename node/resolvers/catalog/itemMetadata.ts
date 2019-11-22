@@ -19,7 +19,7 @@ interface SimulationPayload {
 const getSimulationPayload = async (
   segment: Segment
 ): Promise<SimulationPayload> => {
-  const segmentData = await segment.segment()
+  const segmentData = await segment.getSegment()
 
   let marketingData: Record<string, string> = {}
   try {

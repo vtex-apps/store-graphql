@@ -6,7 +6,6 @@ import {
 } from '@vtex/api'
 
 import { Clients } from './clients'
-import { IdentityDataSource } from './dataSources/identity'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -18,7 +17,6 @@ declare global {
 
   interface CustomContext {
     cookie: string
-    dataSources: StoreGraphQLDataSources
     originalPath: string
     vtex: CustomIOContext
   }
@@ -27,10 +25,6 @@ declare global {
     currentProfile: CurrentProfile
     segment?: SegmentData
     orderFormId?: string
-  }
-
-  interface StoreGraphQLDataSources {
-    identity: IdentityDataSource
   }
 
   interface UserAddress {

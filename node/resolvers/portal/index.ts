@@ -4,7 +4,7 @@ export const resolvers = {
   storeConfigs: async (_: any, __: any, ctx: Context) => {
     const {
       clients: { portal },
-      vtex: { account },
+      vtex: { account, logger },
     } = ctx
 
     const sites = await portal.sites()
@@ -16,10 +16,10 @@ export const resolvers = {
     try {
       return portal.storeConfigs(currentSite ? currentSite.id : 'default')
     } catch (e) {
-      ctx.clients.logger.info(
-        JSON.stringify(currentSite),
-        'portal-storegraphql-errors'
-      )
+      logger.info({
+        message: JSON.stringify(currentSite),
+        type: 'portal-storegraphql-errors'
+      })
       return null
     }
   },

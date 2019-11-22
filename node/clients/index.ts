@@ -3,11 +3,12 @@ import { IOClients } from '@vtex/api'
 import { CallCenterOperator } from './callCenterOperator'
 import { Catalog } from './catalog'
 import { Checkout } from './checkout'
+import { Identity } from './identity'
+import { LogisticsClient } from './logistics'
 import { MasterData } from './masterdata'
-import { ProfileClient } from './profile'
 import { OMS } from './oms'
 import { Portal } from './portal'
-import { LogisticsClient } from './logistics'
+import { ProfileClient } from './profile'
 
 export class Clients extends IOClients {
   public get masterdata() {
@@ -40,5 +41,9 @@ export class Clients extends IOClients {
 
   public get logistics() {
     return this.getOrSet('logistics', LogisticsClient)
+  }
+
+  public get identity() {
+    return this.getOrSet('identity', Identity)
   }
 }

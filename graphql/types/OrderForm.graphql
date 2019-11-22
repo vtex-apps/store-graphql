@@ -167,7 +167,7 @@ type OrderFormShippingData {
 scalar InputValues
 
 input OrderFormItemInput {
-  id: Int
+  id: ID
   index: Int
   quantity: Int
   seller: ID

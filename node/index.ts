@@ -3,7 +3,6 @@ import './globals'
 import { LRUCache, Service } from '@vtex/api'
 
 import { Clients } from './clients'
-import { dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 
@@ -58,7 +57,6 @@ export default new Service<Clients, void, CustomContext>({
     },
   },
   graphql: {
-    dataSources,
     resolvers,
     schemaDirectives,
   },

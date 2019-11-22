@@ -1,9 +1,9 @@
+import { AuthenticationError, ResolverError } from '@vtex/api'
 import { parse as parseCookie } from 'cookie'
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import jwtDecode from 'jwt-decode'
 
-import { AuthenticationError, ResolverError } from '@vtex/api'
 import { queries as sessionQueries } from '../resolvers/session'
 import { SessionFields } from '../resolvers/session/sessionResolver'
 
@@ -59,8 +59,7 @@ async function getCurrentProfileFromCookies(
   context: Context
 ): Promise<CurrentProfile | null> {
   const {
-    dataSources: { identity },
-    clients: { profile },
+    clients: { profile, identity },
     vtex: { adminUserAuthToken, storeUserAuthToken },
     request: {
       headers: { cookie },
