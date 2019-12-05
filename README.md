@@ -15,6 +15,7 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 |  [3.x]  | **Unscheduled**     |   ----------    |                       |             |
 
 ## Table of Content
+- [Depreaction Notices](#depreaction-notices)
 - [Usage](#usage)
 - [Queries](#queries)
   - [Catalog](#catalog) 
@@ -28,6 +29,10 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 - [Contributing](#contributing)
 - [Troubleshooting](#troubleshooting)
 
+### Depreaction Notices
+
+The queries `facets`, `product`, `products`, `productSearch`, `autocomplete`, `searchMetadata` and `productsByIdentifier` were deprecated. They were moved to a new app `vtex.search-graphql`, use the queries from that app from now on.
+
 ## Usage
 TODO
 
@@ -35,9 +40,9 @@ TODO
 
 ### Catalog
 
-* `product` - Returns a specified product
-* `products` - Returns products list filtered and ordered
-* `facets` - Returns facets category
+* `product` - Returns a specified product - DEPRECATED
+* `products` - Returns products list filtered and ordered - DEPRECATED
+* `facets` - Returns facets category - DEPRECATED
 * `category` - Returns a specified category
 * `categories` - Returns categories tree
 * `brand` - Returns a specified brand
