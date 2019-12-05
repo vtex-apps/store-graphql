@@ -4,8 +4,6 @@ import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
 import { queries as logisticsQueries } from '../logistics/index'
 import paths from '../paths'
-import { queries as sessionQueries } from '../session'
-import { SessionFields } from '../session/sessionResolver'
 import { fieldResolvers as slasResolvers } from './checkoutSLA'
 
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
@@ -43,18 +41,11 @@ const isWhitelistedSetCookie = (cookie: string) => {
  */
 const convertIntToFloat = (int: number) => int * 0.01
 
-const getSessionMarketingParams = (sesionData: SessionFields) => ({
-  utm_source: path(['utmParams', 'source'], sesionData),
-  utm_campaign: path(['utmParams', 'campaign'], sesionData),
-  utm_medium: path(['utmParams', 'medium'], sesionData),
-  utmi_campaign: path(['utmiParams', 'campaign'], sesionData),
-  utmi_part: path(['utmiParams', 'part'], sesionData),
-  utmi_page: path(['utmiParams', 'page'], sesionData),
-})
-
 interface AddItemArgs {
   orderFormId?: string
   items?: OrderFormItemInput[]
+  utmParams?: UTMParams
+  utmiParams?: UTMIParams
 }
 
 interface SkuPickupSLAListArgs {
@@ -71,7 +62,8 @@ interface SkuPickupSLAArgs extends SkuPickupSLAListArgs {
 
 const shouldUpdateMarketingData = (
   orderFormMarketingTags: OrderFormMarketingData | null,
-  sessionData: SessionFields
+  utmParams: UTMParams,
+  utmiParams: UTMIParams,
 ) => {
   const {
     utmCampaign = null,
@@ -81,21 +73,20 @@ const shouldUpdateMarketingData = (
     utmiPart = null,
     utmipage = null,
   } = orderFormMarketingTags || {}
-  const params = getSessionMarketingParams(sessionData)
 
   return (
-    (params.utm_source ||
-      params.utm_campaign ||
-      params.utm_medium ||
-      params.utmi_campaign ||
-      params.utmi_part ||
-      params.utmi_page) &&
-    (utmCampaign !== params.utm_campaign ||
-      utmMedium !== params.utm_medium ||
-      utmSource !== params.utm_source ||
-      utmiCampaign !== params.utmi_campaign ||
-      utmiPart !== params.utmi_part ||
-      utmipage !== params.utmi_page)
+    (utmParams.source ||
+      utmParams.campaign ||
+       utmParams.medium ||
+      utmiParams.campaign ||
+      utmiParams.part ||
+      utmiParams.page) &&
+    (utmCampaign !== utmParams.campaign ||
+      utmMedium !== utmParams.medium ||
+      utmSource !== utmParams.source ||
+      utmiCampaign !== utmiParams.campaign ||
+      utmiPart !== utmiParams.part ||
+      utmipage !== utmiParams.page)
   )
 }
 
@@ -151,16 +142,6 @@ export const fieldResolvers = {
 
 const replaceDomain = (host: string) => (cookie: string) =>
   cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
-
-const getSession = async (ctx: Context): Promise<SessionFields> => {
-  try {
-    return sessionQueries.getSession({}, {}, ctx)
-  } catch (err) {
-    // todo: log error using colossus
-    console.error(err)
-    return {}
-  }
-}
 
 async function syncWithStoreLocale(
   orderForm: OrderForm,
@@ -291,38 +272,39 @@ export const queries: Record<string, Resolver> = {
   },
 }
 
+interface UTMParams {
+  campaign?: string
+  medium?: string
+  source?: string
+}
+
+interface UTMIParams {
+  campaign?: string
+  part?: string
+  page?: string
+}
+
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, { orderFormId, items }: AddItemArgs, ctx: Context) => {
+  addItem: async (_, { orderFormId, items, utmParams, utmiParams }: AddItemArgs, ctx: Context) => {
     const {
       clients: { checkout },
     } = ctx
     if (orderFormId == null || items == null) {
       throw new UserInputError('No order form id or items to add provided')
     }
-    const [
-      { marketingData, items: previousItems },
-      sessionData,
-    ] = await Promise.all([checkout.orderForm(), getSession(ctx)])
 
-    if (shouldUpdateMarketingData(marketingData, sessionData)) {
+    const { marketingData, items: previousItems } = await checkout.orderForm()
+
+    if (utmParams && utmiParams && shouldUpdateMarketingData(marketingData, utmParams, utmiParams)) {
       const newMarketingData = {
         ...(marketingData || {}),
       }
-
-      if (sessionData && Object.keys(sessionData).length > 0) {
-        newMarketingData.utmCampaign = path(
-          ['utmParams', 'campaign'],
-          sessionData
-        )
-        newMarketingData.utmMedium = path(['utmParams', 'medium'], sessionData)
-        newMarketingData.utmSource = path(['utmParams', 'source'], sessionData)
-        newMarketingData.utmiCampaign = path(
-          ['utmiParams', 'campaign'],
-          sessionData
-        )
-        newMarketingData.utmiPart = path(['utmiParams', 'part'], sessionData)
-        newMarketingData.utmipage = path(['utmiParams', 'page'], sessionData)
-      }
+      newMarketingData.utmCampaign = utmParams.campaign
+      newMarketingData.utmMedium = utmParams.medium
+      newMarketingData.utmSource = utmParams.source
+      newMarketingData.utmiCampaign = utmiParams.campaign
+      newMarketingData.utmiPart = utmiParams.part
+      newMarketingData.utmipage = utmiParams.page
 
       if (newMarketingData.marketingTags == null) {
         delete newMarketingData.marketingTags

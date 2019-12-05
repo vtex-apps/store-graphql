@@ -225,6 +225,18 @@ input OrderFormCheckinInput {
   pickupPointId: String
 }
 
+input OrderFormInputUTMParams {
+  campaign: String
+  medium: String
+  source: String
+}
+
+input OrderFormInputUTMIParams {
+  campaign: String
+  part: String
+  page: String
+}
+
 type RemovedOptionItem {
   """
   The initialQuantity of the assembly option CompositionItem

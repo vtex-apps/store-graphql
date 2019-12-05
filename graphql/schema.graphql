@@ -528,7 +528,24 @@ type Mutation {
   """
   Cart
   """
-  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
+  addItem(
+    """
+    Id of orderForm you want to mutate
+    """
+    orderFormId: String
+    """
+    List of items you want to add and their properties
+    """
+    items: [OrderFormItemInput]
+    """
+    Optional marketing UTM Params to add them to order form
+    """
+    utmParams: OrderFormInputUTMParams
+    """
+    Optional marketing UTMi Params to add them to order form
+    """
+    utmiParams: OrderFormInputUTMIParams
+  ): OrderForm
     @withSegment
     @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
