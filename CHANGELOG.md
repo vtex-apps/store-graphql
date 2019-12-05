@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.111.0] - 2019-12-05
+
 ## [2.110.0] - 2019-11-05
 ### Added
 - New query `checkProfileAllowed`.
