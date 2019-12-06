@@ -42,7 +42,7 @@ export const queries = {
       clients: { masterdata },
     } = context
 
-    const data = await masterdata.getSchema(dataEntity, schema);
+    const data = await masterdata.getSchema<object>(dataEntity, schema)
 
     return {...data, name: data? args.schema : null}
   },
