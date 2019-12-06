@@ -1,5 +1,5 @@
 import { Functions } from '@gocommerce/utils'
-import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
+import { NotFoundError, ResolverWarning, UserInputError, ResolverError } from '@vtex/api'
 import { all } from 'bluebird'
 import {
   compose,
@@ -286,6 +286,9 @@ const isValidProductIdentifier = (identifier: ProductIndentifier | undefined) =>
 
 export const queries = {
   autocomplete: async (_: any, args: any, ctx: Context) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const {
       clients: { catalog },
       clients,
@@ -309,6 +312,9 @@ export const queries = {
     { facets, query, map, hideUnavailableItems }: FacetsArgs,
     ctx: Context
   ) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const {
       clients: { catalog },
       clients,
@@ -344,6 +350,9 @@ export const queries = {
   },
 
   product: async (_: any, rawArgs: ProductArgs, ctx: Context) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const {
       vtex: { account },
       clients: { catalog },
@@ -391,6 +400,9 @@ export const queries = {
   },
 
   products: async (_: any, args: SearchArgs, ctx: Context) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const {
       clients: { catalog },
     } = ctx
@@ -415,6 +427,9 @@ export const queries = {
     args: ProductsByIdentifierArgs,
     ctx: Context
   ) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const {
       clients: { catalog },
     } = ctx
@@ -445,6 +460,9 @@ export const queries = {
   },
 
   productSearch: async (_: any, args: SearchArgs, ctx: Context) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const {
       clients,
       clients: { catalog },
@@ -575,6 +593,9 @@ export const queries = {
     { identifier, type }: ProductRecommendationArg,
     ctx: Context
   ) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     if (identifier == null || type == null) {
       throw new UserInputError('Wrong input provided')
     }
@@ -588,6 +609,9 @@ export const queries = {
   },
 
   searchMetadata: async (_: any, args: SearchMetadataArgs, ctx: Context) => {
+    if (!ctx.vtex.production) {
+      throw new ResolverError('Query was deprecated and will not work in development workspaces. Use vtex.search-graphql queries.')
+    }
     const { clients } = ctx
     const queryTerm = args.query
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
