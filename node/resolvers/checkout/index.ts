@@ -75,18 +75,12 @@ const shouldUpdateMarketingData = (
   } = orderFormMarketingTags || {}
 
   return (
-    (utmParams?.source ||
-      utmParams?.campaign ||
-       utmParams?.medium ||
-      utmiParams?.campaign ||
-      utmiParams?.part ||
-      utmiParams?.page) &&
-    (utmCampaign !== utmParams?.campaign ||
-      utmMedium !== utmParams?.medium ||
-      utmSource !== utmParams?.source ||
-      utmiCampaign !== utmiParams?.campaign ||
-      utmiPart !== utmiParams?.part ||
-      utmipage !== utmiParams?.page)
+    ((utmParams?.source ?? null) !== utmSource) ||
+    ((utmParams?.medium ?? null) !== utmMedium) ||
+    ((utmParams?.campaign ?? null) !== utmCampaign) ||
+    ((utmiParams?.part ?? null) !== utmiPart) ||
+    ((utmiParams?.page ?? null) !== utmipage) ||
+    ((utmiParams?.campaign ?? null) !== utmiCampaign)
   )
 }
 
