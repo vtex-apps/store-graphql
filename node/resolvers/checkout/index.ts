@@ -62,8 +62,8 @@ interface SkuPickupSLAArgs extends SkuPickupSLAListArgs {
 
 const shouldUpdateMarketingData = (
   orderFormMarketingTags: OrderFormMarketingData | null,
-  utmParams: UTMParams,
-  utmiParams: UTMIParams,
+  utmParams?: UTMParams,
+  utmiParams?: UTMIParams,
 ) => {
   const {
     utmCampaign = null,
@@ -75,18 +75,18 @@ const shouldUpdateMarketingData = (
   } = orderFormMarketingTags || {}
 
   return (
-    (utmParams.source ||
-      utmParams.campaign ||
-       utmParams.medium ||
-      utmiParams.campaign ||
-      utmiParams.part ||
-      utmiParams.page) &&
-    (utmCampaign !== utmParams.campaign ||
-      utmMedium !== utmParams.medium ||
-      utmSource !== utmParams.source ||
-      utmiCampaign !== utmiParams.campaign ||
-      utmiPart !== utmiParams.part ||
-      utmipage !== utmiParams.page)
+    (utmParams?.source ||
+      utmParams?.campaign ||
+       utmParams?.medium ||
+      utmiParams?.campaign ||
+      utmiParams?.part ||
+      utmiParams?.page) &&
+    (utmCampaign !== utmParams?.campaign ||
+      utmMedium !== utmParams?.medium ||
+      utmSource !== utmParams?.source ||
+      utmiCampaign !== utmiParams?.campaign ||
+      utmiPart !== utmiParams?.part ||
+      utmipage !== utmiParams?.page)
   )
 }
 
@@ -295,16 +295,16 @@ export const mutations: Record<string, Resolver> = {
 
     const { marketingData, items: previousItems } = await checkout.orderForm()
 
-    if (utmParams && utmiParams && shouldUpdateMarketingData(marketingData, utmParams, utmiParams)) {
+    if (shouldUpdateMarketingData(marketingData, utmParams, utmiParams)) {
       const newMarketingData = {
         ...(marketingData || {}),
       }
-      newMarketingData.utmCampaign = utmParams.campaign
-      newMarketingData.utmMedium = utmParams.medium
-      newMarketingData.utmSource = utmParams.source
-      newMarketingData.utmiCampaign = utmiParams.campaign
-      newMarketingData.utmiPart = utmiParams.part
-      newMarketingData.utmipage = utmiParams.page
+      newMarketingData.utmCampaign = utmParams?.campaign
+      newMarketingData.utmMedium = utmParams?.medium
+      newMarketingData.utmSource = utmParams?.source
+      newMarketingData.utmiCampaign = utmiParams?.campaign
+      newMarketingData.utmiPart = utmiParams?.part
+      newMarketingData.utmipage = utmiParams?.page
 
       if (newMarketingData.marketingTags == null) {
         delete newMarketingData.marketingTags
