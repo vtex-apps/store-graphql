@@ -72,7 +72,7 @@ export const queries = {
     )
 
     if (!email) {
-      return { allowed: false }
+      return { allowed: false, condition: 'unauthorized' }
     }
 
     const availableSalesChannels = await catalog
@@ -82,7 +82,10 @@ export const queries = {
     // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
     const available = availableSalesChannels.find(sc => sc.Id == salesChannel)
 
-    return { allowed: Boolean(available) }
+    return {
+      allowed: Boolean(available),
+      condition: available ? 'authorized' : 'forbidden',
+    }
   },
 }
 

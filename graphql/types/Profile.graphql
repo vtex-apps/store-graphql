@@ -230,7 +230,14 @@ input ProfileInput {
 }
 
 type UserCondition {
-  allowed: Boolean
+  condition: UserConditionType
+  allowed: Boolean @deprecated(reason: "Use condition field instead")
+}
+
+enum UserConditionType {
+  authorized
+  unauthorized
+  forbidden
 }
 
 input AddressInput {
