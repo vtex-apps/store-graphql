@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.112.0] - 2019-12-20
+
 ## [2.111.2] - 2019-12-18
 ### Changed
 - Decode segment from segment token locally.
