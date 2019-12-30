@@ -1,13 +1,10 @@
-import { Functions } from '@gocommerce/utils'
 import {
   compose,
   last,
-  length,
   map,
   omit,
   propOr,
   reject,
-  reverse,
   split,
   toPairs,
 } from 'ramda'
@@ -49,39 +46,56 @@ const removeTrailingSlashes = (str: string) =>
 const removeStartingSlashes = (str: string) =>
   str.startsWith('/') ? str.slice(1) : str
 
-const parseId = compose(
-  Number,
+const getLastCategory = compose<string, string, string[], string>(
   last,
   split('/'),
   removeTrailingSlashes
 )
 
-const getCategoryLevel = compose(
-  length,
+const treeStringToArray = compose(
   split('/'),
   removeTrailingSlashes,
   removeStartingSlashes
 )
 
+const findMainTree = (categoriesIds: string[], prodCategoryId: string) => {
+  const mainTree = categoriesIds.find(
+    treeIdString => getLastCategory(treeIdString) === prodCategoryId
+  )
+  if (mainTree) {
+    return treeStringToArray(mainTree)
+  }
+
+  // If we are here, did not find the specified main category ID in given strings. It is probably a bug.
+  // We will return the biggest tree we find
+
+  const trees = categoriesIds.map(treeStringToArray)
+
+  return trees.reduce(
+    (acc, currTree) => (currTree.length > acc.length ? currTree : acc),
+    []
+  )
+}
+
 const productCategoriesToCategoryTree = async (
-  {
-    categories,
-    categoriesIds,
-  }: { categories: string[]; categoriesIds: string[] },
+  { categories, categoriesIds, categoryId: prodCategoryId }: { categories: string[], categoriesIds: string[], categoryId: string },
   _: any,
-  { clients: { catalog }, vtex: { account } }: Context
+  { clients: { catalog }, vtex: { platform } }: Context
 ) => {
   if (!categories || !categoriesIds) {
     return []
   }
-  const reversedIds = reverse(categoriesIds)
-  if (!Functions.isGoCommerceAcc(account)) {
-    return reversedIds.map(categoryId => catalog.category(parseId(categoryId)))
+
+  const mainTreeIds = findMainTree(categoriesIds, prodCategoryId)
+
+  if (platform === 'vtex') {
+    return mainTreeIds.map(categoryId => catalog.category(Number(categoryId)))
   }
-  const level = Math.max(...reversedIds.map(getCategoryLevel))
-  const categoriesTree = await catalog.categories(level)
+  const categoriesTree = await catalog.categories(mainTreeIds.length)
   const categoryMap = buildCategoryMap(categoriesTree)
-  const mappedCategories = reversedIds.map(id => categoryMap[parseId(id)]).filter(Boolean)
+  const mappedCategories = mainTreeIds
+    .map(id => categoryMap[id])
+    .filter(Boolean)
 
   return mappedCategories.length ? mappedCategories : null
 }
