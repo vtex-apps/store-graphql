@@ -31,17 +31,13 @@ export const resolvers = {
   Category: {
     cacheId: prop('id'),
 
-    href: async ({ url }: SafeCategory) => {
-      return cleanUrl(url)
-    },
+    href: ({ url }: SafeCategory) => cleanUrl(url),
 
     metaTagDescription: prop('MetaTagDescription'),
 
     titleTag: prop('Title'),
 
-    slug: async ({ url }: SafeCategory) => {
-      return url ? lastSegment(url) : null
-    },
+    slug: ({ url }: SafeCategory) => url ? lastSegment(url) : null,
 
     children: async (
       { id, children }: SafeCategory,
