@@ -246,7 +246,7 @@ const filterCompositionNull = (assemblyOptions: AssemblyOption[]) =>
   assemblyOptions.filter(({ composition }) => !!composition)
 
 export const buildAssemblyOptionsMap = (orderForm: OrderForm) => {
-  const metadataItems = pathOr<[], MetadataItem[]>(
+  const metadataItems = pathOr<MetadataItem[]>(
     [],
     ['itemMetadata', 'items'],
     orderForm
@@ -257,11 +257,11 @@ export const buildAssemblyOptionsMap = (orderForm: OrderForm) => {
       ({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0
     )
     .reduce(
-      (prev, curr) => ({
-        ...prev,
-        [curr.id]: filterCompositionNull(curr.assemblyOptions),
-      }),
-      {}
+      (prev, curr) => {
+        prev[curr.id] = filterCompositionNull(curr.assemblyOptions)
+        return prev
+      },
+      {} as Record<string, AssemblyOption[]>
     )
 }
 

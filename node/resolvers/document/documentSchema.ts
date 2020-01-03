@@ -3,7 +3,7 @@ import { prop, toPairs, map } from 'ramda'
 export const resolvers = {
   DocumentSchema: {
     properties: ({properties} : any) =>
-      map(([name, rest]) => ({
+      map(([name, rest]: any) => ({
         name,
         type: rest.type,
         optional: rest.optional || false

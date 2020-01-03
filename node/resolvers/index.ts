@@ -38,9 +38,6 @@ import {
   fieldResolvers as sessionResolvers,
 } from './session'
 
-// eslint-disable-next-line no-global-assign
-Promise = require('bluebird')
-
 export const resolvers = {
   ...catalogFieldResolvers,
   ...benefitsFieldResolvers,

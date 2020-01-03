@@ -1,6 +1,5 @@
 import { Functions } from '@gocommerce/utils'
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
-import { all } from 'bluebird'
 import {
   compose,
   equals,
@@ -244,7 +243,7 @@ const translateToStoreDefaultLanguage = async (
   term: string
 ): Promise<string> => {
   const { segment, messagesGraphQL } = clients
-  const [{ cultureInfo: to }, { cultureInfo: from }] = await all([
+  const [{ cultureInfo: to }, { cultureInfo: from }] = await Promise.all([
     segment.getSegmentByToken(null),
     segment.getSegment(),
   ])
@@ -470,7 +469,7 @@ export const queries = {
       ...args,
       query,
     }
-    const [productsRaw, searchMetaData] = await all([
+    const [productsRaw, searchMetaData] = await Promise.all([
       catalog.products(args, true),
       getSearchMetaData(_, translatedArgs, ctx),
     ])
@@ -553,7 +552,7 @@ export const queries = {
       contextKey: 'search',
     }
 
-    const [brandId, categoryId] = await all([
+    const [brandId, categoryId] = await Promise.all<string | null, string | number | null>([
       getBrandId(args.brand, catalog, isVtex, logger),
       searchContextGetCategory(args, catalog, isVtex, logger),
     ])

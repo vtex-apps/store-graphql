@@ -1,6 +1,6 @@
 import http from 'axios'
-import { mapSeries } from 'bluebird'
 import { last, merge, propEq, reject } from 'ramda'
+import pMapSeries from 'p-map-series'
 import paths from '../paths'
 
 const createClient = (account: any, orderFormId: any, authToken: any) => {
@@ -39,6 +39,6 @@ export default async (body: any, ioContext: any) => {
     return { data: merge(body.data, response.data) }
   }
 
-  const lastDeleteResponse = await mapSeries(tokensToRemove, ({ tokenId }: any) => checkout.removeToken(tokenId)).then<any>(last)
+  const lastDeleteResponse = await pMapSeries(tokensToRemove, ({ tokenId }: any) => checkout.removeToken(tokenId)).then<any>(last)
   return { data: merge(body.data, lastDeleteResponse.data) }
 }
