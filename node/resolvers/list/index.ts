@@ -65,10 +65,10 @@ const deleteItems = (items: Item[], masterdata: MasterData) =>
   )
 
 const updateItems = async (items: Item[], masterdata: MasterData) => {
-  const itemsWithoutDuplicated = Object.values(groupBy(({ skuId }) => skuId, items)).map(itemArray => last(itemArray))
-  const itemsToBeDeleted = itemsWithoutDuplicated.filter(item => item?.id && item?.quantity === 0) as Item[]
-  const itemsToBeAdded = itemsWithoutDuplicated.filter(item => !item?.id) as Item[]
-  const itemsToBeUpdated = itemsWithoutDuplicated.filter(item => item?.id && item?.quantity > 0) as Item[]
+  const itemsWithoutDuplicated = Object.values(groupBy(({ skuId }) => skuId, items)).map(itemArray => last(itemArray)) as Item[]
+  const itemsToBeDeleted = itemsWithoutDuplicated.filter(item => item?.id && item?.quantity === 0)
+  const itemsToBeAdded = itemsWithoutDuplicated.filter(item => !item?.id)
+  const itemsToBeUpdated = itemsWithoutDuplicated.filter(item => item?.id && item?.quantity > 0)
 
   deleteItems(itemsToBeDeleted, masterdata)
 
