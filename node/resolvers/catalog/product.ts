@@ -3,7 +3,6 @@ import {
   last,
   map,
   omit,
-  propOr,
   reject,
   split,
   toPairs,
@@ -140,11 +139,9 @@ export const resolvers = {
     recommendations: (product: any) => product,
 
     specificationGroups: (product: any) => {
-      const allSpecificationsGroups = propOr<string[], any, string[]>(
-        [],
-        'allSpecificationsGroups',
-        product
-      ).concat(['allSpecifications'])
+      const productSpecificationGroups = (product?.allSpecificationsGroups ?? []) as string[]
+      const allSpecificationsGroups = productSpecificationGroups.concat(['allSpecifications'])
+
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,
