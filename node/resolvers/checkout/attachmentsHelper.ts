@@ -4,7 +4,6 @@ import {
   find,
   partition,
   path,
-  pathOr,
   propEq,
   omit,
   eqProps,
@@ -246,11 +245,7 @@ const filterCompositionNull = (assemblyOptions: AssemblyOption[]) =>
   assemblyOptions.filter(({ composition }) => !!composition)
 
 export const buildAssemblyOptionsMap = (orderForm: OrderForm) => {
-  const metadataItems = pathOr<MetadataItem[]>(
-    [],
-    ['itemMetadata', 'items'],
-    orderForm
-  )
+  const metadataItems = orderForm?.itemMetadata?.items ?? []
 
   return metadataItems
     .filter(
