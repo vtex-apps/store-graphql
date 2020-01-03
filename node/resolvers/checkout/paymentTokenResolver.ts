@@ -1,5 +1,5 @@
 import http from 'axios'
-import { last, merge, propEq, reject } from 'ramda'
+import { last, mergeRight, propEq, reject } from 'ramda'
 import pMapSeries from 'p-map-series'
 import paths from '../paths'
 
@@ -36,9 +36,9 @@ export default async (body: any, ioContext: any) => {
   const tokensToRemove = reject(propEq('tokenId', paymentToken.tokenId), availableTokens)
 
   if (tokensToRemove.length === 0) {
-    return { data: merge(body.data, response.data) }
+    return { data: mergeRight(body.data, response.data) }
   }
 
   const lastDeleteResponse = await pMapSeries(tokensToRemove, ({ tokenId }: any) => checkout.removeToken(tokenId)).then<any>(last)
-  return { data: merge(body.data, lastDeleteResponse.data) }
+  return { data: mergeRight(body.data, lastDeleteResponse.data) }
 }
