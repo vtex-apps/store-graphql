@@ -19,13 +19,8 @@ const getNewItemsOnly = (
   previousItems: OrderFormItem[],
   allItems: OrderFormItem[]
 ) => {
-  const idSet = previousItems.reduce(
-    (acc, item) => {
-      acc.add(item.uniqueId)
-      return acc
-    },
-    new Set<string>(),
-  )
+  const idSet = new Set<string>()
+  previousItems.forEach(item => idSet.add(item.uniqueId))
   return allItems.filter(item => !idSet.has(item.uniqueId))
 }
 
