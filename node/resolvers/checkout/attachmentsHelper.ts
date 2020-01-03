@@ -3,10 +3,8 @@ import {
   filter,
   find,
   partition,
-  path,
   propEq,
   omit,
-  eqProps,
   compose,
   equals,
 } from 'ramda'
@@ -21,7 +19,14 @@ const getNewItemsOnly = (
   previousItems: OrderFormItem[],
   allItems: OrderFormItem[]
 ) => {
-  return allItems.filter(item => !previousItems.find(eqProps('uniqueId', item)))
+  const idSet = previousItems.reduce(
+    (acc, item) => {
+      acc.add(item.uniqueId)
+      return acc
+    },
+    new Set<string>(),
+  )
+  return allItems.filter(item => !idSet.has(item.uniqueId))
 }
 
 const findRecentlyAddedParent = (
@@ -384,10 +389,7 @@ const isInitialItemMissing = (
     return null
   }
 
-  const metadataItems = path<MetadataItem[]>(
-    ['itemMetadata', 'items'],
-    orderForm
-  )
+  const metadataItems = orderForm?.itemMetadata?.items
   const metadataItem =
     metadataItems && find(propEq('id', initialItem.id), metadataItems)
 
