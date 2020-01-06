@@ -3,11 +3,8 @@ import {
   filter,
   find,
   partition,
-  path,
-  pathOr,
   propEq,
   omit,
-  eqProps,
   compose,
   equals,
 } from 'ramda'
@@ -22,7 +19,9 @@ const getNewItemsOnly = (
   previousItems: OrderFormItem[],
   allItems: OrderFormItem[]
 ) => {
-  return allItems.filter(item => !previousItems.find(eqProps('uniqueId', item)))
+  const idSet = new Set<string>()
+  previousItems.forEach(item => idSet.add(item.uniqueId))
+  return allItems.filter(item => !idSet.has(item.uniqueId))
 }
 
 const findRecentlyAddedParent = (
@@ -246,22 +245,18 @@ const filterCompositionNull = (assemblyOptions: AssemblyOption[]) =>
   assemblyOptions.filter(({ composition }) => !!composition)
 
 export const buildAssemblyOptionsMap = (orderForm: OrderForm) => {
-  const metadataItems = pathOr<[], MetadataItem[]>(
-    [],
-    ['itemMetadata', 'items'],
-    orderForm
-  )
+  const metadataItems = orderForm?.itemMetadata?.items ?? []
 
   return metadataItems
     .filter(
       ({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0
     )
     .reduce(
-      (prev, curr) => ({
-        ...prev,
-        [curr.id]: filterCompositionNull(curr.assemblyOptions),
-      }),
-      {}
+      (prev, curr) => {
+        prev[curr.id] = filterCompositionNull(curr.assemblyOptions)
+        return prev
+      },
+      {} as Record<string, AssemblyOption[]>
     )
 }
 
@@ -389,10 +384,7 @@ const isInitialItemMissing = (
     return null
   }
 
-  const metadataItems = path<MetadataItem[]>(
-    ['itemMetadata', 'items'],
-    orderForm
-  )
+  const metadataItems = orderForm?.itemMetadata?.items
   const metadataItem =
     metadataItems && find(propEq('id', initialItem.id), metadataItems)
 

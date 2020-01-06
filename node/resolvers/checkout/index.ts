@@ -1,4 +1,4 @@
-import { addIndex, compose, forEach, map, reject, path, pathOr } from 'ramda'
+import { compose, forEach, reject, path } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -90,8 +90,6 @@ type Resolver<TArgs = any, TRoot = any> = (
   context: Context
 ) => Promise<any>
 
-const mapIndexed = addIndex<any, any, any, any>(map)
-
 export const fieldResolvers = {
   OrderForm: {
     cacheId: (orderForm: OrderForm) => {
@@ -100,18 +98,15 @@ export const fieldResolvers = {
     items: (orderForm: OrderForm) => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
-      return mapIndexed(
-        (item: OrderFormItem, index: number) => ({
-          ...item,
+      return orderForm.items.map((item, index) => ({
+        ...item,
           assemblyOptionsData: {
             assemblyOptionsMap,
             childs,
             index,
             orderForm,
           },
-        }),
-        orderForm.items
-      )
+      }))
     },
     pickupPointCheckedIn: (orderForm: OrderForm, _: any, ctx: Context) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
@@ -199,7 +194,7 @@ export const queries: Record<string, Resolver> = {
       parseCookie,
       replaceDomain(host)
     )
-    const cleanCookies = map(parseAndClean, forwardedSetCookies)
+    const cleanCookies = forwardedSetCookies.map(parseAndClean)
     forEach(
       ({ name, value, options }) => ctx.cookies.set(name, value, options),
       cleanCookies
@@ -240,11 +235,7 @@ export const queries: Record<string, Resolver> = {
       },
     })
 
-    const slas = pathOr<SLA[], []>(
-      [],
-      ['logisticsInfo', '0', 'slas'],
-      simulation
-    )
+    const slas = simulation?.logisticsInfo?.[0]?.slas ?? []
 
     return slas.filter(sla => sla.deliveryChannel === 'pickup-in-point')
   },

@@ -1,4 +1,4 @@
-import { comparator, filter, gte, head, lte, propOr, sort } from 'ramda'
+import { gte, lte, propOr } from 'ramda'
 
 const InstallmentsCriteria = {
   ALL: 'ALL',
@@ -8,22 +8,29 @@ const InstallmentsCriteria = {
 
 export const resolvers = {
   Offer: {
-    Installments: ({ Installments }: any, { criteria, rates }: any) => {
-      if (criteria === InstallmentsCriteria.ALL) {
+    Installments: (
+      { Installments }: any,
+      { criteria, rates }: { criteria?: string; rates?: boolean }
+    ) => {
+      if (criteria === InstallmentsCriteria.ALL || Installments.length === 0) {
         return Installments
       }
       const filteredInstallments = !rates
         ? Installments
-        : filter(({ InterestRate }) => !InterestRate, Installments)
+        : Installments.filter(({ InterestRate }: any) => !InterestRate)
 
       const compareFunc = criteria === InstallmentsCriteria.MAX ? gte : lte
-      const byNumberOfInstallments = comparator((previous: any, next) =>
-        compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments)
+      const value = filteredInstallments.reduce(
+        (acc: any, currentValue: any) =>
+          compareFunc(
+            currentValue.NumberOfInstallments,
+            acc.NumberOfInstallments
+          )
+            ? currentValue
+            : acc,
+        filteredInstallments[0]
       )
-      const installments = head(
-        sort(byNumberOfInstallments, filteredInstallments)
-      )
-      return installments ? [installments] : null
+      return [value]
     },
     teasers: propOr([], 'Teasers'),
     giftSkuIds: propOr([], 'GiftSkuIds'),

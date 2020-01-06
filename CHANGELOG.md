@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Use native promises and not bluebird anymore.
+- Other code improvements related to types and ramda update.
 
 ## [2.113.1] - 2019-12-30
 ### Fixed

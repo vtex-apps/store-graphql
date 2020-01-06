@@ -3,7 +3,6 @@ import {
   last,
   map,
   omit,
-  propOr,
   reject,
   split,
   toPairs,
@@ -12,14 +11,15 @@ import {
 import { queries as benefitsQueries } from '../benefits'
 import { buildCategoryMap } from './utils'
 
+type MaybeRecord = false | Record<string, any>
 const objToNameValue = (
   keyName: string,
   valueName: string,
   record: Record<string, any>
 ) =>
-  compose(
-    reject(value => typeof value === 'boolean' && value === false),
-    map<[string, any], any>(
+  compose<Record<string, any>, [string, any][], MaybeRecord[], MaybeRecord>(
+    reject<MaybeRecord>(value => typeof value === 'boolean' && value === false),
+    map<[string, any], MaybeRecord>(
       ([key, value]) =>
         typeof value === 'string' && { [keyName]: key, [valueName]: value }
     ),
@@ -139,11 +139,9 @@ export const resolvers = {
     recommendations: (product: any) => product,
 
     specificationGroups: (product: any) => {
-      const allSpecificationsGroups = propOr(
-        [],
-        'allSpecificationsGroups',
-        product
-      ).concat(['allSpecifications'])
+      const productSpecificationGroups = (product?.allSpecificationsGroups ?? []) as string[]
+      const allSpecificationsGroups = productSpecificationGroups.concat(['allSpecifications'])
+
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,

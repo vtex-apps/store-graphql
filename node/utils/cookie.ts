@@ -8,7 +8,7 @@ const isUserLoggedIn = (ctx: Context) => {
 
 const parseCookie = (cookie: string) => {
   const parsed = parse(cookie)
-  const cookieName = keys(parsed)[0]
+  const cookieName = keys(parsed)[0] as string
   const cookieValue = parsed[cookieName]
 
   const extraOptions = {
