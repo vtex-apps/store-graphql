@@ -83,8 +83,8 @@ export const queries = {
       condition: available
         ? 'authorized'
         : email
-        ? 'forbidden'
-        : 'unauthorized',
+        ? 'forbidden' // The user is logged in and not allowed
+        : 'unauthorized', // We don't know the user identity
     }
   },
 }
