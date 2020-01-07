@@ -62,9 +62,12 @@ export class Catalog extends AppClient {
     )
   }
 
-  public salesChannelAvailable = (email: string) =>
+  public salesChannelAvailable = (email?: string) =>
     this.get<SalesChannelAvailable[]>(
-      `/pub/saleschannel/available?email=${encodeURIComponent(email)}`,
+      `/pub/saleschannel/available${
+        // If we dont pass the email query string, it will return all open Trade Policies
+        email ? `?email=${encodeURIComponent(email)}` : ''
+      }`,
       {
         metric: 'catalog-sales-channel-available',
       }
