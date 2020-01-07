@@ -71,10 +71,6 @@ export const queries = {
       sessionData
     )
 
-    if (!email) {
-      return { allowed: false, condition: 'unauthorized' }
-    }
-
     const availableSalesChannels = await catalog
       .salesChannelAvailable(email)
       .catch(() => [])
@@ -84,7 +80,11 @@ export const queries = {
 
     return {
       allowed: Boolean(available),
-      condition: available ? 'authorized' : 'forbidden',
+      condition: available
+        ? 'authorized'
+        : email
+        ? 'forbidden'
+        : 'unauthorized',
     }
   },
 }

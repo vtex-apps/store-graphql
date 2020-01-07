@@ -62,9 +62,11 @@ export class Catalog extends AppClient {
     )
   }
 
-  public salesChannelAvailable = (email: string) =>
+  public salesChannelAvailable = (email?: string) =>
     this.get<SalesChannelAvailable[]>(
-      `/pub/saleschannel/available?email=${encodeURIComponent(email)}`,
+      `/pub/saleschannel/available${
+        email ? `?email=${encodeURIComponent(email)}` : ''
+      }`,
       {
         metric: 'catalog-sales-channel-available',
       }
