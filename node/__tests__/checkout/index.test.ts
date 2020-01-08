@@ -121,3 +121,32 @@ it.each<any>([
   expect(checkoutClient.addItem.mock.calls[0][1]).toMatchObject([itemToAdd])
   expect(checkoutClient.updateOrderFormMarketingData).toBeCalledTimes(0)
 })
+
+it.each([
+  [undefined, undefined],
+  [{}, {}]
+])('empty utmParams and utmiParams do not call updateOrderFormMarketingData', async (utmParams, utmiParams) => {
+  const itemToAdd = {
+    id: 100,
+    quantity: 1,
+    seller: '1'
+  }
+
+  const checkoutClient = mockContext.clients.checkout
+  checkoutClient.orderForm.mockImplementationOnce(() => ({
+    ...orderForm,
+    marketingData: { coupon: null, marketingTags: [] }
+  }))
+
+  await mutations.addItem({}, {
+    orderFormId: orderForm.orderFormId,
+    items: [itemToAdd],
+    utmParams,
+    utmiParams,
+  }, mockContext as any)
+
+
+  expect(checkoutClient.addItem.mock.calls[0][0]).toBe(orderForm.orderFormId)
+  expect(checkoutClient.addItem.mock.calls[0][1]).toMatchObject([itemToAdd])
+  expect(checkoutClient.updateOrderFormMarketingData).toBeCalledTimes(0)
+})
