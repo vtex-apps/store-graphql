@@ -305,7 +305,7 @@ export const mutations: Record<string, Resolver> = {
       }
 
       const atLeastOneValidField = Object.values(newMarketingData).some(value => {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
+        if (value == null || value === '' && (Array.isArray(value) && value.length === 0)) {
           return false
         }
         return true
