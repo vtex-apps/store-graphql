@@ -74,6 +74,11 @@ const shouldUpdateMarketingData = (
     utmipage = null,
   } = orderFormMarketingTags || {}
 
+  if (!utmParams?.campaign && !utmParams?.medium && !utmParams?.campaign && !utmiParams?.campaign && !utmiParams?.page && !utmiParams?.part) {
+    // Avoid updating at any costs if all fields are invalid
+    return false
+  }
+
   return (
     ((utmParams?.source ?? null) !== utmSource) ||
     ((utmParams?.medium ?? null) !== utmMedium) ||
@@ -299,7 +304,20 @@ export const mutations: Record<string, Resolver> = {
         )
       }
 
-      await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+      const atLeastOneValidField = Object.values(newMarketingData).some(value => {
+        if (value == null || value === '') {
+          return false
+        }
+        if (Array.isArray(value) && value.length === 0) {
+          return false
+        }
+        return true
+      })
+
+      // If all fields of newMarketingData are invalid, it causes checkout to answer with an error 400
+      if (atLeastOneValidField) {
+        await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+      }
     }
 
     const cleanItems = items.map(({ options, ...rest }) => rest)
