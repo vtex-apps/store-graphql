@@ -283,6 +283,10 @@ export const mutations: Record<string, Resolver> = {
       throw new UserInputError('No order form id or items to add provided')
     }
 
+    if (ctx.vtex.orderFormId !== orderFormId) {
+      ctx.vtex.logger.warn(`Different orderFormId found: provided=${orderFormId} and in cookies=${ctx.vtex.orderFormId}`)
+    }
+
     const { marketingData, items: previousItems } = await checkout.orderForm()
 
     if (shouldUpdateMarketingData(marketingData, utmParams, utmiParams)) {
@@ -367,7 +371,10 @@ export const mutations: Record<string, Resolver> = {
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, { orderFormId, items }, { clients: { checkout } }) => {
+  updateItems: (_, { orderFormId, items }, { clients: { checkout }, vtex }) => {
+    if (vtex.orderFormId !== orderFormId) {
+      vtex.logger.warn(`Different orderFormId found: provided=${orderFormId} and in cookies=${vtex.orderFormId}`)
+    }
     return checkout.updateItems(orderFormId, items)
   },
 

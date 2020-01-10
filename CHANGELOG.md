@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add log when orderFormId passed in addItem and updateItem mutations is different than the one in cookie.
 
 ## [2.113.4] - 2020-01-09
 ### Fixed
