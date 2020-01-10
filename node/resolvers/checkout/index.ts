@@ -371,7 +371,10 @@ export const mutations: Record<string, Resolver> = {
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, { orderFormId, items }, { clients: { checkout } }) => {
+  updateItems: (_, { orderFormId, items }, { clients: { checkout }, vtex }) => {
+    if (vtex.orderFormId !== orderFormId) {
+      vtex.logger.warn(`Different orderFormId found: provided=${orderFormId} and in cookies=${vtex.orderFormId}`)
+    }
     return checkout.updateItems(orderFormId, items)
   },
 
