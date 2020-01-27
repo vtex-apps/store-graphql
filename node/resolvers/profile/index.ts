@@ -26,11 +26,11 @@ export const mutations = {
   updateProfile: (_: any, { fields, customFields }: any, context: Context) =>
     updateProfile(context, fields, customFields),
 
-  updateProfilePicture: (_: any, { file }: { file: any }, context: Context) =>
-    updateProfilePicture(context, file),
+  updateProfilePicture: (_: any, __: any, context: Context) =>
+    updateProfilePicture('updateProfilePicture', context),
 
-  uploadProfilePicture: (_: any, { file }: { file: any }, context: Context) =>
-    updateProfilePicture(context, file),
+  uploadProfilePicture: (_: any, __: any, context: Context) =>
+    updateProfilePicture('uploadProfilePicture', context),
 
   subscribeNewsletter: async (
     _: any,
