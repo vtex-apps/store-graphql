@@ -3,7 +3,6 @@ import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
 import { makeRequest } from '../auth'
-import { uploadFile, deleteFile } from '../fileManager/services'
 import paths from '../paths'
 
 export function getProfile(context: Context, customFields?: string) {
@@ -115,32 +114,10 @@ export async function updateProfile(
     .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
 }
 
-export async function updateProfilePicture(context: Context, file: any) {
-  const {
-    clients: { profile },
-    vtex: { currentProfile },
-  } = context
-
-  const { profilePicture } = await profile.getProfileInfo(
-    currentProfile,
-    'profilePicture'
+export function updateProfilePicture(mutationsName: string, context: Context) {
+  console.warn(
+    `The ${mutationsName} mutation is deprecated and no longer supported.`
   )
-
-  const bucket = 'image'
-
-  if (profilePicture) {
-    await deleteFile(context.vtex, { path: profilePicture, bucket })
-  }
-
-  const result = await uploadFile(context.vtex, { file, bucket })
-
-  const fileUrl = result.fileUrl.split('image/')[1]
-  await profile.updateProfileInfo(
-    currentProfile,
-    { profilePicture: fileUrl },
-    'profilePicture'
-  )
-
   return getProfile(context)
 }
 
