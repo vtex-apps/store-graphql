@@ -18,6 +18,8 @@ import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
 import { UserInputError } from '@vtex/api'
+import { LogisticPickupPoint } from '../logistics/types'
+import logisticPickupResolvers from '../logistics/fieldResolvers'
 
 const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
 
@@ -59,6 +61,31 @@ interface SkuPickupSLAListArgs {
 interface SkuPickupSLAArgs extends SkuPickupSLAListArgs {
   pickupId: string
 }
+
+interface SLAFromLogistics {
+  id: string
+  shippingEstimate: null
+  pickupStoreInfo: {
+    friendlyName: string
+    address: CheckoutAddress
+  }
+}
+
+const checkouSlaFromLogisticPickup = (  logisticPickup: LogisticPickupPoint): SLAFromLogistics => {
+  return {
+    id: logisticPickup.id,
+    shippingEstimate: null,
+    pickupStoreInfo: {
+      friendlyName: logisticPickup.name,
+      address: {
+        ...logisticPickupResolvers.PickupPoint.address(logisticPickup),
+        geoCoordinates: [logisticPickup.address.location.longitude, logisticPickup.address.location.latitude]
+      }
+    }
+  }
+}
+
+type AllSLAs = SLAItem | SLAFromLogistics
 
 const shouldUpdateMarketingData = (
   orderFormMarketingTags: OrderFormMarketingData | null,
@@ -219,9 +246,9 @@ export const queries: Record<string, Resolver> = {
   skuPickupSLAs: async (
     _: any,
     { itemId, seller, lat, long, country }: SkuPickupSLAListArgs,
-    ctx: Context
+    { clients: { checkout, logistics }}: Context
   ) => {
-    const simulation = await ctx.clients.checkout.simulation({
+    const simulationPayload = {
       items: [
         {
           id: itemId,
@@ -238,11 +265,31 @@ export const queries: Record<string, Resolver> = {
           },
         ],
       },
-    })
+    }
+
+    const [simulation, allPickupsOutput] = await Promise.all([checkout.simulation(simulationPayload), logistics.nearPickupPoints(lat, long)])
 
     const slas = simulation?.logisticsInfo?.[0]?.slas ?? []
+    const slasPickup = slas.filter(sla => sla.deliveryChannel === 'pickup-in-point') as AllSLAs[]
 
-    return slas.filter(sla => sla.deliveryChannel === 'pickup-in-point')
+    const slaIdsSet = slasPickup.reduce(
+      (acc, { pickupStoreInfo }) => {
+        if (pickupStoreInfo.address?.addressId) {
+          acc.add(pickupStoreInfo.address.addressId)
+        }
+        return acc
+      },
+      new Set<string>()
+    )
+
+    allPickupsOutput.items.forEach(logisticItem => {
+      if (logisticItem.isActive && !slaIdsSet.has(logisticItem.id)) {
+        const checkouSla = checkouSlaFromLogisticPickup(logisticItem)
+        slasPickup.push(checkouSla)
+      }
+    })
+
+    return slasPickup
   },
 
   skuPickupSLA: async (

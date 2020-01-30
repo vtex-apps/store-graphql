@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Make `pickupSLAs` query return all pickup points close to location sent, even uunavailable pickups.
 
 ## [2.113.6] - 2020-01-28
 ### Removed

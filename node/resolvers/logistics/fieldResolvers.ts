@@ -23,6 +23,7 @@ export default {
       const { country, location, ...rest } = logAddress
       return {
         ...rest,
+        receiverName: null,
         addressId: id,
         addressType: 'pickup',
         country: country.acronym,
