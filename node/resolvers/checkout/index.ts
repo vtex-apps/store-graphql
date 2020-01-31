@@ -71,7 +71,7 @@ interface SLAFromLogistics {
   }
 }
 
-const checkouSlaFromLogisticPickup = (  logisticPickup: LogisticPickupPoint): SLAFromLogistics => {
+const checkouSlaFromLogisticPickup = (logisticPickup: LogisticPickupPoint): SLAFromLogistics => {
   return {
     id: logisticPickup.id,
     shippingEstimate: null,
@@ -132,12 +132,12 @@ export const fieldResolvers = {
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
       return orderForm.items.map((item, index) => ({
         ...item,
-          assemblyOptionsData: {
-            assemblyOptionsMap,
-            childs,
-            index,
-            orderForm,
-          },
+        assemblyOptionsData: {
+          assemblyOptionsMap,
+          childs,
+          index,
+          orderForm,
+        },
       }))
     },
     pickupPointCheckedIn: (orderForm: OrderForm, _: any, ctx: Context) => {
@@ -246,7 +246,7 @@ export const queries: Record<string, Resolver> = {
   skuPickupSLAs: async (
     _: any,
     { itemId, seller, lat, long, country }: SkuPickupSLAListArgs,
-    { clients: { checkout, logistics }}: Context
+    { clients: { checkout, logistics } }: Context
   ) => {
     const simulationPayload = {
       items: [
