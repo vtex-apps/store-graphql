@@ -10,7 +10,7 @@ interface OrderFormMarketingData {
 
 interface CheckoutAddress {
   addressType: string
-  receiverName: string
+  receiverName: string | null
   addressId: string
   postalCode: string
   city: string
@@ -228,42 +228,43 @@ interface SimulationPayload {
   shippingData?: any
 }
 
+interface SLAItem {
+  id: string
+  deliveryChannel: string
+  name: string
+  deliveryIds: {
+    courierId: string
+    warehouseId: string
+    dockId: string
+    courierName: string
+    quantity: number
+  }[]
+  shippingEstimate: string
+  shippingEstimateDate: string | null
+  lockTTL: string | null
+  availableDeliveryWindows: any[]
+  deliveryWindow: string | null
+  price: number
+  listPrice: number
+  tax: number
+  pickupStoreInfo: {
+    isPickupStore: boolean
+    friendlyName: string | null
+    address: CheckoutAddress | null
+    additionalInfo: any | null
+    dockId: string | null
+  }
+  pickupPointId: string | null
+  pickupDistance: number
+  polygonName: string | null
+}
+
 interface LogisticsInfo {
   itemIndex: number
   selectedSla: string | null
   selectedDeliveryChannel: string | null
   addressId: string
-  slas: {
-    id: string
-    deliveryChannel: string
-    name: string
-    deliveryIds: {
-      courierId: string
-      warehouseId: string
-      dockId: string
-      courierName: string
-      quantity: number
-    }[]
-    shippingEstimate: string
-    shippingEstimateDate: string | null
-    lockTTL: string | null
-    availableDeliveryWindows: any[]
-    deliveryWindow: string | null
-    price: number
-    listPrice: number
-    tax: number
-    pickupStoreInfo: {
-      isPickupStore: boolean
-      friendlyName: string | null
-
-      address: CheckoutAddress | null
-      additionalInfo: any | null
-      dockId: string | null
-    }
-    pickupPointId: string | null
-    pickupDistance: number
-    polygonName: string | null
-  }[]
+  slas: SLAItem[]
   shipsTo: string[]
   itemId: string
   deliveryChannels: { id: string }[]

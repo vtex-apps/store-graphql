@@ -33,7 +33,7 @@ interface Paging {
   pages: number
 }
 
-export interface LogisticOuput {
+export interface LogisticOutput {
   items: LogisticPickupPoint[],
   paging: Paging,
 }
