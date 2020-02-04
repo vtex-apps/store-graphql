@@ -52,7 +52,7 @@ export class LogisticsClient extends JanusClient {
     return {
       shipping: `${basePVT}/pub/shipping/configuration`,
       nearPickupPoints: (lat: string, long: string, maxDistance: number) =>
-        `${basePVT}/pvt/configuration/pickuppoints/_search?&page=1&pageSize=100&lat=${lat}&$lon=${long}&maxDistance=${maxDistance}`,
+        `${basePVT}/pvt/configuration/pickuppoints/_search?&page=1&pageSize=100&lat=${lat}&lon=${long}&maxDistance=${maxDistance}`,
       pickUpById: (id: string) =>
         `${basePVT}/pvt/configuration/pickuppoints/${id}`,
     }
