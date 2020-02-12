@@ -108,6 +108,7 @@ type OrderFormItem {
   unitMultiplier on orderFormItem
   """
   unitMultiplier: Float
+  canHaveAttachment: Boolean
 }
 
 type ItemAdditionalInfo {

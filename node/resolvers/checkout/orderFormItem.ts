@@ -39,6 +39,9 @@ export const resolvers = {
       ...item
     }: Params) => ({ item, childs, index, orderForm, assemblyOptionsMap }),
     cartIndex: ({ assemblyOptionsData: { index } }: Params) => index,
+    canHaveAttachment: ({ attachmentOfferings }: OrderFormItem) => {
+      return attachmentOfferings && attachmentOfferings.length > 0
+    },
     listPrice: ({ listPrice }: Params) => listPrice / 100,
     price: ({ price }: Params) => price / 100,
     sellingPrice: ({ sellingPrice }: Params) => sellingPrice / 100,
