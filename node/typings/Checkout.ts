@@ -23,6 +23,11 @@ interface CheckoutAddress {
   reference: string | null
   geoCoordinates: [number, number]
 }
+
+interface CheckoutAssemblyItem {
+  id: string
+  inputValues: Record<string, string>
+}
 interface OrderFormItem {
   id: string
   name: string
@@ -59,6 +64,7 @@ interface OrderFormItem {
   sellerChain: string[]
   availability: string
   unitMultiplier: number
+  assemblies: CheckoutAssemblyItem[]
 }
 interface OrderForm {
   orderFormId: string
