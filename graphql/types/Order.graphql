@@ -38,7 +38,7 @@ type OrderItem {
   isGift: Boolean
   quantity: Int
   seller: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   detailUrl: String
   availability: String
   measurementUnit: String

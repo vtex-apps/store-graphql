@@ -57,7 +57,7 @@ type OrderFormItem {
   id: ID
   name: String @translatableV2
   detailUrl: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   skuName: String @translatableV2
   productRefId: String
   quantity: Float

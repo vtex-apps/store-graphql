@@ -4,7 +4,7 @@ type Brand {
   """ Brand id """
   id: Int
   """ Brand logo """
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   """ Text link"""
   slug: String
   """ Name of brand """
