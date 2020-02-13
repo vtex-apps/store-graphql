@@ -9,8 +9,12 @@ import {
 } from './services'
 import { path } from 'ramda'
 
+const TRUE = 'True'
+const FALSE = 'False'
+
 interface SubscribeNewsletterArgs {
   email: string
+  isNewsletterOptIn: boolean
 }
 
 export const mutations = {
@@ -34,14 +38,18 @@ export const mutations = {
 
   subscribeNewsletter: async (
     _: any,
-    { email }: SubscribeNewsletterArgs,
+    { email, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
     const profile = context.clients.profile
+    const optIn =
+      isNewsletterOptIn === undefined || isNewsletterOptIn === true
+        ? TRUE
+        : FALSE
     await profile.updatePersonalPreferences(
       { email, userId: '' },
       {
-        isNewsletterOptIn: 'True',
+        isNewsletterOptIn: optIn,
       }
     )
 

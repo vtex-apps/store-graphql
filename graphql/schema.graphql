@@ -545,9 +545,7 @@ type Mutation {
     Optional marketing UTMi Params to add them to order form
     """
     utmiParams: OrderFormInputUTMIParams
-  ): OrderForm
-    @withSegment
-    @withOrderFormId
+  ): OrderForm @withSegment @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
     @withSegment
@@ -632,7 +630,7 @@ type Mutation {
   """
   Subscribe to newsletter
   """
-  subscribeNewsletter(email: String): Boolean
+  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean): Boolean
 
   """
   Order Form
