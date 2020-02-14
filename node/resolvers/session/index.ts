@@ -4,6 +4,8 @@ import { sessionFields } from './sessionResolver'
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
 
 const VTEX_SESSION = 'vtex_session'
+const vtexIdAccount = (account: string) => `VtexIdclientAutCookie_${account}`
+const VTEX_ID = 'VtexIdclientAutCookie'
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
@@ -24,6 +26,18 @@ const convertCheckoutAddressToProfile = (
   return { ...rest, geoCoordinate: geoCoordinates }
 }
 
+const vtexIdCookies = (ctx: Context) => {
+  const { cookies, vtex: { account }} = ctx
+  const vtexIdAccountCookieValue = cookies.get(vtexIdAccount(account))
+  const vtexIdValue = cookies.get(VTEX_ID)
+
+  return {
+    account: vtexIdAccountCookieValue ? `${vtexIdAccount(account)}=${vtexIdAccountCookieValue}` : null,
+    id: vtexIdValue ? `${VTEX_ID}=${vtexIdValue}` : null,
+  }
+}
+
+
 // Disclaimer: These queries and mutations assume that vtex_session was passed in cookies.
 export const queries = {
   /**
@@ -32,13 +46,14 @@ export const queries = {
    */
   getSession: async (_: any, __: any, ctx: Context) => {
     const {
-      clients: { session },
+      clients: { customSession },
       cookies,
     } = ctx
-    const { sessionData } = await session.getSession(
+    const { sessionData } = await customSession.getSession(
       cookies.get(VTEX_SESSION)!,
       ['*']
     )
+    console.log('teste profile: ', sessionData.namespaces.profile)
     return sessionFields(sessionData)
   },
 }
@@ -50,15 +65,16 @@ interface ImpersonateArg {
 export const mutations = {
   impersonate: async (_: any, { email }: ImpersonateArg, ctx: Context) => {
     const {
-      clients: { session, checkout },
+      clients: { customSession, checkout },
       cookies,
     } = ctx
 
-    await session.updateSession(
+    await customSession.updateSession(
       IMPERSONATED_EMAIL,
       email,
       [],
-      cookies.get(VTEX_SESSION)!
+      cookies.get(VTEX_SESSION)!,
+      vtexIdCookies(ctx)
     )
 
     const orderForm = await checkout.orderForm()
@@ -88,15 +104,16 @@ export const mutations = {
 
   depersonify: async (_: any, __: any, ctx: Context) => {
     const {
-      clients: { session, checkout },
+      clients: { customSession, checkout },
       cookies,
     } = ctx
 
-    await session.updateSession(
+    await customSession.updateSession(
       IMPERSONATED_EMAIL,
       '',
       [],
-      cookies.get(VTEX_SESSION)!
+      cookies.get(VTEX_SESSION)!,
+      vtexIdCookies(ctx)
     )
 
     try {
@@ -120,15 +137,16 @@ export const mutations = {
   savePickupInSession: async (_: any, args: SavePickupArgs, ctx: Context) => {
     const { address, name } = args
     const {
-      clients: { session },
+      clients: { customSession },
       cookies,
     } = ctx
 
-    await session.updateSession(
+    await customSession.updateSession(
       'favoritePickup',
       { address: convertCheckoutAddressToProfile(address), name },
       [],
-      cookies.get(VTEX_SESSION)!
+      cookies.get(VTEX_SESSION)!,
+      vtexIdCookies(ctx)
     )
 
     return queries.getSession({}, {}, ctx)
