@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Update session does not logout the user anymore.
+- Fix unexpected deletion of cookies from session
 
 ### Added
 - Temporary custom session client with update session fix.
