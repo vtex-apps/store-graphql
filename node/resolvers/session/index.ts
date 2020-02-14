@@ -2,10 +2,9 @@ import { serialize } from 'cookie'
 import { identity } from 'ramda'
 import { sessionFields } from './sessionResolver'
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
+import { vtexIdCookies } from '../../utils/vtexId'
 
 const VTEX_SESSION = 'vtex_session'
-const vtexIdAccount = (account: string) => `VtexIdclientAutCookie_${account}`
-const VTEX_ID = 'VtexIdclientAutCookie'
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
@@ -25,18 +24,6 @@ const convertCheckoutAddressToProfile = (
   const { geoCoordinates, ...rest } = checkoutAddress
   return { ...rest, geoCoordinate: geoCoordinates }
 }
-
-const vtexIdCookies = (ctx: Context) => {
-  const { cookies, vtex: { account }} = ctx
-  const vtexIdAccountCookieValue = cookies.get(vtexIdAccount(account))
-  const vtexIdValue = cookies.get(VTEX_ID)
-
-  return {
-    account: vtexIdAccountCookieValue ? `${vtexIdAccount(account)}=${vtexIdAccountCookieValue}` : null,
-    id: vtexIdValue ? `${VTEX_ID}=${vtexIdValue}` : null,
-  }
-}
-
 
 // Disclaimer: These queries and mutations assume that vtex_session was passed in cookies.
 export const queries = {
