@@ -55,13 +55,13 @@ export const queries = {
 
   checkProfileAllowed: async (_: any, __: any, context: Context) => {
     const {
-      clients: { catalog, session },
+      clients: { catalog, customSession },
       vtex: { segment },
       cookies,
     } = context
     const salesChannel = segment ? segment.channel : null
 
-    const { sessionData } = await session.getSession(
+    const { sessionData } = await customSession.getSession(
       cookies.get('vtex_session')!,
       ['*']
     )
