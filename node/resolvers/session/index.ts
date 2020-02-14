@@ -53,7 +53,6 @@ export const queries = {
       cookies.get(VTEX_SESSION)!,
       ['*']
     )
-    console.log('teste profile: ', sessionData.namespaces.profile)
     return sessionFields(sessionData)
   },
 }

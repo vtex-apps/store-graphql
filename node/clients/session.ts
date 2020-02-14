@@ -56,8 +56,6 @@ export class Session extends JanusClient {
       cookies += `${vtexIdCookies.id};`
     }
 
-    console.log('teste SENDING COOKIES: ', cookies)
-
     const config = {
       headers: {
         'Content-Type': 'application/json',
