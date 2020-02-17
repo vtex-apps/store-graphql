@@ -1,5 +1,7 @@
 type Document {
-  """ id is used as cacheId """
+  """
+  id is used as cacheId
+  """
   cacheId: ID
   id: String
   fields: [Field]
@@ -11,10 +13,12 @@ type Field {
 }
 
 type DocumentResponse {
-  """ documentId is used as cacheId """
+  """
+  documentId is used as cacheId
+  """
   cacheId: ID
-  id: String,
-  href: String,
+  id: String
+  href: String
   documentId: String
 }
 
@@ -24,7 +28,7 @@ type AttachmentResponse {
 }
 
 input FieldInput {
-  key: String,
+  key: String
   value: String
 }
 
@@ -33,22 +37,22 @@ input DocumentInput {
 }
 
 type DocProperty {
-  name: String,
-  type: String,
+  name: String
+  type: String
   optional: Boolean
 }
 
 type VSecurity {
-  allowGetAll: Boolean,
-  publicRead: [String],
-  publicWrite: [String],
+  allowGetAll: Boolean
+  publicRead: [String]
+  publicWrite: [String]
   publicFilter: [String]
 }
 
 type DocumentSchema {
   name: String
-  properties: [DocProperty],
-  indexed: [String],
-  security: VSecurity,
+  properties: [DocProperty]
+  indexed: [String]
+  security: VSecurity
   cache: Boolean
 }
