@@ -1,25 +1,31 @@
 import { UserInputError } from '@vtex/api'
 import { compose, map, union, prop, replace } from 'ramda'
+
 import { parseFieldsToJson } from '../../utils/object'
-import { resolvers as documentSchemaResolvers} from './documentSchema'
+import { resolvers as documentSchemaResolvers } from './documentSchema'
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
     const { acronym, fields, page, pageSize, where, schema } = args
-    const { clients: { masterdata } } = context
+    const {
+      clients: { masterdata },
+    } = context
     const fieldsWithId = union(fields, ['id'])
-    const data = await masterdata.searchDocuments(acronym, fieldsWithId, where, {
-      page,
-      pageSize,
-    }, schema) as any
-    return map(
-      (document: any) =>
-      ({
-        cacheId: document.id,
-        id: document.id,
-        fields: mapKeyAndStringifiedValues(document)
-      })
-    )(data)
+    const data = (await masterdata.searchDocuments(
+      acronym,
+      fieldsWithId,
+      where,
+      {
+        page,
+        pageSize,
+      },
+      schema
+    )) as any
+    return map((document: any) => ({
+      cacheId: document.id,
+      id: document.id,
+      fields: mapKeyAndStringifiedValues(document),
+    }))(data)
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
@@ -35,8 +41,12 @@ export const queries = {
     }
   },
 
-  documentSchema: async(_: any, args: DocumentSchemaArgs, context: Context) => {
-    const { dataEntity, schema } = args;
+  documentSchema: async (
+    _: any,
+    args: DocumentSchemaArgs,
+    context: Context
+  ) => {
+    const { dataEntity, schema } = args
 
     const {
       clients: { masterdata },
@@ -44,12 +54,12 @@ export const queries = {
 
     const data = await masterdata.getSchema<object>(dataEntity, schema)
 
-    return {...data, name: data? args.schema : null}
+    return { ...data, name: data ? args.schema : null }
   },
 }
 
 export const fieldResolvers = {
-  ...documentSchemaResolvers
+  ...documentSchemaResolvers,
 }
 
 export const mutations = {
@@ -61,7 +71,7 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
-      schema
+      schema,
     } = args
     const {
       clients: { masterdata },
