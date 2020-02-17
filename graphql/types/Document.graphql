@@ -1,3 +1,6 @@
+scalar JSONSchema
+scalar DocumentV2
+
 type Document {
   """
   id is used as cacheId
@@ -22,6 +25,16 @@ type DocumentResponse {
   documentId: String
 }
 
+type DocumentResponseV2 {
+  """
+  documentId is used as cacheId
+  """
+  cacheId: ID
+  id: String
+  href: String
+  documentId: String
+}
+
 type AttachmentResponse {
   filename: String
   mimetype: String
@@ -34,6 +47,10 @@ input FieldInput {
 
 input DocumentInput {
   fields: [FieldInput]
+}
+
+input DocumentInputV2 {
+  document: DocumentV2
 }
 
 type DocProperty {
@@ -55,4 +72,8 @@ type DocumentSchema {
   indexed: [String]
   security: VSecurity
   cache: Boolean
+}
+
+type DocumentSchemaV2 {
+  schema: JSONSchema
 }
