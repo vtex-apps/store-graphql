@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Chame order form item image url to have https.
+- Make order form item image url use https.
 
 ## [2.116.0] - 2020-02-18
 ### Added
