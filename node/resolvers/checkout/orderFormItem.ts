@@ -42,6 +42,7 @@ export const resolvers = {
     canHaveAttachment: ({ attachmentOfferings }: OrderFormItem) => {
       return attachmentOfferings && attachmentOfferings.length > 0
     },
+    imageUrl: ({ imageUrl }: Params) => imageUrl && imageUrl.replace('http://', 'https://'),
     listPrice: ({ listPrice }: Params) => listPrice / 100,
     price: ({ price }: Params) => price / 100,
     sellingPrice: ({ sellingPrice }: Params) => sellingPrice / 100,
