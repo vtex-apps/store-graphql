@@ -399,6 +399,17 @@ type Query {
     schema: String
   ): DocumentSchema
 
+  documentSchemaV2(
+    """
+    Data entity name.
+    """
+    dataEntity: String!
+    """
+    MasterData schema name.
+    """
+    schema: String!
+  ): DocumentSchemaV2
+
   """
   Get the benefits associated with a list of products
   """
@@ -814,6 +825,11 @@ type Mutation {
     field: String!
     file: Upload!
   ): AttachmentResponse
+  createDocumentV2(
+    dataEntity: String!
+    document: DocumentInputV2
+    schema: String
+  ): DocumentResponseV2
 
   """
   List

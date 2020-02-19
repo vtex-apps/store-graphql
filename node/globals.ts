@@ -117,6 +117,12 @@ declare global {
     DocumentId: string
   }
 
+  interface DocumentResponseV2 {
+    Id: string
+    Href: string
+    DocumentId: string
+  }
+
   interface DocumentArgs {
     acronym: string
     fields: string[]
@@ -140,6 +146,12 @@ declare global {
   interface CreateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
+  }
+
+  interface CreateDocumentV2Args {
+    dataEntity: string
+    document: { document: any }
     schema?: string
   }
 

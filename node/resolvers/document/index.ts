@@ -56,6 +56,22 @@ export const queries = {
 
     return { ...data, name: data ? args.schema : null }
   },
+
+  documentSchemaV2: async (
+    _: any,
+    args: DocumentSchemaArgs,
+    context: Context
+  ) => {
+    const { dataEntity, schema } = args
+
+    const {
+      clients: { masterdata },
+    } = context
+
+    const data = await masterdata.getSchema<object>(dataEntity, schema)
+
+    return { schema: data }
+  },
 }
 
 export const fieldResolvers = {
@@ -88,6 +104,36 @@ export const mutations = {
       id: prop('Id', response),
       href: prop('Href', response),
       documentId: removeAcronymFromId(acronym, response),
+    }
+  },
+
+  createDocumentV2: async (
+    _: any,
+    args: CreateDocumentV2Args,
+    context: Context
+  ) => {
+    const {
+      dataEntity,
+      document: { document },
+      schema,
+    } = args
+
+    const {
+      clients: { masterdata },
+    } = context
+
+    const response = (await masterdata.createDocument(
+      dataEntity,
+      document,
+      schema
+    )) as DocumentResponseV2
+
+    const documentId = removeAcronymFromId(dataEntity, response)
+    return {
+      cacheId: documentId,
+      id: prop('Id', response),
+      href: prop('Href', response),
+      documentId: documentId,
     }
   },
 

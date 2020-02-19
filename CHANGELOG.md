@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- `documentSchemaV2` query, get generic masterdata schema, returned as a `scalar` type as is from the request
+- `createDocumentV2` mutation, upload a `scalar` document to Master Data
+
 ## [2.116.1] - 2020-02-18
 ### Fixed
 - Make order form item image url use https.
