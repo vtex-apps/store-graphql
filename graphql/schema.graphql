@@ -399,7 +399,7 @@ type Query {
     schema: String
   ): DocumentSchema
 
-  documentSchemaV2(
+  documentPublicSchema(
     """
     Data entity name.
     """
