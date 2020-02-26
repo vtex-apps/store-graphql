@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- `documentSchemaV2` to `documentPublicSchema`, as the query only works with public schemas without authentication.
+
 ## [2.117.0] - 2020-02-19
 
 ### Added
