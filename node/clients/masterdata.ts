@@ -31,6 +31,11 @@ export class MasterData extends ExternalClient {
       metric: 'masterdata-getSchema',
     })
 
+  public getPublicSchema = <T>(dataEntity: string, schema: string) =>
+    this.get<T>(this.routes.publicSchema(dataEntity, schema), {
+      metric: 'masterdata-getPublicSchema',
+    })
+
   public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
@@ -43,17 +48,21 @@ export class MasterData extends ExternalClient {
     this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
       params: {
-        ...schema? {_schema: schema} : null
-      }
+        ...(schema ? { _schema: schema } : null),
+      },
     })
 
-
-  public updateDocument = (acronym: string, id: string, fields: object, schema?: string) =>
+  public updateDocument = (
+    acronym: string,
+    id: string,
+    fields: object,
+    schema?: string
+  ) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
       params: {
-        ...schema? {_schema: schema} : null
-      }
+        ...(schema ? { _schema: schema } : null),
+      },
     })
 
   public searchDocuments = <T>(
@@ -62,16 +71,17 @@ export class MasterData extends ExternalClient {
     where: string,
     pagination: PaginationArgs,
     schema?: string
-  ) =>{
+  ) => {
     return this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
       metric: 'masterdata-searchDocuments',
       params: {
         _fields: generateFieldsArg(fields),
         _where: where,
-        ...schema ? {_schema: schema} : null
+        ...(schema ? { _schema: schema } : null),
       },
-    })}
+    })
+  }
 
   public deleteDocument = (acronym: string, id: string) =>
     this.delete(this.routes.document(acronym, id), {
@@ -111,7 +121,10 @@ export class MasterData extends ExternalClient {
         `${acronym}/documents/${id}/${fields}/attachments`,
       document: (acronym: string, id: string) => `${acronym}/documents/${id}`,
       documents: (acronym: string) => `${acronym}/documents`,
-      schema: (acronym: string, schema: string) => `${acronym}/schemas/${schema}`,
+      schema: (acronym: string, schema: string) =>
+        `${acronym}/schemas/${schema}`,
+      publicSchema: (acronym: string, schema: string) =>
+        `${acronym}/schemas/${schema}/public`,
       search: (acronym: string) => `${acronym}/search`,
     }
   }

@@ -57,7 +57,7 @@ export const queries = {
     return { ...data, name: data ? args.schema : null }
   },
 
-  documentSchemaV2: async (
+  documentPublicSchema: async (
     _: any,
     args: DocumentSchemaArgs,
     context: Context
@@ -68,7 +68,7 @@ export const queries = {
       clients: { masterdata },
     } = context
 
-    const data = await masterdata.getSchema<object>(dataEntity, schema)
+    const data = await masterdata.getPublicSchema<object>(dataEntity, schema)
 
     return { schema: data }
   },
