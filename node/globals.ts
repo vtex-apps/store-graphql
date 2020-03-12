@@ -7,8 +7,6 @@ import {
 
 import { Clients } from './clients'
 import { IdentityDataSource } from './dataSources/identity'
-import { LogisticsDataSource } from './dataSources/logistics'
-import { OMSDataSource } from './dataSources/oms'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -33,30 +31,6 @@ declare global {
 
   interface StoreGraphQLDataSources {
     identity: IdentityDataSource
-    logistics: LogisticsDataSource
-    oms: OMSDataSource
-  }
-
-  interface OrderFormItem {
-    id: string
-    name: string
-    detailUrl: string
-    imageUrl: string
-    skuName: string
-    quantity: number
-    uniqueId: string
-    productId: string
-    refId: string
-    ean: string
-    priceValidUntil: string
-    price: number
-    tax: number
-    listPrice: number
-    sellingPrice: number
-    rewardValue: number
-    isGift: boolean
-    parentItemIndex: number
-    parentAssemblyBinding: string
   }
 
   interface UserAddress {
@@ -96,7 +70,7 @@ declare global {
     reference?: string
     addressName?: string
     addressType?: string
-    geoCoordinate?: string
+    geoCoordinates?: string
   }
 
   interface Profile {
@@ -115,6 +89,7 @@ declare global {
     corporateDocument?: string
     stateRegistration?: string
     addresses?: Address[]
+    tradeName?: string
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
   }
@@ -142,10 +117,21 @@ declare global {
     DocumentId: string
   }
 
+  interface DocumentResponseV2 {
+    Id: string
+    Href: string
+    DocumentId: string
+  }
+
   interface DocumentArgs {
     acronym: string
     fields: string[]
     id: string
+  }
+
+  interface DocumentSchemaArgs {
+    dataEntity: string
+    schema: string
   }
 
   interface DocumentsArgs {
@@ -160,11 +146,19 @@ declare global {
   interface CreateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
+  }
+
+  interface CreateDocumentV2Args {
+    dataEntity: string
+    document: { document: any }
+    schema?: string
   }
 
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
   }
 
   interface DeleteDocumentArgs {
@@ -181,5 +175,37 @@ declare global {
     filename: string
     mimetype: string
     encoding: string
+  }
+
+  interface SKU {
+    itemId: string
+    name: string
+    nameComplete: string
+    productName: string
+    productDescription: string
+    brandName: string
+    variations: [Property]
+    skuSpecifications: [SkuSpecification]
+    productSpecifications: [ProductSpecification]
+  }
+
+  interface Property {
+    name: string
+    values: [string]
+  }
+
+  interface SkuSpecification {
+    fieldName: string
+    fieldValues: string[]
+  }
+
+  interface ProductSpecification {
+    fieldName: string
+    fieldValues: string[]
+  }
+
+  interface Reference {
+    Key: string
+    Value: string
   }
 }

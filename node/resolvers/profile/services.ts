@@ -3,7 +3,6 @@ import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 
 import { generateRandomName } from '../../utils'
 import { makeRequest } from '../auth'
-import { uploadFile, deleteFile } from '../fileManager/services'
 import paths from '../paths'
 
 export function getProfile(context: Context, customFields?: string) {
@@ -98,6 +97,11 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
+    // Read the comments in Profile in fieldResolvers.ts files
+    // to understand the following transformations
+    businessDocument: profile.corporateDocument,
+    isPJ: profile.isCorporate ? 'True' : 'False',
+    fancyName: profile.tradeName,
     ...(extraFields && extraFields.customFieldsObj),
   }
 
@@ -110,32 +114,10 @@ export async function updateProfile(
     .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
 }
 
-export async function updateProfilePicture(context: Context, file: any) {
-  const {
-    clients: { profile },
-    vtex: { currentProfile },
-  } = context
-
-  const { profilePicture } = await profile.getProfileInfo(
-    currentProfile,
-    'profilePicture'
+export function updateProfilePicture(mutationsName: string, context: Context) {
+  console.warn(
+    `The ${mutationsName} mutation is deprecated and no longer supported.`
   )
-
-  const bucket = 'image'
-
-  if (profilePicture) {
-    await deleteFile(context.vtex, { path: profilePicture, bucket })
-  }
-
-  const result = await uploadFile(context.vtex, { file, bucket })
-
-  const fileUrl = result.fileUrl.split('image/')[1]
-  await profile.updateProfileInfo(
-    currentProfile,
-    { profilePicture: fileUrl },
-    'profilePicture'
-  )
-
   return getProfile(context)
 }
 
@@ -149,8 +131,11 @@ export function createAddress(context: Context, address: Address) {
 
   const addressesData = {} as any
   const addressName = generateRandomName()
+  const { geoCoordinates, ...addr } = address
+
   addressesData[addressName] = JSON.stringify({
-    ...address,
+    ...addr,
+    geoCoordinate: geoCoordinates,
     addressName,
     userId: currentProfile.userId,
   })
@@ -173,7 +158,7 @@ export function deleteAddress(context: Context, addressName: string) {
 
 export function updateAddress(
   context: Context,
-  { id, fields }: UpdateAddressArgs
+  { id, fields: { geoCoordinates, ...addressFields } }: UpdateAddressArgs
 ) {
   const {
     clients: { profile },
@@ -182,7 +167,8 @@ export function updateAddress(
 
   const addressesData = {} as any
   addressesData[id] = JSON.stringify({
-    ...fields,
+    ...addressFields,
+    geoCoordinate: geoCoordinates,
     userId: currentProfile.userId,
   })
 
@@ -197,7 +183,7 @@ export function pickCustomFieldsFromData(customFields: string, data: any) {
     compose(
       values,
       mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields))
+      pick(split(',', customFields)) as any
     )(data)
   )
 }

@@ -1,8 +1,9 @@
 {
   "stack": "nodejs",
-  "memory": 1024,
-  "ttl": 60,
-  "timeout": 20,
-  "minReplicas": 20,
-  "maxReplicas": 40
+  "memory": 1536,
+  "ttl": 30,
+  "timeout": 40,
+  "minReplicas": 30,
+  "maxReplicas": 100,
+  "cpu": 30
 }

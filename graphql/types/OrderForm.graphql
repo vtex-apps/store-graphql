@@ -1,7 +1,10 @@
 type OrderForm {
-  """ orderFormId is used as cacheId """
+  """
+  orderFormId is used as cacheId
+  """
   cacheId: ID
   orderFormId: String
+  customData: CustomData
   value: Float
   items: [OrderFormItem]
   salesChannel: String
@@ -22,6 +25,17 @@ type OrderForm {
   pickupPointCheckedIn: PickupPoint
 }
 
+type CustomData {
+  customApps: [CustomApp]
+}
+
+scalar CustomFields
+type CustomApp {
+  fields: CustomFields
+  id: String
+  major: Int
+}
+
 type StorePreferencesData {
   countryCode: String
   currencyCode: String
@@ -37,12 +51,15 @@ type CurrencyFormatInfo {
   startsWithCurrencySymbol: Boolean
 }
 
+scalar ProductCategories
+
 type OrderFormItem {
   id: ID
-  name: String
+  name: String @translatableV2
   detailUrl: String
-  imageUrl: String
-  skuName: String
+  imageUrl: String @toVtexAssets
+  skuName: String @translatableV2
+  productRefId: String
   quantity: Float
   uniqueId: String
   productId: String
@@ -57,20 +74,67 @@ type OrderFormItem {
   isGift: Boolean
   parentItemIndex: Int
   parentAssemblyBinding: String
-  """ Informations related to assembly options children of this item """
+  additionalInfo: ItemAdditionalInfo
+  """
+  Informations related to assembly options children of this item
+  """
   assemblyOptions: AssemblyOptionItem
-  """ ID of item's seller """
+  """
+  ID of item's seller
+  """
   seller: String
-  """ Item index on cart """
+  """
+  Item index on cart
+  """
   cartIndex: Int
+  """
+  Category ids on orderFormItem
+  """
+  productCategoryIds: String
+  productCategories: ProductCategories
+  """
+  Price tags on orderFormItem
+  """
+  priceTags: [PriceTags]
+  """
+  measurementUnit on orderFormItem
+  """
+  measurementUnit: String
+  """
+  Selling price of item summing with all of its children items selling prices.
+  """
+  sellingPriceWithAssemblies: Float
+  """
+  unitMultiplier on orderFormItem
+  """
+  unitMultiplier: Float
+  canHaveAttachment: Boolean
+}
+
+type ItemAdditionalInfo {
+  brandName: String
+}
+
+type PriceTags {
+  identifier: String
+  isPercentual: Boolean
+  name: String
+  rawValue: Float
+  value: Int
 }
 
 type AssemblyOptionItem {
-  """ Assembly options added to parent OrderFormItem """
+  """
+  Assembly options added to parent OrderFormItem
+  """
   added: [AddedOptionItem]!
-  """ Assembly options removed from parent OrderFormItem """
+  """
+  Assembly options removed from parent OrderFormItem
+  """
   removed: [RemovedOptionItem]!
-  """ Selling price of parent item """
+  """
+  Selling price of parent item
+  """
   parentPrice: Float
 }
 
@@ -101,15 +165,19 @@ type OrderFormShippingData {
   selectedAddresses: [Address]!
 }
 
+scalar InputValues
+
 input OrderFormItemInput {
   id: Int
   index: Int
   quantity: Int
   seller: ID
+  inputValues: InputValues
   options: [AssemblyOptionInput]
 }
 
 input OrderFormAddressInput {
+  addressId: String
   addressType: String
   postalCode: String
   country: String
@@ -158,24 +226,68 @@ input OrderFormCheckinInput {
   pickupPointId: String
 }
 
+input OrderFormInputUTMParams {
+  campaign: String
+  medium: String
+  source: String
+}
+
+input OrderFormInputUTMIParams {
+  campaign: String
+  part: String
+  page: String
+}
+
 type RemovedOptionItem {
-  """ The initialQuantity of the assembly option CompositionItem """
+  """
+  The initialQuantity of the assembly option CompositionItem
+  """
   initialQuantity: Int
-  """ The amount that the user removed of this assembly option """
+  """
+  The amount that the user removed of this assembly option
+  """
   removedQuantity: Int
-  """ The name of this assembly option """
+  """
+  The name of this assembly option
+  """
   name: String
 }
 
 type AddedOptionItem {
-  """ The OrderFormItem of this assembly options, as appering on cart """
+  """
+  The OrderFormItem of this assembly options, as appering on cart
+  """
   item: OrderFormItem
-  """ Composition item of assembly option, as it appears on ItemMetadata of OrderForm """
+  """
+  Composition item of assembly option, as it appears on ItemMetadata of OrderForm
+  """
   compositionItem: CompositionItem
-  """ The quantity of this assembly option per parent unit, so childQuantity / parentQuantity """
+  """
+  The quantity of this assembly option per parent unit, so childQuantity / parentQuantity
+  """
   normalizedQuantity: Int
-  """ The choice type of this assembly option (MULTIPLE, SINGLE or TOGGLE) """
+  """
+  The choice type of this assembly option (MULTIPLE, SINGLE or TOGGLE)
+  """
   choiceType: String
-  """ The real quantity added by user, so quantity in cart minus the item's initialQuantity """
+  """
+  The real quantity added by user, so quantity in cart minus the item's initialQuantity
+  """
   extraQuantity: Int
+}
+
+type CheckoutSLA {
+  cacheId: ID
+  id: String
+  deliveryChannel: String
+  name: String
+  shippingEstimate: String
+  pickupStoreInfo: PickupStoreInfo
+  pickupPointId: String
+  pickupDistance: Float
+}
+
+type PickupStoreInfo {
+  friendlyName: String
+  address: Address
 }

@@ -1,0 +1,12 @@
+type StoreConfigs {
+  tagManagerId: String
+  siteTitle: String
+  kiosk: Boolean
+  timeout: Int
+  url: String
+  googleMapsApiKey: String
+  ioExtensions: Boolean
+  geolocation: Boolean
+  leanShipping: Boolean
+  invoiceAddress: Boolean
+}

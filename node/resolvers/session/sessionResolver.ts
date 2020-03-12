@@ -8,12 +8,14 @@ interface ProfileFields {
   isAuthenticatedAsCustomer?: boolean
   lastName?: string
   phone?: string
+  priceTables: string[]
 }
 
 export interface SessionFields {
   adminUserEmail?: string
   adminUserId?: string
   id?: string
+  cacheId?: string
   impersonable?: boolean
   impersonate?: { profile: ProfileFields }
   orderFormId?: string
@@ -21,6 +23,7 @@ export interface SessionFields {
   profile?: ProfileFields
   utmParams?: UtmParams
   utmiParams?: UtmiParams
+  favoritePickup?: { address: CheckoutAddress; name: string }
   public?: {
     [key: string]: {
       value: string
@@ -44,6 +47,12 @@ interface UtmiParams {
 
 const convertToBool = (str: any) => !!str && toLower(str) === 'true'
 
+const priceTables = (profile: SessionProfile): string[] => {
+  const priceTables =
+    profile && profile.priceTables && profile.priceTables.value
+  return priceTables ? priceTables.split(',') : []
+}
+
 const profileFields = (
   profile: SessionProfile,
   user: SessionImpersonate | SessionAuthentication
@@ -59,6 +68,7 @@ const profileFields = (
   ),
   lastName: path(['lastName', 'value'], profile),
   phone: path(['phone', 'value'], profile),
+  priceTables: priceTables(profile),
 })
 
 const setProfileData = (
@@ -89,26 +99,28 @@ export const sessionFields = (session: Session): SessionFields | {} => {
   const { namespaces } = session
   return namespaces
     ? {
-        address: path(['public', 'address', 'value'], namespaces),
-        adminUserEmail: path(
-          ['authentication', 'adminUserEmail', 'value'],
-          namespaces
-        ),
-        adminUserId: path(
-          ['authentication', 'adminUserId', 'value'],
-          namespaces
-        ),
-        id: session.id,
-        impersonable: convertToBool(
-          path(['impersonate', 'canImpersonate', 'value'], namespaces)
-        ),
-        impersonate: {
-          ...setProfileData(namespaces.profile, namespaces.impersonate),
-        },
-        utmParams: setUtmParams(namespaces.public),
-        utmiParams: setUtmiParams(namespaces.public),
-        orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
-        ...setProfileData(namespaces.profile, namespaces.authentication),
-      }
-    : {}
+      address: path(['public', 'address', 'value'], namespaces),
+      adminUserEmail: path(
+        ['authentication', 'adminUserEmail', 'value'],
+        namespaces
+      ),
+      adminUserId: path(
+        ['authentication', 'adminUserId', 'value'],
+        namespaces
+      ),
+      id: session.id,
+      cacheId: session.id,
+      impersonable: convertToBool(
+        path(['impersonate', 'canImpersonate', 'value'], namespaces)
+      ),
+      impersonate: {
+        ...setProfileData(namespaces.profile, namespaces.impersonate),
+      },
+      utmParams: setUtmParams(namespaces.public),
+      utmiParams: setUtmiParams(namespaces.public),
+      orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
+      favoritePickup: path(['public', 'favoritePickup', 'value'], namespaces),
+      ...setProfileData(namespaces.profile, namespaces.authentication),
+    }
+    : ({} as any)
 }

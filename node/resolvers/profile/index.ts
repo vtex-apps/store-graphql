@@ -7,9 +7,14 @@ import {
   updateProfile,
   updateProfilePicture,
 } from './services'
+import { path } from 'ramda'
+
+const TRUE = 'True'
+const FALSE = 'False'
 
 interface SubscribeNewsletterArgs {
   email: string
+  isNewsletterOptIn: boolean
 }
 
 export const mutations = {
@@ -25,17 +30,28 @@ export const mutations = {
   updateProfile: (_: any, { fields, customFields }: any, context: Context) =>
     updateProfile(context, fields, customFields),
 
-  updateProfilePicture: (_: any, { file }: { file: any }, context: Context) =>
-    updateProfilePicture(context, file),
+  updateProfilePicture: (_: any, __: any, context: Context) =>
+    updateProfilePicture('updateProfilePicture', context),
 
-  uploadProfilePicture: (_: any, { file }: { file: any }, context: Context) =>
-    updateProfilePicture(context, file),
+  uploadProfilePicture: (_: any, __: any, context: Context) =>
+    updateProfilePicture('uploadProfilePicture', context),
 
-  subscribeNewsletter: async (_: any, { email }: SubscribeNewsletterArgs, context: Context) => {
+  subscribeNewsletter: async (
+    _: any,
+    { email, isNewsletterOptIn }: SubscribeNewsletterArgs,
+    context: Context
+  ) => {
     const profile = context.clients.profile
-    await profile.updatePersonalPreferences({ email, userId: '' }, {
-      isNewsletterOptIn: 'True',
-    })
+    const optIn =
+      isNewsletterOptIn === undefined || isNewsletterOptIn === true
+        ? TRUE
+        : FALSE
+    await profile.updatePersonalPreferences(
+      { email, userId: '' },
+      {
+        isNewsletterOptIn: optIn,
+      }
+    )
 
     return true
   },
@@ -44,6 +60,41 @@ export const mutations = {
 export const queries = {
   profile: (_: any, { customFields }: any, context: Context) =>
     getProfile(context, customFields),
+
+  checkProfileAllowed: async (_: any, __: any, context: Context) => {
+    const {
+      clients: { catalog, customSession },
+      vtex: { segment },
+      cookies,
+    } = context
+    const salesChannel = segment ? segment.channel : null
+
+    const { sessionData } = await customSession.getSession(
+      cookies.get('vtex_session')!,
+      ['*']
+    )
+
+    const email: string | undefined = path(
+      ['namespaces', 'profile', 'email', 'value'],
+      sessionData
+    )
+
+    const availableSalesChannels = await catalog
+      .salesChannelAvailable(email)
+      .catch(() => [])
+
+    // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
+    const available = availableSalesChannels.find(sc => sc.Id == salesChannel)
+
+    return {
+      allowed: Boolean(available),
+      condition: available
+        ? 'authorized'
+        : email
+        ? 'forbidden' // The user is logged in and not allowed
+        : 'unauthorized', // We don't know the user identity
+    }
+  },
 }
 
 export const fieldResolvers = fieldR

@@ -1,6 +1,8 @@
 type Product {
   """ Brand of the product """
-  brand: String
+  brand: String @translatableV2
+  """ Id of the brand of the product """
+  brandId: Int
   """ linkText is used as cacheId """
   cacheId: ID
   categoryId: ID
@@ -14,7 +16,7 @@ type Product {
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
   """ Product description """
-  description: IOMessage
+  description: String @translatableV2
   """ SKU objects of the product """
   items: [SKU]
   """ Product URL """
@@ -24,7 +26,7 @@ type Product {
   """ Product ID """
   productId: ID
   """ Product name """
-  productName: IOMessage
+  productName: String @translatableV2
   """ Array of product properties  """
   properties: [Property]
   """ Array of product properties  """
@@ -32,9 +34,9 @@ type Product {
   """ Product reference """
   productReference: String
   """ Title used by html tag"""
-  titleTag: String
+  titleTag: String @translatableV2
   """ Description used by html tag"""
-  metaTagDescription: String
+  metaTagDescription: String @translatableV2
   """ Related Products """
   recommendations: Recommendation
   """ JSON specification of the product"""
@@ -92,8 +94,8 @@ type Recommendation {
 
 type SKU {
   itemId: ID
-  name: String
-  nameComplete: String
+  name: String @translatableV2
+  nameComplete: String @translatableV2
   complementName: String
   ean: String
   referenceId: [Reference]
@@ -101,10 +103,26 @@ type SKU {
   unitMultiplier: Float
   kitItems: [KitItem]
   images (quantity: Int = 10) : [Image]
+  videos: [Video]
   sellers: [Seller]
   variations: [Property]
   attachments: [Attachment]
   calculatedAttachments: String
+  productName: String @translatableV2
+  productDescription: String @translatableV2
+  brandName: String @translatableV2
+  skuSpecifications: [skuSpecification]
+  productSpecifications: [productSpecification]
+}
+
+type skuSpecification {
+  fieldName: String @translatableV2
+  fieldValues: [String] @translatableV2
+}
+
+type productSpecification {
+  fieldName: String @translatableV2
+  fieldValues: [String] @translatableV2
 }
 
 input ProductUniqueIdentifier {
@@ -159,6 +177,13 @@ type Offer {
   DeliverySlaSamples: [DeliverySlaSamples]
   """List of discount highlights"""
   discountHighlights: [Discount!]
+  teasers: [Teaser!]
+  """List of gifts associated with the product"""
+  giftSkuIds: [String]
+}
+
+type Teaser {
+  name: String
 }
 
 """ Discount object """
@@ -193,13 +218,22 @@ type Image {
   imageId: ID
   imageLabel: String
   imageTag: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   imageText: String
 }
 
+type Video {
+  videoUrl: String
+}
+
 type SpecificationGroup {
-  name: String,
-  specifications: [Property]
+  name: String @translatableV2,
+  specifications: [SpecificationGroupProperty]
+}
+
+type SpecificationGroupProperty {
+  name: String @translatableV2
+  values: [String] @translatableV2
 }
 
 type Property {

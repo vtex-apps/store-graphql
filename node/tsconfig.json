@@ -1,42 +1,8 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "alwaysStrict": true,
-    "esModuleInterop": true,
-    "lib": [
-      "es2017",
-      "esnext.asynciterable"
-    ],
-    "listEmittedFiles": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "skipLibCheck": true,
-    "sourceMap": false,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "target": "es2017",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "types": [
-      "node"
-    ]
-  },
+  "extends": "@vtex/tsconfig",
   "include": [
     "typings",
     "typings.d.ts",
     "**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "typeAcquisition": {
-    "enable": false
-  }
+  ]
 }

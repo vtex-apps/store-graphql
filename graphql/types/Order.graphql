@@ -9,6 +9,7 @@ type Order {
   lastChange: String
   timeZoneCreationDate: String
   timeZoneLastChange: String
+  invoicedDate: String
   isCompleted: Boolean
   items: [OrderItem]
   sellers: [OrderItemSeller]
@@ -32,11 +33,12 @@ type OrderItem {
   rewardValue: Float
   additionalInfo: OrderItemAdditionalInfo
   preSaleDate: String
+  productCategoryIds: String
   handling: Boolean
   isGift: Boolean
   quantity: Int
   seller: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   detailUrl: String
   availability: String
   measurementUnit: String
@@ -90,7 +92,11 @@ type OrderItemPaymentConnectorResponse {
   tid: String
   returnCode: String
   message: String
+  """Payment Connector Additional Data Response"""
+  additionalData: ConnectorAdditionalData
 }
+
+scalar ConnectorAdditionalData
 
 type OrderItemShippingData {
   logisticsInfo: [LogisticsInfo]

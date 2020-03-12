@@ -6,3 +6,10 @@ node/tslint.json
 react/node_modules/
 .vscode/
 .gitignore
+
+node/**/__tests__/**
+node/**/__mocks__/**
+node/**/__snapshots__/**
+node/**/*.test.js
+node/**/*.test.ts
+node/**/*.test.tsx

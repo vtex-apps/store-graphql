@@ -1,0 +1,12 @@
+type PageType {
+  id: String
+  type: PageEntityIdentifier
+}
+
+enum PageEntityIdentifier {
+  brand
+  department
+  category
+  subcategory
+  search
+}

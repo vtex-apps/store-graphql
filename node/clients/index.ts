@@ -5,6 +5,10 @@ import { Catalog } from './catalog'
 import { Checkout } from './checkout'
 import { MasterData } from './masterdata'
 import { ProfileClient } from './profile'
+import { OMS } from './oms'
+import { Portal } from './portal'
+import { LogisticsClient } from './logistics'
+import { Session } from './session'
 
 export class Clients extends IOClients {
   public get masterdata() {
@@ -25,5 +29,21 @@ export class Clients extends IOClients {
 
   public get profile() {
     return this.getOrSet('profile', ProfileClient)
+  }
+
+  public get oms() {
+    return this.getOrSet('oms', OMS)
+  }
+
+  public get portal() {
+    return this.getOrSet('portal', Portal)
+  }
+
+  public get logistics() {
+    return this.getOrSet('logistics', LogisticsClient)
+  }
+
+  public get customSession() {
+    return this.getOrSet('customSession', Session)
   }
 }

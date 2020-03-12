@@ -3,15 +3,9 @@ import {
   IOContext,
   JanusClient,
   RequestConfig,
+  IOResponse,
 } from '@vtex/api'
-
 import { checkoutCookieFormat, statusToError } from '../utils'
-
-export interface SimulationData {
-  country: string
-  items: any[]
-  postalCode: string
-}
 
 export class Checkout extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -27,12 +21,12 @@ export class Checkout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId } = this.context as CustomIOContext
+    const { orderFormId, segmentToken, sessionToken } = this.context as CustomIOContext
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
+    const segmentTokenCookie = segmentToken ? `vtex_segment=${segmentToken};` : ''
+    const sessionTokenCookie = sessionToken ? `vtex_session=${sessionToken};` : ''
     return {
-      Cookie: `${checkoutCookie}vtex_segment=${
-        this.context.segmentToken
-      };vtex_session=${this.context.sessionToken};`,
+      Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
     }
   }
 
@@ -44,7 +38,7 @@ export class Checkout extends JanusClient {
   }
 
   public addItem = (orderFormId: string, items: any) =>
-    this.post(
+    this.post<OrderForm>(
       this.routes.addItem(orderFormId, this.getChannelQueryString()),
       { orderItems: items },
       { metric: 'checkout-addItem' }
@@ -117,27 +111,42 @@ export class Checkout extends JanusClient {
       { metric: 'checkout-updateOrderFormMarketingData' }
     )
 
+  public updateOrderFormClientPreferencesData = (
+    orderFormId: string,
+    clientPreferencesData: OrderFormClientPreferencesData,
+  ) => {
+    // The API default value of `optinNewsLetter` is `null`, but it doesn't accept a POST with its value as `null`
+    const filteredClientPreferencesData = clientPreferencesData.optinNewsLetter === null
+      ? { locale: clientPreferencesData.locale }
+      : clientPreferencesData
+
+    return this.post(
+      this.routes.attachmentsData(orderFormId, 'clientPreferencesData'),
+      filteredClientPreferencesData,
+      { metric: 'checkout-updateOrderFormClientPreferencesData' }
+    )
+  }
+
   public addAssemblyOptions = async (
     orderFormId: string,
-    itemId: string,
+    itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
-    this.post(
+    this.post<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
       body,
       { metric: 'checkout-addAssemblyOptions' }
     )
-
   public removeAssemblyOptions = async (
     orderFormId: string,
-    itemId: string,
+    itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
-    this.delete(
+    this.delete<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
-      { metric: 'checkout-removeAssemblyOptions', params: body }
+      { metric: 'checkout-removeAssemblyOptions', data: body }
     )
 
   public updateOrderFormCheckin = (orderFormId: string, checkinPayload: any) =>
@@ -145,40 +154,65 @@ export class Checkout extends JanusClient {
       metric: 'checkout-updateOrderFormCheckin',
     })
 
-  public orderForm = (useRaw?: boolean) => {
-    const method = useRaw ? this.postRaw : this.post
-    return method(
+  public orderForm = () => {
+    return this.post<OrderForm>(
       this.routes.orderForm,
       { expectedOrderFormSections: ['items'] },
       { metric: 'checkout-orderForm' }
     )
   }
 
+  public orderFormRaw = () => {
+    return this.postRaw<OrderForm>(
+      this.routes.orderForm,
+      { expectedOrderFormSections: ['items'] },
+      { metric: 'checkout-orderForm' }
+    )
+  }
+
+  public changeToAnonymousUser = () => {
+    const { orderFormId } = this.context as CustomIOContext
+
+    if (!orderFormId) {
+      throw new Error('Missing orderFormId. Use withOrderFormId directive.')
+    }
+
+    return this.get(this.routes.changeToAnonymousUser(orderFormId), {
+      metric: 'checkout-change-to-anonymous',
+    })
+  }
+
   public orders = () =>
     this.get(this.routes.orders, { metric: 'checkout-orders' })
 
-  public shipping = (simulation: SimulationData) =>
-    this.post(this.routes.shipping(this.getChannelQueryString()), simulation, {
-      metric: 'checkout-shipping',
-    })
+  public simulation = (simulation: SimulationPayload) =>
+    this.post<SimulationOrderForm>(
+      this.routes.simulation(this.getChannelQueryString()),
+      simulation,
+      {
+        metric: 'checkout-simulation',
+      }
+    )
 
   protected get = <T>(url: string, config: RequestConfig = {}) => {
     config.headers = {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.get<T>(url, config).catch(statusToError)
+    return this.http.get<T>(url, config).catch(statusToError) as Promise<T>
   }
 
-  protected post = (url: string, data?: any, config: RequestConfig = {}) => {
+  protected post = <T>(url: string, data?: any, config: RequestConfig = {}) => {
     config.headers = {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.post<any>(url, data, config).catch(statusToError)
+    return this.http.post<T>(url, data, config).catch(statusToError) as Promise<
+      T
+    >
   }
 
-  protected postRaw = async (
+  protected postRaw = async <T>(
     url: string,
     data?: any,
     config: RequestConfig = {}
@@ -187,7 +221,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.postRaw<any>(url, data, config).catch(statusToError)
+    return this.http
+      .postRaw<T>(url, data, config)
+      .catch(statusToError) as Promise<IOResponse<T>>
   }
 
   protected delete = <T>(url: string, config: RequestConfig = {}) => {
@@ -195,7 +231,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.delete<T>(url, config).catch(statusToError)
+    return this.http.delete<T>(url, config).catch(statusToError) as Promise<
+      IOResponse<T>
+    >
   }
 
   protected patch = <T>(
@@ -207,7 +245,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.patch<T>(url, data, config).catch(statusToError)
+    return this.http
+      .patch<T>(url, data, config)
+      .catch(statusToError) as Promise<T>
   }
 
   protected put = <T>(url: string, data?: any, config: RequestConfig = {}) => {
@@ -215,7 +255,9 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
-    return this.http.put<T>(url, data, config).catch(statusToError)
+    return this.http.put<T>(url, data, config).catch(statusToError) as Promise<
+      T
+    >
   }
 
   private get routes() {
@@ -238,7 +280,7 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/attachments/${field}`,
       assemblyOptions: (
         orderFormId: string,
-        itemId: string,
+        itemId: string | number,
         assemblyOptionsId: string
       ) =>
         `${base}/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
@@ -246,8 +288,10 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/checkIn`,
       orderForm: `${base}/orderForm`,
       orders: `${base}/orders`,
-      shipping: (queryString: string) =>
+      simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
+      changeToAnonymousUser: (orderFormId: string) =>
+        `/checkout/changeToAnonymousUser/${orderFormId}`,
     }
   }
 }
