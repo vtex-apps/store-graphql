@@ -162,14 +162,6 @@ export class Checkout extends JanusClient {
     )
   }
 
-  public orderFormWithoutCookies = () => {
-    return this.http.post<OrderForm>(
-      this.routes.orderForm,
-      { expectedOrderFormSections: ['items'] },
-      { metric: 'checkout-orderForm-without-cookies' }
-    )
-  }
-
   public orderFormRaw = () => {
     return this.postRaw<OrderForm>(
       this.routes.orderForm,
