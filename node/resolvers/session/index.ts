@@ -88,10 +88,11 @@ export const mutations = {
     return queries.getSession({}, {}, ctx)
   },
 
-  depersonify: async (_: any, __: any, ctx: Context) => {
+  depersonify: async (_: any, __: any, ctx: any) => {
     const {
       clients: { customSession, checkout },
       cookies,
+      vtex: { orderFormId }
     } = ctx
 
     await customSession.updateSession(
@@ -101,6 +102,15 @@ export const mutations = {
       cookies.get(VTEX_SESSION)!,
       vtexIdCookies(ctx)
     )
+
+    const { items }: OrderForm = await checkout.orderForm()
+    const emptyItems = items.map(({ id, seller }: OrderFormItem, index) => ({
+      id,
+      seller,
+      quantity: 0,
+      index
+    }))
+    await checkout.updateItems(orderFormId, emptyItems)
 
     try {
       await checkout.changeToAnonymousUser()

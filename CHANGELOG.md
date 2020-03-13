@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Clear cart when Telemarketing user ends customer's session
+
 ## [2.118.0] - 2020-02-27
 
 ### Changed
