@@ -1,4 +1,4 @@
-import { serialize } from 'cookie'
+import { serialize, parse } from 'cookie'
 import { identity } from 'ramda'
 import { sessionFields } from './sessionResolver'
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
@@ -92,7 +92,7 @@ export const mutations = {
     const {
       clients: { customSession, checkout },
       cookies,
-      vtex: { orderFormId }
+      // vtex: { orderFormId }
     } = ctx
 
     await customSession.updateSession(
@@ -103,14 +103,7 @@ export const mutations = {
       vtexIdCookies(ctx)
     )
 
-    const { items }: OrderForm = await checkout.orderForm()
-    const emptyItems = items.map(({ id, seller }: OrderFormItem, index) => ({
-      id,
-      seller,
-      quantity: 0,
-      index
-    }))
-    await checkout.updateItems(orderFormId, emptyItems)
+    const res = await checkout.newOrderForm()
 
     try {
       await checkout.changeToAnonymousUser()
@@ -119,13 +112,23 @@ export const mutations = {
       // That's fine.
     }
 
-    ctx.response.set(
-      'Set-Cookie',
-      serialize(IMPERSONATED_EMAIL, '', {
-        maxAge: 0,
-        path: '/',
-      })
-    )
+    const orderFormParsedCookie = parse(res.headers['set-cookie'][0])
+
+    ctx.response.set({
+      'Set-Cookie':
+        serialize(IMPERSONATED_EMAIL, '', {
+          maxAge: 0,
+          path: '/',
+        }),
+      ...(
+        Object.entries(orderFormParsedCookie).map(cookie => ({
+          'Set-Cookie': serialize(cookie[0], cookie[1], {
+            maxAge: 0,
+            path: '/',
+          })
+        }))
+      )
+    })
 
     return true
   },

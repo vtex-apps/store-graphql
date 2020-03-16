@@ -162,6 +162,14 @@ export class Checkout extends JanusClient {
     )
   }
 
+  public newOrderForm = () => {
+    return this.http.postRaw<OrderForm>(
+      this.routes.orderForm,
+      { expectedOrderFormSections: ['items'] },
+      { metric: 'checkout-orderForm-new' }
+    )
+  }
+
   public orderFormRaw = () => {
     return this.postRaw<OrderForm>(
       this.routes.orderForm,
