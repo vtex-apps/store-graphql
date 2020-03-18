@@ -21,10 +21,15 @@ export class Checkout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId, segmentToken, sessionToken } = this.context as CustomIOContext
+    const { orderFormId, segmentToken, sessionToken } = this
+      .context as CustomIOContext
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
-    const segmentTokenCookie = segmentToken ? `vtex_segment=${segmentToken};` : ''
-    const sessionTokenCookie = sessionToken ? `vtex_session=${sessionToken};` : ''
+    const segmentTokenCookie = segmentToken
+      ? `vtex_segment=${segmentToken};`
+      : ''
+    const sessionTokenCookie = sessionToken
+      ? `vtex_session=${sessionToken};`
+      : ''
     return {
       Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
     }
@@ -113,12 +118,13 @@ export class Checkout extends JanusClient {
 
   public updateOrderFormClientPreferencesData = (
     orderFormId: string,
-    clientPreferencesData: OrderFormClientPreferencesData,
+    clientPreferencesData: OrderFormClientPreferencesData
   ) => {
     // The API default value of `optinNewsLetter` is `null`, but it doesn't accept a POST with its value as `null`
-    const filteredClientPreferencesData = clientPreferencesData.optinNewsLetter === null
-      ? { locale: clientPreferencesData.locale }
-      : clientPreferencesData
+    const filteredClientPreferencesData =
+      clientPreferencesData.optinNewsLetter === null
+        ? { locale: clientPreferencesData.locale }
+        : clientPreferencesData
 
     return this.post(
       this.routes.attachmentsData(orderFormId, 'clientPreferencesData'),
