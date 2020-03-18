@@ -1,5 +1,10 @@
 # VTEX Store GraphQL
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Description
 
@@ -9,16 +14,17 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 
 ## Release schedule
 
-| Release |       Status        | Initial Release | Maintenance LTS Start | End-of-life | 
-| :-----: | :-----------------: | :-------------: | :-------------------: | :---------: | 
+| Release |       Status        | Initial Release | Maintenance LTS Start | End-of-life |
+| :-----: | :-----------------: | :-------------: | :-------------------: | :---------: |
 |  [2.x]  | **Current Release** |   2018-03-05    |                       |             |
-|  [3.x]  | **Unscheduled**     |   ----------    |                       |             |
+|  [3.x]  |   **Unscheduled**   |   ----------    |                       |             |
 
 ## Table of Content
+
 - [Depreaction Notices](#depreaction-notices)
 - [Usage](#usage)
 - [Queries](#queries)
-  - [Catalog](#catalog) 
+  - [Catalog](#catalog)
   - [Logistics](#logistics)
   - [Checkout](#checkout)
   - [OMS](#oms)
@@ -34,59 +40,65 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 The queries `facets`, `product`, `products`, `productSearch`, `autocomplete`, `searchMetadata` and `productsByIdentifier` were deprecated. They were moved to a new app `vtex.search-graphql`, use the queries from that app from now on.
 
 ## Usage
+
 TODO
 
 ## Queries
 
 ### Catalog
 
-* `product` - Returns a specified product - DEPRECATED
-* `products` - Returns products list filtered and ordered - DEPRECATED
-* `facets` - Returns facets category - DEPRECATED
-* `category` - Returns a specified category
-* `categories` - Returns categories tree
-* `brand` - Returns a specified brand
-* `brands` - Returns brands list
-* `pagetype` - Returns the page type based on path and query
+- `product` - Returns a specified product - DEPRECATED
+- `products` - Returns products list filtered and ordered - DEPRECATED
+- `facets` - Returns facets category - DEPRECATED
+- `category` - Returns a specified category
+- `categories` - Returns categories tree
+- `brand` - Returns a specified brand
+- `brands` - Returns brands list
+- `pagetype` - Returns the page type based on path and query
 
-### Logistics 
-* `shipping` - Returns orderForm shipping simulation
+### Logistics
+
+- `shipping` - Returns orderForm shipping simulation
 
 ### Checkout
-* `orderForm` - Returns checkout cart details
+
+- `orderForm` - Returns checkout cart details
 
 ### OMS
-* `orders` - Returns user orders details
-* `order` - Returns a specified user order
+
+- `orders` - Returns user orders details
+- `order` - Returns a specified user order
 
 ### Profile System
-* `profile` - Returns user profile details
+
+- `profile` - Returns user profile details
 
 ## Mutations
 
 ### Checkout
 
-* `addItem`
-* `updateItems` 
-* `updateOrderFormProfile`
-* `updateOrderFormShipping`
-* `updateOrderFormPayment`
-* `updateOrderFormIgnoreProfile`
-* `addOrderFormPaymentToken`
-* `setOrderFormCustomData`
-* `createPaymentSession`
-* `createPaymentTokens`
-* `cancelOrder`
+- `addItem`
+- `updateItems`
+- `updateOrderFormProfile`
+- `updateOrderFormShipping`
+- `updateOrderFormPayment`
+- `updateOrderFormIgnoreProfile`
+- `addOrderFormPaymentToken`
+- `setOrderFormCustomData`
+- `createPaymentSession`
+- `createPaymentTokens`
+- `cancelOrder`
 
 ### Profile System
 
-* `createAddress`
-* `updateProfile`
-* `updateAddress`
-* `deleteAddress`
+- `createAddress`
+- `updateProfile`
+- `updateAddress`
+- `deleteAddress`
 
 ## Contributing
-TODO 
+
+TODO
 
 ## Troubleshooting
 
