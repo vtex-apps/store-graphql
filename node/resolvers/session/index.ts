@@ -1,8 +1,9 @@
-import { serialize, parse } from 'cookie'
+import { serialize } from 'cookie'
 import { identity } from 'ramda'
 import { sessionFields } from './sessionResolver'
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
 import { vtexIdCookies } from '../../utils/vtexId'
+import { setCheckoutCookies, syncWithStoreLocale } from '../checkout'
 
 const VTEX_SESSION = 'vtex_session'
 
@@ -88,11 +89,11 @@ export const mutations = {
     return queries.getSession({}, {}, ctx)
   },
 
-  depersonify: async (_: any, __: any, ctx: any) => {
+  depersonify: async (_: any, __: any, ctx: Context) => {
     const {
       clients: { customSession, checkout },
       cookies,
-      // vtex: { orderFormId }
+      vtex: { segment },
     } = ctx
 
     await customSession.updateSession(
@@ -103,31 +104,15 @@ export const mutations = {
       vtexIdCookies(ctx)
     )
 
-    const res = await checkout.newOrderForm()
+    const { data, headers } = await checkout.newOrderForm()
 
-    try {
-      await checkout.changeToAnonymousUser()
-    } catch (e) {
-      // This Checkout API triggers a redirect (302).
-      // That's fine.
-    }
+    await syncWithStoreLocale(data, segment!.cultureInfo, checkout)
 
-    const orderFormParsedCookie = parse(res.headers['set-cookie'][0])
+    setCheckoutCookies(headers, ctx)
 
-    ctx.response.set({
-      'Set-Cookie':
-        serialize(IMPERSONATED_EMAIL, '', {
-          maxAge: 0,
-          path: '/',
-        }),
-      ...(
-        Object.entries(orderFormParsedCookie).map(cookie => ({
-          'Set-Cookie': serialize(cookie[0], cookie[1], {
-            maxAge: 0,
-            path: '/',
-          })
-        }))
-      )
+    ctx.cookies.set(IMPERSONATED_EMAIL, '', {
+      maxAge: 0,
+      path: '/',
     })
 
     return true

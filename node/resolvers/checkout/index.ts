@@ -164,7 +164,7 @@ export const fieldResolvers = {
 const replaceDomain = (host: string) => (cookie: string) =>
   cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
-async function syncWithStoreLocale(
+export async function syncWithStoreLocale(
   orderForm: OrderForm,
   cultureInfo: string,
   checkout: Context['clients']['checkout']
@@ -199,6 +199,25 @@ async function syncWithStoreLocale(
   return orderForm
 }
 
+export async function setCheckoutCookies(rawHeaders: Record<string, any>, ctx: Context) {
+  const responseSetCookies: string[] =
+    (rawHeaders && rawHeaders['set-cookie']) || []
+
+  const host = ctx.get('x-forwarded-host')
+  const forwardedSetCookies = responseSetCookies.filter(
+    isWhitelistedSetCookie
+  )
+  const parseAndClean = compose(
+    parseCookie,
+    replaceDomain(host)
+  )
+  const cleanCookies = forwardedSetCookies.map(parseAndClean)
+  forEach(
+    ({ name, value, options }) => ctx.cookies.set(name, value, options),
+    cleanCookies
+  )
+}
+
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
@@ -214,23 +233,7 @@ export const queries: Record<string, Resolver> = {
       checkout
     )
 
-    const rawHeaders = headers as Record<string, any>
-    const responseSetCookies: string[] =
-      (rawHeaders && rawHeaders['set-cookie']) || []
-
-    const host = ctx.get('x-forwarded-host')
-    const forwardedSetCookies = responseSetCookies.filter(
-      isWhitelistedSetCookie
-    )
-    const parseAndClean = compose(
-      parseCookie,
-      replaceDomain(host)
-    )
-    const cleanCookies = forwardedSetCookies.map(parseAndClean)
-    forEach(
-      ({ name, value, options }) => ctx.cookies.set(name, value, options),
-      cleanCookies
-    )
+    setCheckoutCookies(headers, ctx)
 
     return orderForm
   },

@@ -803,7 +803,10 @@ type Mutation {
   """
   Depersonify a customer
   """
-  depersonify: Boolean @withOrderFormId
+  depersonify: Boolean
+    @withOrderFormId
+    @withSegment
+    @cacheControl(scope: PRIVATE)
 
   """
   Document
