@@ -1,9 +1,7 @@
 # VTEX Store GraphQL
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Description
@@ -109,9 +107,18 @@ You can check if others are passing through similar issues [here](https://github
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://github.com/regis-samurai"><img src="https://avatars0.githubusercontent.com/u/38638226?v=4" width="100px;" alt="Reginaldo"/><br /><sub><b>Reginaldo</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=regis-samurai" title="Code">💻</a></td><td align="center"><a href="https://github.com/juliomoreira"><img src="https://avatars2.githubusercontent.com/u/1207017?v=4" width="100px;" alt="Julio Moreira"/><br /><sub><b>Julio Moreira</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=juliomoreira" title="Code">💻</a></td></tr></table>
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/regis-samurai"><img src="https://avatars0.githubusercontent.com/u/38638226?v=4" width="100px;" alt=""/><br /><sub><b>Reginaldo</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=regis-samurai" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/juliomoreira"><img src="https://avatars2.githubusercontent.com/u/1207017?v=4" width="100px;" alt=""/><br /><sub><b>Julio Moreira</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=juliomoreira" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/gustavopvasconcellos"><img src="https://avatars1.githubusercontent.com/u/49173685?v=4" width="100px;" alt=""/><br /><sub><b>gustavopvasconcellos</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=gustavopvasconcellos" title="Code">💻</a></td>
+  </tr>
+</table>
 
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
