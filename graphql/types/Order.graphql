@@ -3,6 +3,7 @@ type Order {
   orderId: String
   orderGroup: String
   status: String
+  statusDescription: String
   value: Float
   salesChannel: String
   creationDate: String
