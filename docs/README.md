@@ -19,19 +19,24 @@ This project is a GraphQL API build in our [VTEX IO Platform](https://vtex.io/) 
 
 ## Table of Content
 
-- [Depreaction Notices](#depreaction-notices)
-- [Usage](#usage)
-- [Queries](#queries)
-  - [Catalog](#catalog)
-  - [Logistics](#logistics)
-  - [Checkout](#checkout)
-  - [OMS](#oms)
-  - [Profile System](#profile-system)
-- [Mutations](#mutations)
-  - [Checkout](#checkout-1)
-  - [Profile System](#profile-system-1)
-- [Contributing](#contributing)
-- [Troubleshooting](#troubleshooting)
+- [VTEX Store GraphQL](#vtex-store-graphql)
+  - [Description](#description)
+  - [Release schedule](#release-schedule)
+  - [Table of Content](#table-of-content)
+    - [Depreaction Notices](#depreaction-notices)
+  - [Usage](#usage)
+  - [Queries](#queries)
+    - [Catalog](#catalog)
+    - [Logistics](#logistics)
+    - [Checkout](#checkout)
+    - [OMS](#oms)
+    - [Profile System](#profile-system)
+  - [Mutations](#mutations)
+    - [Checkout](#checkout-1)
+    - [Profile System](#profile-system-1)
+  - [Contributing](#contributing)
+  - [Troubleshooting](#troubleshooting)
+  - [Contributors](#contributors)
 
 ### Depreaction Notices
 
@@ -66,6 +71,7 @@ TODO
 
 - `orders` - Returns user orders details
 - `order` - Returns a specified user order
+- `userLastOrder` - Returns the last order made by a logged in customer
 
 ### Profile System
 
