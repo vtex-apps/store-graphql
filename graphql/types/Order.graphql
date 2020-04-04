@@ -2,7 +2,7 @@ type Order {
   allowCancellation: Boolean
   orderId: String
   orderGroup: String
-  state: String
+  status: String
   value: Float
   salesChannel: String
   creationDate: String
