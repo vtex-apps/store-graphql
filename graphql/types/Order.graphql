@@ -2,6 +2,7 @@ type Order {
   allowCancellation: Boolean
   orderId: String
   orderGroup: String
+  state: String
   status: String
   statusDescription: String
   value: Float
@@ -116,4 +117,3 @@ type OrderItemShippingDataAddress {
   complement: String
   reference: String
 }
-
