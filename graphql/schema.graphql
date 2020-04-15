@@ -789,7 +789,11 @@ type Mutation {
   """
   Invalidate VtexIdclientAutCookie
   """
-  logout: Boolean @cacheControl(scope: PRIVATE)
+  logout: Boolean
+    @cacheControl(scope: PRIVATE)
+    @deprecated(
+      reason: "See https://github.com/vtex-apps/store-graphql/issues/182"
+    )
 
   """
   Impersonate a customer
