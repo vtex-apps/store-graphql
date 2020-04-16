@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.120.2] - 2020-04-15
+### Changed
+- Deprecate mutation `logout`.
+
+## [2.120.1] - 2020-04-09
+### Fixed
+- Adds scope private to mutations
+
+## [2.120.0] - 2020-04-06
+### Added
+- Add `status` and `statusDescription` field.
+
+## [2.119.0] - 2020-03-18
+
+### Added
+- Clear cart when Telemarketing user ends customer's session
+
 ## [2.118.0] - 2020-02-27
 
 ### Changed

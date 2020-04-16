@@ -3,6 +3,8 @@ type Order {
   orderId: String
   orderGroup: String
   state: String
+  status: String
+  statusDescription: String
   value: Float
   salesChannel: String
   creationDate: String
@@ -115,4 +117,3 @@ type OrderItemShippingDataAddress {
   complement: String
   reference: String
 }
-

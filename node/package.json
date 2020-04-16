@@ -18,7 +18,7 @@
     "querystring": "^0.2.0",
     "ramda": "^0.26.1",
     "slugify": "^1.2.6",
-    "typescript": "3.7.3",
+    "typescript": "3.8.3",
     "unorm": "^1.5.0",
     "url-parse": "^1.2.0"
   },
@@ -47,5 +47,5 @@
     "test": "vtex-test-tools test",
     "lint": "tsc --noEmit && eslint --ext ts ."
   },
-  "version": "2.118.0"
+  "version": "2.120.2"
 }
