@@ -69,7 +69,6 @@ export class MasterData extends ExternalClient {
     acronym: string,
     fields: string[],
     where: string,
-    sort: string,
     pagination: PaginationArgs,
     schema?: string
   ) => {
@@ -79,7 +78,6 @@ export class MasterData extends ExternalClient {
       params: {
         _fields: generateFieldsArg(fields),
         _where: where,
-        _sort: sort,
         ...(schema ? { _schema: schema } : null),
       },
     })
