@@ -362,6 +362,10 @@ type Query {
     """
     where: String
     """
+    Sorts the results. eg.: _sort=firstName ASC
+    """
+    sort: String
+    """
     Defines the Master Data schema to be used
     """
     schema: String
