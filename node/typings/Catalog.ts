@@ -60,6 +60,11 @@ interface Product {
   link: string
   description: string
   items: Item[]
+  itemMetadata: {
+    items: CatalogMetadataItem[]
+  }
+  titleTag: string
+  jsonSpecifications: string
 }
 
 interface Item {
@@ -78,6 +83,9 @@ interface Item {
     imageTag: string
     imageUrl: string
     imageText: string
+  }[]
+  videos: {
+    videoUrl: string
   }[]
   variations: string[]
   sellers: Seller[]
@@ -103,7 +111,7 @@ interface Seller {
       Name: string
     }[]
     DiscountHighLight: any[]
-    GiftSkuIds: any[]
+    GiftSkuIds: string[]
     Teasers: any[]
     BuyTogether: any[]
     ItemMetadataAttachment: any[]
@@ -121,4 +129,21 @@ interface Seller {
     GetInfoErrorMessage: any | null
     CacheVersionUsedToCallCheckout: string
   }
+}
+
+interface SalesChannelAvailable {
+  Id: number
+  Name: string
+  IsActive: boolean
+  ProductClusterId: string | null
+  CountryCode: string
+  CultureInfo: string
+  TimeZone: string
+  CurrencyCode: string
+  CurrencySymbol: string
+  CurrencyLocale: number
+  CurrencyFormatInfo: unknown
+  Position: number
+  ConditionRule: string | null
+  CurrencyDecimalDigits: null | number
 }

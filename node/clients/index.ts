@@ -8,6 +8,7 @@ import { ProfileClient } from './profile'
 import { OMS } from './oms'
 import { Portal } from './portal'
 import { LogisticsClient } from './logistics'
+import { Session } from './session'
 
 export class Clients extends IOClients {
   public get masterdata() {
@@ -40,5 +41,9 @@ export class Clients extends IOClients {
 
   public get logistics() {
     return this.getOrSet('logistics', LogisticsClient)
+  }
+
+  public get customSession() {
+    return this.getOrSet('customSession', Session)
   }
 }

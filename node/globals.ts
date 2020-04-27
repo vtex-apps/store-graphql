@@ -70,7 +70,7 @@ declare global {
     reference?: string
     addressName?: string
     addressType?: string
-    geoCoordinate?: string
+    geoCoordinates?: string
   }
 
   interface Profile {
@@ -117,6 +117,12 @@ declare global {
     DocumentId: string
   }
 
+  interface DocumentResponseV2 {
+    Id: string
+    Href: string
+    DocumentId: string
+  }
+
   interface DocumentArgs {
     acronym: string
     fields: string[]
@@ -140,11 +146,19 @@ declare global {
   interface CreateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
+  }
+
+  interface CreateDocumentV2Args {
+    dataEntity: string
+    document: { document: any }
+    schema?: string
   }
 
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    schema?: string
   }
 
   interface DeleteDocumentArgs {
@@ -161,5 +175,37 @@ declare global {
     filename: string
     mimetype: string
     encoding: string
+  }
+
+  interface SKU {
+    itemId: string
+    name: string
+    nameComplete: string
+    productName: string
+    productDescription: string
+    brandName: string
+    variations: [Property]
+    skuSpecifications: [SkuSpecification]
+    productSpecifications: [ProductSpecification]
+  }
+
+  interface Property {
+    name: string
+    values: [string]
+  }
+
+  interface SkuSpecification {
+    fieldName: string
+    fieldValues: string[]
+  }
+
+  interface ProductSpecification {
+    fieldName: string
+    fieldValues: string[]
+  }
+
+  interface Reference {
+    Key: string
+    Value: string
   }
 }

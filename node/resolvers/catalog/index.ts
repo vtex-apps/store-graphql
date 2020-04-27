@@ -1,6 +1,5 @@
 import { Functions } from '@gocommerce/utils'
 import { NotFoundError, ResolverWarning, UserInputError } from '@vtex/api'
-import { all } from 'bluebird'
 import {
   compose,
   equals,
@@ -18,7 +17,6 @@ import {
   zip,
 } from 'ramda'
 
-import { toSearchTerm } from '../../utils/ioMessage'
 import { resolvers as autocompleteResolvers } from './autocomplete'
 import { resolvers as brandResolvers } from './brand'
 import { resolvers as categoryResolvers } from './category'
@@ -54,6 +52,11 @@ interface SearchContextParams {
   department?: string
   category?: string
   subcategory?: string
+}
+
+interface SearchMetadataArgs {
+  query?: string | null
+  map?: string | null
 }
 
 interface ProductIndentifier {
@@ -160,7 +163,7 @@ const getAndParsePagetype = async (path: string, ctx: Context) => {
 }
 
 const getCategoryMetadata = async (
-  { map, query }: SearchArgs,
+  { map, query }: SearchMetadataArgs,
   ctx: Context
 ) => {
   const {
@@ -192,7 +195,10 @@ const getCategoryMetadata = async (
   return getAndParsePagetype(cleanQuery, ctx)
 }
 
-const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
+const getBrandMetadata = async (
+  { query }: SearchMetadataArgs,
+  ctx: Context
+) => {
   const {
     vtex: { account },
     clients: { catalog },
@@ -216,7 +222,11 @@ const getBrandMetadata = async ({ query }: SearchArgs, ctx: Context) => {
  * @param args
  * @param ctx
  */
-const getSearchMetaData = async (_: any, args: SearchArgs, ctx: Context) => {
+const getSearchMetaData = async (
+  _: any,
+  args: SearchMetadataArgs,
+  ctx: Context
+) => {
   const map = args.map || ''
   const firstMap = head(map.split(','))
   if (firstMap === 'c') {
@@ -232,13 +242,23 @@ const translateToStoreDefaultLanguage = async (
   clients: Context['clients'],
   term: string
 ): Promise<string> => {
-  const { segment, messages } = clients
-  const [{ cultureInfo: to }, { cultureInfo: from }] = await all([
+  const { segment, messagesGraphQL } = clients
+  const [{ cultureInfo: to }, { cultureInfo: from }] = await Promise.all([
     segment.getSegmentByToken(null),
     segment.getSegment(),
   ])
   return from && from !== to
-    ? messages.translate(to, [toSearchTerm(term, from)]).then(head)
+    ? messagesGraphQL
+        .translateV2({
+          indexedByFrom: [
+            {
+              from,
+              messages: [{ content: term }],
+            },
+          ],
+          to,
+        })
+        .then(head)
     : term
 }
 
@@ -292,6 +312,11 @@ export const queries = {
       clients: { catalog },
       clients,
     } = ctx
+
+    if (facets && facets.includes('undefined')) {
+      throw new UserInputError('Bad facets parameter provided')
+    }
+
     let result
     const translatedQuery = await translateToStoreDefaultLanguage(
       clients,
@@ -364,7 +389,7 @@ export const queries = {
     )
   },
 
-  products: async (_: any, args: any, ctx: Context) => {
+  products: async (_: any, args: SearchArgs, ctx: Context) => {
     const {
       clients: { catalog },
     } = ctx
@@ -374,6 +399,13 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
+
+    if (args.to && args.to > 2500) {
+      throw new UserInputError(
+        `The maximum value allowed for the 'to' argument is 2500`
+      )
+    }
+
     return catalog.products(args)
   },
 
@@ -422,6 +454,13 @@ export const queries = {
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
+
+    if (args.to && args.to > 2500) {
+      throw new UserInputError(
+        `The maximum value allowed for the 'to' argument is 2500`
+      )
+    }
+
     const query = await translateToStoreDefaultLanguage(
       clients,
       args.query || ''
@@ -430,7 +469,7 @@ export const queries = {
       ...args,
       query,
     }
-    const [productsRaw, searchMetaData] = await all([
+    const [productsRaw, searchMetaData] = await Promise.all([
       catalog.products(args, true),
       getSearchMetaData(_, translatedArgs, ctx),
     ])
@@ -513,7 +552,7 @@ export const queries = {
       contextKey: 'search',
     }
 
-    const [brandId, categoryId] = await all([
+    const [brandId, categoryId] = await Promise.all<string | null, string | number | null>([
       getBrandId(args.brand, catalog, isVtex, logger),
       searchContextGetCategory(args, catalog, isVtex, logger),
     ])
@@ -545,5 +584,24 @@ export const queries = {
       productId = product!.productId
     }
     return ctx.clients.catalog.crossSelling(productId, catalogType)
+  },
+
+  searchMetadata: async (_: any, args: SearchMetadataArgs, ctx: Context) => {
+    const { clients } = ctx
+    const queryTerm = args.query
+    if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
+      throw new UserInputError(
+        `The query term contains invalid characters. query=${queryTerm}`
+      )
+    }
+    const query = await translateToStoreDefaultLanguage(
+      clients,
+      args.query || ''
+    )
+    const translatedArgs = {
+      ...args,
+      query,
+    }
+    return getSearchMetaData(_, translatedArgs, ctx)
   },
 }

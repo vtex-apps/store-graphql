@@ -1,25 +1,31 @@
 import { UserInputError } from '@vtex/api'
 import { compose, map, union, prop, replace } from 'ramda'
+
 import { parseFieldsToJson } from '../../utils/object'
-import { resolvers as documentSchemaResolvers} from './documentSchema'
+import { resolvers as documentSchemaResolvers } from './documentSchema'
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
     const { acronym, fields, page, pageSize, where, schema } = args
-    const { clients: { masterdata } } = context
+    const {
+      clients: { masterdata },
+    } = context
     const fieldsWithId = union(fields, ['id'])
-    const data = await masterdata.searchDocuments(acronym, fieldsWithId, where, {
-      page,
-      pageSize,
-    }, schema) as any
-    return map(
-      (document: any) =>
-      ({
-        cacheId: document.id,
-        id: document.id,
-        fields: mapKeyAndStringifiedValues(document)
-      })
-    )(data)
+    const data = (await masterdata.searchDocuments(
+      acronym,
+      fieldsWithId,
+      where,
+      {
+        page,
+        pageSize,
+      },
+      schema
+    )) as any
+    return map((document: any) => ({
+      cacheId: document.id,
+      id: document.id,
+      fields: mapKeyAndStringifiedValues(document),
+    }))(data)
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
@@ -35,21 +41,41 @@ export const queries = {
     }
   },
 
-  documentSchema: async(_: any, args: DocumentSchemaArgs, context: Context) => {
-    const { dataEntity, schema } = args;
+  documentSchema: async (
+    _: any,
+    args: DocumentSchemaArgs,
+    context: Context
+  ) => {
+    const { dataEntity, schema } = args
 
     const {
       clients: { masterdata },
     } = context
 
-    const data = await masterdata.getSchema(dataEntity, schema);
+    const data = await masterdata.getSchema<object>(dataEntity, schema)
 
-    return {...data, name: data? args.schema : null}
+    return { ...data, name: data ? args.schema : null }
+  },
+
+  documentPublicSchema: async (
+    _: any,
+    args: DocumentSchemaArgs,
+    context: Context
+  ) => {
+    const { dataEntity, schema } = args
+
+    const {
+      clients: { masterdata },
+    } = context
+
+    const data = await masterdata.getPublicSchema<object>(dataEntity, schema)
+
+    return { schema: data }
   },
 }
 
 export const fieldResolvers = {
-  ...documentSchemaResolvers
+  ...documentSchemaResolvers,
 }
 
 export const mutations = {
@@ -61,13 +87,15 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
+      schema,
     } = args
     const {
       clients: { masterdata },
     } = context
     const response = (await masterdata.createDocument(
       acronym,
-      parseFieldsToJson(fields)
+      parseFieldsToJson(fields),
+      schema
     )) as DocumentResponse
 
     const documentId = removeAcronymFromId(acronym, response)
@@ -76,6 +104,36 @@ export const mutations = {
       id: prop('Id', response),
       href: prop('Href', response),
       documentId: removeAcronymFromId(acronym, response),
+    }
+  },
+
+  createDocumentV2: async (
+    _: any,
+    args: CreateDocumentV2Args,
+    context: Context
+  ) => {
+    const {
+      dataEntity,
+      document: { document },
+      schema,
+    } = args
+
+    const {
+      clients: { masterdata },
+    } = context
+
+    const response = (await masterdata.createDocument(
+      dataEntity,
+      document,
+      schema
+    )) as DocumentResponseV2
+
+    const documentId = removeAcronymFromId(dataEntity, response)
+    return {
+      cacheId: documentId,
+      id: prop('Id', response),
+      href: prop('Href', response),
+      documentId: documentId,
     }
   },
 

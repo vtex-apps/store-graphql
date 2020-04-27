@@ -11,7 +11,10 @@ type Query {
     Product identifier
     """
     identifier: ProductUniqueIdentifier
-  ): Product @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): Product
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Returns products list filtered and ordered
@@ -61,7 +64,24 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
-  ): ProductSearch @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): ProductSearch
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
+
+  searchMetadata(
+    """
+    Terms that is used in search e.g.: eletronics/samsung
+    """
+    query: String = ""
+    """
+    Defines terms types: Brand, Category, Department e.g.: c,b
+    """
+    map: String = ""
+  ): SearchMetadata
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Returns products list filtered and ordered
@@ -111,17 +131,26 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel. Will override any given salesChannel arg
     """
     hideUnavailableItems: Boolean = false
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Product]
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   productRecommendations(
     identifier: ProductUniqueIdentifier
     type: CrossSelingInputEnum
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Product]
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   productsByIdentifier(
     field: ProductUniqueIdentifierField!
     values: [ID!]
-  ): [Product] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Product]
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Returns facets category
@@ -144,7 +173,10 @@ type Query {
     If true, uses isAvailablePerSalesChannel_ parameter on query with segment's sales channel.
     """
     hideUnavailableItems: Boolean = false
-  ): Facets @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+  ): Facets
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Search for products. e.g.: search(query: 'eletronics', rest: 'lg', map: 'c,b')
@@ -258,7 +290,10 @@ type Query {
   """
   Returns checkout cart details
   """
-  orderForm: OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
+  orderForm: OrderForm
+    @cacheControl(scope: PRIVATE)
+    @withOrderFormId
+    @withSegment
 
   """
   Returns user orders details
@@ -297,7 +332,10 @@ type Query {
     Terms that is used in search e.g.: iphone
     """
     searchTerm: String
-  ): Suggestions @cacheControl(scope: SEGMENT, maxAge: MEDIUM) @withSegment
+  ): Suggestions
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+    @withSegment
+    @deprecated(reason: "Use the query defined in the search-graphql app")
 
   """
   Search documents
@@ -361,6 +399,17 @@ type Query {
     schema: String
   ): DocumentSchema
 
+  documentPublicSchema(
+    """
+    Data entity name.
+    """
+    dataEntity: String!
+    """
+    MasterData schema name.
+    """
+    schema: String!
+  ): DocumentSchemaV2
+
   """
   Get the benefits associated with a list of products
   """
@@ -410,11 +459,11 @@ type Query {
   """
   nearPickupPoints(
     """
-    Desired latitude coordinate, for example: -22.4321
+    Desired latitude coordinate, for example: -22.944370
     """
     lat: String!
     """
-    Desired longitude coordinate, for example: 44.10101
+    Desired longitude coordinate, for example: -43.182553
     """
     long: String!
     """
@@ -422,6 +471,23 @@ type Query {
     """
     maxDistance: Int = 50
   ): NearPickupPointQueryResponse
+
+  skuPickupSLAs(
+    itemId: String
+    seller: String
+    lat: String
+    long: String
+    country: String
+  ): [CheckoutSLA]
+
+  skuPickupSLA(
+    itemId: String
+    seller: String
+    lat: String
+    long: String
+    country: String
+    pickupId: String
+  ): CheckoutSLA
 
   """
   Get pickup point by its id
@@ -465,19 +531,37 @@ type Query {
   Get logged in user's last order
   """
   userLastOrder: Order @cacheControl(scope: PRIVATE)
+
+  checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
 }
 
 type Mutation {
   """
   Cart
   """
-  addItem(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment
-    @withOrderFormId
+  addItem(
+    """
+    Id of orderForm you want to mutate
+    """
+    orderFormId: String
+    """
+    List of items you want to add and their properties
+    """
+    items: [OrderFormItemInput]
+    """
+    Optional marketing UTM Params to add them to order form
+    """
+    utmParams: OrderFormInputUTMParams
+    """
+    Optional marketing UTMi Params to add them to order form
+    """
+    utmiParams: OrderFormInputUTMIParams
+  ): OrderForm @withSegment @withOrderFormId
   cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
   updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
     @withSegment
     @withOrderFormId
+    @cacheControl(scope: PRIVATE)
 
   """
   Used to update the CL entity on masterData.
@@ -493,7 +577,7 @@ type Mutation {
     Extra fields that can be added to the CL.
     """
     customFields: [ProfileCustomFieldInput]
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Updates one address related to a customer profile. This is the AD entity on MasterData.
@@ -508,13 +592,13 @@ type Mutation {
     Address's field.
     """
     fields: AddressInput
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Creates one address related to a customer profile. This is the AD entity on MasterData.
   The user needs to be signed in or impersonated to perform this mutation.
   """
-  createAddress(fields: AddressInput): Profile @withCurrentProfile
+  createAddress(fields: AddressInput): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Deletes an address related to a customer profile. This is the AD entity on MasterData.
@@ -525,7 +609,7 @@ type Mutation {
     Address's id.
     """
     id: String
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Updates the Profile Picture by erasing the old ones DEPRECATED
@@ -539,7 +623,7 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String @deprecated
-  ): Profile @withCurrentProfile @deprecated
+  ): Profile @withCurrentProfile @deprecated @cacheControl(scope: PRIVATE)
 
   """
   Uploads the Profile Picture by appending to the existing ones DEPRECATED
@@ -553,12 +637,12 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String
-  ): Profile @withCurrentProfile @deprecated
+  ): Profile @withCurrentProfile @deprecated @cacheControl(scope: PRIVATE)
 
   """
   Subscribe to newsletter
   """
-  subscribeNewsletter(email: String): Boolean
+  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean): Boolean @cacheControl(scope: PRIVATE)
 
   """
   Order Form
@@ -598,7 +682,7 @@ type Mutation {
   updateOrderFormCheckin(
     orderFormId: String
     checkin: OrderFormCheckinInput
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @cacheControl(scope: PRIVATE)
 
   """
   Payment
@@ -608,7 +692,7 @@ type Mutation {
     sessionId: String
     payments: [PaymentInput]
   ): [PaymentToken]
-  setPlaceholder(fields: PlaceholderInput): Boolean
+  setPlaceholder(fields: PlaceholderInput): Boolean @cacheControl(scope: PRIVATE)
 
   """
   Send access key to user email
@@ -618,7 +702,7 @@ type Mutation {
     User email
     """
     email: String!
-  ): Boolean
+  ): Boolean @cacheControl(scope: PRIVATE)
 
   """
   Access key sign in mode
@@ -632,7 +716,7 @@ type Mutation {
     Access key that was received
     """
     code: String!
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   Classic sign in mode
@@ -646,7 +730,7 @@ type Mutation {
     User password
     """
     password: String!
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   OAuth to login with Social Account
@@ -660,7 +744,7 @@ type Mutation {
     The URL to be redirected after authentication
     """
     redirectUrl: String
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   To recovery password you need to get your email, password and access code
@@ -678,7 +762,7 @@ type Mutation {
     Access Code
     """
     code: String!
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   Change password using email and old password
@@ -700,12 +784,16 @@ type Mutation {
     Your app's identification to help VTEX ID track requests
     """
     vtexIdVersion: String
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   Invalidate VtexIdclientAutCookie
   """
   logout: Boolean
+    @cacheControl(scope: PRIVATE)
+    @deprecated(
+      reason: "See https://github.com/vtex-apps/store-graphql/issues/182"
+    )
 
   """
   Impersonate a customer
@@ -715,18 +803,29 @@ type Mutation {
     The email which will be used to impersonate a user
     """
     email: String!
-  ): Session
+  ): Session @withOrderFormId @cacheControl(scope: PRIVATE)
 
   """
   Depersonify a customer
   """
   depersonify: Boolean
+    @withOrderFormId
+    @withSegment
+    @cacheControl(scope: PRIVATE)
 
   """
   Document
   """
-  createDocument(acronym: String!, document: DocumentInput): DocumentResponse
-  updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  createDocument(
+    acronym: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse
+  updateDocument(
+    acronym: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(
     acronym: String!
@@ -734,17 +833,24 @@ type Mutation {
     field: String!
     file: Upload!
   ): AttachmentResponse
+  createDocumentV2(
+    dataEntity: String!
+    document: DocumentInputV2
+    schema: String
+  ): DocumentResponseV2 @cacheControl(scope: PRIVATE)
 
   """
   List
   """
-  createList(list: ListInput): List
+  createList(list: ListInput): List @cacheControl(scope: PRIVATE)
   """
    Update the list informations and its items.
   If the item given does not have the itemId, add it as a new item in the list.
   If the item given has got an itemId, but its quantity is 0, remove it from the list.
   Otherwise, update it.
   """
-  updateList(id: ID!, list: ListInput): List
-  deleteList(id: ID!): List
+  updateList(id: ID!, list: ListInput): List @cacheControl(scope: PRIVATE)
+  deleteList(id: ID!): List @cacheControl(scope: PRIVATE)
+
+  savePickupInSession(address: OrderFormAddressInput, name: String): Session @cacheControl(scope: PRIVATE)
 }

@@ -7,15 +7,6 @@ import {
 } from '@vtex/api'
 import { checkoutCookieFormat, statusToError } from '../utils'
 
-export interface SimulationData {
-  country: string
-  items: { id: string; quantity: number | string; seller: string }[]
-  postalCode?: string
-  isCheckedIn?: boolean
-  priceTables?: string[]
-  marketingData?: Record<string, string>
-}
-
 export class Checkout extends JanusClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -30,12 +21,17 @@ export class Checkout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId } = this.context as CustomIOContext
+    const { orderFormId, segmentToken, sessionToken } = this
+      .context as CustomIOContext
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
+    const segmentTokenCookie = segmentToken
+      ? `vtex_segment=${segmentToken};`
+      : ''
+    const sessionTokenCookie = sessionToken
+      ? `vtex_session=${sessionToken};`
+      : ''
     return {
-      Cookie: `${checkoutCookie}vtex_segment=${
-        this.context.segmentToken
-      };vtex_session=${this.context.sessionToken};`,
+      Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
     }
   }
 
@@ -120,25 +116,41 @@ export class Checkout extends JanusClient {
       { metric: 'checkout-updateOrderFormMarketingData' }
     )
 
+  public updateOrderFormClientPreferencesData = (
+    orderFormId: string,
+    clientPreferencesData: OrderFormClientPreferencesData
+  ) => {
+    // The API default value of `optinNewsLetter` is `null`, but it doesn't accept a POST with its value as `null`
+    const filteredClientPreferencesData =
+      clientPreferencesData.optinNewsLetter === null
+        ? { locale: clientPreferencesData.locale }
+        : clientPreferencesData
+
+    return this.post(
+      this.routes.attachmentsData(orderFormId, 'clientPreferencesData'),
+      filteredClientPreferencesData,
+      { metric: 'checkout-updateOrderFormClientPreferencesData' }
+    )
+  }
+
   public addAssemblyOptions = async (
     orderFormId: string,
     itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
-    this.post(
+    this.post<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
       body,
       { metric: 'checkout-addAssemblyOptions' }
     )
-
   public removeAssemblyOptions = async (
     orderFormId: string,
     itemId: string | number,
     assemblyOptionsId: string,
     body: any
   ) =>
-    this.delete(
+    this.delete<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
       { metric: 'checkout-removeAssemblyOptions', data: body }
     )
@@ -164,11 +176,31 @@ export class Checkout extends JanusClient {
     )
   }
 
+  public newOrderForm = () => {
+    return this.http
+      .postRaw<OrderForm>(this.routes.orderForm, undefined, {
+        metric: 'checkout-newOrderForm',
+      })
+      .catch(statusToError) as Promise<IOResponse<OrderForm>>
+  }
+
+  public changeToAnonymousUser = () => {
+    const { orderFormId } = this.context as CustomIOContext
+
+    if (!orderFormId) {
+      throw new Error('Missing orderFormId. Use withOrderFormId directive.')
+    }
+
+    return this.get(this.routes.changeToAnonymousUser(orderFormId), {
+      metric: 'checkout-change-to-anonymous',
+    })
+  }
+
   public orders = () =>
     this.get(this.routes.orders, { metric: 'checkout-orders' })
 
-  public simulation = (simulation: SimulationData) =>
-    this.post(
+  public simulation = (simulation: SimulationPayload) =>
+    this.post<SimulationOrderForm>(
       this.routes.simulation(this.getChannelQueryString()),
       simulation,
       {
@@ -272,6 +304,8 @@ export class Checkout extends JanusClient {
       orders: `${base}/orders`,
       simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
+      changeToAnonymousUser: (orderFormId: string) =>
+        `/checkout/changeToAnonymousUser/${orderFormId}`,
     }
   }
 }

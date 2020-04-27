@@ -4,15 +4,15 @@ type Brand {
   """ Brand id """
   id: Int
   """ Brand logo """
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   """ Text link"""
   slug: String
   """ Name of brand """
-  name: String
+  name: String @translatableV2
   """ Title used by html tag"""
-  titleTag: String
+  titleTag: String @translatableV2
   """ Description used by html tag"""
-  metaTagDescription: String
+  metaTagDescription: String @translatableV2
   """ Brand is active """
   active: Boolean
 }

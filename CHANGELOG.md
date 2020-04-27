@@ -7,6 +7,280 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.120.2] - 2020-04-15
+### Changed
+- Deprecate mutation `logout`.
+
+## [2.120.1] - 2020-04-09
+### Fixed
+- Adds scope private to mutations
+
+## [2.120.0] - 2020-04-06
+### Added
+- Add `status` and `statusDescription` field.
+
+## [2.119.0] - 2020-03-18
+
+### Added
+- Clear cart when Telemarketing user ends customer's session
+
+## [2.118.0] - 2020-02-27
+
+### Changed
+- `documentSchemaV2` to `documentPublicSchema`, as the query only works with public schemas without authentication.
+
+## [2.117.0] - 2020-02-19
+
+### Added
+- `documentSchemaV2` query, get generic masterdata schema, returned as a `scalar` type as is from the request
+- `createDocumentV2` mutation, upload a `scalar` document to Master Data
+
+## [2.116.1] - 2020-02-18
+### Fixed
+- Make order form item image url use https.
+
+## [2.116.0] - 2020-02-18
+### Added
+- A optional `isNewsletterOptIn` parameter to `subscribeNewsletter` mutation.
+
+## [2.115.1] - 2020-02-14
+### Fixed
+- Fix unexpected deletion of cookies from session
+
+### Added
+- Temporary custom session client with update session fix.
+
+## [2.115.0] - 2020-02-13
+### Added
+- Create `toVtexAssets` directive.
+- Add @toVtexAssets directive in imageUrl resolvers.
+
+## [2.114.0] - 2020-02-12
+### Added
+- `canHaveAttachment` resolver in OrderFormItem.
+
+## [2.113.8] - 2020-02-04
+### Fixed
+- Fix nearPickupPoint route.
+
+## [2.113.7] - 2020-02-03
+### Changed
+- Make `pickupSLAs` query return all pickup points close to location sent, even unavailable ones.
+
+## [2.113.6] - 2020-01-28
+### Removed
+- Upload profile picture action from `uploadProfilePicture` and `updateProfilePicture` mutations.
+
+## [2.113.5] - 2020-01-10
+### Added
+- Add log when orderFormId passed in addItem and updateItem mutations is different than the one in cookie.
+
+## [2.113.4] - 2020-01-09
+### Fixed
+- Fix problem of updating order form marketing data with invalid fields and breaking addItem mutation in some ocasions.
+
+## [2.113.3] - 2020-01-07
+### Fixed
+- Make `checkProfileAllowed` return `authorized` if the user is not logged in but is in an open trade policy.
+
+## [2.113.2] - 2020-01-06
+### Changed
+- Use native promises and not bluebird anymore.
+- Other code improvements related to types and ramda update.
+
+## [2.113.1] - 2019-12-30
+### Fixed
+- Performance improvements on product category tree resolver.
+
+## [2.113.0] - 2019-12-20
+### Added
+- New field `condition` to `checkProfileAllowed`.
+
+### Changed
+- Deprecate field `allowed` from `checkProfileAllowed`.
+
+## [2.112.0] - 2019-12-20
+
+## [2.111.2] - 2019-12-18
+### Changed
+- Decode segment from segment token locally.
+
+## [2.111.1] - 2019-12-06
+### Changed
+- Adapt to TS 3.7.3.
+
+## [2.111.0] - 2019-12-05
+### Added
+- Docs folder and builder.
+
+## [2.110.0] - 2019-11-05
+### Added
+- New query `checkProfileAllowed`.
+
+## [2.109.2] - 2019-10-30
+
+## [2.109.1] - 2019-10-25
+
+## [2.109.0] - 2019-10-24
+
+## [2.108.5] - 2019-10-24
+### Deprecated
+- Deprecate the queries: `products`, `productSearch`, `product`, `searchMetadata`, `facets` and `autocomplete`. They were moved to the `search-graphql` app.
+
+## [2.108.4] - 2019-10-17
+
+## [2.108.3] - 2019-10-16
+### Fixed
+- Sync OrderForm locale with the locale currently being used by the store.
+
+## [2.108.2] - 2019-10-16
+### Changed
+- Make Checkout fields have the @translatableV2 directive.
+
+## [2.108.1] - 2019-10-09
+
+### Added
+
+- Argument **schema** on mutations `createDocument` and `updateDocument`.
+## [2.108.0] - 2019-09-30
+
+## [2.107.1] - 2019-09-26
+### Fixed
+- Use `geoCoordinates` and `geoCoordnate` on Address type.
+
+## [2.107.0] - 2019-09-24
+
+## [2.106.1] - 2019-09-24
+
+## [2.106.0] - 2019-09-19
+### Added
+- Handle Assembly Options' InputValues
+
+## [2.105.10] - 2019-09-19
+### Fixed
+- Revert scalar Upload.
+
+## [2.105.9] - 2019-09-19
+### Fixed
+- Protect against bad marketing tag argument when updating order form marketing data.
+- Remove unnecessary scalar.
+
+## [2.105.8] - 2019-09-19 [YANKED]
+### Fixed
+- Add missing scalar.
+
+## [2.105.7] - 2019-09-19
+
+## [2.105.6] - 2019-09-18
+### Fixed
+- Throw errors on `products` and `productSearch` queries when the `to` arg is greater than 2500.
+
+## [2.105.5] - 2019-09-18
+### Fixed
+- Check if undefined is passed to facets param in `facets` query.
+
+## [2.105.4] - 2019-09-18
+
+### Fixed
+
+- Transform `geoCoordinates` prop passed to `updateAddress` into `geoCoordinate`.
+
+## [2.105.3] - 2019-09-17
+
+### Fixed
+
+- Transform `geoCoordinates` prop passed to `createAddress` into `geoCoordinate`.
+
+## [2.105.2] - 2019-09-16
+### Changed
+- Decrease min replicas.
+
+## [2.105.1] - 2019-09-05
+### Added
+- Create friendly name resolver to ShippingSLA type.
+
+## [2.105.0] - 2019-09-02
+### Added
+- Create query for search metadata.
+
+## [2.104.2] - 2019-08-29
+
+## [2.104.1] - 2019-08-29
+
+## [2.102.1] - 2019-08-29
+### Changed
+- Translate terms with `messagesGraphQL` client(instead of `messages` client) before sending them to search api for `productSearch` and `facets` resolvers.
+
+## [2.104.0] - 2019-08-28
+
+## [2.103.1] - 2019-08-27
+
+## [2.102.2] - 2019-08-20
+### Fixed
+- impersonate and depersonify mutations to affect orderForm
+- Use session client instead of making requests directly
+
+## [2.102.1] - 2019-08-12
+### Fixed
+- Fix `titleTag` prop of the `Brand` type that was removed in the last release.
+
+## [2.102.0] - 2019-08-09
+### Added
+- Add more translatable fields for catalog members.
+
+## [2.101.0] - 2019-08-09
+
+### Added
+- Field `videos` to `Items`
+
+## [2.100.1] - 2019-08-08
+### Fixed
+- Returning an array of installments with `[null]`.
+
+## [2.100.0] - 2019-08-06
+### Added
+- Field `unitMultiplier` to `OrderFormItem`.
+- Field `addressId` to `OrderFormItemInput`.
+
+## [2.99.0] - 2019-08-06
+### Added
+- Add `priceTables` to `SessionProfile`.
+
+## [2.98.2] - 2019-08-05
+### Fixed
+- Fix issue where Offer resolver was not being applied.
+
+## [2.98.1] - 2019-08-01
+
+## [2.98.0] - 2019-07-29
+### Added
+- `additionalData` in `connectorResponses` in `order`.
+
+## [2.97.1] - 2019-07-29
+### Fixed
+- Bug on fetching price of assembly options, on some corner cases of assembly tree building.
+
+## [2.97.0] - 2019-07-26
+### Added
+- Capability of adding recursive assembly options on addItems mutation.
+
+### Fixed
+- Check only on recently added items to add assembly options, preventing to add options to wrong father.
+
+## [2.96.0] - 2019-07-19
+### Added
+- Field `producRefId` to `OrderFormItem`.
+- Field `productCategories` to `OrderFormItem`.
+- Field `additionalInfo` to `OrderFormItem`.
+
+## [2.95.0] - 2019-07-18
+### Fixed
+- `listsByOwner` query not returning the list information updated.
+
+## [2.94.0] - 2019-07-18
+### Fixed
+- Add `giftSkuIds` field to the `Offer` schema
+
 ## [2.93.2] - 2019-07-12
 ### Added
 - Code improvement. More types in Checkout files.
@@ -22,7 +296,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Return the sales channel country as a default country on the `shipsTo` array of countries in **logistics** query.
-- Port LogisticsDataSource to a Janus Client. 
+- Port LogisticsDataSource to a Janus Client.
 
 ## [2.92.0] - 2019-07-09
 
@@ -47,7 +321,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.90.5] - 2019-07-04
 
 ### Added
-- added `teasers` and `discountHighlights` fields in `Product` type. 
+- added `teasers` and `discountHighlights` fields in `Product` type.
 
 ## [2.90.4] - 2019-07-04
 

@@ -22,7 +22,10 @@ import {
   fieldResolvers as logisticsResolvers,
   queries as logisticsQueries,
 } from './logistics'
-import { queries as omsQueries } from './oms'
+import {
+  queries as omsQueries,
+  fieldResolvers as omsFieldResolvers,
+} from './oms'
 import {
   fieldResolvers as profileFieldResolvers,
   mutations as profileMutations,
@@ -32,10 +35,8 @@ import { resolvers as portalResolvers } from './portal'
 import {
   mutations as sessionMutations,
   queries as sessionQueries,
+  fieldResolvers as sessionResolvers,
 } from './session'
-
-// eslint-disable-next-line no-global-assign
-Promise = require('bluebird')
 
 export const resolvers = {
   ...catalogFieldResolvers,
@@ -44,6 +45,8 @@ export const resolvers = {
   ...checkoutFieldResolvers,
   ...documentFieldResolvers,
   ...logisticsResolvers,
+  ...omsFieldResolvers,
+  ...sessionResolvers,
   Mutation: {
     ...profileMutations,
     ...checkoutMutations,

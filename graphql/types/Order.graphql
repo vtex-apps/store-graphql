@@ -3,6 +3,8 @@ type Order {
   orderId: String
   orderGroup: String
   state: String
+  status: String
+  statusDescription: String
   value: Float
   salesChannel: String
   creationDate: String
@@ -38,7 +40,7 @@ type OrderItem {
   isGift: Boolean
   quantity: Int
   seller: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   detailUrl: String
   availability: String
   measurementUnit: String
@@ -92,7 +94,11 @@ type OrderItemPaymentConnectorResponse {
   tid: String
   returnCode: String
   message: String
+  """Payment Connector Additional Data Response"""
+  additionalData: ConnectorAdditionalData
 }
+
+scalar ConnectorAdditionalData
 
 type OrderItemShippingData {
   logisticsInfo: [LogisticsInfo]
@@ -111,4 +117,3 @@ type OrderItemShippingDataAddress {
   complement: String
   reference: String
 }
-

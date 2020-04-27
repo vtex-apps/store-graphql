@@ -1,6 +1,5 @@
 import { compose, last, prop, split } from 'ramda'
 
-import { toCategoryIOMessage } from '../../utils/ioMessage'
 import { getCategoryInfo } from './utils'
 
 const lastSegment = compose<string, string[], string>(
@@ -22,8 +21,8 @@ export const pathToCategoryHref = (path: string) => {
  */
 interface SafeCategory
   extends Pick<
-    Category,
-    'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
+  Category,
+  'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
   > {
   url: string | null
   children: Category[] | null
@@ -51,13 +50,7 @@ export const resolvers = {
 
     metaTagDescription: prop('MetaTagDescription'),
 
-    name: async (
-      { id, name }: SafeCategory,
-      _: any,
-      { clients: { segment } }: Context
-    ) => {
-      return toCategoryIOMessage('name')(segment, name, id)
-    },
+    titleTag: prop('Title'),
 
     slug: async (
       { id, url }: SafeCategory,
@@ -70,8 +63,6 @@ export const resolvers = {
       }
       return url ? lastSegment(url) : null
     },
-
-    titleTag: prop('Title'),
 
     children: async (
       { id, children }: SafeCategory,

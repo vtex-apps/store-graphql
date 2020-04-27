@@ -1,5 +1,5 @@
 import { UserInputError } from '@vtex/api'
-import { concat, filter, groupBy, last, map, nth, path, prop, values } from 'ramda'
+import { concat, groupBy, last, map, nth, path } from 'ramda'
 
 import { Catalog } from '../../clients/catalog'
 import { MasterData } from '../../clients/masterdata'
@@ -65,23 +65,10 @@ const deleteItems = (items: Item[], masterdata: MasterData) =>
   )
 
 const updateItems = async (items: Item[], masterdata: MasterData) => {
-  const itemsWithoutDuplicated = map(
-    (item: any) => last(item),
-    values(groupBy(prop('skuId') as any, items))
-  )
-  const itemsToBeDeleted = filter(
-    (item: Item) => path<any>(['id'], item) && path(['quantity'], item) === 0,
-    itemsWithoutDuplicated
-  )
-  const itemsToBeAdded = filter(
-    (item: Item) => !path(['id'], item),
-    itemsWithoutDuplicated
-  )
-  const itemsToBeUpdated = filter(
-    (item: Item) =>
-      path<any>(['id'], item) && path<any>(['quantity'], item) > 0,
-    itemsWithoutDuplicated
-  )
+  const itemsWithoutDuplicated = Object.values(groupBy(({ skuId }) => skuId, items)).map(itemArray => last(itemArray)) as Item[]
+  const itemsToBeDeleted = itemsWithoutDuplicated.filter(item => item?.id && item?.quantity === 0)
+  const itemsToBeAdded = itemsWithoutDuplicated.filter(item => !item?.id)
+  const itemsToBeUpdated = itemsWithoutDuplicated.filter(item => item?.id && item?.quantity > 0)
 
   deleteItems(itemsToBeDeleted, masterdata)
 
@@ -118,24 +105,18 @@ export const queries = {
     context: Context
   ) => {
     const {
-      clients: { masterdata, catalog },
+      clients: { masterdata },
     } = context
 
     const lists = (await masterdata.searchDocuments<any>(
       acronymList,
-      fields,
+      ['id'],
       `owner=${owner}`,
       { page, pageSize }
     )) as any[]
 
-    const listsWithProducts = map(async list => {
-      const items = await getListItems(
-        path(['items'], list) || [],
-        catalog,
-        masterdata
-      )
-      return { ...list, items }
-    }, lists)
+    const listsWithProducts = map(list =>
+      queries.list(_, { id: list.id }, context), lists)
 
     return Promise.all(listsWithProducts)
   },

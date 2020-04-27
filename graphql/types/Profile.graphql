@@ -1,6 +1,6 @@
 type Profile {
   """
-   email is used as cacheId
+  email is used as cacheId
   """
   cacheId: ID
   """
@@ -8,137 +8,141 @@ type Profile {
   """
   id: ID @deprecated
   """
-   User's first name
+  User's first name
   """
   firstName: String
   """
-   User's last name
+  User's last name
   """
   lastName: String
   """
-   User's profile picture (only fetched if saved as 'profilePicture')
+  User's profile picture (only fetched if saved as 'profilePicture')
   """
   profilePicture: String
   """
-   User's email
+  User's email
   """
   email: String
   """
-   Document identification. E.g. CPF, SSN, Driver License
+  Document identification. E.g. CPF, SSN, Driver License
   """
   document: String
   """
-   DEPRECATED
+  DEPRECATED
   """
   phone: String @deprecated
   """
-   User's ID
+  User's ID
   """
   userId: ID
   """
-   User's birth date
+  User's birth date
   """
   birthDate: String
   """
-   User's gender (plain unvalidated string)
+  User's gender (plain unvalidated string)
   """
   gender: String
   """
-   User' personal phone
+  User' personal phone
   """
   homePhone: String
   """
-   User's business phone
+  User's business phone
   """
   businessPhone: String
   """
-   Collection of user's address
+  Collection of user's address
   """
   address: [Address] @deprecated
   """
-   Collection of user's address
+  Collection of user's address
   """
   addresses: [Address]
   """
-   Whether the user is a corporation or not
+  Whether the user is a corporation or not
   """
   isCorporate: Boolean
   """
-   DEPRECATED
+  DEPRECATED
   """
   tradeName: String @deprecated
   """
-   User's company name
+  User's company name
   """
   corporateName: String
   """
-   User's company document (e.g. CNPJ)
+  User's company document (e.g. CNPJ)
   """
   corporateDocument: String
   """
-   User's company state registration
+  User's company state registration
   """
   stateRegistration: String
   """
-   Collection of user's payment data
+  Collection of user's payment data
   """
   payments: [PaymentProfile]
   """
-   Other fields to query
+  Other fields to query
   """
   customFields: [ProfileCustomField]
   """
-   User's last password update time
+  User's last password update time
   """
   passwordLastUpdate: String
 }
 
 """
- Custom fields to add to query
+Custom fields to add to query
 """
 type ProfileCustomField {
   """
-   Id used for caching
+  Id used for caching
   """
   cacheId: ID
   """
-   Name of the custom field
+  Name of the custom field
   """
   key: String
   """
-   Value of the custom field
+  Value of the custom field
   """
   value: String
 }
 
 """
- Profile information that is receive in session
+Profile information that is receive in session
 """
 type SessionProfile {
   """
-   profile ID
+  profile ID
   """
   id: ID
   """
-   User first name
+  User first name
   """
   firstName: String
   """
-   User last name
+  User last name
   """
   lastName: String
   """
-   User email
+  User email
   """
   email: String
   """
-   Document identification. E.g. CPF, SSN, Driver License
+  Document identification. E.g. CPF, SSN, Driver License
   """
   document: String
   """
-   User phone number
+  User phone number
   """
   phone: String
+  """
+  Price tables
+  """
+  priceTables: [String]
 }
 
 type Address {
@@ -168,61 +172,72 @@ input ProfileCustomFieldInput {
 
 input ProfileInput {
   """
-   User's email
+  User's email
   """
   email: String!
   """
-   User's first name
+  User's first name
   """
   firstName: String
   """
-   User's last name
+  User's last name
   """
   lastName: String
   """
-   Document identification. E.g. CPF, SSN, Driver License
+  Document identification. E.g. CPF, SSN, Driver License
   """
   document: String
   """
-   DEPRECATED
+  DEPRECATED
   """
   phone: String @deprecated
   """
-   User's birth date
+  User's birth date
   """
   birthDate: String
   """
-   User's gender (plain unvalidated string)
+  User's gender (plain unvalidated string)
   """
   gender: String
   """
-   User' personal phone
+  User' personal phone
   """
   homePhone: String
   """
-   User's business phone
+  User's business phone
   """
   businessPhone: String
   """
-   DEPRECATED
+  DEPRECATED
   """
   tradeName: String @deprecated
   """
-   User's company corporate name
+  User's company corporate name
   """
   corporateName: String
   """
-   User's company corporate document (e.g. CNPJ)
+  User's company corporate document (e.g. CNPJ)
   """
   corporateDocument: String
   """
-   User's company state registration
+  User's company state registration
   """
   stateRegistration: String
   """
-   Whether the user is a corporation or not
+  Whether the user is a corporation or not
   """
   isCorporate: Boolean
+}
+
+type UserCondition {
+  condition: UserConditionType
+  allowed: Boolean @deprecated(reason: "Use condition field instead")
+}
+
+enum UserConditionType {
+  authorized
+  unauthorized
+  forbidden
 }
 
 input AddressInput {

@@ -7,7 +7,7 @@ import {
 
 import { statusToError } from '../utils'
 import {
-  LogisticOuput,
+  LogisticOutput,
   LogisticPickupPoint,
 } from '../resolvers/logistics/types'
 
@@ -31,7 +31,7 @@ export class LogisticsClient extends JanusClient {
     })
 
   public nearPickupPoints = (lat: string, long: string, maxDistance = 50) =>
-    this.get<LogisticOuput>(
+    this.get<LogisticOutput>(
       this.routes.nearPickupPoints(lat, long, maxDistance),
       {
         metric: 'logistics-nearPickupPoints',
@@ -44,7 +44,7 @@ export class LogisticsClient extends JanusClient {
     })
 
   protected get = <T>(url: string, config?: RequestConfig) =>
-    this.http.get<T>(url, config).catch(statusToError)
+    this.http.get<T>(url, config).catch(statusToError) as Promise<T>
 
   private get routes() {
     const basePVT = '/api/logistics'
@@ -52,7 +52,7 @@ export class LogisticsClient extends JanusClient {
     return {
       shipping: `${basePVT}/pub/shipping/configuration`,
       nearPickupPoints: (lat: string, long: string, maxDistance: number) =>
-        `${basePVT}/pvt/configuration/pickuppoints/_search?&page=1&pageSize=100&lat=${lat}&$lon=${long}&maxDistance=${maxDistance}`,
+        `${basePVT}/pvt/configuration/pickuppoints/_search?&page=1&pageSize=100&lat=${lat}&lon=${long}&maxDistance=${maxDistance}`,
       pickUpById: (id: string) =>
         `${basePVT}/pvt/configuration/pickuppoints/${id}`,
     }

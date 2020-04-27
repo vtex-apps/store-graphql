@@ -15,11 +15,13 @@ interface AutocompleteArgs {
 }
 
 const inflightKey = ({ baseURL, url, params, headers }: RequestConfig) => {
+  const segmentToken = headers['x-vtex-segment']
+  const segmentQs = segmentToken ? `&segmentToken=${segmentToken}` : ''
   return (
     baseURL! +
     url! +
     stringify(params, { arrayFormat: 'repeat', addQueryPrefix: true }) +
-    `&segmentToken=${headers['x-vtex-segment']}`
+    segmentQs
   )
 }
 
@@ -59,6 +61,17 @@ export class Catalog extends AppClient {
       { metric: 'catalog-pagetype' }
     )
   }
+
+  public salesChannelAvailable = (email?: string) =>
+    this.get<SalesChannelAvailable[]>(
+      `/pub/saleschannel/available${
+        // If we dont pass the email query string, it will return all open Trade Policies
+        email ? `?email=${encodeURIComponent(email)}` : ''
+      }`,
+      {
+        metric: 'catalog-sales-channel-available',
+      }
+    )
 
   public product = (slug: string) =>
     this.get<Product[]>(

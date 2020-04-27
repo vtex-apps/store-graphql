@@ -3,27 +3,23 @@ import {
   last,
   map,
   omit,
-  propOr,
   reject,
-  reverse,
   split,
   toPairs,
-  length,
 } from 'ramda'
-import { Functions } from '@gocommerce/utils'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toProductIOMessage } from './../../utils/ioMessage'
 import { buildCategoryMap } from './utils'
 
+type MaybeRecord = false | Record<string, any>
 const objToNameValue = (
   keyName: string,
   valueName: string,
   record: Record<string, any>
 ) =>
-  compose(
-    reject(value => typeof value === 'boolean' && value === false),
-    map<[string, any], any>(
+  compose<Record<string, any>, [string, any][], MaybeRecord[], MaybeRecord>(
+    reject<MaybeRecord>(value => typeof value === 'boolean' && value === false),
+    map<[string, any], MaybeRecord>(
       ([key, value]) =>
         typeof value === 'string' && { [keyName]: key, [valueName]: value }
     ),
@@ -50,65 +46,66 @@ const removeTrailingSlashes = (str: string) =>
 const removeStartingSlashes = (str: string) =>
   str.startsWith('/') ? str.slice(1) : str
 
-const parseId = compose(
-  Number,
+const getLastCategory = compose<string, string, string[], string>(
   last,
   split('/'),
   removeTrailingSlashes
 )
 
-const getCategoryLevel = compose(
-  length,
+const treeStringToArray = compose(
   split('/'),
   removeTrailingSlashes,
   removeStartingSlashes
 )
 
+const findMainTree = (categoriesIds: string[], prodCategoryId: string) => {
+  const mainTree = categoriesIds.find(
+    treeIdString => getLastCategory(treeIdString) === prodCategoryId
+  )
+  if (mainTree) {
+    return treeStringToArray(mainTree)
+  }
+
+  // If we are here, did not find the specified main category ID in given strings. It is probably a bug.
+  // We will return the biggest tree we find
+
+  const trees = categoriesIds.map(treeStringToArray)
+
+  return trees.reduce(
+    (acc, currTree) => (currTree.length > acc.length ? currTree : acc),
+    []
+  )
+}
+
 const productCategoriesToCategoryTree = async (
-  {
-    categories,
-    categoriesIds,
-  }: { categories: string[]; categoriesIds: string[] },
+  { categories, categoriesIds, categoryId: prodCategoryId }: { categories: string[], categoriesIds: string[], categoryId: string },
   _: any,
-  { clients: { catalog }, vtex: { account } }: Context
+  { clients: { catalog }, vtex: { platform } }: Context
 ) => {
   if (!categories || !categoriesIds) {
     return []
   }
-  const reversedIds = reverse(categoriesIds)
-  if (!Functions.isGoCommerceAcc(account)) {
-    return reversedIds.map(categoryId => catalog.category(parseId(categoryId)))
+
+  const mainTreeIds = findMainTree(categoriesIds, prodCategoryId)
+
+  if (platform === 'vtex') {
+    return mainTreeIds.map(categoryId => catalog.category(Number(categoryId)))
   }
-  const level = Math.max(...reversedIds.map(getCategoryLevel))
-  const categoriesTree = await catalog.categories(level)
+  const categoriesTree = await catalog.categories(mainTreeIds.length)
   const categoryMap = buildCategoryMap(categoriesTree)
-  const mappedCategories = reversedIds.map(id => categoryMap[parseId(id)]).filter(Boolean)
+  const mappedCategories = mainTreeIds
+    .map(id => categoryMap[id])
+    .filter(Boolean)
 
   return mappedCategories.length ? mappedCategories : null
 }
 
 export const resolvers = {
-  Offer: {
-    teasers: propOr([], 'Teasers'),
-    discountHighlights: propOr([], 'DiscountHighLight')
-  },
   Product: {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
     categoryTree: productCategoriesToCategoryTree,
-
-    description: (
-      { description, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('description')(segment, description, productId),
-
-    productName: (
-      { productName, productId }: any,
-      _: any,
-      { clients: { segment } }: Context
-    ) => toProductIOMessage('name')(segment, productName, productId),
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -141,26 +138,58 @@ export const resolvers = {
 
     recommendations: (product: any) => product,
 
-    titleTag: ({ productTitle }: any) => productTitle,
-
     specificationGroups: (product: any) => {
-      const allSpecificationsGroups = propOr(
-        [],
-        'allSpecificationsGroups',
-        product
-      ).concat(['allSpecifications'])
+      const productSpecificationGroups = (product?.allSpecificationsGroups ?? []) as string[]
+      const allSpecificationsGroups = productSpecificationGroups.concat(['allSpecifications'])
+
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,
-          specifications: map(
-            (name: string) => ({ name, values: product[name] }),
-            product[groupName] || []
-          ),
+          specifications: (product[groupName] || []).map(
+            (name: string) => ({
+              name,
+              values: (product[name] || [])
+            })
+          )
         })
       )
       return specificationGroups || []
     },
+
+    items: (product: any) => {
+      const { allSpecifications, items, productName, description: productDescription, brand: brandName } = product
+      let productSpecifications: ProductSpecification[] = [];
+
+      (allSpecifications || []).forEach(
+        (specification: string) => {
+          let fieldValues: string[] = [];
+          (product[specification] || []).forEach(
+            (value: string) => {
+              fieldValues.push(value)
+            }
+          )
+
+          productSpecifications.push({
+            fieldName: specification,
+            fieldValues,
+          })
+        }
+      )
+
+      if (items && items.length > 0) {
+        items.forEach(
+          (item: any) => {
+            item.productSpecifications = productSpecifications
+            item.productName = productName
+            item.productDescription = productDescription
+            item.brandName = brandName
+          }
+        )
+      }
+      return items
+    }
   },
+
   OnlyProduct: {
     categoryTree: productCategoriesToCategoryTree,
   },

@@ -15,6 +15,7 @@ interface SessionProfile {
   lastName?: ObjValue
   phone?: ObjValue
   isAuthenticated?: ObjValue
+  priceTables?: ObjValue
 }
 
 interface SessionImpersonate {
