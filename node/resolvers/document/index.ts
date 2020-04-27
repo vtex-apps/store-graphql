@@ -19,7 +19,8 @@ export const queries = {
         page,
         pageSize,
       },
-      schema
+      schema,
+      sort
     )) as any
     return map((document: any) => ({
       cacheId: document.id,
