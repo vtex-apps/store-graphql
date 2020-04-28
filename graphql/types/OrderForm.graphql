@@ -18,11 +18,17 @@ type OrderForm {
   ignoreProfileData: Boolean
   totalizers: [Totalizer]
   clientProfileData: ClientProfile
+  sellers: [OrderFormSeller]
   shippingData: OrderFormShippingData
   storePreferencesData: StorePreferencesData
   itemMetadata: ItemMetadata
   checkedInPickupPointId: String
   pickupPointCheckedIn: PickupPoint
+}
+
+type OrderFormSeller {
+  id: String
+  name: String
 }
 
 type CustomData {
