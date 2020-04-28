@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Adds `sellers` to `orderForm` schema.
+- `sellers` to `orderForm` schema.
   
 ## [2.121.0] - 2020-04-27
 ### Added
