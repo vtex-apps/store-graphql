@@ -8,7 +8,7 @@ const lastSegment = compose<string, string[], string>(
 )
 
 function cleanUrl(url: string) {
-  return url.replace(/(https|http):\/\/[A-z0-9]+\.vtexcommercestable\.com\.br/, '')
+  return url.replace(/^.*(vtexcommercestable\.com\.br)/, '')
 }
 
 export const pathToCategoryHref = (path: string) => {
