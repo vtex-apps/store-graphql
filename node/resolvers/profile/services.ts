@@ -190,7 +190,7 @@ export async function saveAddress(
   } = context
 
   const addressesData = mapNewAddressToProfile(args.address, currentProfile)
-  const newId = Object.keys(addressesData)[0]
+  const [newId] = Object.keys(addressesData)
 
   await profile.updateAddress(currentProfile, addressesData)
 
@@ -225,17 +225,14 @@ function mapNewAddressToProfile(
   currentProfile: CurrentProfile,
   id: string = generateRandomName()
 ) {
-  const addressesData = {} as any
   const { geoCoordinates, ...addr } = address
-
-  addressesData[id] = JSON.stringify({
+  return {
+    [id]: JSON.stringify({
     ...addr,
     geoCoordinate: geoCoordinates,
     addressName: id,
     userId: currentProfile.userId,
-  })
-
-  return addressesData
+  }
 }
 
 interface UpdateAddressArgs {
