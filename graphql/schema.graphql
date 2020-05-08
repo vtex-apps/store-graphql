@@ -602,7 +602,18 @@ type Mutation {
   Creates one address related to a customer profile. This is the AD entity on MasterData.
   The user needs to be signed in or impersonated to perform this mutation.
   """
-  createAddress(fields: AddressInput): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
+  createAddress(fields: AddressInput): Profile
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
+    @deprecated(reason: "Prefer the saveAddress mutation instead.")
+
+  """
+  Add a new address to a customer profile. This is the AD entity on MasterData.
+  The user needs to be signed in or impersonated to perform this mutation.
+  """
+  saveAddress(address: AddressInput!): Address!
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
 
   """
   Deletes an address related to a customer profile. This is the AD entity on MasterData.
@@ -646,7 +657,8 @@ type Mutation {
   """
   Subscribe to newsletter
   """
-  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean): Boolean @cacheControl(scope: PRIVATE)
+  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean): Boolean
+    @cacheControl(scope: PRIVATE)
 
   """
   Order Form
@@ -696,7 +708,8 @@ type Mutation {
     sessionId: String
     payments: [PaymentInput]
   ): [PaymentToken]
-  setPlaceholder(fields: PlaceholderInput): Boolean @cacheControl(scope: PRIVATE)
+  setPlaceholder(fields: PlaceholderInput): Boolean
+    @cacheControl(scope: PRIVATE)
 
   """
   Send access key to user email
@@ -856,5 +869,6 @@ type Mutation {
   updateList(id: ID!, list: ListInput): List @cacheControl(scope: PRIVATE)
   deleteList(id: ID!): List @cacheControl(scope: PRIVATE)
 
-  savePickupInSession(address: OrderFormAddressInput, name: String): Session @cacheControl(scope: PRIVATE)
+  savePickupInSession(address: OrderFormAddressInput, name: String): Session
+    @cacheControl(scope: PRIVATE)
 }

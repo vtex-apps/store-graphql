@@ -6624,6 +6624,22 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
+"vtex.catalog-api-proxy@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.8.1/public/_types/react":
+  version "0.0.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.8.1/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
+
+"vtex.file-manager@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.9.4/public/_types/react":
+  version "0.0.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.9.4/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
+
+"vtex.messages@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.60.1/public/@types/vtex.messages":
+  version "1.60.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.60.1/public/@types/vtex.messages#8005189da8e3d60ad37c682052e99db5e235d142"
+
+"vtex.store-graphql@https://storev1--recorrenciaqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.122.1+build1588958298/public/@types/vtex.store-graphql":
+  version "2.122.1"
+  resolved "https://storev1--recorrenciaqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.122.1+build1588958298/public/@types/vtex.store-graphql#c3b937eea82c0d8fc13c70ec8ea1ab6c30785564"
+
 w3c-hr-time@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/w3c-hr-time/-/w3c-hr-time-1.0.1.tgz#82ac2bff63d950ea9e3189a58a65625fedf19045"

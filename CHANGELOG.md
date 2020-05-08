@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **saveAddress** mutation, this new mutation saves address to the user's profile and then returns the newly saved address.
+
+### Deprecated
+
+- **createAddress** mutation, prefer using the new **saveAddress** mutation.
 
 ## [2.122.1] - 2020-05-07
 ### Fixed
