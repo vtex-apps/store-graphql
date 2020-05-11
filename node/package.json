@@ -41,7 +41,11 @@
     "eslint": "^5.15.3",
     "eslint-config-vtex": "^10.1.0",
     "http2": "^3.3.7",
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "vtex.catalog-api-proxy": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.8.1/public/_types/react",
+    "vtex.file-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.9.4/public/_types/react",
+    "vtex.messages": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.60.1/public/@types/vtex.messages",
+    "vtex.store-graphql": "https://storev1--recorrenciaqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.122.1+build1588958298/public/@types/vtex.store-graphql"
   },
   "scripts": {
     "test": "vtex-test-tools test",

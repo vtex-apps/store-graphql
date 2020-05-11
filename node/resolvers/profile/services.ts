@@ -1,5 +1,6 @@
 import { parse } from 'cookie'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
+import { MutationSaveAddressArgs, AddressInput } from 'vtex.store-graphql'
 
 import { generateRandomName } from '../../utils'
 import { makeRequest } from '../auth'
@@ -55,7 +56,7 @@ export function getAddresses(context: Context) {
     vtex: { currentProfile },
   } = context
 
-  return profile.getUserAddresses(currentProfile).then(mapAddressesObjToList)
+  return profile.getUserAddresses(currentProfile)
 }
 
 export async function getPayments(context: Context) {
@@ -77,7 +78,7 @@ export async function getPayments(context: Context) {
   return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account
     const accountAddress = addresses.find(
-      (addr: UserAddress) => addr.addressName === availableAddresses[0]
+      addr => addr.addressName === availableAddresses[0]
     )
     return { ...cleanAccount, id: accountId, address: accountAddress }
   })
@@ -123,22 +124,13 @@ export function updateProfilePicture(mutationsName: string, context: Context) {
 
 // CRUD Address
 
-export function createAddress(context: Context, address: Address) {
+export function createAddress(context: Context, address: AddressInput) {
   const {
     clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  const addressesData = {} as any
-  const addressName = generateRandomName()
-  const { geoCoordinates, ...addr } = address
-
-  addressesData[addressName] = JSON.stringify({
-    ...addr,
-    geoCoordinate: geoCoordinates,
-    addressName,
-    userId: currentProfile.userId,
-  })
+  const addressesData = mapNewAddressToProfile(address, currentProfile)
 
   return profile
     .updateAddress(currentProfile, addressesData)
@@ -188,6 +180,27 @@ export function pickCustomFieldsFromData(customFields: string, data: any) {
   )
 }
 
+export async function saveAddress(
+  context: Context,
+  args: MutationSaveAddressArgs
+): Promise<Address> {
+  const {
+    clients: { profile },
+    vtex: { currentProfile },
+  } = context
+
+  const addressesData = mapNewAddressToProfile(args.address, currentProfile)
+  const [newId] = Object.keys(addressesData)
+
+  await profile.updateAddress(currentProfile, addressesData)
+
+  const currentAddresses = await profile.getUserAddresses(currentProfile)
+
+  return currentAddresses.find(
+    address => address.addressName === newId
+  ) as Address
+}
+
 // Aux
 
 function mapCustomFieldsToObjNStr(customFields: CustomField[] = []) {
@@ -207,10 +220,21 @@ function mapCustomFieldsToObjNStr(customFields: CustomField[] = []) {
   }
 }
 
-function mapAddressesObjToList(addressesObj: any) {
-  return Object.values<string>(addressesObj).map(stringifiedObj =>
-    JSON.parse(stringifiedObj)
-  )
+function mapNewAddressToProfile(
+  address: AddressInput,
+  currentProfile: CurrentProfile,
+  id: string = generateRandomName()
+) {
+  const { geoCoordinates, ...addr } = address
+
+  return {
+    [id]: JSON.stringify({
+      ...addr,
+      geoCoordinate: geoCoordinates,
+      addressName: id,
+      userId: currentProfile.userId,
+    }),
+  }
 }
 
 interface UpdateAddressArgs {

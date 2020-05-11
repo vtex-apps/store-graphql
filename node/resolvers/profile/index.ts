@@ -1,3 +1,6 @@
+import { path } from 'ramda'
+import { MutationSaveAddressArgs } from 'vtex.store-graphql'
+
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -6,8 +9,8 @@ import {
   updateAddress,
   updateProfile,
   updateProfilePicture,
+  saveAddress,
 } from './services'
-import { path } from 'ramda'
 
 const TRUE = 'True'
 const FALSE = 'False'
@@ -20,6 +23,9 @@ interface SubscribeNewsletterArgs {
 export const mutations = {
   createAddress: (_: any, { fields }: any, context: Context) =>
     createAddress(context, fields),
+
+  saveAddress: (_: void, args: MutationSaveAddressArgs, context: Context) =>
+    saveAddress(context, args),
 
   deleteAddress: (_: any, { id }: any, context: Context) =>
     deleteAddress(context, id),
