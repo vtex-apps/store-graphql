@@ -226,12 +226,14 @@ function mapNewAddressToProfile(
   id: string = generateRandomName()
 ) {
   const { geoCoordinates, ...addr } = address
+
   return {
     [id]: JSON.stringify({
-    ...addr,
-    geoCoordinate: geoCoordinates,
-    addressName: id,
-    userId: currentProfile.userId,
+      ...addr,
+      geoCoordinate: geoCoordinates,
+      addressName: id,
+      userId: currentProfile.userId,
+    }),
   }
 }
 
