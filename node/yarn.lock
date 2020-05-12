@@ -6636,9 +6636,9 @@ verror@1.10.0:
   version "1.60.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.60.1/public/@types/vtex.messages#8005189da8e3d60ad37c682052e99db5e235d142"
 
-"vtex.store-graphql@https://storev1--recorrenciaqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.122.1+build1588958298/public/@types/vtex.store-graphql":
-  version "2.122.1"
-  resolved "https://storev1--recorrenciaqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.122.1+build1588958298/public/@types/vtex.store-graphql#c3b937eea82c0d8fc13c70ec8ea1ab6c30785564"
+"vtex.store-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.123.0/public/@types/vtex.store-graphql":
+  version "2.123.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.123.0/public/@types/vtex.store-graphql#79f11746c99279e434100f588489023ffdfb0c1e"
 
 w3c-hr-time@^1.0.1:
   version "1.0.1"
