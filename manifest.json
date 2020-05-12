@@ -140,6 +140,9 @@
       "name": "vtex.catalog-api-proxy:catalog-proxy"
     },
     {
+      "name": "vtex.catalog-api-proxy:authenticated-catalog-proxy"
+    },
+    {
       "name": "vtex.file-manager:file-manager-read-write"
     },
     {

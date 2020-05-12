@@ -47,8 +47,10 @@ interface CatalogPageTypeResponse {
  * Docs: https://documenter.getpostman.com/view/845/catalogsystem-102/Hs44
  */
 export class Catalog extends AppClient {
+  private basePath: string
   public constructor(ctx: IOContext, opts?: InstanceOptions) {
     super('vtex.catalog-api-proxy', ctx, opts)
+    this.basePath = ctx.sessionToken ? '/proxy/authenticated/catalog' : '/proxy/catalog'
   }
 
   public pageType = (path: string, query: string = '') => {
@@ -190,7 +192,7 @@ export class Catalog extends AppClient {
 
     config.inflightKey = inflightKey
 
-    return this.http.get<T>(`/proxy/catalog${url}`, config)
+    return this.http.get<T>(`${this.basePath}${url}`, config)
   }
 
   private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
@@ -204,7 +206,7 @@ export class Catalog extends AppClient {
     }
 
     config.inflightKey = inflightKey
-    return this.http.getRaw<T>(`/proxy/catalog${url}`, config)
+    return this.http.getRaw<T>(`${this.basePath}${url}`, config)
   }
 
   private productSearchUrl = ({
