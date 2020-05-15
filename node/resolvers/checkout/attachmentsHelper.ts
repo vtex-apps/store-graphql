@@ -69,6 +69,7 @@ const addAssemblyBody = (option: OptionRequestUnit) => {
   }
 
   if (option.inputValues) {
+    body.noSplitItem = true
     body.inputValues = Object.keys(option.inputValues)
       .reduce<Record<string, string>>((acc, key) => {
         // Transforming boolean values to string
