@@ -370,7 +370,17 @@ export const mutations: Record<string, Resolver> = {
 
       // If all fields of newMarketingData are invalid, it causes checkout to answer with an error 400
       if (atLeastOneValidField) {
-        await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+        try {
+          await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+        } catch (e) {
+          ctx.vtex.logger.error({
+            message: 'Error when updating orderformmarketing data',
+            id: orderFormId,
+            chkArgs: JSON.stringify(newMarketingData),
+            graphqlArgs: JSON.stringify({ utmParams, utmiParams })
+          })
+        }
+
       }
     }
 
