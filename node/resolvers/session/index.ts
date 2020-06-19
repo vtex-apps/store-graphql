@@ -1,11 +1,10 @@
 import { serialize } from 'cookie'
 import { identity } from 'ramda'
-import { sessionFields } from './sessionResolver'
+
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
 import { vtexIdCookies } from '../../utils/vtexId'
 import { setCheckoutCookies, syncWithStoreLocale } from '../checkout'
-
-const VTEX_SESSION = 'vtex_session'
+import { VTEX_SESSION, getSession } from './service'
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
@@ -33,15 +32,7 @@ export const queries = {
    * @return Session
    */
   getSession: async (_: any, __: any, ctx: Context) => {
-    const {
-      clients: { customSession },
-      cookies,
-    } = ctx
-    const { sessionData } = await customSession.getSession(
-      cookies.get(VTEX_SESSION)!,
-      ['*']
-    )
-    return sessionFields(sessionData)
+    return getSession(ctx)
   },
 }
 

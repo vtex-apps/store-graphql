@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Get session request, add validation before making the request to retrieve the user's session.
 
 ## [2.123.3] - 2020-05-19
 ### Changed
