@@ -4,7 +4,7 @@ import { SchemaDirectiveVisitor } from 'graphql-tools'
 import jwtDecode from 'jwt-decode'
 
 import { AuthenticationError, ResolverError } from '@vtex/api'
-import { queries as sessionQueries } from '../resolvers/session'
+import { getSession } from '../resolvers/session/service'
 import { SessionFields } from '../resolvers/session/sessionResolver'
 
 export class WithCurrentProfile extends SchemaDirectiveVisitor {
@@ -34,7 +34,7 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
 function getCurrentProfileFromSession(
   context: Context
 ): Promise<CurrentProfile | null> {
-  return sessionQueries.getSession(null, null, context).then(currentSession => {
+  return getSession(context).then(currentSession => {
     const session = currentSession as SessionFields
 
     if (!session || !session.id) {
@@ -127,7 +127,7 @@ async function validatedProfile(
 function isValidCallcenterOperator(context: Context, email: string) {
   const {
     clients: { callCenterOperator, licenseManager },
-    vtex: { authToken }
+    vtex: { authToken },
   } = context
 
   return licenseManager
