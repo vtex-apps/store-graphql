@@ -142,6 +142,7 @@ declare global {
     where: string
     sort: string
     schema?: string
+    account?: string
   }
 
   interface CreateDocumentArgs {
