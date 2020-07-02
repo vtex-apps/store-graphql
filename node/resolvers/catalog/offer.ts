@@ -35,5 +35,12 @@ export const resolvers = {
     teasers: propOr([], 'Teasers'),
     giftSkuIds: propOr([], 'GiftSkuIds'),
     discountHighlights: propOr([], 'DiscountHighLight'),
+    spotPrice: (offer: Seller["commertialOffer"]) => {
+      const sellingPrice = offer.Price
+      const spotPrice: number | undefined = offer.Installments.find(({ NumberOfInstallments, Value }) => {
+        return (NumberOfInstallments === 1 && Value < sellingPrice)
+      })?.Value;
+      return spotPrice || sellingPrice
+    }
   },
 }
