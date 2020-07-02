@@ -82,7 +82,7 @@ export class MasterData extends ExternalClient {
         _where: where,
         _sort: sort,
         ...(schema ? { _schema: schema } : null),
-        ...(account ? {an: account } : null ),
+        ...(account ? { an: account } : null),
       },
     })
   }
