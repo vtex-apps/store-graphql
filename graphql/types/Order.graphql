@@ -1,14 +1,3 @@
-scalar CustomFields
-
-type CustomData {
-  customApps: [CustomApp]
-}
-type CustomApp {
-  fields: CustomFields
-  id: String
-  major: Int
-}
-
 type Order {
   allowCancellation: Boolean
   orderId: String
