@@ -168,6 +168,7 @@ type Offer {
   Installments (criteria: InstallmentsCriteria = ALL, rates: Boolean = true): [Installment]
   Price: Float
   ListPrice: Float
+  spotPrice: Float
   PriceWithoutDiscount: Float
   RewardValue: Float
   PriceValidUntil: String
