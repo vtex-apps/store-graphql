@@ -551,7 +551,7 @@ type Mutation {
     """
     Id of orderForm you want to mutate
     """
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     """
     List of items you want to add and their properties
     """
@@ -565,11 +565,14 @@ type Mutation {
     """
     utmiParams: OrderFormInputUTMIParams
   ): OrderForm @withSegment @withOrderFormId
-  cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
-  updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment
-    @withOrderFormId
-    @cacheControl(scope: PRIVATE)
+  cancelOrder(
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
+    reason: String
+  ): Boolean @withOrderFormId
+  updateItems(
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
+    items: [OrderFormItemInput]
+  ): OrderForm @withSegment @withOrderFormId @cacheControl(scope: PRIVATE)
 
   """
   Used to update the CL entity on masterData.
@@ -668,39 +671,39 @@ type Mutation {
   Order Form
   """
   updateOrderFormProfile(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     fields: OrderFormProfileInput
   ): OrderForm @withOrderFormId
   updateOrderFormShipping(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     address: OrderFormAddressInput
   ): OrderForm @withOrderFormId
   updateOrderFormPayment(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     payments: [OrderFormPaymentInput]
   ): OrderForm @withOrderFormId
   updateOrderFormIgnoreProfile(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     ignoreProfileData: Boolean
   ): OrderForm @withOrderFormId
   addOrderFormPaymentToken(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     paymentToken: OrderFormPaymentTokenInput
   ): OrderForm @withOrderFormId
   setOrderFormCustomData(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     appId: String
     field: String
     value: String
   ): OrderForm @withOrderFormId
   addAssemblyOptions(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     itemId: String
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
   ): OrderForm @withOrderFormId
   updateOrderFormCheckin(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Use the checkout cookie instead")
     checkin: OrderFormCheckinInput
   ): OrderForm @withOrderFormId @cacheControl(scope: PRIVATE)
 
