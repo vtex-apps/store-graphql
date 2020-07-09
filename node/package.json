@@ -51,5 +51,5 @@
     "test": "vtex-test-tools test",
     "lint": "tsc --noEmit && eslint --ext ts ."
   },
-  "version": "2.123.4"
+  "version": "2.124.0"
 }
