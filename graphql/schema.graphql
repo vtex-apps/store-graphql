@@ -369,6 +369,10 @@ type Query {
     Defines the Master Data schema to be used
     """
     schema: String
+    """
+    Defines which account will be required
+    """
+    account: String
   ): [Document]
 
   """
