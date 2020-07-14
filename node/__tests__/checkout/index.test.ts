@@ -149,7 +149,7 @@ it.each<any>([
   }
 )
 
-it.each([
+it.each<any>([
   [undefined, undefined],
   [{}, {}],
 ])(
