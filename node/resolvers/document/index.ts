@@ -6,7 +6,16 @@ import { resolvers as documentSchemaResolvers } from './documentSchema'
 
 export const queries = {
   documents: async (_: any, args: DocumentsArgs, context: Context) => {
-    const { acronym, fields, page, pageSize, where, schema } = args
+    const {
+      acronym,
+      fields,
+      page,
+      pageSize,
+      where,
+      schema,
+      sort,
+      account,
+    } = args
     const {
       clients: { masterdata },
     } = context
@@ -19,7 +28,9 @@ export const queries = {
         page,
         pageSize,
       },
-      schema
+      schema,
+      sort,
+      account
     )) as any
     return map((document: any) => ({
       cacheId: document.id,

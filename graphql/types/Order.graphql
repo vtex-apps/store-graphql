@@ -3,9 +3,12 @@ type Order {
   orderId: String
   orderGroup: String
   state: String
+  status: String
+  statusDescription: String
   value: Float
   salesChannel: String
   creationDate: String
+  customData: CustomData
   lastChange: String
   timeZoneCreationDate: String
   timeZoneLastChange: String
@@ -70,9 +73,9 @@ type OrderItemPaymentData {
 }
 
 type OrderItemTransactions {
-  isActive: Boolean,
-  merchantName: String,
-  payments: [OrderItemPayment],
+  isActive: Boolean
+  merchantName: String
+  payments: [OrderItemPayment]
   transactionId: String
 }
 
@@ -92,7 +95,9 @@ type OrderItemPaymentConnectorResponse {
   tid: String
   returnCode: String
   message: String
-  """Payment Connector Additional Data Response"""
+  """
+  Payment Connector Additional Data Response
+  """
   additionalData: ConnectorAdditionalData
 }
 
@@ -115,4 +120,3 @@ type OrderItemShippingDataAddress {
   complement: String
   reference: String
 }
-

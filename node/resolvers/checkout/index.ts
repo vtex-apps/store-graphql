@@ -1,3 +1,4 @@
+import { UserInputError } from '@vtex/api'
 import { compose, forEach, reject, path } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
@@ -17,7 +18,7 @@ import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
-import { UserInputError } from '@vtex/api'
+
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
 
@@ -164,7 +165,7 @@ export const fieldResolvers = {
 const replaceDomain = (host: string) => (cookie: string) =>
   cookie.replace(/domain=.+?(;|$)/, `domain=${host};`)
 
-async function syncWithStoreLocale(
+export async function syncWithStoreLocale(
   orderForm: OrderForm,
   cultureInfo: string,
   checkout: Context['clients']['checkout']
@@ -199,6 +200,25 @@ async function syncWithStoreLocale(
   return orderForm
 }
 
+export async function setCheckoutCookies(rawHeaders: Record<string, any>, ctx: Context) {
+  const responseSetCookies: string[] =
+    (rawHeaders && rawHeaders['set-cookie']) || []
+
+  const host = ctx.get('x-forwarded-host')
+  const forwardedSetCookies = responseSetCookies.filter(
+    isWhitelistedSetCookie
+  )
+  const parseAndClean = compose(
+    parseCookie,
+    replaceDomain(host)
+  )
+  const cleanCookies = forwardedSetCookies.map(parseAndClean)
+  forEach(
+    ({ name, value, options }) => ctx.cookies.set(name, value, options),
+    cleanCookies
+  )
+}
+
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
@@ -214,23 +234,7 @@ export const queries: Record<string, Resolver> = {
       checkout
     )
 
-    const rawHeaders = headers as Record<string, any>
-    const responseSetCookies: string[] =
-      (rawHeaders && rawHeaders['set-cookie']) || []
-
-    const host = ctx.get('x-forwarded-host')
-    const forwardedSetCookies = responseSetCookies.filter(
-      isWhitelistedSetCookie
-    )
-    const parseAndClean = compose(
-      parseCookie,
-      replaceDomain(host)
-    )
-    const cleanCookies = forwardedSetCookies.map(parseAndClean)
-    forEach(
-      ({ name, value, options }) => ctx.cookies.set(name, value, options),
-      cleanCookies
-    )
+    setCheckoutCookies(headers, ctx)
 
     return orderForm
   },
@@ -322,16 +326,21 @@ interface UTMIParams {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, { orderFormId, items, utmParams, utmiParams }: AddItemArgs, ctx: Context) => {
+  addItem: async (_, { orderFormId: paramsOrderFormId, items, utmParams, utmiParams }: AddItemArgs, ctx: Context) => {
     const {
       clients: { checkout },
+      vtex
     } = ctx
-    if (orderFormId == null || items == null) {
-      throw new UserInputError('No order form id or items to add provided')
+    const orderFormId = vtex.orderFormId
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
+    if (items == null) {
+      throw new UserInputError('No items to add provided')
     }
 
-    if (ctx.vtex.orderFormId !== orderFormId) {
-      ctx.vtex.logger.warn(`Different orderFormId found: provided=${orderFormId} and in cookies=${ctx.vtex.orderFormId}`)
+    if (orderFormId !== paramsOrderFormId) {
+      ctx.vtex.logger.warn(`Different orderFormId found: provided=${paramsOrderFormId} and in cookies=${orderFormId}`)
     }
 
     const { marketingData, items: previousItems } = await checkout.orderForm()
@@ -367,7 +376,17 @@ export const mutations: Record<string, Resolver> = {
 
       // If all fields of newMarketingData are invalid, it causes checkout to answer with an error 400
       if (atLeastOneValidField) {
-        await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+        try {
+          await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+        } catch (e) {
+          ctx.vtex.logger.error({
+            message: 'Error when updating orderformmarketing data',
+            id: orderFormId,
+            chkArgs: JSON.stringify(newMarketingData),
+            graphqlArgs: JSON.stringify({ utmParams, utmiParams })
+          })
+        }
+
       }
     }
 
@@ -412,47 +431,67 @@ export const mutations: Record<string, Resolver> = {
 
   setOrderFormCustomData: (
     _,
-    { orderFormId, appId, field, value },
-    { clients: { checkout } }
+    { appId, field, value },
+    { clients: { checkout }, vtex: { orderFormId } }
   ) => {
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, { orderFormId, items }, { clients: { checkout }, vtex }) => {
-    if (vtex.orderFormId !== orderFormId) {
-      vtex.logger.warn(`Different orderFormId found: provided=${orderFormId} and in cookies=${vtex.orderFormId}`)
+  updateItems: (_, { orderFormId: paramsOrderFormId, items }, { clients: { checkout }, vtex }) => {
+    const orderFormId = vtex.orderFormId
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
+    if (orderFormId !== paramsOrderFormId) {
+      vtex.logger.warn(`Different orderFormId found: provided=${paramsOrderFormId} and in cookies=${vtex.orderFormId}`)
     }
     return checkout.updateItems(orderFormId, items)
   },
 
   updateOrderFormIgnoreProfile: (
     _,
-    { orderFormId, ignoreProfileData },
-    { clients: { checkout } }
+    { ignoreProfileData },
+    { clients: { checkout }, vtex: { orderFormId } }
   ) => {
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
   },
 
   updateOrderFormPayment: (
     _,
-    { orderFormId, payments },
-    { clients: { checkout } }
+    { payments },
+    { clients: { checkout }, vtex: { orderFormId } }
   ) => {
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
   updateOrderFormProfile: (
     _,
-    { orderFormId, fields },
-    { clients: { checkout } }
+    { fields },
+    { clients: { checkout }, vtex: { orderFormId } }
   ) => {
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
-  updateOrderFormShipping: async (_, { orderFormId, address }, ctx) => {
+  updateOrderFormShipping: async (_, { address }, ctx) => {
     const {
       clients: { checkout },
+      vtex: { orderFormId }
     } = ctx
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     return checkout.updateOrderFormShipping(orderFormId, {
       clearAddressIfPostalCodeNotFound: false,
       selectedAddresses: [address],
@@ -461,9 +500,12 @@ export const mutations: Record<string, Resolver> = {
 
   addAssemblyOptions: (
     _,
-    { orderFormId, itemId, assemblyOptionsId, options },
-    { clients: { checkout } }
+    { itemId, assemblyOptionsId, options },
+    { clients: { checkout }, vtex: { orderFormId } }
   ) => {
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     const body = {
       composition: {
         items: options,
@@ -480,9 +522,12 @@ export const mutations: Record<string, Resolver> = {
 
   updateOrderFormCheckin: (
     _,
-    { orderFormId, checkin }: any,
-    { clients: { checkout } }
+    { checkin }: any,
+    { clients: { checkout }, vtex: { orderFormId } }
   ) => {
+    if (orderFormId == null) {
+      throw new Error('No orderformid in cookies')
+    }
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 }

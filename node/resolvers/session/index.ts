@@ -1,10 +1,10 @@
 import { serialize } from 'cookie'
 import { identity } from 'ramda'
-import { sessionFields } from './sessionResolver'
+
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
 import { vtexIdCookies } from '../../utils/vtexId'
-
-const VTEX_SESSION = 'vtex_session'
+import { setCheckoutCookies, syncWithStoreLocale } from '../checkout'
+import { VTEX_SESSION, getSession } from './service'
 
 const IMPERSONATED_EMAIL = 'vtex-impersonated-customer-email'
 // maxAge of 1-day defined in vtex-impersonated-customer-email cookie
@@ -32,15 +32,7 @@ export const queries = {
    * @return Session
    */
   getSession: async (_: any, __: any, ctx: Context) => {
-    const {
-      clients: { customSession },
-      cookies,
-    } = ctx
-    const { sessionData } = await customSession.getSession(
-      cookies.get(VTEX_SESSION)!,
-      ['*']
-    )
-    return sessionFields(sessionData)
+    return getSession(ctx)
   },
 }
 
@@ -92,6 +84,7 @@ export const mutations = {
     const {
       clients: { customSession, checkout },
       cookies,
+      vtex: { segment },
     } = ctx
 
     await customSession.updateSession(
@@ -102,20 +95,16 @@ export const mutations = {
       vtexIdCookies(ctx)
     )
 
-    try {
-      await checkout.changeToAnonymousUser()
-    } catch (e) {
-      // This Checkout API triggers a redirect (302).
-      // That's fine.
-    }
+    const { data, headers } = await checkout.newOrderForm()
 
-    ctx.response.set(
-      'Set-Cookie',
-      serialize(IMPERSONATED_EMAIL, '', {
-        maxAge: 0,
-        path: '/',
-      })
-    )
+    await syncWithStoreLocale(data, segment!.cultureInfo, checkout)
+
+    setCheckoutCookies(headers, ctx)
+
+    ctx.cookies.set(IMPERSONATED_EMAIL, '', {
+      maxAge: 0,
+      path: '/',
+    })
 
     return true
   },

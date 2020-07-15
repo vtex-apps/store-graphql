@@ -362,9 +362,17 @@ type Query {
     """
     where: String
     """
+    Sorts the results. eg.: _sort=firstName ASC
+    """
+    sort: String
+    """
     Defines the Master Data schema to be used
     """
     schema: String
+    """
+    Defines which account will be required
+    """
+    account: String
   ): [Document]
 
   """
@@ -543,7 +551,7 @@ type Mutation {
     """
     Id of orderForm you want to mutate
     """
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     """
     List of items you want to add and their properties
     """
@@ -557,10 +565,14 @@ type Mutation {
     """
     utmiParams: OrderFormInputUTMIParams
   ): OrderForm @withSegment @withOrderFormId
-  cancelOrder(orderFormId: String, reason: String): Boolean @withOrderFormId
-  updateItems(orderFormId: String, items: [OrderFormItemInput]): OrderForm
-    @withSegment
-    @withOrderFormId
+  cancelOrder(
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
+    reason: String
+  ): Boolean @withOrderFormId
+  updateItems(
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
+    items: [OrderFormItemInput]
+  ): OrderForm @withSegment @withOrderFormId @cacheControl(scope: PRIVATE)
 
   """
   Used to update the CL entity on masterData.
@@ -576,7 +588,7 @@ type Mutation {
     Extra fields that can be added to the CL.
     """
     customFields: [ProfileCustomFieldInput]
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Updates one address related to a customer profile. This is the AD entity on MasterData.
@@ -591,13 +603,24 @@ type Mutation {
     Address's field.
     """
     fields: AddressInput
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Creates one address related to a customer profile. This is the AD entity on MasterData.
   The user needs to be signed in or impersonated to perform this mutation.
   """
-  createAddress(fields: AddressInput): Profile @withCurrentProfile
+  createAddress(fields: AddressInput): Profile
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
+    @deprecated(reason: "Prefer the saveAddress mutation instead.")
+
+  """
+  Add a new address to a customer profile. This is the AD entity on MasterData.
+  The user needs to be signed in or impersonated to perform this mutation.
+  """
+  saveAddress(address: AddressInput!): Address!
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
 
   """
   Deletes an address related to a customer profile. This is the AD entity on MasterData.
@@ -608,7 +631,7 @@ type Mutation {
     Address's id.
     """
     id: String
-  ): Profile @withCurrentProfile
+  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Updates the Profile Picture by erasing the old ones DEPRECATED
@@ -622,7 +645,7 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String @deprecated
-  ): Profile @withCurrentProfile @deprecated
+  ): Profile @withCurrentProfile @deprecated @cacheControl(scope: PRIVATE)
 
   """
   Uploads the Profile Picture by appending to the existing ones DEPRECATED
@@ -636,52 +659,53 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String
-  ): Profile @withCurrentProfile @deprecated
+  ): Profile @withCurrentProfile @deprecated @cacheControl(scope: PRIVATE)
 
   """
   Subscribe to newsletter
   """
   subscribeNewsletter(email: String, isNewsletterOptIn: Boolean): Boolean
+    @cacheControl(scope: PRIVATE)
 
   """
   Order Form
   """
   updateOrderFormProfile(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     fields: OrderFormProfileInput
   ): OrderForm @withOrderFormId
   updateOrderFormShipping(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     address: OrderFormAddressInput
   ): OrderForm @withOrderFormId
   updateOrderFormPayment(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     payments: [OrderFormPaymentInput]
   ): OrderForm @withOrderFormId
   updateOrderFormIgnoreProfile(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     ignoreProfileData: Boolean
   ): OrderForm @withOrderFormId
   addOrderFormPaymentToken(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     paymentToken: OrderFormPaymentTokenInput
   ): OrderForm @withOrderFormId
   setOrderFormCustomData(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     appId: String
     field: String
     value: String
   ): OrderForm @withOrderFormId
   addAssemblyOptions(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     itemId: String
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
   ): OrderForm @withOrderFormId
   updateOrderFormCheckin(
-    orderFormId: String
+    orderFormId: String @deprecated(reason: "Field is no longer needed. Checkout cookie is automatically taken into account now")
     checkin: OrderFormCheckinInput
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @cacheControl(scope: PRIVATE)
 
   """
   Payment
@@ -692,6 +716,7 @@ type Mutation {
     payments: [PaymentInput]
   ): [PaymentToken]
   setPlaceholder(fields: PlaceholderInput): Boolean
+    @cacheControl(scope: PRIVATE)
 
   """
   Send access key to user email
@@ -701,7 +726,7 @@ type Mutation {
     User email
     """
     email: String!
-  ): Boolean
+  ): Boolean @cacheControl(scope: PRIVATE)
 
   """
   Access key sign in mode
@@ -715,7 +740,7 @@ type Mutation {
     Access key that was received
     """
     code: String!
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   Classic sign in mode
@@ -729,7 +754,7 @@ type Mutation {
     User password
     """
     password: String!
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   OAuth to login with Social Account
@@ -743,7 +768,7 @@ type Mutation {
     The URL to be redirected after authentication
     """
     redirectUrl: String
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   To recovery password you need to get your email, password and access code
@@ -761,7 +786,7 @@ type Mutation {
     Access Code
     """
     code: String!
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   Change password using email and old password
@@ -783,12 +808,16 @@ type Mutation {
     Your app's identification to help VTEX ID track requests
     """
     vtexIdVersion: String
-  ): String
+  ): String @cacheControl(scope: PRIVATE)
 
   """
   Invalidate VtexIdclientAutCookie
   """
   logout: Boolean
+    @cacheControl(scope: PRIVATE)
+    @deprecated(
+      reason: "See https://github.com/vtex-apps/store-graphql/issues/182"
+    )
 
   """
   Impersonate a customer
@@ -798,12 +827,15 @@ type Mutation {
     The email which will be used to impersonate a user
     """
     email: String!
-  ): Session @withOrderFormId
+  ): Session @withOrderFormId @cacheControl(scope: PRIVATE)
 
   """
   Depersonify a customer
   """
-  depersonify: Boolean @withOrderFormId
+  depersonify: Boolean
+    @withOrderFormId
+    @withSegment
+    @cacheControl(scope: PRIVATE)
 
   """
   Document
@@ -829,20 +861,21 @@ type Mutation {
     dataEntity: String!
     document: DocumentInputV2
     schema: String
-  ): DocumentResponseV2
+  ): DocumentResponseV2 @cacheControl(scope: PRIVATE)
 
   """
   List
   """
-  createList(list: ListInput): List
+  createList(list: ListInput): List @cacheControl(scope: PRIVATE)
   """
    Update the list informations and its items.
   If the item given does not have the itemId, add it as a new item in the list.
   If the item given has got an itemId, but its quantity is 0, remove it from the list.
   Otherwise, update it.
   """
-  updateList(id: ID!, list: ListInput): List
-  deleteList(id: ID!): List
+  updateList(id: ID!, list: ListInput): List @cacheControl(scope: PRIVATE)
+  deleteList(id: ID!): List @cacheControl(scope: PRIVATE)
 
   savePickupInSession(address: OrderFormAddressInput, name: String): Session
+    @cacheControl(scope: PRIVATE)
 }

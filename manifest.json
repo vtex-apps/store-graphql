@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.118.0",
+  "version": "2.126.1",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -138,6 +138,9 @@
     },
     {
       "name": "vtex.catalog-api-proxy:catalog-proxy"
+    },
+    {
+      "name": "vtex.catalog-api-proxy:authenticated-catalog-proxy"
     },
     {
       "name": "vtex.file-manager:file-manager-read-write"

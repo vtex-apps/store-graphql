@@ -70,7 +70,9 @@ export class MasterData extends ExternalClient {
     fields: string[],
     where: string,
     pagination: PaginationArgs,
-    schema?: string
+    schema?: string,
+    sort?: string,
+    account?: string
   ) => {
     return this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
@@ -78,7 +80,9 @@ export class MasterData extends ExternalClient {
       params: {
         _fields: generateFieldsArg(fields),
         _where: where,
+        _sort: sort,
         ...(schema ? { _schema: schema } : null),
+        ...(account ? { an: account } : null),
       },
     })
   }

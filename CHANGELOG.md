@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.126.1] - 2020-07-14
+### Changed
+- Use value in cookie instead of parameter `orderFormId` in Checkout mutations.
+
+### Deprecated
+- Parameter `orderFormId` from Checkout-related mutations.
+
+## [2.126.0] - 2020-07-09
+### Added
+- New `account` field on `documents` query. 
+
+## [2.125.0] - 2020-07-09
+### Added
+- Add field `CustomData` in Order Graphql.
+
+## [2.124.0] - 2020-07-09
+### Added
+- Field `spotPrice` to Product type.
+
+## [2.123.4] - 2020-06-22
+### Fixed
+- Get session request, add validation before making the request to retrieve the user's session.
+
+## [2.123.3] - 2020-05-19
+### Changed
+- Continue add item if updateOrderFormMarketingData fails and just log its error.
+
+## [2.123.2] - 2020-05-18
+### Fixed
+- Assembly options with inputValues were being split when an item is added to the `orderForm`.
+
+## [2.123.1] - 2020-05-12
+### Changed
+- Call the new catalog-api-proxy endpoint for authenticaded searches (B2B).
+
+## [2.123.0] - 2020-05-11
+### Added
+- **saveAddress** mutation, this new mutation saves address to the user's profile and then returns the newly saved address.
+
+### Deprecated
+
+- **createAddress** mutation, prefer using the new **saveAddress** mutation.
+
+## [2.122.1] - 2020-05-07
+### Fixed
+- Update regex to remove vtexcommercestable in Category resolvers to remove if http as well.
+
+## [2.122.0] - 2020-04-28
+### Added
+- `sellers` to `orderForm` schema.
+
+## [2.121.0] - 2020-04-27
+### Added
+- Add `sort` field to `documents` query
+
+## [2.120.2] - 2020-04-15
+### Changed
+- Deprecate mutation `logout`.
+
+## [2.120.1] - 2020-04-09
+### Fixed
+- Adds scope private to mutations
+
+## [2.120.0] - 2020-04-06
+### Added
+- Add `status` and `statusDescription` field.
+
+## [2.119.0] - 2020-03-18
+
+### Added
+- Clear cart when Telemarketing user ends customer's session
+
 ## [2.118.0] - 2020-02-27
 
 ### Changed

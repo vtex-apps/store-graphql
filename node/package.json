@@ -18,7 +18,7 @@
     "querystring": "^0.2.0",
     "ramda": "^0.26.1",
     "slugify": "^1.2.6",
-    "typescript": "3.7.3",
+    "typescript": "3.8.3",
     "unorm": "^1.5.0",
     "url-parse": "^1.2.0"
   },
@@ -41,11 +41,15 @@
     "eslint": "^5.15.3",
     "eslint-config-vtex": "^10.1.0",
     "http2": "^3.3.7",
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "vtex.catalog-api-proxy": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.8.1/public/_types/react",
+    "vtex.file-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.9.4/public/_types/react",
+    "vtex.messages": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.60.1/public/@types/vtex.messages",
+    "vtex.store-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.123.0/public/@types/vtex.store-graphql"
   },
   "scripts": {
     "test": "vtex-test-tools test",
     "lint": "tsc --noEmit && eslint --ext ts ."
   },
-  "version": "2.118.0"
+  "version": "2.126.1"
 }
