@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- `LogisticItem` type on `shipping` query
+
 ## [2.126.1] - 2020-07-14
 ### Changed
 - Use value in cookie instead of parameter `orderFormId` in Checkout mutations.

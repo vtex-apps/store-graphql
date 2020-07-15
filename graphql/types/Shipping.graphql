@@ -1,4 +1,5 @@
 type ShippingData {
+  items: [LogisticsItem]
   logisticsInfo: [LogisticsInfo]
   messages: [MessageInfo]
 }
@@ -38,6 +39,22 @@ type DeliveryIds {
   dockId: String
   courierName: String
   quantity: Int
+}
+
+type LogisticsItem {
+  id: String
+  requestIndex: Int
+  quantity: Int
+  seller: String
+  tax: Int
+  priceValidUntil: String
+  price: Int
+  listPrice: Int
+  rewardValue: Int
+  sellingPrice: Int
+  measurementUnit: String
+  unitMultiplier: Int
+  availability: String
 }
 
 input ShippingItem {
