@@ -46,6 +46,7 @@ type LogisticsItem {
   requestIndex: Int
   quantity: Int
   seller: String
+  sellerChain: [String]
   tax: Int
   priceValidUntil: String
   price: Int
