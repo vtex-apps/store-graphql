@@ -155,6 +155,18 @@ export class Checkout extends JanusClient {
       { metric: 'checkout-removeAssemblyOptions', data: body }
     )
 
+  public addItemAttachment = async (
+    orderFormId: string,
+    itemId: string | number,
+    attachmentName: string,
+    body: any
+  ) =>
+    this.post<OrderForm>(
+      this.routes.itemAttachment(orderFormId, itemId, attachmentName),
+      body,
+      { metric: 'checkout-addItemAttachment' }
+    )
+
   public updateOrderFormCheckin = (orderFormId: string, checkinPayload: any) =>
     this.post(this.routes.checkin(orderFormId), checkinPayload, {
       metric: 'checkout-updateOrderFormCheckin',
@@ -298,6 +310,14 @@ export class Checkout extends JanusClient {
         assemblyOptionsId: string
       ) =>
         `${base}/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
+      itemAttachment: (
+        orderFormId: string,
+        itemId: string | number,
+        attachmentName: string
+      ) =>
+        `${base}/orderForm/${orderFormId}/items/${itemId}/attachments/${encodeURI(
+          attachmentName
+        )}`,
       checkin: (orderFormId: string) =>
         `${base}/orderForm/${orderFormId}/checkIn`,
       orderForm: `${base}/orderForm`,

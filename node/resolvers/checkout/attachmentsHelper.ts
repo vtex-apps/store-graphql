@@ -169,13 +169,24 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
 
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
+    const assemblyBody = addAssemblyBody(parsedOptions)
     recentOrderForm = await checkout
       .addAssemblyOptions(
-        orderForm.orderFormId,
+        orderForm.orderFormId!,
         itemIndex,
         assemblyId,
-        addAssemblyBody(parsedOptions)
+        assemblyBody
       )
+      .then((newOrderForm) => {
+        if (!parsedOptions.inputValues) {
+          return newOrderForm
+        }
+
+        return checkout.addItemAttachment(orderForm.orderFormId!, itemIndex, assemblyId, {
+          content: parsedOptions.inputValues,
+          noSplitItem: true,
+        })
+      })
       .catch(() => recentOrderForm)
   }
 
