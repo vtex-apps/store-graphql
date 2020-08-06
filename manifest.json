@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema",
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "3.0.0",
+  "version": "3.0.1-beta.0",
   "title": "Store GraphQL",
   "description": "A Graph containing all VTEX's commerce APIs",
   "builders": {
