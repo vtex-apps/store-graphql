@@ -1,0 +1,16 @@
+{
+  "stack": "nodejs",
+  "memory": 258,
+  "ttl": 30,
+  "timeout": 10,
+  "minReplicas": 2,
+  "maxReplicas": 30,
+  "workers": 4,
+  "cpu": 30,
+  "routes": {
+    "graphql": {
+      "public": true,
+      "path": "/graphql"
+    }
+  }
+}

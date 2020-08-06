@@ -1,0 +1,6 @@
+{
+  "extends": "tslint-config-vtex",
+  "rules": {
+    "variable-name": [true, "allow-pascal-case"]
+  }
+}

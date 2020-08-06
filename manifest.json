@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema",
+  "vendor": "vtex",
+  "name": "store-graphql",
+  "version": "3.0.0",
+  "title": "Store GraphQL",
+  "description": "A Graph containing all VTEX's commerce APIs",
+  "builders": {
+    "node": "6.x"
+  },
+  "dependencies": {
+    "vtex.search-resolver": "0.x",
+    "vtex.checkout-graphql": "0.x"
+  },
+  "credentialType": "absolute",
+  "policies": [
+    {
+      "name": "graphql-query"
+    },
+    {
+      "attrs": {
+        "host": "*",
+        "path": "*"
+      },
+      "name": "outbound-access"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "version": "1.62.6",
+  "dependencies": {
+    "@apollo/federation": "^0.18.1",
+    "@graphql-tools/delegate": "^6.0.15",
+    "@graphql-tools/merge": "^6.0.15",
+    "@graphql-tools/wrap": "^6.0.15",
+    "@types/co-body": "^5.1.0",
+    "apollo-server-core": "^2.16.1",
+    "co-body": "^6.0.0",
+    "graphql": "^15.3.0",
+    "isomorphic-unfetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vtex/api": "6.36.0",
+    "typescript": "3.8.3"
+  }
+}
