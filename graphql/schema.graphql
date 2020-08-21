@@ -300,6 +300,7 @@ type Query {
   """
   orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
 
+
   """
   Returns a specified user order
   """
@@ -878,4 +879,9 @@ type Mutation {
 
   savePickupInSession(address: OrderFormAddressInput, name: String): Session
     @cacheControl(scope: PRIVATE)
+
+  """
+  Set new orderForm.
+  """
+  newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }

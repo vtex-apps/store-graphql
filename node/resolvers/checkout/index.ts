@@ -530,4 +530,18 @@ export const mutations: Record<string, Resolver> = {
     }
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
+
+  newOrderForm: async (_, { orderFormId }, ctx) => {
+    console.log("orderFormId", orderFormId)
+
+    const {
+      clients: { checkout },
+    } = ctx
+
+    const { data, headers } = await checkout.newOrderForm(orderFormId)
+    
+    setCheckoutCookies(headers, ctx)
+
+    return data
+  },
 }
