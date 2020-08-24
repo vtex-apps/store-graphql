@@ -532,8 +532,6 @@ export const mutations: Record<string, Resolver> = {
   },
 
   newOrderForm: async (_, { orderFormId }, ctx) => {
-    console.log("orderFormId", orderFormId)
-
     const {
       clients: { checkout },
     } = ctx
