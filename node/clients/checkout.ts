@@ -300,7 +300,7 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       checkin: (orderFormId: string) =>
         `${base}/orderForm/${orderFormId}/checkIn`,
-      orderForm: (orderFormId?: string) =>`${base}/orderForm/${orderFormId}`,
+      orderForm: (orderFormId?: string) => `${base}/orderForm/${orderFormId ?? ''}`,
       orders: `${base}/orders`,
       simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
