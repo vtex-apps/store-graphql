@@ -300,7 +300,6 @@ type Query {
   """
   orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
 
-
   """
   Returns a specified user order
   """

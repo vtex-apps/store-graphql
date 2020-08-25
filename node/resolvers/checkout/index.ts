@@ -538,7 +538,7 @@ export const mutations: Record<string, Resolver> = {
 
     const { data, headers } = await checkout.newOrderForm(orderFormId)
     
-    setCheckoutCookies(headers, ctx)
+    await setCheckoutCookies(headers, ctx)
 
     return data
   },
