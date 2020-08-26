@@ -310,7 +310,7 @@ type Mutation {
 
   """ Document """
   createDocument(acronym: String!, document: DocumentInput): DocumentResponse
-  updateDocument(acronym: String!, document: DocumentInput): DocumentResponse
+  updateDocument(acronym: String!, document: DocumentInput, account: String): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(acronym: String!, documentId: String!, field: String!, file: Upload!): AttachmentResponse
 
