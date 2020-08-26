@@ -848,8 +848,8 @@ type Mutation {
   updateDocument(
     acronym: String!
     document: DocumentInput
+    account: String
     schema: String
-    accountName: String
   ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(

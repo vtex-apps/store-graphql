@@ -156,7 +156,7 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
-      accountName
+      account: accountName
     } = args
     const documentId = prop('id', parseFieldsToJson(fields)) as string
     if (!documentId) {
