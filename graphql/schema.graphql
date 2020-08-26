@@ -849,7 +849,7 @@ type Mutation {
     acronym: String!
     document: DocumentInput
     schema: String
-    account: String
+    accountName: String
   ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
   uploadAttachment(
