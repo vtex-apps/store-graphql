@@ -1,11 +1,11 @@
+import { ResolverError } from '@vtex/api'
 import FormData from 'form-data'
 
-import ResolverError from '../../errors/resolverError'
 import { generateRandomName } from '../../utils'
 
-export const uploadAttachment = async (args: any, ctx: any) => {
+export async function uploadAttachment(args: any, ctx: Context) {
   const {
-    dataSources: { document },
+    clients: { masterdata },
   } = ctx
   const { acronym, documentId, field, file } = args
   const { createReadStream, filename, mimetype } = await file
@@ -29,7 +29,7 @@ export const uploadAttachment = async (args: any, ctx: any) => {
     knownLength: buffer.byteLength,
   })
 
-  const response = await document.uploadAttachment(
+  const response = await masterdata.uploadAttachment(
     acronym,
     documentId,
     field,
@@ -37,7 +37,7 @@ export const uploadAttachment = async (args: any, ctx: any) => {
   )
 
   if (response) {
-    throw new ResolverError(response, 500)
+    throw new ResolverError(response)
   }
 
   return { filename: randomName, mimetype }

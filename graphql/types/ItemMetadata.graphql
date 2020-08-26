@@ -10,17 +10,18 @@ type ItemPriceTable {
 
 type PriceTableItem {
   id: String
+  assemblyId: String
   price: Int
 }
 
 type ItemMetadataUnit {
   id: ID
-  name: String
-  skuName: String
+  name: String @translatableV2
+  skuName: String @translatableV2
   productId: String
   refId: String
   ean: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   detailUrl: String
   seller: String
   assemblyOptions: [AssemblyOption]
@@ -28,7 +29,7 @@ type ItemMetadataUnit {
 
 type AssemblyOption {
   id: ID
-  name: String
+  name: String @translatableV2
   required: Boolean
   composition: CompositionType
 }
@@ -49,8 +50,10 @@ type CompositionItem {
 }
 
 input AssemblyOptionInput {
-  id: ID!
-  quantity: Int!
   assemblyId: String!
-  seller: String!
+  id: ID
+  quantity: Int
+  seller: String
+  inputValues: InputValues
+  options: [AssemblyOptionInput!]
 }

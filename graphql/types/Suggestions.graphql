@@ -6,8 +6,9 @@ type Suggestions {
 
 type Items {
   thumb: String
-  name: IOMessage
+  name: String @translatableV2
   href: String
   criteria: String
   slug: String
+  productId: String
 }

@@ -1,0 +1,69 @@
+{
+  "files": [
+    "docs/README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "regis-samurai",
+      "name": "Reginaldo",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/38638226?v=4",
+      "profile": "https://github.com/regis-samurai",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "juliomoreira",
+      "name": "Julio Moreira",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1207017?v=4",
+      "profile": "https://github.com/juliomoreira",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "gustavopvasconcellos",
+      "name": "gustavopvasconcellos",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/49173685?v=4",
+      "profile": "https://github.com/gustavopvasconcellos",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lucasayb",
+      "name": "Lucas Yamamoto",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/17356081?v=4",
+      "profile": "https://github.com/lucasayb",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lucaspacheco-acct",
+      "name": "Lucas Pacheco",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/59736416?v=4",
+      "profile": "https://github.com/lucaspacheco-acct",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "BeatrizMiranda",
+      "name": "Beatriz Miranda",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/28959326?v=4",
+      "profile": "https://github.com/BeatrizMiranda",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "store-graphql",
+  "projectOwner": "vtex-apps",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

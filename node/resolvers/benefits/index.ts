@@ -9,13 +9,13 @@ const DEFAULT_QUANTITY = '1'
 
 export const fieldResolvers = {
   Benefit: {
-    items: async (benefit: any, _: any, {dataSources: {catalog}}: Context) => {
+    items: async (benefit: any, _: any, {clients: {catalog}}: Context) => {
       const { teaserType, conditions, effects } = benefit
 
       if (teaserType === CATALOG) {
         const {
           parameters: conditionsParameters,
-          minimumQuantity = parseInt(DEFAULT_QUANTITY), // tslint:disable-line:radix
+          minimumQuantity = parseInt(DEFAULT_QUANTITY, 10),
         } = conditions
 
         const { parameters: effectsParameters } = effects

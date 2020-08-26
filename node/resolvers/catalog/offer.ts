@@ -1,4 +1,4 @@
-import { comparator, filter, gte, head, lte, prop, sort } from 'ramda'
+import { gte, lte, propOr } from 'ramda'
 
 const InstallmentsCriteria = {
   ALL: 'ALL',
@@ -8,18 +8,39 @@ const InstallmentsCriteria = {
 
 export const resolvers = {
   Offer: {
-    Installments: ({ Installments }: any, { criteria, rates }: any) => {
-      if (criteria === InstallmentsCriteria.ALL) {
+    Installments: (
+      { Installments }: any,
+      { criteria, rates }: { criteria?: string; rates?: boolean }
+    ) => {
+      if (criteria === InstallmentsCriteria.ALL || Installments.length === 0) {
         return Installments
       }
       const filteredInstallments = !rates
         ? Installments
-        : filter(({ InterestRate }) => !InterestRate, Installments)
+        : Installments.filter(({ InterestRate }: any) => !InterestRate)
 
       const compareFunc = criteria === InstallmentsCriteria.MAX ? gte : lte
-      const byNumberOfInstallments = comparator((previous: any, next) => compareFunc(previous.NumberOfInstallments, next.NumberOfInstallments))
-      return [head(sort(byNumberOfInstallments, filteredInstallments))]
+      const value = filteredInstallments.reduce(
+        (acc: any, currentValue: any) =>
+          compareFunc(
+            currentValue.NumberOfInstallments,
+            acc.NumberOfInstallments
+          )
+            ? currentValue
+            : acc,
+        filteredInstallments[0]
+      )
+      return [value]
     },
-    discountHighlights: prop('DiscountHighLight')
-  }
+    teasers: propOr([], 'Teasers'),
+    giftSkuIds: propOr([], 'GiftSkuIds'),
+    discountHighlights: propOr([], 'DiscountHighLight'),
+    spotPrice: (offer: Seller["commertialOffer"]) => {
+      const sellingPrice = offer.Price
+      const spotPrice: number | undefined = offer.Installments.find(({ NumberOfInstallments, Value }) => {
+        return (NumberOfInstallments === 1 && Value < sellingPrice)
+      })?.Value;
+      return spotPrice || sellingPrice
+    }
+  },
 }

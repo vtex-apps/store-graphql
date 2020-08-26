@@ -1,15 +1,12 @@
-import { IOClients, IOContext, MetricsAccumulator, SegmentData, ServiceContext } from '@vtex/api'
+import {
+  IOContext,
+  MetricsAccumulator,
+  SegmentData,
+  ServiceContext,
+} from '@vtex/api'
 
-import { CallcenterOperatorDataSource } from './dataSources/callcenterOperator'
-import { CatalogDataSource } from './dataSources/catalog'
-import { CheckoutDataSource } from './dataSources/checkout'
-import { DocumentDataSource } from './dataSources/document'
+import { Clients } from './clients'
 import { IdentityDataSource } from './dataSources/identity'
-import { LicenseManagerDataSource } from './dataSources/licenseManager'
-import { LogisticsDataSource } from './dataSources/logistics'
-import { OMSDataSource } from './dataSources/oms'
-import { ProfileDataSource } from './dataSources/profile'
-import { SessionDataSource } from './dataSources/session'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -17,7 +14,7 @@ if (!global.metrics) {
 }
 
 declare global {
-  type Context = ServiceContext<IOClients, void, CustomContext>
+  type Context = ServiceContext<Clients, void, CustomContext>
 
   interface CustomContext {
     cookie: string
@@ -29,41 +26,11 @@ declare global {
   interface CustomIOContext extends IOContext {
     currentProfile: CurrentProfile
     segment?: SegmentData
+    orderFormId?: string
   }
 
   interface StoreGraphQLDataSources {
-    catalog: CatalogDataSource
-    checkout: CheckoutDataSource
-    document: DocumentDataSource
     identity: IdentityDataSource
-    licenseManager: LicenseManagerDataSource
-    logistics: LogisticsDataSource
-    profile: ProfileDataSource
-    session: SessionDataSource
-    callcenterOperator: CallcenterOperatorDataSource
-    oms: OMSDataSource
-  }
-
-  interface OrderFormItem {
-    id: string
-    name: string
-    detailUrl: string
-    imageUrl: string
-    skuName: string
-    quantity: number
-    uniqueId: string
-    productId: string
-    refId: string
-    ean: string
-    priceValidUntil: string
-    price: number
-    tax: number
-    listPrice: number
-    sellingPrice: number
-    rewardValue: number
-    isGift: boolean
-    parentItemIndex: number
-    parentAssemblyBinding: string
   }
 
   interface UserAddress {
@@ -103,7 +70,7 @@ declare global {
     reference?: string
     addressName?: string
     addressType?: string
-    geoCoordinate?: string
+    geoCoordinates?: string
   }
 
   interface Profile {
@@ -122,6 +89,7 @@ declare global {
     corporateDocument?: string
     stateRegistration?: string
     addresses?: Address[]
+    tradeName?: string
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
   }
@@ -141,5 +109,105 @@ declare global {
     paymentSystemName: string
     carNumber: string
     address: Address
+  }
+
+  interface DocumentResponse {
+    Id: string
+    Href: string
+    DocumentId: string
+  }
+
+  interface DocumentResponseV2 {
+    Id: string
+    Href: string
+    DocumentId: string
+  }
+
+  interface DocumentArgs {
+    acronym: string
+    fields: string[]
+    id: string
+  }
+
+  interface DocumentSchemaArgs {
+    dataEntity: string
+    schema: string
+  }
+
+  interface DocumentsArgs {
+    acronym: string
+    fields: string[]
+    page: number
+    pageSize: number
+    where: string
+    sort: string
+    schema?: string
+    account?: string
+  }
+
+  interface CreateDocumentArgs {
+    acronym: string
+    document: { fields: KeyValue[] }
+    schema?: string
+  }
+
+  interface CreateDocumentV2Args {
+    dataEntity: string
+    document: { document: any }
+    schema?: string
+  }
+
+  interface UpdateDocumentArgs {
+    acronym: string
+    document: { fields: KeyValue[] }
+    schema?: string
+  }
+
+  interface DeleteDocumentArgs {
+    acronym: string
+    documentId: string
+  }
+
+  interface KeyValue {
+    key: string
+    value: string
+  }
+
+  interface IncomingFile {
+    filename: string
+    mimetype: string
+    encoding: string
+  }
+
+  interface SKU {
+    itemId: string
+    name: string
+    nameComplete: string
+    productName: string
+    productDescription: string
+    brandName: string
+    variations: [Property]
+    skuSpecifications: [SkuSpecification]
+    productSpecifications: [ProductSpecification]
+  }
+
+  interface Property {
+    name: string
+    values: [string]
+  }
+
+  interface SkuSpecification {
+    fieldName: string
+    fieldValues: string[]
+  }
+
+  interface ProductSpecification {
+    fieldName: string
+    fieldValues: string[]
+  }
+
+  interface Reference {
+    Key: string
+    Value: string
   }
 }

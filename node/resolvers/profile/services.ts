@@ -1,16 +1,14 @@
-import { makeRequest } from './../auth/index'
-
+import { parse } from 'cookie'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
+import { MutationSaveAddressArgs, AddressInput } from 'vtex.store-graphql'
 
 import { generateRandomName } from '../../utils'
-import { uploadAttachment } from '../document/attachment'
+import { makeRequest } from '../auth'
 import paths from '../paths'
-
-import { parse } from 'cookie'
 
 export function getProfile(context: Context, customFields?: string) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
@@ -19,7 +17,7 @@ export function getProfile(context: Context, customFields?: string) {
     : `profilePicture,id`
 
   return profile
-    .getProfileInfo(currentProfile.email, extraFields)
+    .getProfileInfo(currentProfile, extraFields)
     .then(profileData => {
       if (profileData) {
         return {
@@ -33,33 +31,41 @@ export function getProfile(context: Context, customFields?: string) {
 }
 
 export function getPasswordLastUpdate(context: Context) {
-  const { request: { headers: { cookie } }, vtex: { account } } = context
+  const {
+    request: {
+      headers: { cookie },
+    },
+    vtex: { account },
+  } = context
   const url = paths.getUser(account)
   const parsedCookies = parse(cookie)
   const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
-  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then((response: any) => {
-    return response.data.passwordLastUpdate
-  })
+
+  if (!userCookie) return null
+
+  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then(
+    (response: any) => {
+      return response.data.passwordLastUpdate
+    }
+  )
 }
 
 export function getAddresses(context: Context) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  return profile
-    .getUserAddresses(currentProfile.email)
-    .then(mapAddressesObjToList)
+  return profile.getUserAddresses(currentProfile)
 }
 
 export async function getPayments(context: Context) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  const paymentsRawData = await profile.getUserPayments(currentProfile.email)
+  const paymentsRawData = await profile.getUserPayments(currentProfile)
 
   if (!paymentsRawData) {
     return null
@@ -72,7 +78,7 @@ export async function getPayments(context: Context) {
   return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account
     const accountAddress = addresses.find(
-      (addr: UserAddress) => addr.addressName === availableAddresses[0]
+      addr => addr.addressName === availableAddresses[0]
     )
     return { ...cleanAccount, id: accountId, address: accountAddress }
   })
@@ -84,7 +90,7 @@ export async function updateProfile(
   customFields: CustomField[] | undefined
 ) {
   const {
-    dataSources,
+    clients,
     vtex: { currentProfile },
   } = context
 
@@ -92,91 +98,74 @@ export async function updateProfile(
 
   const newData = {
     ...profile,
-    ...extraFields && extraFields.customFieldsObj,
+    // Read the comments in Profile in fieldResolvers.ts files
+    // to understand the following transformations
+    businessDocument: profile.corporateDocument,
+    isPJ: profile.isCorporate ? 'True' : 'False',
+    fancyName: profile.tradeName,
+    ...(extraFields && extraFields.customFieldsObj),
   }
 
-  return dataSources.profile
+  return clients.profile
     .updateProfileInfo(
-      currentProfile.email,
+      currentProfile,
       newData,
       extraFields && extraFields.customFieldsStr
     )
     .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
 }
 
-export async function updateProfilePicture(context: Context, file: string) {
-  const {
-    dataSources: { profile },
-    vtex: { currentProfile },
-  } = context
-
-  const field = 'profilePicture'
-
-  const { id } = await profile.getProfileInfo(currentProfile.email, 'id')
-
-  await profile.updateProfileInfo(
-    currentProfile.email,
-    { profilePicture: '' },
-    'profilePicture'
+export function updateProfilePicture(mutationsName: string, context: Context) {
+  console.warn(
+    `The ${mutationsName} mutation is deprecated and no longer supported.`
   )
-
-  await uploadAttachment(
-    { acronym: 'CL', documentId: id, field, file },
-    context
-  )
-
   return getProfile(context)
 }
 
 // CRUD Address
 
-export function createAddress(context: Context, address: Address) {
+export function createAddress(context: Context, address: AddressInput) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  const addressesData = {} as any
-  const addressName = generateRandomName()
-  addressesData[addressName] = JSON.stringify({
-    ...address,
-    addressName,
-    userId: currentProfile.userId,
-  })
+  const addressesData = mapNewAddressToProfile(address, currentProfile)
 
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .updateAddress(currentProfile, addressesData)
     .then(() => getProfile(context))
 }
 
 export function deleteAddress(context: Context, addressName: string) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
   return profile
-    .deleteAddress(currentProfile.email, addressName)
+    .deleteAddress(currentProfile, addressName)
     .then(() => getProfile(context))
 }
 
 export function updateAddress(
   context: Context,
-  { id, fields }: UpdateAddressArgs
+  { id, fields: { geoCoordinates, ...addressFields } }: UpdateAddressArgs
 ) {
   const {
-    dataSources: { profile },
+    clients: { profile },
     vtex: { currentProfile },
   } = context
 
   const addressesData = {} as any
   addressesData[id] = JSON.stringify({
-    ...fields,
+    ...addressFields,
+    geoCoordinate: geoCoordinates,
     userId: currentProfile.userId,
   })
 
   return profile
-    .updateAddress(currentProfile.email, addressesData)
+    .updateAddress(currentProfile, addressesData)
     .then(() => getProfile(context))
 }
 
@@ -186,9 +175,30 @@ export function pickCustomFieldsFromData(customFields: string, data: any) {
     compose(
       values,
       mapObjIndexed((value, key) => ({ key, value })),
-      pick(split(',', customFields))
+      pick(split(',', customFields)) as any
     )(data)
   )
+}
+
+export async function saveAddress(
+  context: Context,
+  args: MutationSaveAddressArgs
+): Promise<Address> {
+  const {
+    clients: { profile },
+    vtex: { currentProfile },
+  } = context
+
+  const addressesData = mapNewAddressToProfile(args.address, currentProfile)
+  const [newId] = Object.keys(addressesData)
+
+  await profile.updateAddress(currentProfile, addressesData)
+
+  const currentAddresses = await profile.getUserAddresses(currentProfile)
+
+  return currentAddresses.find(
+    address => address.addressName === newId
+  ) as Address
 }
 
 // Aux
@@ -210,10 +220,21 @@ function mapCustomFieldsToObjNStr(customFields: CustomField[] = []) {
   }
 }
 
-function mapAddressesObjToList(addressesObj: any) {
-  return Object.values<string>(addressesObj).map(stringifiedObj =>
-    JSON.parse(stringifiedObj)
-  )
+function mapNewAddressToProfile(
+  address: AddressInput,
+  currentProfile: CurrentProfile,
+  id: string = generateRandomName()
+) {
+  const { geoCoordinates, ...addr } = address
+
+  return {
+    [id]: JSON.stringify({
+      ...addr,
+      geoCoordinate: geoCoordinates,
+      addressName: id,
+      userId: currentProfile.userId,
+    }),
+  }
 }
 
 interface UpdateAddressArgs {

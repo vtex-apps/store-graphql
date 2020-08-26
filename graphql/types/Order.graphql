@@ -3,12 +3,16 @@ type Order {
   orderId: String
   orderGroup: String
   state: String
+  status: String
+  statusDescription: String
   value: Float
   salesChannel: String
   creationDate: String
+  customData: CustomData
   lastChange: String
   timeZoneCreationDate: String
   timeZoneLastChange: String
+  invoicedDate: String
   isCompleted: Boolean
   items: [OrderItem]
   sellers: [OrderItemSeller]
@@ -32,11 +36,12 @@ type OrderItem {
   rewardValue: Float
   additionalInfo: OrderItemAdditionalInfo
   preSaleDate: String
+  productCategoryIds: String
   handling: Boolean
   isGift: Boolean
   quantity: Int
   seller: String
-  imageUrl: String
+  imageUrl: String @toVtexAssets
   detailUrl: String
   availability: String
   measurementUnit: String
@@ -68,9 +73,9 @@ type OrderItemPaymentData {
 }
 
 type OrderItemTransactions {
-  isActive: Boolean,
-  merchantName: String,
-  payments: [OrderItemPayment],
+  isActive: Boolean
+  merchantName: String
+  payments: [OrderItemPayment]
   transactionId: String
 }
 
@@ -90,7 +95,13 @@ type OrderItemPaymentConnectorResponse {
   tid: String
   returnCode: String
   message: String
+  """
+  Payment Connector Additional Data Response
+  """
+  additionalData: ConnectorAdditionalData
 }
+
+scalar ConnectorAdditionalData
 
 type OrderItemShippingData {
   logisticsInfo: [LogisticsInfo]
@@ -109,4 +120,3 @@ type OrderItemShippingDataAddress {
   complement: String
   reference: String
 }
-

@@ -1,73 +1,79 @@
-import { compose, find, last, path, prop, split } from 'ramda'
-import { toIOMessage } from '../../utils/ioMessage'
+import { compose, last, prop, split } from 'ramda'
 
-const lastSegment = compose<string, string[], string>(last, split('/'))
+import { getCategoryInfo } from './utils'
 
-interface Category {
-  id: string,
-  url: string,
-  children: Category[],
+const lastSegment = compose<string, string[], string>(
+  last,
+  split('/')
+)
+
+function cleanUrl(url: string) {
+  return url.replace(/^.*(vtexcommercestable\.com\.br)/, '')
+}
+
+export const pathToCategoryHref = (path: string) => {
+  const isDepartment = path.slice(1).indexOf('/') === -1
+  return isDepartment ? `${path}/d` : path
+}
+
+/** This type has to be created because the Catlog API to get category by ID does not return the url or children for now.
+ * These fields only come if you get the category from the categroy tree api.
+ */
+interface SafeCategory
+  extends Pick<
+  Category,
+  'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
+  > {
+  url: string | null
+  children: Category[] | null
 }
 
 export const resolvers = {
   Category: {
     cacheId: prop('id'),
 
-    href: async ({ id }: any, _: any, { dataSources: { catalog } }: any) => {
-      const categories = await catalog.categories(3) as Category[]
+    href: async (
+      { id, url }: SafeCategory,
+      _: any,
+      { clients: { catalog } }: Context
+    ) => {
+      if (url == null) {
+        const category = await getCategoryInfo(catalog, id, 4)
+        url = category.url
+      }
+      const path = cleanUrl(url)
 
-      const flattenCategories = categories.reduce(
-        (acc : Category[], cat) => acc.concat(cat, cat.children),
-        []
-      )
-
-      const category = find(
-        (c : Category) => c.id === id,
-        flattenCategories
-      ) || { url: '' }
-
-      return category.url.replace(
-        /https:\/\/[A-z0-9]+\.vtexcommercestable\.com\.br/,
-        ''
-      )
+      // If the path is `/clothing`, we know that's a department
+      // But if it is `/clothing/shirts`, it's not.
+      return pathToCategoryHref(path)
     },
 
     metaTagDescription: prop('MetaTagDescription'),
 
-    name: ({name}: any, _: any, ctx: Context) => toIOMessage(ctx, name, `category-${name}`),
-
-    slug: async ({ id }: any, _: any, { dataSources: { catalog } }: any) => {
-      const categories = await catalog.categories(3) as Category[]
-
-      const flattenCategories = categories.reduce(
-        (acc : Category[], c) => acc.concat(c, c.children),
-        []
-      )
-
-      const category = find(
-        (c : Category) => c.id === id,
-        flattenCategories
-      ) || { url: '' }
-
-      return category.url ? lastSegment(category.url) : null
-    },
-
     titleTag: prop('Title'),
 
-    children: async ({ id }: any, _: any, { dataSources: { catalog } }: any) => {
-      const categories = await catalog.categories(3) as Category[]
-      
-      const flattenCategories = categories.reduce(
-        (acc : Category[], c) => acc.concat(c, c.children),
-        []
-      )
+    slug: async (
+      { id, url }: SafeCategory,
+      _: any,
+      { clients: { catalog } }: Context
+    ) => {
+      if (url == null) {
+        const category = await getCategoryInfo(catalog, id, 4)
+        url = category.url
+      }
+      return url ? lastSegment(url) : null
+    },
 
-      const category = find(
-        (c : Category) => c.id === id,
-        flattenCategories
-      ) || {}
-    
-      return path(['children'], category)
+    children: async (
+      { id, children }: SafeCategory,
+      _: any,
+      { clients: { catalog } }: Context
+    ) => {
+      if (children == null) {
+        const category = await getCategoryInfo(catalog, id, 4)
+        children = category.children
+      }
+      return children
     },
   },
 }

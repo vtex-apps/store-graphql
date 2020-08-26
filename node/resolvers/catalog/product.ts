@@ -1,18 +1,25 @@
-import { map as mapP } from 'bluebird'
-import { GraphQLResolveInfo } from 'graphql'
-import { compose, map, omit, propOr, reject, toPairs } from 'ramda'
+import {
+  compose,
+  last,
+  map,
+  omit,
+  reject,
+  split,
+  toPairs,
+} from 'ramda'
 
 import { queries as benefitsQueries } from '../benefits'
-import { toIOMessage } from './../../utils/ioMessage'
+import { buildCategoryMap } from './utils'
 
+type MaybeRecord = false | Record<string, any>
 const objToNameValue = (
   keyName: string,
   valueName: string,
   record: Record<string, any>
 ) =>
-  compose(
-    reject(value => typeof value === 'boolean' && value === false),
-    map<[string, any], any>(
+  compose<Record<string, any>, [string, any][], MaybeRecord[], MaybeRecord>(
+    reject<MaybeRecord>(value => typeof value === 'boolean' && value === false),
+    map<[string, any], MaybeRecord>(
       ([key, value]) =>
         typeof value === 'string' && { [keyName]: key, [valueName]: value }
     ),
@@ -33,19 +40,72 @@ const knownNotPG = [
   'productReference',
 ]
 
+const removeTrailingSlashes = (str: string) =>
+  str.endsWith('/') ? str.slice(0, str.length - 1) : str
+
+const removeStartingSlashes = (str: string) =>
+  str.startsWith('/') ? str.slice(1) : str
+
+const getLastCategory = compose<string, string, string[], string>(
+  last,
+  split('/'),
+  removeTrailingSlashes
+)
+
+const treeStringToArray = compose(
+  split('/'),
+  removeTrailingSlashes,
+  removeStartingSlashes
+)
+
+const findMainTree = (categoriesIds: string[], prodCategoryId: string) => {
+  const mainTree = categoriesIds.find(
+    treeIdString => getLastCategory(treeIdString) === prodCategoryId
+  )
+  if (mainTree) {
+    return treeStringToArray(mainTree)
+  }
+
+  // If we are here, did not find the specified main category ID in given strings. It is probably a bug.
+  // We will return the biggest tree we find
+
+  const trees = categoriesIds.map(treeStringToArray)
+
+  return trees.reduce(
+    (acc, currTree) => (currTree.length > acc.length ? currTree : acc),
+    []
+  )
+}
+
+const productCategoriesToCategoryTree = async (
+  { categories, categoriesIds, categoryId: prodCategoryId }: { categories: string[], categoriesIds: string[], categoryId: string },
+  _: any,
+  { clients: { catalog }, vtex: { platform } }: Context
+) => {
+  if (!categories || !categoriesIds) {
+    return []
+  }
+
+  const mainTreeIds = findMainTree(categoriesIds, prodCategoryId)
+
+  if (platform === 'vtex') {
+    return mainTreeIds.map(categoryId => catalog.category(Number(categoryId)))
+  }
+  const categoriesTree = await catalog.categories(mainTreeIds.length)
+  const categoryMap = buildCategoryMap(categoriesTree)
+  const mappedCategories = mainTreeIds
+    .map(id => categoryMap[id])
+    .filter(Boolean)
+
+  return mappedCategories.length ? mappedCategories : null
+}
+
 export const resolvers = {
   Product: {
     benefits: ({ productId }: any, _: any, ctx: Context) =>
       benefitsQueries.benefits(_, { id: productId }, ctx),
 
-    categories: ({ categories }: {categories: string[]}, _: any, ctx: Context) => mapP(
-      categories,
-      category => toIOMessage(ctx, category, `category-${category}`)
-    ),
-
-    description: ({ description, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, description, `${info.parentType}-${info.fieldName}-${productId}`),
-
-    productName: ({ productName, productId }: any, _: any, ctx: Context, info: GraphQLResolveInfo) => toIOMessage(ctx, productName, `${info.parentType}-${info.fieldName}-${productId}`),
+    categoryTree: productCategoriesToCategoryTree,
 
     cacheId: ({ linkText }: any) => linkText,
 
@@ -78,22 +138,59 @@ export const resolvers = {
 
     recommendations: (product: any) => product,
 
-    titleTag: ({ productTitle }: any) => productTitle,
-
     specificationGroups: (product: any) => {
-      const allSpecificationsGroups = propOr([], 'allSpecificationsGroups', product).concat([
-        'allSpecifications',
-      ])
+      const productSpecificationGroups = (product?.allSpecificationsGroups ?? []) as string[]
+      const allSpecificationsGroups = productSpecificationGroups.concat(['allSpecifications'])
+
       const specificationGroups = allSpecificationsGroups.map(
         (groupName: string) => ({
           name: groupName,
-          specifications: map(
-            (name: string) => ({ name, values: product[name] }),
-            product[groupName] || []
-          ),
+          specifications: (product[groupName] || []).map(
+            (name: string) => ({
+              name,
+              values: (product[name] || [])
+            })
+          )
         })
       )
       return specificationGroups || []
     },
+
+    items: (product: any) => {
+      const { allSpecifications, items, productName, description: productDescription, brand: brandName } = product
+      let productSpecifications: ProductSpecification[] = [];
+
+      (allSpecifications || []).forEach(
+        (specification: string) => {
+          let fieldValues: string[] = [];
+          (product[specification] || []).forEach(
+            (value: string) => {
+              fieldValues.push(value)
+            }
+          )
+
+          productSpecifications.push({
+            fieldName: specification,
+            fieldValues,
+          })
+        }
+      )
+
+      if (items && items.length > 0) {
+        items.forEach(
+          (item: any) => {
+            item.productSpecifications = productSpecifications
+            item.productName = productName
+            item.productDescription = productDescription
+            item.brandName = brandName
+          }
+        )
+      }
+      return items
+    }
+  },
+
+  OnlyProduct: {
+    categoryTree: productCategoriesToCategoryTree,
   },
 }

@@ -1,0 +1,17 @@
+type ProductSearch {
+  products: [Product]
+  recordsFiltered: Int
+  titleTag: String
+  metaTagDescription: String
+  breadcrumb: [SearchBreadcrumb]
+}
+
+type SearchBreadcrumb {
+  name: String @translatableV2
+  href: String
+}
+
+type SearchMetadata {
+  titleTag: String
+  metaTagDescription: String
+}
