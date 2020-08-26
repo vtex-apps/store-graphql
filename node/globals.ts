@@ -161,7 +161,7 @@ declare global {
     acronym: string
     document: { fields: KeyValue[] }
     schema?: string
-    account?: string
+    accountName?: string
   }
 
   interface DeleteDocumentArgs {
