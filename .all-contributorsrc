@@ -58,6 +58,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "carafizi1",
+      "name": "Gabriel Carafizi",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/51974587?v=4",
+      "profile": "http://carafizi.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
