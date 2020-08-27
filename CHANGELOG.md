@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - New mutation `newOrderForm`.
 
+### Added
+
+- `pickupStoreInfo` to the `ShippingSLA` type
+
+### Fixed
+
+- `undefined` parameter being sent to `messagesGraphQL.translateV2` *then*
+
 ## [2.127.0] - 2020-07-17
 
 ### Added
