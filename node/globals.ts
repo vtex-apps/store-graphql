@@ -160,6 +160,7 @@ declare global {
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    account?: string
     schema?: string
   }
 

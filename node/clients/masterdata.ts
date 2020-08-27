@@ -56,12 +56,14 @@ export class MasterData extends ExternalClient {
     acronym: string,
     id: string,
     fields: object,
-    schema?: string
+    account?: string,
+    schema?: string,
   ) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
       params: {
         ...(schema ? { _schema: schema } : null),
+        ...(account ? { an: account } : null),
       },
     })
 
