@@ -31,6 +31,30 @@ type ShippingSLA {
   shippingEstimateDate: String
   deliveryIds: [DeliveryIds]
   friendlyName: String
+  pickupStoreInfo: PickupStoreInfo
+}
+
+type pickupStoreInfo {
+  friendlyName: String
+  address: PickupAddress
+  additionalInfo: String
+  dockId: String
+}
+
+type PickupAddress {
+  addressType: String
+  receiverName: String
+  addressId: String
+  postalCode: String
+  city: String
+  state: String
+  country: String
+  street: String
+  number: String
+  neighborhood: String
+  complement: String
+  reference: String
+  geoCoordinates: [Float]
 }
 
 type DeliveryIds {
