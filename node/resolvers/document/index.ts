@@ -156,6 +156,7 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
+      account: accountName
     } = args
     const documentId = prop('id', parseFieldsToJson(fields)) as string
     if (!documentId) {
@@ -168,7 +169,8 @@ export const mutations = {
     await masterdata.updateDocument(
       acronym,
       documentId,
-      parseFieldsToJson(fields)
+      parseFieldsToJson(fields),
+      accountName
     )
     return {
       cacheId: documentId,

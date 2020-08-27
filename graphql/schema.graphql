@@ -848,6 +848,7 @@ type Mutation {
   updateDocument(
     acronym: String!
     document: DocumentInput
+    account: String
     schema: String
   ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
@@ -878,4 +879,9 @@ type Mutation {
 
   savePickupInSession(address: OrderFormAddressInput, name: String): Session
     @cacheControl(scope: PRIVATE)
+
+  """
+  Set new orderForm.
+  """
+  newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }
