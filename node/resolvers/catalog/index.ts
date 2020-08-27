@@ -258,7 +258,7 @@ const translateToStoreDefaultLanguage = async (
           ],
           to,
         })
-        .then(response => response[0])
+        .then(head)
     : term
 }
 
