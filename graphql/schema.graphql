@@ -290,7 +290,6 @@ type Query {
   """
   Returns checkout cart details
   """
-  
   orderForm: OrderForm
     @cacheControl(scope: PRIVATE)
     @withOrderFormId
@@ -299,8 +298,7 @@ type Query {
   """
   returns a certain checkout cart details
   """
-
-  consultOrderForm: (orderFormId: String): OrderForm
+  searchOrderForm(orderFormId: String): OrderForm
     @cacheControl(scope: PRIVATE)
     @withOrderFormId
 

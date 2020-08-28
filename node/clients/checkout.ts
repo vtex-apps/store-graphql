@@ -160,17 +160,17 @@ export class Checkout extends JanusClient {
       metric: 'checkout-updateOrderFormCheckin',
     })
 
-  public orderForm = () => {
+  public orderForm = (orderFormId?: string) => {
     return this.post<OrderForm>(
-      this.routes.orderForm(),
+      this.routes.orderForm(orderFormId),
       { expectedOrderFormSections: ['items'] },
       { metric: 'checkout-orderForm' }
     )
   }
 
-  public orderFormRaw = (orderFormId?: string) => {
+  public orderFormRaw = () => {
     return this.postRaw<OrderForm>(
-      this.routes.orderForm(orderFormId),
+      this.routes.orderForm(),
       { expectedOrderFormSections: ['items'] },
       { metric: 'checkout-orderForm' }
     )
