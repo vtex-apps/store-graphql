@@ -890,7 +890,6 @@ type Mutation {
   """
   Set new orderForm.
   """
-  newOrderForm(orderFormId: String): OrderForm
-    @cacheControl(scope: PRIVATE)
-    @withOrderFormId
+  
+  newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }
