@@ -239,6 +239,25 @@ export const queries: Record<string, Resolver> = {
     return orderForm
   },
 
+  consultOrderForm: async (_, { orderFormId }, ctx) => {
+    const {
+      clients: { checkout },
+      vtex: { segment },
+    } = ctx
+
+    const { headers, data } = await checkout.orderFormRaw(orderFormId)
+
+    const orderForm = await syncWithStoreLocale(
+      data,
+      segment!.cultureInfo,
+      checkout
+    )
+
+    setCheckoutCookies(headers, ctx)
+
+    return orderForm
+  },
+
   orders: (_, __, { clients: { checkout } }) => {
     return checkout.orders()
   },
