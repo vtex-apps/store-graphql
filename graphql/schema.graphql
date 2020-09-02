@@ -296,6 +296,12 @@ type Query {
     @withSegment
 
   """
+  returns a certain checkout cart details
+  """
+  searchOrderForm(orderFormId: String!): OrderForm
+    @cacheControl(scope: PRIVATE)
+
+  """
   Returns user orders details
   """
   orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
@@ -883,5 +889,6 @@ type Mutation {
   """
   Set new orderForm.
   """
+  
   newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }

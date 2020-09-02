@@ -239,6 +239,16 @@ export const queries: Record<string, Resolver> = {
     return orderForm
   },
 
+  searchOrderForm: async (_, { orderFormId }, ctx) => {
+    const {
+      clients: { checkout }
+        } = ctx
+
+    const orderForm = await checkout.orderForm(orderFormId)
+
+    return orderForm
+  },
+
   orders: (_, __, { clients: { checkout } }) => {
     return checkout.orders()
   },

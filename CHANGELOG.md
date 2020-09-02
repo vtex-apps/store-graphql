@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- New query `searchOrderForm`.
+
 ## [2.129.1] - 2020-08-27
 ### Added
 
