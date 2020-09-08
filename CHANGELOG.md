@@ -7,14 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.130.0] - 2020-09-02
+### Added
+- `instructions` to the `PickupPoint` type
 
+## [2.130.0] - 2020-09-02
 ### Added
 - New query `searchOrderForm`.
 
 ## [2.129.1] - 2020-08-27
 ### Added
-
 - `pickupStoreInfo` to the `ShippingSLA` type
 
 ## [2.129.0] - 2020-08-27

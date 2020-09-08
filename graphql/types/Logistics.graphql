@@ -25,6 +25,10 @@ type PickupPoint {
   friendlyName: String
   id: String
   """
+  AdditionalInfo from pickup point
+  """
+  instructions: String
+  """
   Seller account name
   """
   seller: String
