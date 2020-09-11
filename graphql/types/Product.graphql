@@ -270,3 +270,164 @@ enum CrossSelingInputEnum {
   accessories
   suggestions
 }
+
+input ProductInput {
+  brand: String
+  brandId: Int
+  cacheId: ID
+  categoryId: ID
+  categories: [String]
+  categoriesIds: [String]
+  categoryTree: [CategoryInput]
+  clusterHighlights: [ClusterHighlightInput]
+  productClusters: [ProductClustersInput]
+  description: String
+  items: [SKUInput]
+  link: String
+  linkText: String
+  productId: ID
+  productName: String
+  properties: [PropertyInput]
+  propertyGroups: [PropertyGroupInput]
+  productReference: String
+  titleTag: String
+  metaTagDescription: String
+  sku: SKUInput
+  recommendations: RecommendationInput
+  jsonSpecifications: String
+}
+
+input ClusterHighlightInput {
+  id: ID
+  name: String
+}
+
+input ProductClustersInput {
+  id: ID
+  name: String
+}
+
+input SKUInput {
+  itemId: ID
+  name: String
+  nameComplete: String
+  complementName: String
+  ean: String
+  referenceId: [ReferenceInput]
+  measurementUnit: String
+  unitMultiplier: Float
+  kitItems: [KitItemInput]
+  images: [ImageInput]
+  videos: [VideoInput]
+  sellers: [SellerInput]
+  variations: [PropertyInput]
+  calculatedAttachments: String
+  productName: String
+  productDescription: String
+  brandName: String
+  skuSpecifications: [skuSpecificationInput]
+  productSpecifications: [productSpecificationInput]
+}
+
+input SellerInput {
+  sellerId: ID
+  sellerName: String
+  addToCartLink: String
+  sellerDefault: Boolean
+  commertialOffer: OfferInput
+}
+
+input InstallmentInput {
+  Value: Float
+  InterestRate: Float
+  TotalValuePlusInterestRate: Float
+  NumberOfInstallments: Int
+  PaymentSystemName: String
+  PaymentSystemGroupName: String
+  Name: String
+}
+
+input OfferInput {
+  Installments: [InstallmentInput]
+  Price: Float
+  ListPrice: Float
+  spotPrice: Float
+  PriceWithoutDiscount: Float
+  RewardValue: Float
+  PriceValidUntil: String
+  AvailableQuantity: Float
+  Tax: Float
+  CacheVersionUsedToCallCheckout: String
+  giftSkuIds: [String]
+}
+
+input skuSpecificationInput {
+  fieldName: String
+  fieldValues: [String]
+}
+
+input productSpecificationInput {
+  fieldName: String
+  fieldValues: [String]
+}
+
+input PropertyGroupInput {
+  name: String
+  properties: [String]
+}
+
+input PropertyInput {
+  name: String
+  values: [String]
+}
+
+input ImageInput {
+  cacheId: ID
+  imageId: ID
+  imageLabel: String
+  imageTag: String
+  imageUrl: String
+  imageText: String
+}
+
+input VideoInput {
+  videoUrl: String
+}
+
+input ReferenceInput {
+  Key: String
+  Value: String
+}
+
+input RecommendationInput {
+  buy: [ProductInput]
+  view: [ProductInput]
+  similars: [ProductInput]
+}
+
+input OnlyProductInput {
+  brand: String
+  categoryId: ID
+  categories: [String]
+  categoriesIds: [String]
+  categoryTree: [CategoryInput]
+  clusterHighlights: [ClusterHighlightInput]
+  productClusters: [ProductClustersInput]
+  description: String
+  link: String
+  linkText: String
+  productId: ID
+  productName: String
+  properties: [PropertyInput]
+  propertyGroups: [PropertyGroupInput]
+  productReference: String
+  recommendations: RecommendationInput
+  jsonSpecifications: String
+}
+
+input KitItemInput {
+  itemId: ID
+  amount: Int
+  product: OnlyProductInput
+  sku: SKUInput
+}

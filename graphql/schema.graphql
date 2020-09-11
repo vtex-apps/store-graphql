@@ -547,6 +547,8 @@ type Query {
   userLastOrder: Order @cacheControl(scope: PRIVATE)
 
   checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
+
+  productWithSimulation(product: ProductInput): Product
 }
 
 type Mutation {
@@ -889,6 +891,6 @@ type Mutation {
   """
   Set new orderForm.
   """
-  
+
   newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }

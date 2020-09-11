@@ -232,7 +232,7 @@ interface PayloadItem {
 }
 
 interface SimulationPayload {
-  country: string
+  country?: string
   items: PayloadItem[]
   postalCode?: string
   isCheckedIn?: boolean

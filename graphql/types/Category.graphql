@@ -18,3 +18,15 @@ type Category {
   """ Categories children """
   children: [Category]
 }
+
+input CategoryInput {
+  cacheId: ID
+  href: String
+  slug: String
+  id: Int
+  name: String
+  titleTag: String
+  hasChildren: Boolean
+  metaTagDescription: String
+  children: [CategoryInput]
+}

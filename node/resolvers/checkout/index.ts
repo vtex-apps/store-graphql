@@ -1,5 +1,5 @@
 import { UserInputError } from '@vtex/api'
-import { compose, forEach, reject, path } from 'ramda'
+import { compose, forEach, reject, path, groupBy, prop, mergeAll, indexBy } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -18,6 +18,7 @@ import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
+import { getSimulationPayloads, OrderFormItemBySellerById, fillSearchItemWithSimulation } from './../../utils/simulation'
 
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
@@ -321,6 +322,30 @@ export const queries: Record<string, Resolver> = {
       s => path(['pickupStoreInfo', 'address', 'addressId'], s) === pickupId
     )
   },
+
+  productWithSimulation: async (_, { product }: any, ctx: Context) => {
+    const {
+      clients: { checkout },
+      vtex: { segment }
+    } = ctx
+
+    const simulationPayloads: SimulationPayload[] = getSimulationPayloads(product, segment?.priceTables, segment?.regionId)
+    const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
+    const simulations = await Promise.all(simulationPromises)
+
+    const simulationItems = simulations.map(simulation => simulation.items.map((item: any) => ({ ...item, paymentData: simulation.paymentData }))).reduce((acc, val) => acc.concat(val), [])
+    const groupedBySkuId = groupBy(prop('id'), simulationItems)
+
+    const orderItemsBySellerById: OrderFormItemBySellerById = mergeAll(Object.entries(groupedBySkuId).map(([id, items]) => {
+      const groupedBySeller = indexBy((prop('seller')), items)
+
+      return { [id]: groupedBySeller }
+    }))
+
+    return product.items.map((item: Item) => {
+      fillSearchItemWithSimulation(item, orderItemsBySellerById[item.itemId])
+    })
+  },
 }
 
 interface UTMParams {
@@ -547,7 +572,7 @@ export const mutations: Record<string, Resolver> = {
     } = ctx
 
     const { data, headers } = await checkout.newOrderForm(orderFormId)
-    
+
     await setCheckoutCookies(headers, ctx)
 
     return data
