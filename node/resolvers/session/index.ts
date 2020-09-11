@@ -55,11 +55,14 @@ export const mutations = {
       vtexIdCookies(ctx)
     )
 
-    const orderForm = await checkout.orderForm()
+    const { headers, data: orderForm } = await checkout.orderFormRaw()
+
     const clientProfileData =
       orderForm && orderForm.clientProfileData
-        ? orderForm.clientProfileData
-        : {}
+      ? orderForm.clientProfileData
+      : {}
+
+    setCheckoutCookies(headers, ctx)
 
     if (clientProfileData.email !== email && orderForm.orderFormId) {
       await checkout.updateOrderFormProfile(orderForm.orderFormId, {
@@ -68,14 +71,7 @@ export const mutations = {
       })
     }
 
-    ctx.response.set(
-      'Set-Cookie',
-      serialize(IMPERSONATED_EMAIL, email, {
-        encode: identity,
-        maxAge: VTEXID_EXPIRES,
-        path: '/',
-      })
-    )
+    ctx.cookies.set(IMPERSONATED_EMAIL, email, { maxAge: VTEXID_EXPIRES, path: '/' })
 
     return queries.getSession({}, {}, ctx)
   },
