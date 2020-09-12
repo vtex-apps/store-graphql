@@ -13,9 +13,12 @@ export class Checkout extends JanusClient {
       ...options,
       headers: {
         ...(options && options.headers),
-        ...(ctx.storeUserAuthToken
-          ? { VtexIdclientAutCookie: ctx.storeUserAuthToken }
-          : null),
+        ...ctx.storeUserAuthToken
+          ? { [`VtexIdclientAutCookie_${ctx.account}`]: ctx.storeUserAuthToken }
+          : null,
+        ...ctx.adminUserAuthToken
+          ? { VtexIdclientAutCookie: ctx.adminUserAuthToken }
+          : null,
       },
     })
   }

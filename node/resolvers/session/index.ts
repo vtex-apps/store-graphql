@@ -1,6 +1,3 @@
-import { serialize } from 'cookie'
-import { identity } from 'ramda'
-
 import { fieldResolvers as sessionPickupResolvers } from './sessionPickup'
 import { vtexIdCookies } from '../../utils/vtexId'
 import { setCheckoutCookies, syncWithStoreLocale } from '../checkout'
