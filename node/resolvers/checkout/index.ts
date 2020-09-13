@@ -323,13 +323,13 @@ export const queries: Record<string, Resolver> = {
     )
   },
 
-  productWithSimulation: async (_, { product }: any, ctx: Context) => {
+  itemsWithSimulation: async (_, { items }: any, ctx: Context) => {
     const {
       clients: { checkout },
       vtex: { segment }
     } = ctx
 
-    const simulationPayloads: SimulationPayload[] = getSimulationPayloads(product, segment?.priceTables, segment?.regionId)
+    const simulationPayloads: SimulationPayload[] = getSimulationPayloads(items, segment?.priceTables, segment?.regionId)
     const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
     const simulations = await Promise.all(simulationPromises)
 
@@ -342,9 +342,7 @@ export const queries: Record<string, Resolver> = {
       return { [id]: groupedBySeller }
     }))
 
-    return product.items.map((item: Item) => {
-      fillSearchItemWithSimulation(item, orderItemsBySellerById[item.itemId])
-    })
+    return items.map((item: Item) => fillSearchItemWithSimulation(item, orderItemsBySellerById[item.itemId]))
   },
 }
 

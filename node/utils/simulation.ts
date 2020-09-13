@@ -2,8 +2,8 @@ function distinct<T>(value: T, index: number, self: T[]) {
   return self.indexOf(value) === index
 }
 
-export const getSimulationPayloads = (product: Product, priceTable?: string, regionId?: string) => {
-  const payloadItems = product.items.map((item) => {
+export const getSimulationPayloads = (items: Item[], priceTable?: string, regionId?: string) => {
+  const payloadItems = items.map((item) => {
     return item.sellers.map((seller) => {
       return {
         id: item.itemId,
@@ -12,7 +12,6 @@ export const getSimulationPayloads = (product: Product, priceTable?: string, reg
       } as PayloadItem
     })
   }).reduce((acc, val) => acc.concat(val), []).filter(distinct)
-  console.log(regionId, priceTable, 'aaaaaaaa')
 
   return payloadItems.map((item) => {
     return {
@@ -43,6 +42,7 @@ export const fillSearchItemWithSimulation = (item: Item, orderFormItems: OrderFo
         return
       }
 
+      seller.commertialOffer = {} as CommertialOffer
       seller.commertialOffer.Price = orderFormItem.price / 100
       seller.commertialOffer.PriceValidUntil = orderFormItem.priceValidUntil
       seller.commertialOffer.ListPrice = orderFormItem.listPrice / 100
@@ -73,10 +73,7 @@ export const fillSearchItemWithSimulation = (item: Item, orderFormItems: OrderFo
         InterestRate: correctInstallment.interestRate,
         TotalValuePlusInterestRate: correctInstallment.total / 100,
         NumberOfInstallments: correctInstallment.count,
-        Name: '',
-        PaymentSystemName: '',
-        PaymentSystemGroupName: '',
-      }]
+      }] as Installment[]
     })
   }
 

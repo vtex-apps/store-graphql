@@ -548,7 +548,7 @@ type Query {
 
   checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
 
-  productWithSimulation(product: ProductInput): Product @cacheControl(scope: PRIVATE) @withSegment
+  itemsWithSimulation(items: [ItemInput]): [SKU] @cacheControl(scope: PRIVATE) @withSegment
 }
 
 type Mutation {
