@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Problem when addToCart mutation was not updating the marketing data on order form if only the `utm_source` param was being updated.
 
 ## [2.131.0] - 2020-09-08
 

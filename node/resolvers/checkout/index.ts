@@ -102,7 +102,7 @@ const shouldUpdateMarketingData = (
     utmipage = null,
   } = orderFormMarketingTags || {}
 
-  if (!utmParams?.campaign && !utmParams?.medium && !utmParams?.campaign && !utmiParams?.campaign && !utmiParams?.page && !utmiParams?.part) {
+  if (!utmParams?.source && !utmParams?.medium && !utmParams?.campaign && !utmiParams?.campaign && !utmiParams?.page && !utmiParams?.part) {
     // Avoid updating at any costs if all fields are invalid
     return false
   }
