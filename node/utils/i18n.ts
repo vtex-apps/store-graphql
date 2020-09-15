@@ -12,6 +12,15 @@ export const formatTranslatableProp = <R, P extends keyof R, I extends keyof R>(
     ctx
   )
 
+interface BaseMessage {
+  content: string
+  from?: string
+}
+
+export interface Message extends BaseMessage {
+  context?: string
+}
+
 export const addContextToTranslatableString = (message: Message, ctx: Context) => {
   const { vtex: { tenant } } = ctx
   const { locale } = tenant!
