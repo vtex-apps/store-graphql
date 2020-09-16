@@ -398,7 +398,7 @@ type Query {
     """
     id: String
     """
-    Defines which account will be required
+    Defines in wich account the request will be made
     """
     account: String
   ): Document
