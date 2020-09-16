@@ -49,7 +49,6 @@ export const queries = {
       cacheId: id,
       id,
       fields: mapKeyAndStringifiedValues(data),
-      account,
     }
   },
 
