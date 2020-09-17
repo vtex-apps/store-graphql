@@ -1,5 +1,5 @@
 import { UserInputError } from '@vtex/api'
-import { compose, forEach, reject, path, groupBy, prop, mergeAll, indexBy } from 'ramda'
+import { compose, forEach, reject, path } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -18,7 +18,7 @@ import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
-import { getSimulationPayloads, OrderFormItemBySellerById, fillSearchItemWithSimulation } from './../../utils/simulation'
+import { getSimulationPayloadsByItem, orderFormItemToSeller } from './../../utils/simulation'
 
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
@@ -323,26 +323,29 @@ export const queries: Record<string, Resolver> = {
     )
   },
 
-  itemsWithSimulation: async (_, { items }: any, ctx: Context) => {
+  itemsWithSimulation: async (_, { items }: {items: ItemWithSimulationInput[]}, ctx: Context) => {
     const {
       clients: { checkout },
       vtex: { segment }
     } = ctx
 
-    const simulationPayloads: SimulationPayload[] = getSimulationPayloads(items, segment?.priceTables, segment?.regionId)
-    const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
-    const simulations = await Promise.all(simulationPromises)
-
-    const simulationItems = simulations.map(simulation => simulation.items.map((item: any) => ({ ...item, paymentData: simulation.paymentData }))).reduce((acc, val) => acc.concat(val), [])
-    const groupedBySkuId = groupBy(prop('id'), simulationItems)
-
-    const orderItemsBySellerById: OrderFormItemBySellerById = mergeAll(Object.entries(groupedBySkuId).map(([id, items]) => {
-      const groupedBySeller = indexBy((prop('seller')), items)
-
-      return { [id]: groupedBySeller }
-    }))
-
-    return items.map((item: Item) => fillSearchItemWithSimulation(item, orderItemsBySellerById[item.itemId]))
+    return items.map(item => {
+      return new Promise((resolve) => {
+        const simulationPayloads = getSimulationPayloadsByItem(item, segment?.priceTables, segment?.regionId)
+        const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
+        Promise.all(simulationPromises).then(simulations => {
+          const sellers: Partial<Seller>[] = []
+          simulations.forEach(simulation => {
+            const [simulationItem] = simulation.items
+            sellers.push(orderFormItemToSeller({...simulationItem, paymentData: simulation.paymentData}))
+          })
+          resolve({
+            itemId: item.itemId,
+            sellers,
+          })
+        })
+      })
+    })
   },
 }
 
