@@ -397,6 +397,10 @@ type Query {
     Document id
     """
     id: String
+    """
+    Defines in which account the request will be made
+    """
+    account: String
   ): Document
 
   """
@@ -889,6 +893,6 @@ type Mutation {
   """
   Set new orderForm.
   """
-  
+
   newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }

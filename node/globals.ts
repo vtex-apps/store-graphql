@@ -127,6 +127,7 @@ declare global {
     acronym: string
     fields: string[]
     id: string
+    account?: string
   }
 
   interface DocumentSchemaArgs {

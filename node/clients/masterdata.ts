@@ -36,11 +36,12 @@ export class MasterData extends ExternalClient {
       metric: 'masterdata-getPublicSchema',
     })
 
-  public getDocument = <T>(acronym: string, id: string, fields: string[]) =>
+  public getDocument = <T>(acronym: string, id: string, fields: string[], account?: string) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
       params: {
         _fields: generateFieldsArg(fields),
+        ...(account ? { an: account } : null),
       },
     })
 

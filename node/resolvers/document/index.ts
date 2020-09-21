@@ -40,11 +40,11 @@ export const queries = {
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
-    const { acronym, fields, id } = args
+    const { acronym, fields, id, account } = args
     const {
       clients: { masterdata },
     } = context
-    const data = await masterdata.getDocument(acronym, id, fields)
+    const data = await masterdata.getDocument(acronym, id, fields, account)
     return {
       cacheId: id,
       id,
