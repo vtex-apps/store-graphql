@@ -18,6 +18,7 @@ import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
+import { getSimulationPayloadsByItem, orderFormItemToSeller } from './../../utils/simulation'
 
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
@@ -321,6 +322,30 @@ export const queries: Record<string, Resolver> = {
       s => path(['pickupStoreInfo', 'address', 'addressId'], s) === pickupId
     )
   },
+
+  itemsWithSimulation: async (_, { items }: {items: ItemWithSimulationInput[]}, ctx: Context) => {
+    const {
+      clients: { checkout },
+      vtex: { segment }
+    } = ctx
+
+    return items.map(item => {
+      return new Promise((resolve) => {
+        const simulationPayloads = getSimulationPayloadsByItem(item, segment?.priceTables, segment?.regionId)
+        const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
+        Promise.all(simulationPromises).then(simulations => {
+          const sellers: Partial<Seller>[] = simulations.map(simulation => {
+            const [simulationItem] = simulation.items
+            return orderFormItemToSeller({...simulationItem, paymentData: simulation.paymentData})
+          })
+          resolve({
+            itemId: item.itemId,
+            sellers,
+          })
+        })
+      })
+    })
+  },
 }
 
 interface UTMParams {
@@ -547,7 +572,7 @@ export const mutations: Record<string, Resolver> = {
     } = ctx
 
     const { data, headers } = await checkout.newOrderForm(orderFormId)
-    
+
     await setCheckoutCookies(headers, ctx)
 
     return data

@@ -270,3 +270,13 @@ enum CrossSelingInputEnum {
   accessories
   suggestions
 }
+
+input ItemInput {
+  itemId: ID
+  sellers: [SellerInput]
+}
+
+input SellerInput {
+  sellerId: ID
+}
+

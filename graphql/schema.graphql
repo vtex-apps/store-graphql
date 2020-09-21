@@ -551,6 +551,8 @@ type Query {
   userLastOrder: Order @cacheControl(scope: PRIVATE)
 
   checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
+
+  itemsWithSimulation(items: [ItemInput]): [SKU] @cacheControl(scope: PRIVATE) @withSegment
 }
 
 type Mutation {
