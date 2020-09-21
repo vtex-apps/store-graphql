@@ -334,10 +334,9 @@ export const queries: Record<string, Resolver> = {
         const simulationPayloads = getSimulationPayloadsByItem(item, segment?.priceTables, segment?.regionId)
         const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
         Promise.all(simulationPromises).then(simulations => {
-          const sellers: Partial<Seller>[] = []
-          simulations.forEach(simulation => {
+          const sellers: Partial<Seller>[] = simulations.map(simulation => {
             const [simulationItem] = simulation.items
-            sellers.push(orderFormItemToSeller({...simulationItem, paymentData: simulation.paymentData}))
+            return orderFormItemToSeller({...simulationItem, paymentData: simulation.paymentData})
           })
           resolve({
             itemId: item.itemId,
