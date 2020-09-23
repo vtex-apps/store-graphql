@@ -5,8 +5,7 @@ import { formatTranslatableProp } from '../../utils/i18n'
 import { catalogSlugify } from './slug'
 
 const getTypeForCategory = (url: string) => {
-  const correctUrl = url.split('.com.br')[1]
-  switch (correctUrl.split('/').length) {
+  switch (url.split('/').length) {
     case 2:
       return 'department'
     case 3:
@@ -54,17 +53,16 @@ export const resolvers = {
     href: async (
       { id, url }: SafeCategory,
       _: any,
-      { clients: { catalog } }: Context
+      { vtex: { tenant, binding }, clients: { catalog, rewriter } }: Context
     ) => {
       if (url == null) {
         const category = await getCategoryInfo(catalog, id, 4)
         url = category.url
       }
       const path = cleanUrl(url)
-
-      // If the path is `/clothing`, we know that's a department
-      // But if it is `/clothing/shirts`, it's not.
-      return pathToCategoryHref(path)
+      return tenant && binding && binding.id && tenant.locale !== binding.locale
+        ? await rewriter.getRoute(id.toString(), getTypeForCategory(path), binding.id) || url
+        : path
     },
 
     metaTagDescription: formatTranslatableProp<SafeCategory, 'MetaTagDescription', 'id'>(
@@ -89,7 +87,7 @@ export const resolvers = {
       if (!tenant || !binding || tenant?.locale === binding?.locale || !binding.id ) {
         return catalogSlugify(name).toLowerCase()
       }
-      const translatedRoute = await rewriter.getRoute(id.toString(), getTypeForCategory(url), binding.id) || url
+      const translatedRoute = await rewriter.getRoute(id.toString(), getTypeForCategory(cleanUrl(url)), binding.id) || url
       return lastSegment(translatedRoute)
     },
 
