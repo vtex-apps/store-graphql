@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "vtex.messages": "1.x",
+    "vtex.rewriter": "1.x",
     "vtex.catalog-api-proxy": "0.x",
     "vtex.file-manager": "0.x"
   },
