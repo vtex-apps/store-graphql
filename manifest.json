@@ -151,6 +151,9 @@
         "host": "portal.vtexcommercestable.com.br",
         "path": "/api/profile-system/*"
       }
+    },
+    {
+      "name": "vtex.rewriter:resolve-graphql"
     }
   ],
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
