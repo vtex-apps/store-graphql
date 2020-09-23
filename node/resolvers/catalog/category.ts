@@ -5,7 +5,7 @@ import { formatTranslatableProp } from '../../utils/i18n'
 import { catalogSlugify } from './slug'
 
 const getTypeForCategory = (url: string) => {
-  const correctUrl = url.startsWith('/') ? url : `/${url}`
+  const correctUrl = url.split('.com.br')[1]
   switch (correctUrl.split('/').length) {
     case 2:
       return 'department'
