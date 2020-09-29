@@ -60,6 +60,8 @@ export const resolvers = {
         url = category.url
       }
       const path = cleanUrl(url)
+      // Won't translate href if current locale is the same as the default locale
+      // or account isn't in the tenant system, or binding data isn't present
       return tenant && binding && binding.id && tenant.locale !== binding.locale
         ? await rewriter.getRoute(id.toString(), getTypeForCategory(path), binding.id) || url
         : path
@@ -84,6 +86,8 @@ export const resolvers = {
         const category = await getCategoryInfo(catalog, id, 4)
         url = category.url
       }
+      // Won't translate slug if current locale is the same as the default locale
+      // or account isn't in the tenant system, or binding data isn't present
       if (!tenant || !binding || tenant?.locale === binding?.locale || !binding.id ) {
         return catalogSlugify(name).toLowerCase()
       }
