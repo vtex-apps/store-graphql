@@ -31,8 +31,8 @@ class CustomGraphQLError extends Error {
 }
 export function throwOnGraphQLErrors<T extends Serializable>(message: string) {
   return function maybeGraphQLResponse(response: GraphQLResponse<T>) {
-    if (response && response.errors && response.errors.length > 0) {
-      throw new CustomGraphQLError(message, response.errors)
+    if (response?.errors?.length || 0 > 0) {
+      throw new CustomGraphQLError(message, response.errors!)
     }
 
     return response
