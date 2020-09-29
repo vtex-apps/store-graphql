@@ -16,7 +16,7 @@ const getTypeForCategory = (url: string) => {
 }
 
 const lastSegment = (route: string) => {
-  const splittedSegments = route.includes('/') ? route.split('/') : route
+  const splittedSegments = route.split('/')
   return splittedSegments[splittedSegments.length - 1]
 }
 
