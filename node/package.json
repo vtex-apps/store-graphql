@@ -35,7 +35,7 @@
     "@types/ramda": "0.26.39",
     "@types/unorm": "^1.3.27",
     "@types/url-parse": "^1.4.3",
-    "@vtex/api": "^3.57.1",
+    "@vtex/api": "^3.0.0",
     "@vtex/test-tools": "2.1.1",
     "@vtex/tsconfig": "^0.2.0",
     "eslint": "^5.15.3",

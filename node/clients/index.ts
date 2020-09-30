@@ -9,6 +9,7 @@ import { OMS } from './oms'
 import { Portal } from './portal'
 import { LogisticsClient } from './logistics'
 import { Session } from './session'
+import { Rewriter } from './rewriter'
 
 export class Clients extends IOClients {
   public get masterdata() {
@@ -45,5 +46,9 @@ export class Clients extends IOClients {
 
   public get customSession() {
     return this.getOrSet('customSession', Session)
+  }
+
+  public get rewriter() {
+    return this.getOrSet('rewriter', Rewriter)
   }
 }
