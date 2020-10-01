@@ -17,6 +17,7 @@ const FALSE = 'False'
 
 interface SubscribeNewsletterArgs {
   email: string
+  name?: string
   isNewsletterOptIn: boolean
 }
 
@@ -44,7 +45,7 @@ export const mutations = {
 
   subscribeNewsletter: async (
     _: any,
-    { email, isNewsletterOptIn }: SubscribeNewsletterArgs,
+    { email, name, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
     const profile = context.clients.profile
@@ -52,11 +53,25 @@ export const mutations = {
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
         ? TRUE
         : FALSE
+
+    const updatedPersonalPreferences: PersonalPreferences = {
+      isNewsletterOptIn: optIn,
+    }
+
+    if (name) {
+      const userProfile = await profile.getProfileInfo({ email, userId: '' })
+
+      const userHasFirstName = Boolean(userProfile.firstName)
+
+      // Prevent overrides of the 'firstName' field.
+      if (!userHasFirstName) {
+        updatedPersonalPreferences['firstName'] = name
+      }
+    }
+
     await profile.updatePersonalPreferences(
       { email, userId: '' },
-      {
-        isNewsletterOptIn: optIn,
-      }
+      updatedPersonalPreferences,
     )
 
     return true
