@@ -149,12 +149,14 @@ declare global {
   interface CreateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    account?: string
     schema?: string
   }
 
   interface CreateDocumentV2Args {
     dataEntity: string
     document: { document: any }
+    account?: string
     schema?: string
   }
 
