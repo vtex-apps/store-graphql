@@ -50,6 +50,7 @@ function getCurrentProfileFromSession(
       ? ({
           email: profile && profile.email,
           userId: profile && profile.id,
+          isAuthenticated: profile && profile.isAuthenticatedAsCustomer,
         } as CurrentProfile)
       : null
   })
@@ -138,5 +139,5 @@ function isValidCallcenterOperator(context: Context, email: string) {
 }
 
 function isLogged(currentProfile: CurrentProfile | null) {
-  return currentProfile && currentProfile.email
+  return currentProfile && currentProfile.email && currentProfile.isAuthenticated
 }
