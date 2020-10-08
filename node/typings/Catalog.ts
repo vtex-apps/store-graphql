@@ -91,44 +91,49 @@ interface Item {
   sellers: Seller[]
 }
 
+interface Installment {
+  Value: number
+  InterestRate: number
+  TotalValuePlusInterestRate: number
+  NumberOfInstallments: number
+  PaymentSystemName: string
+  PaymentSystemGroupName: string
+  Name: string
+}
+
+// TODO: It should be Commercial, but there are so many places with this typo that I prefer to keep
+interface CommertialOffer {
+  DeliverySlaSamplesPerRegion: Record<
+    string,
+    { DeliverySlaPerTypes: any[]; Region: any | null }
+  >
+  Installments:Installment[]
+  DiscountHighLight: any[]
+  GiftSkuIds: string[]
+  Teasers: any[]
+  BuyTogether: any[]
+  ItemMetadataAttachment: any[]
+  Price: number
+  ListPrice: number
+  PriceWithoutDiscount: number
+  RewardValue: number
+  PriceValidUntil: string
+  AvailableQuantity: number
+  Tax: number
+  DeliverySlaSamples: {
+    DeliverySlaPerTypes: any[]
+    Region: any | null
+  }[]
+  GetInfoErrorMessage: any | null
+  CacheVersionUsedToCallCheckout: string
+}
+
 interface Seller {
   sellerId: string
   sellerName: string
   addToCartLink: string
   sellerDefault: boolean
-  commertialOffer: {
-    DeliverySlaSamplesPerRegion: Record<
-      string,
-      { DeliverySlaPerTypes: any[]; Region: any | null }
-    >
-    Installments: {
-      Value: number
-      InterestRate: number
-      TotalValuePlusInterestRate: number
-      NumberOfInstallments: number
-      PaymentSystemName: string
-      PaymentSystemGroupName: string
-      Name: string
-    }[]
-    DiscountHighLight: any[]
-    GiftSkuIds: string[]
-    Teasers: any[]
-    BuyTogether: any[]
-    ItemMetadataAttachment: any[]
-    Price: number
-    ListPrice: number
-    PriceWithoutDiscount: number
-    RewardValue: number
-    PriceValidUntil: string
-    AvailableQuantity: number
-    Tax: number
-    DeliverySlaSamples: {
-      DeliverySlaPerTypes: any[]
-      Region: any | null
-    }[]
-    GetInfoErrorMessage: any | null
-    CacheVersionUsedToCallCheckout: string
-  }
+  commertialOffer: CommertialOffer
 }
 
 interface SalesChannelAvailable {

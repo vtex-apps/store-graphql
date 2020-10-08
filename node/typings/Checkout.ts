@@ -74,6 +74,56 @@ interface OrderFormItem {
   assemblies: CheckoutAssemblyItem[]
   attachmentOfferings: CheckoutAttachmentOffering[]
 }
+
+interface InstallmentOption {
+  paymentSystem: string
+  paymentName: string
+  paymentGroupName: string
+  value: number
+  bin: string | null
+  installments: SimulationInstallment[]
+}
+
+interface SimulationInstallment {
+  value: number
+  interestRate: number
+  total: number
+  count: number
+}
+
+interface PaymentData {
+  installmentOptions: InstallmentOption[]
+  paymentSystems: {
+    id: string
+    name: string
+    groupName: string
+    validator: {
+      regex: string
+      mask: string
+      cardCodeRegex: string
+      cardCodeMask: string
+      weights: number[]
+      useCvv: boolean
+      useExpirationDate: boolean
+      useCardHolderName: boolean
+      useBillingAddress: boolean
+    }
+    stringId: string
+    template: string
+    requiresDocument: boolean
+    isCustom: boolean
+    description: string | null
+    requiresAuthentication: boolean
+    dueDate: string
+    availablePayments: any | null
+  }[]
+  payments: any[]
+  giftCards: any[]
+  giftCardMessages: any[]
+  availableAccounts: any[]
+  availableTokens: any[]
+}
+
 interface OrderForm {
   orderFormId: string
   salesChannel: string
@@ -109,58 +159,7 @@ interface OrderForm {
     }[]
   }
   clientProfileData: any | null
-  paymentData: {
-    installmentOptions: {
-      paymentSystem: string
-      bin: string | null
-      paymentName: string | null
-      paymentGroupName: string | null
-      value: number
-      installments: {
-        count: number
-        hasInterestRate: false
-        interestRate: number
-        value: number
-        total: number
-        sellerMerchantInstallments: {
-          count: number
-          hasInterestRate: false
-          interestRate: number
-          value: number
-          total: number
-        }[]
-      }[]
-    }[]
-    paymentSystems: {
-      id: string
-      name: string
-      groupName: string
-      validator: {
-        regex: string
-        mask: string
-        cardCodeRegex: string
-        cardCodeMask: string
-        weights: number[]
-        useCvv: boolean
-        useExpirationDate: boolean
-        useCardHolderName: boolean
-        useBillingAddress: boolean
-      }
-      stringId: string
-      template: string
-      requiresDocument: boolean
-      isCustom: boolean
-      description: string | null
-      requiresAuthentication: boolean
-      dueDate: string
-      availablePayments: any | null
-    }[]
-    payments: any[]
-    giftCards: any[]
-    giftCardMessages: any[]
-    availableAccounts: any[]
-    availableTokens: any[]
-  }
+  paymentData: PaymentData
   marketingData: OrderFormMarketingData | null
   sellers: {
     id: string
@@ -232,7 +231,7 @@ interface PayloadItem {
 }
 
 interface SimulationPayload {
-  country: string
+  country?: string
   items: PayloadItem[]
   postalCode?: string
   isCheckedIn?: boolean
@@ -317,4 +316,11 @@ interface SLA {
   pickupPointId: string | null
   pickupDistance: number
   polygonName: string | null
+}
+
+interface ItemWithSimulationInput {
+  itemId: string
+  sellers: {
+    sellerId: string
+  }[]
 }

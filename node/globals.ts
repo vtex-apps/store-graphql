@@ -127,6 +127,7 @@ declare global {
     acronym: string
     fields: string[]
     id: string
+    account?: string
   }
 
   interface DocumentSchemaArgs {
@@ -160,6 +161,7 @@ declare global {
   interface UpdateDocumentArgs {
     acronym: string
     document: { fields: KeyValue[] }
+    account?: string
     schema?: string
   }
 

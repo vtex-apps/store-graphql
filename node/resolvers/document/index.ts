@@ -40,11 +40,11 @@ export const queries = {
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
-    const { acronym, fields, id } = args
+    const { acronym, fields, id, account } = args
     const {
       clients: { masterdata },
     } = context
-    const data = await masterdata.getDocument(acronym, id, fields)
+    const data = await masterdata.getDocument(acronym, id, fields, account)
     return {
       cacheId: id,
       id,
@@ -156,6 +156,7 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
+      account: accountName
     } = args
     const documentId = prop('id', parseFieldsToJson(fields)) as string
     if (!documentId) {
@@ -168,7 +169,8 @@ export const mutations = {
     await masterdata.updateDocument(
       acronym,
       documentId,
-      parseFieldsToJson(fields)
+      parseFieldsToJson(fields),
+      accountName
     )
     return {
       cacheId: documentId,

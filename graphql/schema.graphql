@@ -296,6 +296,12 @@ type Query {
     @withSegment
 
   """
+  returns a certain checkout cart details
+  """
+  searchOrderForm(orderFormId: String!): OrderForm
+    @cacheControl(scope: PRIVATE)
+
+  """
   Returns user orders details
   """
   orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
@@ -391,6 +397,10 @@ type Query {
     Document id
     """
     id: String
+    """
+    Defines in which account the request will be made
+    """
+    account: String
   ): Document
 
   """
@@ -541,6 +551,8 @@ type Query {
   userLastOrder: Order @cacheControl(scope: PRIVATE)
 
   checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
+
+  itemsWithSimulation(items: [ItemInput]): [SKU] @cacheControl(scope: PRIVATE) @withSegment
 }
 
 type Mutation {
@@ -848,6 +860,7 @@ type Mutation {
   updateDocument(
     acronym: String!
     document: DocumentInput
+    account: String
     schema: String
   ): DocumentResponse
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
@@ -878,4 +891,10 @@ type Mutation {
 
   savePickupInSession(address: OrderFormAddressInput, name: String): Session
     @cacheControl(scope: PRIVATE)
+
+  """
+  Set new orderForm.
+  """
+
+  newOrderForm(orderFormId: String): OrderForm @cacheControl(scope: PRIVATE) @withOrderFormId
 }

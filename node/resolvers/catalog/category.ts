@@ -1,11 +1,24 @@
-import { compose, last, prop, split } from 'ramda'
+import { prop } from 'ramda'
 
 import { getCategoryInfo } from './utils'
+import { formatTranslatableProp } from '../../utils/i18n'
+import { catalogSlugify } from './slug'
 
-const lastSegment = compose<string, string[], string>(
-  last,
-  split('/')
-)
+const getTypeForCategory = (url: string) => {
+  switch (url.split('/').length) {
+    case 2:
+      return 'department'
+    case 3:
+      return 'category'
+    default:
+      return 'subcategory'
+  }
+}
+
+const lastSegment = (route: string) => {
+  const splittedSegments = route.split('/')
+  return splittedSegments[splittedSegments.length - 1]
+}
 
 function cleanUrl(url: string) {
   return url.replace(/^.*(vtexcommercestable\.com\.br)/, '')
@@ -30,38 +43,56 @@ interface SafeCategory
 
 export const resolvers = {
   Category: {
+    name: formatTranslatableProp<SafeCategory, 'name', 'id'>(
+      'name',
+      'id'
+    ),
+
     cacheId: prop('id'),
 
     href: async (
       { id, url }: SafeCategory,
       _: any,
-      { clients: { catalog } }: Context
+      { vtex: { tenant, binding }, clients: { catalog, rewriter } }: Context
     ) => {
       if (url == null) {
         const category = await getCategoryInfo(catalog, id, 4)
         url = category.url
       }
       const path = cleanUrl(url)
-
-      // If the path is `/clothing`, we know that's a department
-      // But if it is `/clothing/shirts`, it's not.
-      return pathToCategoryHref(path)
+      // Won't translate href if current locale is the same as the default locale
+      // or account isn't in the tenant system, or binding data isn't present
+      return tenant && binding && binding.id && tenant.locale !== binding.locale
+        ? await rewriter.getRoute(id.toString(), getTypeForCategory(path), binding.id) || url
+        : path
     },
 
-    metaTagDescription: prop('MetaTagDescription'),
+    metaTagDescription: formatTranslatableProp<SafeCategory, 'MetaTagDescription', 'id'>(
+      'MetaTagDescription',
+      'id'
+    ),
 
-    titleTag: prop('Title'),
+    titleTag: formatTranslatableProp<SafeCategory, 'Title', 'id'>(
+      'Title',
+      'id'
+    ),
 
     slug: async (
-      { id, url }: SafeCategory,
+      { name, id, url }: SafeCategory,
       _: any,
-      { clients: { catalog } }: Context
+      { vtex: { tenant, binding }, clients: { catalog, rewriter } }: Context
     ) => {
       if (url == null) {
         const category = await getCategoryInfo(catalog, id, 4)
         url = category.url
       }
-      return url ? lastSegment(url) : null
+      // Won't translate slug if current locale is the same as the default locale
+      // or account isn't in the tenant system, or binding data isn't present
+      if (!tenant || !binding || tenant?.locale === binding?.locale || !binding.id ) {
+        return catalogSlugify(name).toLowerCase()
+      }
+      const translatedRoute = await rewriter.getRoute(id.toString(), getTypeForCategory(cleanUrl(url)), binding.id) || url
+      return lastSegment(translatedRoute)
     },
 
     children: async (

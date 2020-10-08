@@ -49,7 +49,7 @@ interface CatalogPageTypeResponse {
 export class Catalog extends AppClient {
   private basePath: string
   public constructor(ctx: IOContext, opts?: InstanceOptions) {
-    super('vtex.catalog-api-proxy', ctx, opts)
+    super('vtex.catalog-api-proxy@0.x', ctx, opts)
     this.basePath = ctx.sessionToken ? '/proxy/authenticated/catalog' : '/proxy/catalog'
   }
 

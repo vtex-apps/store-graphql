@@ -18,6 +18,7 @@ import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
 
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
+import { getSimulationPayloadsByItem, orderFormItemToSeller } from './../../utils/simulation'
 
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
@@ -102,7 +103,7 @@ const shouldUpdateMarketingData = (
     utmipage = null,
   } = orderFormMarketingTags || {}
 
-  if (!utmParams?.campaign && !utmParams?.medium && !utmParams?.campaign && !utmiParams?.campaign && !utmiParams?.page && !utmiParams?.part) {
+  if (!utmParams?.source && !utmParams?.medium && !utmParams?.campaign && !utmiParams?.campaign && !utmiParams?.page && !utmiParams?.part) {
     // Avoid updating at any costs if all fields are invalid
     return false
   }
@@ -239,6 +240,16 @@ export const queries: Record<string, Resolver> = {
     return orderForm
   },
 
+  searchOrderForm: async (_, { orderFormId }, ctx) => {
+    const {
+      clients: { checkout }
+        } = ctx
+
+    const orderForm = await checkout.orderForm(orderFormId)
+
+    return orderForm
+  },
+
   orders: (_, __, { clients: { checkout } }) => {
     return checkout.orders()
   },
@@ -310,6 +321,30 @@ export const queries: Record<string, Resolver> = {
     return slas.find(
       s => path(['pickupStoreInfo', 'address', 'addressId'], s) === pickupId
     )
+  },
+
+  itemsWithSimulation: async (_, { items }: {items: ItemWithSimulationInput[]}, ctx: Context) => {
+    const {
+      clients: { checkout },
+      vtex: { segment }
+    } = ctx
+
+    return items.map(item => {
+      return new Promise((resolve) => {
+        const simulationPayloads = getSimulationPayloadsByItem(item, segment?.priceTables, segment?.regionId)
+        const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
+        Promise.all(simulationPromises).then(simulations => {
+          const sellers: Partial<Seller>[] = simulations.map(simulation => {
+            const [simulationItem] = simulation.items
+            return orderFormItemToSeller({...simulationItem, paymentData: simulation.paymentData})
+          })
+          resolve({
+            itemId: item.itemId,
+            sellers,
+          })
+        })
+      })
+    })
   },
 }
 
@@ -529,5 +564,17 @@ export const mutations: Record<string, Resolver> = {
       throw new Error('No orderformid in cookies')
     }
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
+  },
+
+  newOrderForm: async (_, { orderFormId }, ctx) => {
+    const {
+      clients: { checkout },
+    } = ctx
+
+    const { data, headers } = await checkout.newOrderForm(orderFormId)
+
+    await setCheckoutCookies(headers, ctx)
+
+    return data
   },
 }

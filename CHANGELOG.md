@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.134.0] - 2020-09-30
+### Added
+- Translated `slug` and `href` fields from the Category type
+
+## [2.133.0] - 2020-09-21
+### Added
+- `itemsWithSimulation` query.
+
+## [2.132.0] - 2020-09-21
+### Added
+- New `account` field on `document` query. 
+
+## [2.131.2] - 2020-09-15
+### Added
+- Translate correctly categories result
+
+## [2.131.1] - 2020-09-14
+### Fixed
+- Problem when addToCart mutation was not updating the marketing data on order form if only the `utm_source` param was being updated.
+
+## [2.131.0] - 2020-09-08
+
+### Added
+- `instructions` to the `PickupPoint` type
+
+## [2.130.0] - 2020-09-02
+### Added
+- New query `searchOrderForm`.
+
+## [2.129.1] - 2020-08-27
+### Added
+- `pickupStoreInfo` to the `ShippingSLA` type
+
+## [2.129.0] - 2020-08-27
+### Added
+- New `account` field on `updateDocuments` query. 
+
+## [2.128.0] - 2020-08-27
+### Added
+- New mutation `newOrderForm`.
+
+## [2.127.0] - 2020-07-17
+
 ### Added
 - `LogisticItem` type on `shipping` query
 

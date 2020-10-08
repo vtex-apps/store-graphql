@@ -241,7 +241,7 @@ const getSearchMetaData = async (
 const translateToStoreDefaultLanguage = async (
   clients: Context['clients'],
   term: string
-): Promise<string> => {
+): Promise<any> => {
   const { segment, messagesGraphQL } = clients
   const [{ cultureInfo: to }, { cultureInfo: from }] = await Promise.all([
     segment.getSegmentByToken(null),

@@ -58,6 +58,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "carafizi1",
+      "name": "Gabriel Carafizi",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/51974587?v=4",
+      "profile": "http://carafizi.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "marcosewbank",
+      "name": "Marcos André Suarez Ewbank",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/27689698?v=4",
+      "profile": "https://github.com/marcosewbank",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "leoWorkingGood",
+      "name": "leoWorkingGood",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/51805410?v=4",
+      "profile": "https://github.com/leoWorkingGood",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
