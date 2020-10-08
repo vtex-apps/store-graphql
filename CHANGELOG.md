@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- New `account` param on createDocument mutations
+
 ## [2.134.0] - 2020-09-30
 ### Added
 - Translated `slug` and `href` fields from the Category type
