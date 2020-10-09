@@ -98,6 +98,7 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
+      account,
       schema,
     } = args
     const {
@@ -106,7 +107,8 @@ export const mutations = {
     const response = (await masterdata.createDocument(
       acronym,
       parseFieldsToJson(fields),
-      schema
+      schema,
+      account
     )) as DocumentResponse
 
     const documentId = removeAcronymFromId(acronym, response)
@@ -126,6 +128,7 @@ export const mutations = {
     const {
       dataEntity,
       document: { document },
+      account,
       schema,
     } = args
 
@@ -136,7 +139,8 @@ export const mutations = {
     const response = (await masterdata.createDocument(
       dataEntity,
       document,
-      schema
+      schema,
+      account
     )) as DocumentResponseV2
 
     const documentId = removeAcronymFromId(dataEntity, response)

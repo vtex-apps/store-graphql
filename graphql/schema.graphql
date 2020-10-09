@@ -855,6 +855,7 @@ type Mutation {
   createDocument(
     acronym: String!
     document: DocumentInput
+    account: String
     schema: String
   ): DocumentResponse
   updateDocument(
@@ -873,6 +874,7 @@ type Mutation {
   createDocumentV2(
     dataEntity: String!
     document: DocumentInputV2
+    account: String
     schema: String
   ): DocumentResponseV2 @cacheControl(scope: PRIVATE)
 

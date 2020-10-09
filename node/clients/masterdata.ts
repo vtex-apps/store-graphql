@@ -45,11 +45,12 @@ export class MasterData extends ExternalClient {
       },
     })
 
-  public createDocument = (acronym: string, fields: object, schema?: string) =>
+  public createDocument = (acronym: string, fields: object, schema?: string, account?: string) =>
     this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
       params: {
         ...(schema ? { _schema: schema } : null),
+        ...(account ? { an: account } : null),
       },
     })
 
