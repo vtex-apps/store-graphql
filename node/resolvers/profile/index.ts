@@ -65,7 +65,7 @@ export const mutations = {
 
       // Prevent overrides of the 'firstName' field.
       if (!userHasFirstName) {
-        updatedPersonalPreferences['firstName'] = name
+        updatedPersonalPreferences.firstName = name
       }
     }
 
