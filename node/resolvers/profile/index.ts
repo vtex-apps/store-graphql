@@ -72,9 +72,9 @@ export const mutations = {
         updatedPersonalPreferences.firstName = fields.name
       }
 
-      // Prevents 'cellPhone' field from being overridden.
+      // Prevents 'homePhone' field from being overridden.
       if (!userHasPhone && fields.phone) {
-        updatedPersonalPreferences.cellPhone = fields.phone
+        updatedPersonalPreferences.homePhone = fields.phone
       }
     }
 
