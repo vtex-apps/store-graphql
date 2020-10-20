@@ -96,6 +96,7 @@ declare global {
 
   interface PersonalPreferences {
     firstName?: string
+    cellPhone?: string
     isNewsletterOptIn?: 'True' | 'False'
   }
 

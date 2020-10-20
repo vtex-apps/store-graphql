@@ -17,7 +17,10 @@ const FALSE = 'False'
 
 interface SubscribeNewsletterArgs {
   email: string
-  name?: string
+  fields?: {
+    name?: string
+    phone?: string
+  }
   isNewsletterOptIn: boolean
 }
 
@@ -45,7 +48,7 @@ export const mutations = {
 
   subscribeNewsletter: async (
     _: any,
-    { email, name, isNewsletterOptIn }: SubscribeNewsletterArgs,
+    { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
     const profile = context.clients.profile
@@ -58,14 +61,20 @@ export const mutations = {
       isNewsletterOptIn: optIn,
     }
 
-    if (name) {
+    if (fields) {
       const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
       const userHasFirstName = Boolean(userProfile.firstName)
+      const userHasPhone = Boolean(userProfile.cellPhone)
 
-      // Prevent overrides of the 'firstName' field.
-      if (!userHasFirstName) {
-        updatedPersonalPreferences.firstName = name
+      // Prevents 'firstName' field from being overridden.
+      if (!userHasFirstName && fields.name) {
+        updatedPersonalPreferences.firstName = fields.name
+      }
+
+      // Prevents 'cellPhone' field from being overridden.
+      if (!userHasPhone && fields.phone) {
+        updatedPersonalPreferences.cellPhone = fields.phone
       }
     }
 
