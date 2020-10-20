@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- `name` argument to `subscribeNewsletter` mutation.
+- `fields` argument to `subscribeNewsletter` mutation.
 
 ## [2.133.0] - 2020-09-21
 ### Added
