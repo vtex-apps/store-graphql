@@ -111,6 +111,11 @@ type ProfileCustomField {
   value: String
 }
 
+input NewsletterFieldsInput {
+  name: String
+  phone: String
+}
+
 """
 Profile information that is receive in session
 """

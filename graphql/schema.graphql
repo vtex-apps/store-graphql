@@ -676,7 +676,7 @@ type Mutation {
   """
   Subscribe to newsletter
   """
-  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean, name: String): Boolean
+  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean, fields: NewsletterFieldsInput): Boolean
     @cacheControl(scope: PRIVATE)
 
   """
