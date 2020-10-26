@@ -63,7 +63,7 @@ export const resolvers = {
       // Won't translate href if current locale is the same as the default locale
       // or account isn't in the tenant system, or binding data isn't present
       return tenant && binding && binding.id && tenant.locale !== binding.locale
-        ? await rewriter.getRoute(id.toString(), getTypeForCategory(path), binding.id) || url
+        ? await rewriter.getRoute(id.toString(), getTypeForCategory(path), binding.id) || path
         : path
     },
 
