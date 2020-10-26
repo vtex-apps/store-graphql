@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.135.1] - 2020-10-26
+
 ### Fixed
 
 - Uses correct fallback for category href
