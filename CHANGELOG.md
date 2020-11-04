@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fills the `PriceWithoutDiscount` field in the `itemsWithSimulation` query.
+- Use `sellingPrice` instead of `price` in the `itemsWithSimulation` query.
 
 ## [2.136.0] - 2020-10-29
 ### Added
