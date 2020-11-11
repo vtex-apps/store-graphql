@@ -12,46 +12,48 @@ export const fieldResolvers = {
     items: async (benefit: any, _: any, { clients: { catalog } }: Context) => {
       const { teaserType, conditions, effects } = benefit
 
-      if (teaserType === CATALOG) {
-        const {
-          parameters: conditionsParameters,
-          minimumQuantity = parseInt(DEFAULT_QUANTITY, 10),
-        } = conditions
+      if (teaserType !== CATALOG) {
+        return
+      }
 
-        const { parameters: effectsParameters } = effects
+      const {
+        parameters: conditionsParameters,
+        minimumQuantity = parseInt(DEFAULT_QUANTITY, 10),
+      } = conditions
 
-        const items = await Promise.all(
-          conditionsParameters.map(
-            async (conditionsParameter: any, index: any) => {
-              const skuIds: string[] = conditionsParameter.value.split(
-                SKU_SEPARATOR
-              )
+      const { parameters: effectsParameters } = effects
 
-              const discount = effectsParameters[index].value
-              const products = await catalog.productBySku(skuIds)
+      const items = await Promise.all(
+        conditionsParameters.map(
+          async (conditionsParameter: any, index: any) => {
+            const skuIds: string[] = conditionsParameter.value.split(
+              SKU_SEPARATOR
+            )
 
-              return products.map((product: any) => {
-                const benefitSKUIds: any = []
+            const discount = effectsParameters[index].value
+            const products = await catalog.productBySku(skuIds)
 
-                product.items.map((item: any) => {
-                  if (indexOf(item.itemId, skuIds) > -1) {
-                    benefitSKUIds.push(item.itemId)
-                  }
-                })
+            return products.map((product: any) => {
+              const benefitSKUIds: any = []
 
-                return {
-                  benefitProduct: product,
-                  benefitSKUIds,
-                  discount,
-                  minQuantity: minimumQuantity,
+              product.items.map((item: any) => {
+                if (indexOf(item.itemId, skuIds) > -1) {
+                  benefitSKUIds.push(item.itemId)
                 }
               })
-            }
-          )
-        )
 
-        return flatten(items)
-      }
+              return {
+                benefitProduct: product,
+                benefitSKUIds,
+                discount,
+                minQuantity: minimumQuantity,
+              }
+            })
+          }
+        )
+      )
+
+      return flatten(items)
     },
   },
 }
