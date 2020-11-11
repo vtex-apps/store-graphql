@@ -4,7 +4,7 @@ import { ResolverError, UserInputError } from '@vtex/api'
 import http, { Method } from 'axios'
 import { parse, serialize } from 'cookie'
 
-import { headers as authHeaders, withAuthToken } from '../headers'
+import { withAuthToken } from '../headers'
 import paths from '../paths'
 
 const E_PASS = 'Password does not follow specified format'
@@ -28,9 +28,10 @@ export async function makeRequest({
   cookie = null,
 }: ParamsMakeRequest) {
   const composedHeaders = {
-    ...authHeaders.profile,
     Cookie: `VtexIdClientAutCookie=${cookie}`,
     'vtex-ui-id-version': vtexIdVersion,
+    accept: 'application/vnd.vtex.ds.v10+json',
+    ...(body && { 'content-type': 'application/x-www-form-urlencoded' }),
   }
 
   return http.request({
