@@ -10,13 +10,21 @@ import paths from '../paths'
 const E_PASS = 'Password does not follow specified format'
 const E_TOKEN = 'VtexSessionToken cookie is null'
 
-export async function makeRequest(
-  ctx: any,
-  url: any,
-  method: Method = 'POST',
+interface ParamsMakeRequest {
+  ctx: any
+  url: any
+  method?: Method
+  vtexIdVersion?: string
+  cookie?: string | null
+}
+
+export async function makeRequest({
+  ctx,
+  url,
+  method = 'POST',
   vtexIdVersion = 'store-graphql',
-  cookie: string | null = null
-) {
+  cookie = null,
+}: ParamsMakeRequest) {
   const composedHeaders = {
     ...authHeaders.profile,
     Cookie: `VtexIdClientAutCookie=${cookie}`,
@@ -50,11 +58,11 @@ const makeSecureRequest = async (
   })
 
 const getSessionToken = async (ioContext: any, redirectUrl?: any) => {
-  const { data, status } = await makeRequest(
-    ioContext,
-    paths.sessionToken(ioContext.account, ioContext.account, redirectUrl),
-    'GET'
-  )
+  const { data, status } = await makeRequest({
+    ctx: ioContext,
+    url: paths.sessionToken(ioContext.account, ioContext.account, redirectUrl),
+    method: 'GET',
+  })
 
   if (!data.authenticationToken) {
     throw new ResolverError(
@@ -118,11 +126,11 @@ export const queries = {
         showClassicAuthentication,
         showAccessKeyAuthentication,
       },
-    } = await makeRequest(
-      ioContext,
-      paths.sessionToken(ioContext.account, ioContext.account),
-      'GET'
-    )
+    } = await makeRequest({
+      ctx: ioContext,
+      url: paths.sessionToken(ioContext.account, ioContext.account),
+      method: 'GET',
+    })
 
     return {
       accessKeyAuthentication: showAccessKeyAuthentication,
@@ -241,15 +249,15 @@ export const mutations = {
     const {
       headers,
       data: { authStatus },
-    } = await makeRequest(
-      ioContext,
-      paths.recoveryPassword(
+    } = await makeRequest({
+      ctx: ioContext,
+      url: paths.recoveryPassword(
         VtexSessionToken,
         args.email,
         args.newPassword,
         args.code
-      )
-    )
+      ),
+    })
 
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
   },
@@ -283,7 +291,12 @@ export const mutations = {
     const {
       headers,
       data: { authStatus },
-    } = await makeRequest(ioContext, passPath, 'POST', args.vtexIdVersion)
+    } = await makeRequest({
+      ctx: ioContext,
+      url: passPath,
+      method: 'POST',
+      vtexIdVersion: args.vtexIdVersion,
+    })
 
     if (authStatus === 'WrongCredentials') {
       throw new UserInputError('Wrong credentials.')
@@ -307,10 +320,10 @@ export const mutations = {
     const SESSION_TOKEN_EXPIRES = 600
     const VtexSessionToken = await getSessionToken(ioContext)
 
-    await makeRequest(
-      ioContext,
-      paths.sendEmailVerification(args.email, VtexSessionToken)
-    )
+    await makeRequest({
+      ctx: ioContext,
+      url: paths.sendEmailVerification(args.email, VtexSessionToken),
+    })
     response.set(
       'Set-Cookie',
       serialize('VtexSessionToken', VtexSessionToken, {
