@@ -8,8 +8,10 @@ const getTypeForCategory = (url: string) => {
   switch (url.split('/').length) {
     case 2:
       return 'department'
+
     case 3:
       return 'category'
+
     default:
       return 'subcategory'
   }
@@ -17,6 +19,7 @@ const getTypeForCategory = (url: string) => {
 
 const lastSegment = (route: string) => {
   const splittedSegments = route.split('/')
+
   return splittedSegments[splittedSegments.length - 1]
 }
 
@@ -26,6 +29,7 @@ function cleanUrl(url: string) {
 
 export const pathToCategoryHref = (path: string) => {
   const isDepartment = path.slice(1).indexOf('/') === -1
+
   return isDepartment ? `${path}/d` : path
 }
 
@@ -34,8 +38,8 @@ export const pathToCategoryHref = (path: string) => {
  */
 interface SafeCategory
   extends Pick<
-  Category,
-  'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
+    Category,
+    'id' | 'name' | 'hasChildren' | 'MetaTagDescription' | 'Title'
   > {
   url: string | null
   children: Category[] | null
@@ -43,10 +47,7 @@ interface SafeCategory
 
 export const resolvers = {
   Category: {
-    name: formatTranslatableProp<SafeCategory, 'name', 'id'>(
-      'name',
-      'id'
-    ),
+    name: formatTranslatableProp<SafeCategory, 'name', 'id'>('name', 'id'),
 
     cacheId: prop('id'),
 
@@ -57,20 +58,28 @@ export const resolvers = {
     ) => {
       if (url == null) {
         const category = await getCategoryInfo(catalog, id, 4)
+
         url = category.url
       }
+
       const path = cleanUrl(url)
+
       // Won't translate href if current locale is the same as the default locale
       // or account isn't in the tenant system, or binding data isn't present
       return tenant && binding && binding.id && tenant.locale !== binding.locale
-        ? await rewriter.getRoute(id.toString(), getTypeForCategory(path), binding.id) || path
+        ? (await rewriter.getRoute(
+            id.toString(),
+            getTypeForCategory(path),
+            binding.id
+          )) || path
         : path
     },
 
-    metaTagDescription: formatTranslatableProp<SafeCategory, 'MetaTagDescription', 'id'>(
+    metaTagDescription: formatTranslatableProp<
+      SafeCategory,
       'MetaTagDescription',
       'id'
-    ),
+    >('MetaTagDescription', 'id'),
 
     titleTag: formatTranslatableProp<SafeCategory, 'Title', 'id'>(
       'Title',
@@ -84,14 +93,28 @@ export const resolvers = {
     ) => {
       if (url == null) {
         const category = await getCategoryInfo(catalog, id, 4)
+
         url = category.url
       }
+
       // Won't translate slug if current locale is the same as the default locale
       // or account isn't in the tenant system, or binding data isn't present
-      if (!tenant || !binding || tenant?.locale === binding?.locale || !binding.id ) {
+      if (
+        !tenant ||
+        !binding ||
+        tenant?.locale === binding?.locale ||
+        !binding.id
+      ) {
         return catalogSlugify(name).toLowerCase()
       }
-      const translatedRoute = await rewriter.getRoute(id.toString(), getTypeForCategory(cleanUrl(url)), binding.id) || url
+
+      const translatedRoute =
+        (await rewriter.getRoute(
+          id.toString(),
+          getTypeForCategory(cleanUrl(url)),
+          binding.id
+        )) || url
+
       return lastSegment(translatedRoute)
     },
 
@@ -102,8 +125,10 @@ export const resolvers = {
     ) => {
       if (children == null) {
         const category = await getCategoryInfo(catalog, id, 4)
+
         children = category.children
       }
+
       return children
     },
   },

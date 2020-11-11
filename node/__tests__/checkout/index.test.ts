@@ -18,12 +18,13 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-it('should call add item with correct param', async () => {
+test('should call add item with correct param', async () => {
   const itemToAdd = {
     id: 100,
     quantity: 1,
     seller: '1',
   }
+
   await mutations.addItem(
     {},
     {
@@ -34,12 +35,13 @@ it('should call add item with correct param', async () => {
   )
 
   const checkoutClient = mockContext.clients.checkout
+
   expect(checkoutClient.addItem.mock.calls[0][0]).toBe(orderForm.orderFormId)
   expect(checkoutClient.addItem.mock.calls[0][1]).toMatchObject([itemToAdd])
   expect(checkoutClient.updateOrderFormMarketingData).toBeCalledTimes(0)
 })
 
-it.each([
+test.each([
   null,
   {
     utmSource: 'SOURCE DIFFERENT',
@@ -57,7 +59,9 @@ it.each([
       quantity: 1,
       seller: '1',
     }
+
     const checkoutClient = mockContext.clients.checkout
+
     checkoutClient.orderForm.mockImplementationOnce(() => ({
       ...orderForm,
       marketingData: currentMarketingData,
@@ -92,7 +96,7 @@ it.each([
   }
 )
 
-it.each<any>([
+test.each<any>([
   [
     {
       utmSource: 'source',
@@ -127,6 +131,7 @@ it.each<any>([
     }
 
     const checkoutClient = mockContext.clients.checkout
+
     checkoutClient.orderForm.mockImplementationOnce(() => ({
       ...orderForm,
       marketingData: currentMarketingData,
@@ -149,7 +154,7 @@ it.each<any>([
   }
 )
 
-it.each<any>([
+test.each<any>([
   [undefined, undefined],
   [{}, {}],
 ])(
@@ -162,6 +167,7 @@ it.each<any>([
     }
 
     const checkoutClient = mockContext.clients.checkout
+
     checkoutClient.orderForm.mockImplementationOnce(() => ({
       ...orderForm,
       marketingData: { coupon: null, marketingTags: [] },

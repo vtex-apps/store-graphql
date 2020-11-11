@@ -5,10 +5,11 @@ import {
   RequestConfig,
   IOResponse,
 } from '@vtex/api'
+
 import { checkoutCookieFormat, statusToError } from '../utils'
 
 export class Checkout extends JanusClient {
-  public constructor(ctx: IOContext, options?: InstanceOptions) {
+  constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
       ...options,
       headers: {
@@ -23,13 +24,16 @@ export class Checkout extends JanusClient {
   private getCommonHeaders = () => {
     const { orderFormId, segmentToken, sessionToken } = this
       .context as CustomIOContext
+
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
     const segmentTokenCookie = segmentToken
       ? `vtex_segment=${segmentToken};`
       : ''
+
     const sessionTokenCookie = sessionToken
       ? `vtex_session=${sessionToken};`
       : ''
+
     return {
       Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
     }
@@ -39,6 +43,7 @@ export class Checkout extends JanusClient {
     const { segment } = this.context as CustomIOContext
     const channel = segment && segment.channel
     const queryString = channel ? `?sc=${channel}` : ''
+
     return queryString
   }
 
@@ -144,6 +149,7 @@ export class Checkout extends JanusClient {
       body,
       { metric: 'checkout-addAssemblyOptions' }
     )
+
   public removeAssemblyOptions = async (
     orderFormId: string,
     itemId: string | number,
@@ -213,6 +219,7 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
+
     return this.http.get<T>(url, config).catch(statusToError) as Promise<T>
   }
 
@@ -221,6 +228,7 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
+
     return this.http.post<T>(url, data, config).catch(statusToError) as Promise<
       T
     >
@@ -235,6 +243,7 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
+
     return this.http
       .postRaw<T>(url, data, config)
       .catch(statusToError) as Promise<IOResponse<T>>
@@ -245,6 +254,7 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
+
     return this.http.delete<T>(url, config).catch(statusToError) as Promise<
       IOResponse<T>
     >
@@ -259,6 +269,7 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
+
     return this.http
       .patch<T>(url, data, config)
       .catch(statusToError) as Promise<T>
@@ -269,6 +280,7 @@ export class Checkout extends JanusClient {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
+
     return this.http.put<T>(url, data, config).catch(statusToError) as Promise<
       T
     >
@@ -276,6 +288,7 @@ export class Checkout extends JanusClient {
 
   private get routes() {
     const base = '/api/checkout/pub'
+
     return {
       addItem: (orderFormId: string, queryString: string) =>
         `${base}/orderForm/${orderFormId}/items${queryString}`,
@@ -300,7 +313,8 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/items/${itemId}/assemblyOptions/${assemblyOptionsId}`,
       checkin: (orderFormId: string) =>
         `${base}/orderForm/${orderFormId}/checkIn`,
-      orderForm: (orderFormId?: string) => `${base}/orderForm/${orderFormId ?? ''}`,
+      orderForm: (orderFormId?: string) =>
+        `${base}/orderForm/${orderFormId ?? ''}`,
       orders: `${base}/orders`,
       simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,

@@ -1,5 +1,6 @@
-import { compose, last, split, toLower } from 'ramda'
 import crypto from 'crypto'
+
+import { compose, last, split, toLower } from 'ramda'
 
 import { catalogSlugify, Slugify } from './slug'
 
@@ -22,13 +23,11 @@ const pageTypeMapping: Record<string, string> = {
   Search: 'search',
 }
 
-const lastSegment = compose<string, string[], string>(
-  last,
-  split('/')
-)
+const lastSegment = compose<string, string[], string>(last, split('/'))
 
 export function hashMD5(text: string) {
   const hash = crypto.createHash('md5')
+
   return hash.update(text).digest('hex')
 }
 
@@ -39,13 +38,16 @@ export function findCategoryInTree(
 ): Category | null {
   for (const node of tree) {
     const slug = lastSegment(node.url)
+
     if (slug.toUpperCase() === values[index].toUpperCase()) {
       if (index === values.length - 1) {
         return node
       }
+
       return findCategoryInTree(node.children, values, index + 1)
     }
   }
+
   return null
 }
 
@@ -54,8 +56,9 @@ export const getBrandFromSlug = async (
   catalog: Context['clients']['catalog']
 ) => {
   const brands = await catalog.brands()
+
   return brands.find(
-    brand =>
+    (brand) =>
       brand.isActive &&
       (toLower(catalogSlugify(brand.name)) === brandSlug ||
         toLower(Slugify(brand.name)) === brandSlug)
@@ -119,24 +122,31 @@ export const searchContextGetCategory = async (
   if (!isVtex) {
     return getIdFromTree(args, catalog)
   }
+
   const { department, category, subcategory } = args
+
   if (!department && !category && !subcategory) {
     return null
   }
+
   const url = [department, category, subcategory]
     .filter(Boolean)
-    .map(str => catalogSlugify(str!))
+    .map((str) => catalogSlugify(str!))
     .join('/')
+
   const pageType = await catalog.pageType(url).catch(() => null)
+
   if (!pageType) {
     logger.info(
       `category ${url}, args ${JSON.stringify(args)}`,
       'pagetype-category-error'
     )
   }
+
   if (!pageType || !typesPossible.includes(pageType.pageType)) {
     return getIdFromTree(args, catalog)
   }
+
   return pageType.id
 }
 
@@ -168,23 +178,24 @@ const getIdFromTree = async (
 
     let found
 
-    found = departments.find(department =>
+    found = departments.find((department) =>
       compareGenericSlug({ entity: 'department', url: department.url })
     )
 
     if (args.category && found) {
-      found = found.children.find(category =>
+      found = found.children.find((category) =>
         compareGenericSlug({ entity: 'category', url: category.url })
       )
     }
 
     if (args.subcategory && found) {
-      found = found.children.find(subcategory =>
+      found = found.children.find((subcategory) =>
         compareGenericSlug({ entity: 'subcategory', url: subcategory.url })
       )
     }
 
     return found ? found.id : null
   }
+
   return null
 }

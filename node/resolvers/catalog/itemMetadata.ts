@@ -1,6 +1,7 @@
 import { Segment } from '@vtex/api'
 import camelCase from 'camelcase'
 import { both, pickBy } from 'ramda'
+
 import { renameKeysWith } from '../../utils'
 
 const isTruthy = (val?: string) => !!val
@@ -22,6 +23,7 @@ const getSimulationPayload = async (
   const segmentData = await segment.segment()
 
   let marketingData: Record<string, string> = {}
+
   try {
     marketingData = renameKeysWith(
       camelCase,
@@ -40,13 +42,13 @@ const getSimulationPayload = async (
 
 type PriceTableMap = Record<
   string,
-  {
+  Array<{
     compositionItem: CompositionItem
     simulationPayload: SimulationPayload
     items: CatalogMetadataItem[]
     parent: CatalogMetadataItem
     assemblyOption: AssemblyOption
-  }[]
+  }>
 >
 
 export const resolvers = {
@@ -58,18 +60,22 @@ export const resolvers = {
     ) => {
       const simulationPayload = await getSimulationPayload(segment)
       const itemsWithAssembly = items.filter(
-        item => item.assemblyOptions.length > 0
+        (item) => item.assemblyOptions.length > 0
       )
+
       const priceTableMap: PriceTableMap = {}
 
       for (const item of itemsWithAssembly) {
         const { assemblyOptions } = item
+
         for (const assemblyOption of assemblyOptions) {
           const { composition } = assemblyOption
+
           if (composition && composition.items) {
             for (const compItem of composition.items) {
               const { priceTable } = compItem
               const currentArray = priceTableMap[priceTable] || []
+
               currentArray.push({
                 compositionItem: compItem,
                 simulationPayload,
@@ -82,6 +88,7 @@ export const resolvers = {
           }
         }
       }
+
       return Object.entries(priceTableMap).map(
         ([priceTableName, priceTableValues]) => ({
           type: priceTableName,

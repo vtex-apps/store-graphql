@@ -50,6 +50,7 @@ const convertToBool = (str: any) => !!str && toLower(str) === 'true'
 const priceTables = (profile: SessionProfile): string[] => {
   const priceTables =
     profile && profile.priceTables && profile.priceTables.value
+
   return priceTables ? priceTables.split(',') : []
 }
 
@@ -97,30 +98,31 @@ const setUtmiParams = (publicFields: SessionPublic) => ({
 
 export const sessionFields = (session: Session): SessionFields | {} => {
   const { namespaces } = session
+
   return namespaces
     ? {
-      address: path(['public', 'address', 'value'], namespaces),
-      adminUserEmail: path(
-        ['authentication', 'adminUserEmail', 'value'],
-        namespaces
-      ),
-      adminUserId: path(
-        ['authentication', 'adminUserId', 'value'],
-        namespaces
-      ),
-      id: session.id,
-      cacheId: session.id,
-      impersonable: convertToBool(
-        path(['impersonate', 'canImpersonate', 'value'], namespaces)
-      ),
-      impersonate: {
-        ...setProfileData(namespaces.profile, namespaces.impersonate),
-      },
-      utmParams: setUtmParams(namespaces.public),
-      utmiParams: setUtmiParams(namespaces.public),
-      orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
-      favoritePickup: path(['public', 'favoritePickup', 'value'], namespaces),
-      ...setProfileData(namespaces.profile, namespaces.authentication),
-    }
+        address: path(['public', 'address', 'value'], namespaces),
+        adminUserEmail: path(
+          ['authentication', 'adminUserEmail', 'value'],
+          namespaces
+        ),
+        adminUserId: path(
+          ['authentication', 'adminUserId', 'value'],
+          namespaces
+        ),
+        id: session.id,
+        cacheId: session.id,
+        impersonable: convertToBool(
+          path(['impersonate', 'canImpersonate', 'value'], namespaces)
+        ),
+        impersonate: {
+          ...setProfileData(namespaces.profile, namespaces.impersonate),
+        },
+        utmParams: setUtmParams(namespaces.public),
+        utmiParams: setUtmiParams(namespaces.public),
+        orderFormId: path(['public', 'orderFormId', 'value'], namespaces),
+        favoritePickup: path(['public', 'favoritePickup', 'value'], namespaces),
+        ...setProfileData(namespaces.profile, namespaces.authentication),
+      }
     : ({} as any)
 }

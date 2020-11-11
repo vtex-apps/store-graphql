@@ -19,6 +19,7 @@ export const resolvers = {
       if (childs.length === 0 || values(assemblyOptionsMap).length === 0) {
         return []
       }
+
       return buildAddedOptionsForItem(
         item,
         index,
@@ -32,6 +33,7 @@ export const resolvers = {
       if (values(assemblyOptionsMap).length === 0) {
         return []
       }
+
       return buildRemovedOptions(item, orderForm, assemblyOptionsMap)
     },
   },

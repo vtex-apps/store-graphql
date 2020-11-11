@@ -20,8 +20,10 @@ const getNewItemsOnly = (
   allItems: OrderFormItem[]
 ) => {
   const idSet = new Set<string>()
-  previousItems.forEach(item => idSet.add(item.uniqueId))
-  return allItems.filter(item => !idSet.has(item.uniqueId))
+
+  previousItems.forEach((item) => idSet.add(item.uniqueId))
+
+  return allItems.filter((item) => !idSet.has(item.uniqueId))
 }
 
 const findRecentlyAddedParent = (
@@ -29,12 +31,14 @@ const findRecentlyAddedParent = (
   id: string,
   assemblyId: string | null
 ) =>
-  recentlyAdded.find(i => i.id === id && i.parentAssemblyBinding === assemblyId)
+  recentlyAdded.find(
+    (i) => i.id === id && i.parentAssemblyBinding === assemblyId
+  )
 
-type OptionItems = Omit<AssemblyOptionInput, 'assemblyId'>[]
+type OptionItems = Array<Omit<AssemblyOptionInput, 'assemblyId'>>
 
 interface OptionRequestUnit {
-  items: OptionItems,
+  items: OptionItems
   inputValues: Record<string, string | boolean>
 }
 
@@ -49,11 +53,11 @@ interface AddOptionsLogicInput {
 interface AssemblyOptionBody {
   noSplitItem?: boolean
   composition?: {
-    items: {
+    items: Array<{
       id: string
       quantity: number
       seller: string
-    }[]
+    }>
   }
   inputValues?: Record<string, string>
 }
@@ -64,18 +68,20 @@ const addAssemblyBody = (option: OptionRequestUnit) => {
   if (option.items.length > 0) {
     body.noSplitItem = true
     body.composition = {
-      items: option.items.map(omit(['options', 'inputValues']))
+      items: option.items.map(omit(['options', 'inputValues'])),
     }
   }
 
   if (option.inputValues) {
     body.noSplitItem = true
-    body.inputValues = Object.keys(option.inputValues)
-      .reduce<Record<string, string>>((acc, key) => {
-        // Transforming boolean values to string
-        acc[key] = `${option.inputValues[key]}`
-        return acc
-      }, {})
+    body.inputValues = Object.keys(option.inputValues).reduce<
+      Record<string, string>
+    >((acc, key) => {
+      // Transforming boolean values to string
+      acc[key] = `${option.inputValues[key]}`
+
+      return acc
+    }, {})
   }
 
   return body
@@ -92,7 +98,7 @@ const joinOptionsWithType = (options: AssemblyOptionInput[]) => {
 
   for (const option of options) {
     const { assemblyId, ...rest } = option
-    const currentArray = result[assemblyId] && result[assemblyId].items || []
+    const currentArray = (result[assemblyId] && result[assemblyId].items) || []
 
     if (rest.id) {
       currentArray.push(rest)
@@ -100,7 +106,7 @@ const joinOptionsWithType = (options: AssemblyOptionInput[]) => {
 
     result[assemblyId] = {
       inputValues: rest.inputValues,
-      items: currentArray
+      items: currentArray,
     }
   }
 
@@ -122,6 +128,7 @@ const addOptionsRecursive = async (
       item.id!.toString(),
       assemblyId
     )
+
     const parentIndex =
       parentItem &&
       orderForm.items.findIndex(propEq('uniqueId', parentItem.uniqueId))
@@ -142,6 +149,7 @@ const addOptionsRecursive = async (
 
 const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   const { checkout, orderForm, itemIndex, options, oldItems } = input
+
   if (!options || options.length === 0) {
     return
   }
@@ -164,11 +172,13 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
         removeAssemblyBody(parsedOptions)
       )
       .catch(() => ({ data: recentOrderForm }))
+
     recentOrderForm = response.data
   }
 
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
+
     recentOrderForm = await checkout
       .addAssemblyOptions(
         orderForm.orderFormId,
@@ -252,13 +262,11 @@ export const buildAssemblyOptionsMap = (orderForm: OrderForm) => {
     .filter(
       ({ assemblyOptions }) => assemblyOptions && assemblyOptions.length > 0
     )
-    .reduce(
-      (prev, curr) => {
-        prev[curr.id] = filterCompositionNull(curr.assemblyOptions)
-        return prev
-      },
-      {} as Record<string, AssemblyOption[]>
-    )
+    .reduce((prev, curr) => {
+      prev[curr.id] = filterCompositionNull(curr.assemblyOptions)
+
+      return prev
+    }, {} as Record<string, AssemblyOption[]>)
 }
 
 const isParentOptionSingleChoice = ({ composition }: AssemblyOption) => {
@@ -283,11 +291,13 @@ export const getItemChoiceType = (childAssemblyData?: AssemblyOption) => {
   }
 
   const isSingle = isParentOptionSingleChoice(childAssemblyData!)
+
   if (isSingle) {
     return CHOICE_TYPES.SINGLE
   }
 
   const isToggle = isParentOptionToggleChoice(childAssemblyData)
+
   if (isToggle) {
     return CHOICE_TYPES.TOGGLE
   }
@@ -320,7 +330,7 @@ export const isParentItem = ({
 export const getPositionInOrderForm = (
   { items }: OrderForm,
   { uniqueId }: OrderFormItem
-) => items.findIndex(orderItem => orderItem.uniqueId === uniqueId)
+) => items.findIndex((orderItem) => orderItem.uniqueId === uniqueId)
 
 export const buildAddedOptionsForItem = (
   item: OrderFormItem,
@@ -331,7 +341,7 @@ export const buildAddedOptionsForItem = (
 ) => {
   const children = filter<OrderFormItem>(isSonOfItem(index), childs)
 
-  return children.map(childItem => {
+  return children.map((childItem) => {
     const parentAssemblyOptions = assemblyOptionsMap[item.id]
 
     const childAssemblyData = find<AssemblyOption>(
@@ -415,6 +425,7 @@ export const buildRemovedOptions = (
   assemblyOptionsMap: Record<string, AssemblyOption[]>
 ): RemovedItem[] => {
   const assemblyOptions = assemblyOptionsMap[item.id]
+
   if (!assemblyOptions) {
     return []
   }
@@ -423,6 +434,7 @@ export const buildRemovedOptions = (
   const onlyToggleAssemblies = assemblyOptions.filter(isAssemblyOptionToggle)
 
   const itemsWithInitials: InitialItem[] = []
+
   for (const assemblyOption of onlyToggleAssemblies) {
     if (assemblyOption.composition) {
       for (const compItem of assemblyOption.composition.items) {

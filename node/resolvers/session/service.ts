@@ -1,4 +1,5 @@
 import { ResolverError } from '@vtex/api'
+
 import { sessionFields } from './sessionResolver'
 
 export const VTEX_SESSION = 'vtex_session'

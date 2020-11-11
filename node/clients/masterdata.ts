@@ -12,7 +12,7 @@ import { statusToError } from '../utils'
 const DATAENTITIES_PREFIX = '/dataentities'
 
 export class MasterData extends ExternalClient {
-  public constructor(ctx: IOContext, options?: InstanceOptions) {
+  constructor(ctx: IOContext, options?: InstanceOptions) {
     super(`http://api.vtex.com/${ctx.account}`, ctx, {
       ...options,
       headers: {
@@ -38,7 +38,12 @@ export class MasterData extends ExternalClient {
       metric: 'masterdata-getPublicSchema',
     })
 
-  public getDocument = <T>(acronym: string, id: string, fields: string[], account?: string) =>
+  public getDocument = <T>(
+    acronym: string,
+    id: string,
+    fields: string[],
+    account?: string
+  ) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
       params: {
@@ -47,7 +52,12 @@ export class MasterData extends ExternalClient {
       },
     })
 
-  public createDocument = (acronym: string, fields: object, schema?: string, account?: string) =>
+  public createDocument = (
+    acronym: string,
+    fields: object,
+    schema?: string,
+    account?: string
+  ) =>
     this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
       params: {
@@ -61,7 +71,7 @@ export class MasterData extends ExternalClient {
     id: string,
     fields: object,
     account?: string,
-    schema?: string,
+    schema?: string
   ) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
@@ -125,13 +135,14 @@ export class MasterData extends ExternalClient {
     return this.http.patch<T>(url, data, config).catch(statusToError)
   }
 
-  
   private get routes() {
     return {
       attachments: (acronym: string, id: string, fields: string) =>
         `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}/${fields}/attachments`,
-      document: (acronym: string, id: string) => `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}`,
-      documents: (acronym: string) => `${DATAENTITIES_PREFIX}/${acronym}/documents`,
+      document: (acronym: string, id: string) =>
+        `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}`,
+      documents: (acronym: string) =>
+        `${DATAENTITIES_PREFIX}/${acronym}/documents`,
       schema: (acronym: string, schema: string) =>
         `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}`,
       publicSchema: (acronym: string, schema: string) =>

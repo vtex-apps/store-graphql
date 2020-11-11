@@ -3,11 +3,14 @@ import {
   parseTranslatableStringV2,
 } from '@vtex/api'
 
-export const formatTranslatableProp = <R, P extends keyof R, I extends keyof R>(prop: P, idProp: I) =>
-  (root: R, _: unknown, ctx: Context) => addContextToTranslatableString(
+export const formatTranslatableProp = <R, P extends keyof R, I extends keyof R>(
+  prop: P,
+  idProp: I
+) => (root: R, _: unknown, ctx: Context) =>
+  addContextToTranslatableString(
     {
-      content: root[prop] as unknown as string,
-      context: root[idProp] as unknown as string
+      content: (root[prop] as unknown) as string,
+      context: (root[idProp] as unknown) as string,
     },
     ctx
   )
@@ -21,8 +24,14 @@ export interface Message extends BaseMessage {
   context?: string
 }
 
-export const addContextToTranslatableString = (message: Message, ctx: Context) => {
-  const { vtex: { tenant } } = ctx
+export const addContextToTranslatableString = (
+  message: Message,
+  ctx: Context
+) => {
+  const {
+    vtex: { tenant },
+  } = ctx
+
   const { locale } = tenant!
 
   if (!message.content) {
@@ -32,7 +41,7 @@ export const addContextToTranslatableString = (message: Message, ctx: Context) =
   const {
     content,
     context: originalContext,
-    from: originalFrom
+    from: originalFrom,
   } = parseTranslatableStringV2(message.content)
 
   const context = (originalContext || message.context)?.toString()

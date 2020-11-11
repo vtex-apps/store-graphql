@@ -8,7 +8,7 @@ import {
 import { statusToError } from '../utils'
 
 export class CallCenterOperator extends ExternalClient {
-  public constructor(ctx: IOContext, options?: InstanceOptions) {
+  constructor(ctx: IOContext, options?: InstanceOptions) {
     super('http://licensemanager.vtex.com.br/api/pvt/accounts', ctx, {
       ...options,
       headers: {

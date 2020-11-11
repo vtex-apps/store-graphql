@@ -13,6 +13,5 @@ export const resolvers = {
     cacheId: (brand: any) => Slugify(brand.name),
 
     slug: (brand: any) => Slugify(brand.name),
-
-  }
+  },
 }

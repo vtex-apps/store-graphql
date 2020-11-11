@@ -1,10 +1,6 @@
 {
   "extends": "@vtex/tsconfig",
-  "include": [
-    "typings",
-    "typings.d.ts",
-    "**/*.ts"
-  ],
+  "include": ["typings", "typings.d.ts", "**/*.ts"],
   "compilerOptions": {
     "alwaysStrict": true,
     "esModuleInterop": true,

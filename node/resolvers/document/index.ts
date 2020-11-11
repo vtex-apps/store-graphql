@@ -16,9 +16,11 @@ export const queries = {
       sort,
       account,
     } = args
+
     const {
       clients: { masterdata },
     } = context
+
     const fieldsWithId = union(fields, ['id'])
     const data = (await masterdata.searchDocuments(
       acronym,
@@ -32,6 +34,7 @@ export const queries = {
       sort,
       account
     )) as any
+
     return map((document: any) => ({
       cacheId: document.id,
       id: document.id,
@@ -44,7 +47,9 @@ export const queries = {
     const {
       clients: { masterdata },
     } = context
+
     const data = await masterdata.getDocument(acronym, id, fields, account)
+
     return {
       cacheId: id,
       id,
@@ -101,9 +106,11 @@ export const mutations = {
       account,
       schema,
     } = args
+
     const {
       clients: { masterdata },
     } = context
+
     const response = (await masterdata.createDocument(
       acronym,
       parseFieldsToJson(fields),
@@ -112,6 +119,7 @@ export const mutations = {
     )) as DocumentResponse
 
     const documentId = removeAcronymFromId(acronym, response)
+
     return {
       cacheId: documentId,
       id: prop('Id', response),
@@ -144,11 +152,12 @@ export const mutations = {
     )) as DocumentResponseV2
 
     const documentId = removeAcronymFromId(dataEntity, response)
+
     return {
       cacheId: documentId,
       id: prop('Id', response),
       href: prop('Href', response),
-      documentId: documentId,
+      documentId,
     }
   },
 
@@ -160,22 +169,27 @@ export const mutations = {
     const {
       acronym,
       document: { fields },
-      account: accountName
+      account: accountName,
     } = args
+
     const documentId = prop('id', parseFieldsToJson(fields)) as string
+
     if (!documentId) {
       throw new UserInputError('document id field cannot be null/undefined')
     }
+
     const {
       clients: { masterdata },
       vtex: { account },
     } = context
+
     await masterdata.updateDocument(
       acronym,
       documentId,
       parseFieldsToJson(fields),
       accountName
     )
+
     return {
       cacheId: documentId,
       documentId,
@@ -194,7 +208,9 @@ export const mutations = {
       clients: { masterdata },
       vtex: { account },
     } = context
+
     await masterdata.deleteDocument(acronym, documentId)
+
     return {
       documentId,
       href: generateHref(account, acronym, documentId),
@@ -209,7 +225,7 @@ export const mutations = {
  * Uses `JSON.stringify` in every value.
  */
 const mapKeyAndStringifiedValues = (document: any) =>
-  Object.keys(document).map(key => ({
+  Object.keys(document).map((key) => ({
     key,
     value:
       typeof document[key] === 'string'

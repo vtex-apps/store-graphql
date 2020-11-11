@@ -21,6 +21,7 @@ export default {
   PickupPoint: {
     address: ({ id, address: logAddress }: LogisticPickupPoint) => {
       const { country, location, ...rest } = logAddress
+
       return {
         ...rest,
         receiverName: null,
