@@ -14,6 +14,7 @@ interface ParamsMakeRequest {
   ctx: any
   url: any
   method?: Method
+  body?: any
   vtexIdVersion?: string
   cookie?: string | null
 }
@@ -22,6 +23,7 @@ export async function makeRequest({
   ctx,
   url,
   method = 'POST',
+  body,
   vtexIdVersion = 'store-graphql',
   cookie = null,
 }: ParamsMakeRequest) {
@@ -32,6 +34,7 @@ export async function makeRequest({
   }
 
   return http.request({
+    ...(body && { data: stringify(body) }),
     headers: withAuthToken(composedHeaders)(ctx),
     method,
     url,
