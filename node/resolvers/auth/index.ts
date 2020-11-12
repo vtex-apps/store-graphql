@@ -16,7 +16,7 @@ interface ParamsMakeRequest {
   method?: Method
   body?: any
   vtexIdVersion?: string
-  cookie?: string | null
+  authCookie?: string | null
 }
 
 export async function makeRequest({
@@ -25,13 +25,14 @@ export async function makeRequest({
   method = 'POST',
   body,
   vtexIdVersion = 'store-graphql',
-  cookie = null,
+  authCookie = null,
 }: ParamsMakeRequest) {
+  const cookieHeader = authCookie ? `VtexIdClientAutCookie=${authCookie}` : ''
   const composedHeaders = {
     'X-Vtex-Use-Https': 'true',
-    Cookie: `VtexIdClientAutCookie=${cookie}`,
     'vtex-ui-id-version': vtexIdVersion,
     accept: 'application/vnd.vtex.ds.v10+json',
+    ...(cookieHeader && { Cookie: cookieHeader }),
     ...(body && { 'content-type': 'application/x-www-form-urlencoded' }),
   }
 
