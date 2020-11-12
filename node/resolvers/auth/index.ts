@@ -44,25 +44,6 @@ export async function makeRequest({
   })
 }
 
-const makeSecureRequest = async (
-  ctx: any,
-  url: any,
-  body: any,
-  method: Method = 'POST',
-  vtexIdVersion = 'store-graphql'
-) =>
-  http.request({
-    data: stringify(body),
-    headers: withAuthToken({
-      'X-Vtex-Use-Https': 'true',
-      accept: 'application/vnd.vtex.ds.v10+json',
-      'content-type': 'application/x-www-form-urlencoded',
-      'vtex-ui-id-version': vtexIdVersion,
-    })(ctx),
-    method,
-    url,
-  })
-
 const getSessionToken = async (ioContext: any, redirectUrl?: any) => {
   const { data, status } = await makeRequest({
     ctx: ioContext,
@@ -171,10 +152,14 @@ export const mutations = {
     const {
       headers,
       data: { authStatus },
-    } = await makeSecureRequest(ioContext, paths.accessKeySignIn(), {
-      accesskey: args.code,
-      authenticationToken: VtexSessionToken,
-      email: args.email,
+    } = await makeRequest({
+      ctx: ioContext,
+      url: paths.accessKeySignIn(),
+      body: {
+        accesskey: args.code,
+        authenticationToken: VtexSessionToken,
+        email: args.email,
+      },
     })
 
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
@@ -197,10 +182,14 @@ export const mutations = {
     const {
       headers,
       data: { authStatus },
-    } = await makeSecureRequest(ioContext, paths.classicSignIn(), {
-      authenticationToken: VtexSessionToken,
-      login: args.email,
-      password: args.password,
+    } = await makeRequest({
+      ctx: ioContext,
+      url: paths.classicSignIn(),
+      body: {
+        authenticationToken: VtexSessionToken,
+        login: args.email,
+        password: args.password,
+      },
     })
 
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
