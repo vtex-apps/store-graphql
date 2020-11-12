@@ -28,6 +28,7 @@ export async function makeRequest({
   cookie = null,
 }: ParamsMakeRequest) {
   const composedHeaders = {
+    'X-Vtex-Use-Https': 'true',
     Cookie: `VtexIdClientAutCookie=${cookie}`,
     'vtex-ui-id-version': vtexIdVersion,
     accept: 'application/vnd.vtex.ds.v10+json',
