@@ -6,6 +6,8 @@ import { parse, serialize } from 'cookie'
 
 import { withAuthToken } from '../headers'
 import paths from '../paths'
+import { GetLoginSessionsResponse } from './types'
+import mapLoginSessionsFromAPI from './mapLoginSessionsFromAPI'
 
 const E_PASS = 'Password does not follow specified format'
 const E_TOKEN = 'VtexSessionToken cookie is null'
@@ -132,6 +134,41 @@ export const queries = {
       accessKeyAuthentication: showAccessKeyAuthentication,
       classicAuthentication: showClassicAuthentication,
       providers: oauthProviders,
+    }
+  },
+
+  /**
+   * Get all currently active Login Sessions from user (identified by the cookie)
+   * @return Object with Login Sessions list and currentSessionId
+   */
+  loginSessionsInfo: async (
+    _: any,
+    __: any,
+    {
+      request: {
+        headers: { 'vtex-ui-id-version': uiVersion },
+      },
+      vtex: ioContext,
+    }: any
+  ) => {
+    const { storeUserAuthToken, account } = ioContext
+
+    if (!storeUserAuthToken) {
+      return null
+    }
+
+    const {
+      data: { currentSessionId, sessions },
+    } = await makeRequest<GetLoginSessionsResponse>({
+      ctx: ioContext,
+      url: paths.loginSessions(account, account),
+      authCookieStore: storeUserAuthToken,
+      vtexIdVersion: uiVersion,
+    })
+
+    return {
+      currentLoginSessionId: currentSessionId,
+      loginSessions: mapLoginSessionsFromAPI(sessions),
     }
   },
 }
