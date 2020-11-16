@@ -19,7 +19,7 @@ interface ParamsMakeRequest {
   authCookie?: string | null
 }
 
-export async function makeRequest({
+export async function makeRequest<T = any>({
   ctx,
   url,
   method = 'POST',
@@ -36,7 +36,7 @@ export async function makeRequest({
     ...(body && { 'content-type': 'application/x-www-form-urlencoded' }),
   }
 
-  return http.request({
+  return http.request<T>({
     ...(body && { data: stringify(body) }),
     headers: withAuthToken(composedHeaders)(ctx),
     method,
