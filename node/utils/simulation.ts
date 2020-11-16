@@ -18,9 +18,10 @@ export const getSimulationPayloadsByItem = (item: ItemWithSimulationInput, price
 
 export const orderFormItemToSeller = (orderFormItem: OrderFormItem & { paymentData: any }) => {
   const commertialOffer = {
-    Price: orderFormItem.price / 100,
+    Price: orderFormItem.sellingPrice / 100,
     PriceValidUntil: orderFormItem.priceValidUntil,
-    ListPrice: orderFormItem.listPrice / 100
+    ListPrice: orderFormItem.listPrice / 100,
+    PriceWithoutDiscount: orderFormItem.price / 100
   } as CommertialOffer
 
   const installmentOptions = orderFormItem?.paymentData?.installmentOptions || []
