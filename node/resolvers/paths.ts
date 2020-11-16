@@ -48,30 +48,30 @@ const paths = {
     `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
   /** VTEX ID API */
-  accessKeySignIn: () => `${paths.vtexId}/authentication/accesskey/validate`,
-  classicSignIn: () => `${paths.vtexId}/authentication/classic/validate`,
+  accessKeySignIn: () => `${paths.vtexIdPub}/authentication/accesskey/validate`,
+  classicSignIn: () => `${paths.vtexIdPub}/authentication/classic/validate`,
   getUser: (accountName: any) =>
     `${paths.vtexIdPvt}/user/detailedinfo?scope=${accountName}`,
   oAuth: (authenticationToken: any, providerName: any) =>
-    `${paths.vtexId}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
+    `${paths.vtexIdPub}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
   recoveryPassword: (token: any, email: any, password: any, code: any) =>
-    `${paths.vtexId}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${password}&accessKey=${code}`,
+    `${paths.vtexIdPub}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${password}&accessKey=${code}`,
   redefinePassword: (
     token: any,
     email: any,
     currentPassword: any,
     newPassword: any
   ) =>
-    `${paths.vtexId}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${newPassword}&currentPassword=${currentPassword}`,
+    `${paths.vtexIdPub}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${newPassword}&currentPassword=${currentPassword}`,
   sendEmailVerification: (email: any, token: any) =>
-    `${paths.vtexId}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
+    `${paths.vtexIdPub}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
   sessionToken: (scope: any, account: any, redirect = '/', returnUrl = '/') =>
     `${
-      paths.vtexId
+      paths.vtexIdPub
     }/authentication/start?appStart=true&scope=${scope}&accountName=${account}${
       redirect && `&callbackUrl=${redirect}`
     }${returnUrl && `&returnUrl=${returnUrl}`}`,
-  vtexId: `http://vtexid.vtex.com.br/api/vtexid/pub`,
+  vtexIdPub: `http://vtexid.vtex.com.br/api/vtexid/pub`,
   vtexIdPvt: `http://vtexid.vtex.com.br/api/vtexid/pvt`,
 
   /** Sessions API */
