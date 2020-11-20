@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Remove `orderForm` query cache.
 
 ## [2.136.1] - 2020-11-16
 ### Fixed
@@ -37,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.132.0] - 2020-09-21
 ### Added
-- New `account` field on `document` query. 
+- New `account` field on `document` query.
 
 ## [2.131.2] - 2020-09-15
 ### Added
@@ -62,7 +64,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.129.0] - 2020-08-27
 ### Added
-- New `account` field on `updateDocuments` query. 
+- New `account` field on `updateDocuments` query.
 
 ## [2.128.0] - 2020-08-27
 ### Added
@@ -82,7 +84,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.126.0] - 2020-07-09
 ### Added
-- New `account` field on `documents` query. 
+- New `account` field on `documents` query.
 
 ## [2.125.0] - 2020-07-09
 ### Added
