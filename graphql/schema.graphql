@@ -291,7 +291,7 @@ type Query {
   Returns checkout cart details
   """
   orderForm: OrderForm
-    @cacheControl(scope: PRIVATE)
+    @cacheControl(maxAge: ZERO, scope: PRIVATE)
     @withOrderFormId
     @withSegment
 
