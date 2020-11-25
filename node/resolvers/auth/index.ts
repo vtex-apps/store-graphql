@@ -22,7 +22,7 @@ interface ParamsMakeRequest {
 export async function makeRequest<T = any>({
   ctx,
   url,
-  method = 'POST',
+  method = 'GET',
   body,
   vtexIdVersion = 'store-graphql',
   authCookie = null,
@@ -48,7 +48,6 @@ const getSessionToken = async (ioContext: any, redirectUrl?: any) => {
   const { data, status } = await makeRequest({
     ctx: ioContext,
     url: paths.sessionToken(ioContext.account, ioContext.account, redirectUrl),
-    method: 'GET',
   })
 
   if (!data.authenticationToken) {
@@ -116,7 +115,6 @@ export const queries = {
     } = await makeRequest({
       ctx: ioContext,
       url: paths.sessionToken(ioContext.account, ioContext.account),
-      method: 'GET',
     })
 
     return {
@@ -154,6 +152,7 @@ export const mutations = {
       data: { authStatus },
     } = await makeRequest({
       ctx: ioContext,
+      method: 'POST',
       url: paths.accessKeySignIn(),
       body: {
         accesskey: args.code,
@@ -184,6 +183,7 @@ export const mutations = {
       data: { authStatus },
     } = await makeRequest({
       ctx: ioContext,
+      method: 'POST',
       url: paths.classicSignIn(),
       body: {
         authenticationToken: VtexSessionToken,
@@ -246,6 +246,7 @@ export const mutations = {
       data: { authStatus },
     } = await makeRequest({
       ctx: ioContext,
+      method: 'POST',
       url: paths.recoveryPassword(
         VtexSessionToken,
         args.email,
@@ -288,8 +289,8 @@ export const mutations = {
       data: { authStatus },
     } = await makeRequest({
       ctx: ioContext,
-      url: passPath,
       method: 'POST',
+      url: passPath,
       vtexIdVersion: args.vtexIdVersion,
     })
 
@@ -317,6 +318,7 @@ export const mutations = {
 
     await makeRequest({
       ctx: ioContext,
+      method: 'POST',
       url: paths.sendEmailVerification(args.email, VtexSessionToken),
     })
     response.set(
