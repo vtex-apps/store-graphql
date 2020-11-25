@@ -9,9 +9,11 @@ import FormData from 'form-data'
 
 import { statusToError } from '../utils'
 
+const DATAENTITIES_PREFIX = '/dataentities'
+
 export class MasterData extends ExternalClient {
   public constructor(ctx: IOContext, options?: InstanceOptions) {
-    super(`http://api.vtex.com/${ctx.account}/dataentities`, ctx, {
+    super(`http://api.vtex.com/${ctx.account}`, ctx, {
       ...options,
       headers: {
         ...(options && options.headers),
@@ -123,17 +125,18 @@ export class MasterData extends ExternalClient {
     return this.http.patch<T>(url, data, config).catch(statusToError)
   }
 
+  
   private get routes() {
     return {
       attachments: (acronym: string, id: string, fields: string) =>
-        `${acronym}/documents/${id}/${fields}/attachments`,
-      document: (acronym: string, id: string) => `${acronym}/documents/${id}`,
-      documents: (acronym: string) => `${acronym}/documents`,
+        `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}/${fields}/attachments`,
+      document: (acronym: string, id: string) => `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}`,
+      documents: (acronym: string) => `${DATAENTITIES_PREFIX}/${acronym}/documents`,
       schema: (acronym: string, schema: string) =>
-        `${acronym}/schemas/${schema}`,
+        `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}`,
       publicSchema: (acronym: string, schema: string) =>
-        `${acronym}/schemas/${schema}/public`,
-      search: (acronym: string) => `${acronym}/search`,
+        `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}/public`,
+      search: (acronym: string) => `${DATAENTITIES_PREFIX}/${acronym}/search`,
     }
   }
 }
