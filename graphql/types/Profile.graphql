@@ -172,62 +172,62 @@ type Address {
 
 input ProfileCustomFieldInput {
   key: String
-  value: String
+  value: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
 }
 
 input ProfileInput {
   """
   User's email
   """
-  email: String!
+  email: String! @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's first name
   """
-  firstName: String
+  firstName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's last name
   """
-  lastName: String
+  lastName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   Document identification. E.g. CPF, SSN, Driver License
   """
-  document: String
+  document: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   DEPRECATED
   """
-  phone: String @deprecated
+  phone: String @deprecated @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's birth date
   """
-  birthDate: String
+  birthDate: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's gender (plain unvalidated string)
   """
-  gender: String
+  gender: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User' personal phone
   """
-  homePhone: String
+  homePhone: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's business phone
   """
-  businessPhone: String
+  businessPhone: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   DEPRECATED
   """
-  tradeName: String @deprecated
+  tradeName: String @deprecated @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's company corporate name
   """
-  corporateName: String
+  corporateName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's company corporate document (e.g. CNPJ)
   """
-  corporateDocument: String
+  corporateDocument: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's company state registration
   """
-  stateRegistration: String
+  stateRegistration: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   Whether the user is a corporation or not
   """
@@ -246,17 +246,17 @@ enum UserConditionType {
 }
 
 input AddressInput {
-  receiverName: String
-  complement: String
-  neighborhood: String
-  country: String
-  state: String
-  number: String
-  street: String
+  receiverName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  complement: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  neighborhood: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  country: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  state: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  number: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  street: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   geoCoordinates: [Float]
-  postalCode: String
-  city: String
-  reference: String
-  addressName: String
-  addressType: String
+  postalCode: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  city: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  reference: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  addressName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  addressType: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
 }
