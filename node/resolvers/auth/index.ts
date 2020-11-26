@@ -17,6 +17,7 @@ interface ParamsMakeRequest {
   body?: any
   vtexIdVersion?: string
   authCookieAdmin?: string | null
+  authCookieStore?: string | null
 }
 
 export async function makeRequest<T = any>({
@@ -26,12 +27,17 @@ export async function makeRequest<T = any>({
   body,
   vtexIdVersion = 'store-graphql',
   authCookieAdmin = null,
+  authCookieStore = null,
 }: ParamsMakeRequest) {
   const adminAuthHeader = authCookieAdmin
     ? `VtexIdClientAutCookie=${authCookieAdmin};`
     : ''
 
-  const cookieHeader = `${adminAuthHeader}`
+  const storeAuthHeader = authCookieStore
+    ? `VtexIdClientAutCookie_${ctx.account}=${authCookieStore};`
+    : ''
+
+  const cookieHeader = `${adminAuthHeader}${storeAuthHeader}`
 
   const composedHeaders = {
     'X-Vtex-Use-Https': 'true',
