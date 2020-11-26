@@ -47,7 +47,7 @@ export function getPasswordLastUpdate(context: Context) {
   return makeRequest({
     ctx: context.vtex,
     url,
-    authCookie: userCookie,
+    authCookieAdmin: userCookie,
   }).then((response: any) => {
     return response.data.passwordLastUpdate
   })
