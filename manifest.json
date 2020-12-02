@@ -112,6 +112,13 @@
       }
     },
     {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercebeta.com.br",
+        "path": "/api/segments/*"
+      }
+    },
+    {
       "name": "POWER_USER_DS"
     },
     {
@@ -150,6 +157,13 @@
       "name": "outbound-access",
       "attrs": {
         "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/profile-system/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercebeta.com.br",
         "path": "/api/profile-system/*"
       }
     },
