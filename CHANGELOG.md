@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.136.5] - 2020-12-02
+
 ## [2.136.4] - 2020-12-01
 ### Fixed
 - Sanitize profile and address related fields.
