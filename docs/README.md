@@ -78,6 +78,10 @@ TODO
 
 - `profile` - Returns user profile details
 
+### VTEXID
+
+- `loginSessionsInfo` - Returns an object with currently active user login sessions and the ID of the current session
+
 ## Mutations
 
 ### Checkout
