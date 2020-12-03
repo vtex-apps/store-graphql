@@ -51,7 +51,7 @@ export const mutations = {
     { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
-    const profile = context.clients.profile
+    const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
         ? TRUE
@@ -80,7 +80,7 @@ export const mutations = {
 
     await profile.updatePersonalPreferences(
       { email, userId: '' },
-      updatedPersonalPreferences,
+      updatedPersonalPreferences
     )
 
     return true
@@ -97,6 +97,7 @@ export const queries = {
       vtex: { segment },
       cookies,
     } = context
+
     const salesChannel = segment ? segment.channel : null
 
     const { sessionData } = await customSession.getSession(
@@ -114,7 +115,7 @@ export const queries = {
       .catch(() => [])
 
     // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
-    const available = availableSalesChannels.find(sc => sc.Id == salesChannel)
+    const available = availableSalesChannels.find((sc) => sc.Id == salesChannel)
 
     return {
       allowed: Boolean(available),

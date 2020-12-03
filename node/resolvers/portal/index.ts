@@ -20,6 +20,7 @@ export const resolvers = {
         JSON.stringify(currentSite),
         'portal-storegraphql-errors'
       )
+
       return null
     }
   },

@@ -1,5 +1,7 @@
 import { partition, propEq } from 'ramda'
+
 import { getPositionInOrderForm } from './attachmentsHelper'
+
 interface Params extends OrderFormItem {
   assemblyOptionsData: {
     childs: OrderFormItem[]
@@ -19,6 +21,7 @@ const getPriceForItem = (
     propEq('parentItemIndex', fatherIndex),
     children
   )
+
   return itemChildren.reduce(
     (sum, currentChildren) =>
       sum +
@@ -42,7 +45,8 @@ export const resolvers = {
     canHaveAttachment: ({ attachmentOfferings }: OrderFormItem) => {
       return attachmentOfferings && attachmentOfferings.length > 0
     },
-    imageUrl: ({ imageUrl }: Params) => imageUrl && imageUrl.replace('http://', 'https://'),
+    imageUrl: ({ imageUrl }: Params) =>
+      imageUrl && imageUrl.replace('http://', 'https://'),
     listPrice: ({ listPrice }: Params) => listPrice / 100,
     price: ({ price }: Params) => price / 100,
     sellingPrice: ({ sellingPrice }: Params) => sellingPrice / 100,
@@ -53,6 +57,7 @@ export const resolvers = {
       if (childs.length === 0) {
         return item.sellingPrice / 100
       }
+
       return (
         getPriceForItem(childs, index, item, orderForm) / item.quantity / 100
       )

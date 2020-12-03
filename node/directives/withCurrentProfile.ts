@@ -2,14 +2,15 @@ import { parse as parseCookie } from 'cookie'
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import jwtDecode from 'jwt-decode'
-
 import { AuthenticationError, ResolverError } from '@vtex/api'
+
 import { getSession } from '../resolvers/session/service'
 import { SessionFields } from '../resolvers/session/sessionResolver'
 
 export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
+
     field.resolve = async (root, args, context, info) => {
       const currentProfile: CurrentProfile | null = await getCurrentProfileFromSession(
         context
@@ -34,7 +35,7 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
 function getCurrentProfileFromSession(
   context: Context
 ): Promise<CurrentProfile | null> {
-  return getSession(context).then(currentSession => {
+  return getSession(context).then((currentSession) => {
     const session = currentSession as SessionFields
 
     if (!session || !session.id) {
@@ -66,6 +67,7 @@ async function getCurrentProfileFromCookies(
       headers: { cookie },
     },
   } = context
+
   const parsedCookies = parseCookie(cookie || '')
 
   const userToken = storeUserAuthToken
@@ -74,8 +76,10 @@ async function getCurrentProfileFromCookies(
   if (userToken) {
     return identity
       .getUserWithToken(userToken)
-      .then(data => ({ userId: data.userId, email: data.user }))
-  } else if (!userToken && !!adminToken) {
+      .then((data) => ({ userId: data.userId, email: data.user }))
+  }
+
+  if (!userToken && !!adminToken) {
     const adminInfo = jwtDecode(adminToken) as any
 
     const callOpUserEmail = adminInfo && adminInfo.sub

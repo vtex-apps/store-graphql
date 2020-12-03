@@ -16,8 +16,8 @@ const THIRTY_SECONDS_MS = 30 * 1000
 // Segments are small and immutable.
 const MAX_SEGMENT_CACHE = 10000
 const segmentCache = new LRUCache<string, any>({ max: MAX_SEGMENT_CACHE })
-const catalogCache = new LRUCache<string, any>({max: 3000})
-const messagesCache = new LRUCache<string, any>({max: 3000})
+const catalogCache = new LRUCache<string, any>({ max: 3000 })
+const messagesCache = new LRUCache<string, any>({ max: 3000 })
 
 metrics.trackCache('segment', segmentCache)
 metrics.trackCache('catalog', catalogCache)
@@ -54,7 +54,7 @@ export default new Service<Clients, void, CustomContext>({
         memoryCache: catalogCache,
         metrics,
         timeout: SIX_SECONDS_MS,
-      }
+      },
     },
   },
   graphql: {

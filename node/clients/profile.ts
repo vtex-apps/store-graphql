@@ -11,12 +11,12 @@ const FIVE_SECONDS_MS = 5 * 1000
 
 function mapAddressesObjToList(addressesObj: any): Address[] {
   return Object.values<string>(addressesObj).map(
-    stringifiedObj => JSON.parse(stringifiedObj) as Address
+    (stringifiedObj) => JSON.parse(stringifiedObj) as Address
   )
 }
 
 export class ProfileClient extends JanusClient {
-  public constructor(context: IOContext, options?: InstanceOptions) {
+  constructor(context: IOContext, options?: InstanceOptions) {
     super(context, {
       ...options,
       headers: {

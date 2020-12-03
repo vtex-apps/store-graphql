@@ -36,7 +36,7 @@ interface Category {
 }
 
 interface FacetsArgs {
-  facets: string //deprecated!
+  facets: string // deprecated!
   query: string
   map: string
   hideUnavailableItems: boolean
@@ -73,20 +73,20 @@ interface Item {
   nameComplete: string
   complementName: string
   ean: string
-  referenceId: { Key: string; Value: string }[]
+  referenceId: Array<{ Key: string; Value: string }>
   measurementUnit: string
   unitMultiplier: number
   modalType: any | null
-  images: {
+  images: Array<{
     imageId: string
     imageLabel: string | null
     imageTag: string
     imageUrl: string
     imageText: string
-  }[]
-  videos: {
+  }>
+  videos: Array<{
     videoUrl: string
-  }[]
+  }>
   variations: string[]
   sellers: Seller[]
 }
@@ -107,7 +107,7 @@ interface CommertialOffer {
     string,
     { DeliverySlaPerTypes: any[]; Region: any | null }
   >
-  Installments:Installment[]
+  Installments: Installment[]
   DiscountHighLight: any[]
   GiftSkuIds: string[]
   Teasers: any[]
@@ -120,10 +120,10 @@ interface CommertialOffer {
   PriceValidUntil: string
   AvailableQuantity: number
   Tax: number
-  DeliverySlaSamples: {
+  DeliverySlaSamples: Array<{
     DeliverySlaPerTypes: any[]
     Region: any | null
-  }[]
+  }>
   GetInfoErrorMessage: any | null
   CacheVersionUsedToCallCheckout: string
 }

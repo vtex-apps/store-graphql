@@ -107,6 +107,7 @@ const brandFromList = async (
   catalog: Context['clients']['catalog']
 ) => {
   const brandFromList = await getBrandFromSlug(toLower(slug), catalog)
+
   return brandFromList ? brandFromList.id : null
 }
 
@@ -119,43 +120,43 @@ const getBrandId = async (
   if (!brand) {
     return null
   }
+
   if (!isVtex) {
     return brandFromList(brand, catalog)
   }
+
   const slugified = catalogSlugify(brand)
   const brandPagetype = await catalog.pageType(slugified).catch(() => null)
+
   if (!brandPagetype) {
     logger.info(`brand ${brand}, slug ${slugified}`, 'pagetype-brand-error')
   }
+
   if (!brandPagetype || brandPagetype.pageType !== 'Brand') {
     return brandFromList(brand, catalog)
   }
+
   return brandPagetype.id
 }
 
 type TupleString = [string, string]
 
-const isTupleMap = compose<TupleString, string, boolean>(
-  equals('c'),
-  prop('1')
-)
+const isTupleMap = compose<TupleString, string, boolean>(equals('c'), prop('1'))
 
 const categoriesOnlyQuery = compose<
   TupleString[],
   TupleString[],
   string[],
   string
->(
-  join('/'),
-  map(prop('0')),
-  filter(isTupleMap)
-)
+>(join('/'), map(prop('0')), filter(isTupleMap))
 
 const getAndParsePagetype = async (path: string, ctx: Context) => {
   const pagetype = await ctx.clients.catalog.pageType(path).catch(() => null)
+
   if (!pagetype) {
     return { titleTag: null, metaTagDescription: null }
   }
+
   return {
     titleTag: pagetype.title || pagetype.name,
     metaTagDescription: pagetype.metaTagDescription,
@@ -169,10 +170,12 @@ const getCategoryMetadata = async (
   const {
     vtex: { account },
   } = ctx
+
   const queryAndMap: TupleString[] = zip(
     (query || '').split('/'),
     (map || '').split(',')
   )
+
   const cleanQuery = categoriesOnlyQuery(queryAndMap)
 
   if (Functions.isGoCommerceAcc(account)) {
@@ -186,6 +189,7 @@ const getCategoryMetadata = async (
         ),
         cleanQuery.split('/')
       ) || {}
+
     return {
       metaTagDescription: path(['MetaTagDescription'], category),
       titleTag: path(['Title'], category) || path(['Name'], category),
@@ -203,15 +207,18 @@ const getBrandMetadata = async (
     vtex: { account },
     clients: { catalog },
   } = ctx
+
   const cleanQuery = head(split('/', query || '')) || ''
 
   if (Functions.isGoCommerceAcc(account)) {
     const brand = (await getBrandFromSlug(toLower(cleanQuery), catalog)) || {}
+
     return {
       metaTagDescription: path(['metaTagDescription'], brand),
       titleTag: path(['title'], brand) || path(['name'], brand),
     }
   }
+
   return getAndParsePagetype(cleanQuery, ctx)
 }
 
@@ -229,12 +236,15 @@ const getSearchMetaData = async (
 ) => {
   const map = args.map || ''
   const firstMap = head(map.split(','))
+
   if (firstMap === 'c') {
     return getCategoryMetadata(args, ctx)
   }
+
   if (firstMap === 'b') {
     return getBrandMetadata(args, ctx)
   }
+
   return { titleTag: null, metaTagDescription: null }
 }
 
@@ -247,6 +257,7 @@ const translateToStoreDefaultLanguage = async (
     segment.getSegmentByToken(null),
     segment.getSegment(),
   ])
+
   return from && from !== to
     ? messagesGraphQL
         .translateV2({
@@ -289,14 +300,17 @@ export const queries = {
       clients: { catalog },
       clients,
     } = ctx
+
     const translatedTerm = await translateToStoreDefaultLanguage(
       clients,
       args.searchTerm
     )
+
     const { itemsReturned } = await catalog.autocomplete({
       maxRows: args.maxRows,
       searchTerm: translatedTerm,
     })
+
     return {
       cacheId: args.searchTerm,
       itemsReturned,
@@ -322,12 +336,14 @@ export const queries = {
       clients,
       query
     )
+
     const segmentData = ctx.vtex.segment
     const salesChannel = (segmentData && segmentData.channel.toString()) || ''
 
     const unavailableString = hideUnavailableItems
       ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
       : ''
+
     if (facets) {
       result = await catalog.facets(facets)
     } else {
@@ -335,10 +351,12 @@ export const queries = {
         `${translatedQuery}?map=${map}${unavailableString}`
       )
     }
+
     result.queryArgs = {
       query: translatedQuery,
       map,
     }
+
     return result
   },
 
@@ -366,15 +384,19 @@ export const queries = {
       case 'id':
         products = await catalog.productById(value)
         break
+
       case 'slug':
         products = await catalog.product(value)
         break
+
       case 'ean':
         products = await catalog.productByEan(value)
         break
+
       case 'reference':
         products = await catalog.productByReference(value)
         break
+
       case 'sku':
         products = await catalog.productBySku([value])
         break
@@ -393,7 +415,9 @@ export const queries = {
     const {
       clients: { catalog },
     } = ctx
+
     const queryTerm = args.query
+
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
       throw new UserInputError(
         `The query term contains invalid characters. query=${queryTerm}`
@@ -425,12 +449,15 @@ export const queries = {
       case 'id':
         products = await catalog.productsById(values)
         break
+
       case 'ean':
         products = await catalog.productsByEan(values)
         break
+
       case 'reference':
         products = await catalog.productsByReference(values)
         break
+
       case 'sku':
         products = await catalog.productBySku(values)
         break
@@ -448,7 +475,9 @@ export const queries = {
       clients,
       clients: { catalog },
     } = ctx
+
     const queryTerm = args.query
+
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
       throw new UserInputError(
         `The query term contains invalid characters. query=${queryTerm}`
@@ -465,14 +494,17 @@ export const queries = {
       clients,
       args.query || ''
     )
+
     const translatedArgs = {
       ...args,
       query,
     }
+
     const [productsRaw, searchMetaData] = await Promise.all([
       catalog.products(args, true),
       getSearchMetaData(_, translatedArgs, ctx),
     ])
+
     return {
       translatedArgs,
       searchMetaData,
@@ -494,6 +526,7 @@ export const queries = {
     if (!brand) {
       throw new NotFoundError(`Brand not found`)
     }
+
     return brand
   },
 
@@ -508,6 +541,7 @@ export const queries = {
     if (id == null) {
       throw new ResolverWarning(`No category ID provided`)
     }
+
     return catalog.category(id)
   },
 
@@ -552,17 +586,23 @@ export const queries = {
       contextKey: 'search',
     }
 
-    const [brandId, categoryId] = await Promise.all<string | null, string | number | null>([
+    const [brandId, categoryId] = await Promise.all<
+      string | null,
+      string | number | null
+    >([
       getBrandId(args.brand, catalog, isVtex, logger),
       searchContextGetCategory(args, catalog, isVtex, logger),
     ])
+
     response.brand = brandId
     response.category = categoryId
+
     return response
   },
 
   pageType: async (_: any, { path, query }: PageTypeArgs, ctx: Context) => {
     const response = await ctx.clients.catalog.pageType(path, query)
+
     return {
       id: response.id,
       type: translatePageType(response.pageType),
@@ -577,31 +617,39 @@ export const queries = {
     if (identifier == null || type == null) {
       throw new UserInputError('Wrong input provided')
     }
+
     const catalogType = inputToCatalogCrossSelling[type]
     let productId = identifier.value
+
     if (identifier.field !== 'id') {
       const product = await queries.product(_, { identifier }, ctx)
+
       productId = product!.productId
     }
+
     return ctx.clients.catalog.crossSelling(productId, catalogType)
   },
 
   searchMetadata: async (_: any, args: SearchMetadataArgs, ctx: Context) => {
     const { clients } = ctx
     const queryTerm = args.query
+
     if (queryTerm == null || test(/[?&[\]=]/, queryTerm)) {
       throw new UserInputError(
         `The query term contains invalid characters. query=${queryTerm}`
       )
     }
+
     const query = await translateToStoreDefaultLanguage(
       clients,
       args.query || ''
     )
+
     const translatedArgs = {
       ...args,
       query,
     }
+
     return getSearchMetaData(_, translatedArgs, ctx)
   },
 }

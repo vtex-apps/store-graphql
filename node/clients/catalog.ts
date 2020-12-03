@@ -17,6 +17,7 @@ interface AutocompleteArgs {
 const inflightKey = ({ baseURL, url, params, headers }: RequestConfig) => {
   const segmentToken = headers['x-vtex-segment']
   const segmentQs = segmentToken ? `&segmentToken=${segmentToken}` : ''
+
   return (
     baseURL! +
     url! +
@@ -48,12 +49,14 @@ interface CatalogPageTypeResponse {
  */
 export class Catalog extends AppClient {
   private basePath: string
-  public constructor(ctx: IOContext, opts?: InstanceOptions) {
+  constructor(ctx: IOContext, opts?: InstanceOptions) {
     super('vtex.catalog-api-proxy@0.x', ctx, opts)
-    this.basePath = ctx.sessionToken ? '/proxy/authenticated/catalog' : '/proxy/catalog'
+    this.basePath = ctx.sessionToken
+      ? '/proxy/authenticated/catalog'
+      : '/proxy/catalog'
   }
 
-  public pageType = (path: string, query: string = '') => {
+  public pageType = (path: string, query = '') => {
     const pageTypePath = path.startsWith('/') ? path.substr(1) : path
 
     const pageTypeQuery = !query || query.startsWith('?') ? query : `?${query}`
@@ -89,7 +92,7 @@ export class Catalog extends AppClient {
   public productsByEan = (ids: string[]) =>
     this.get<Product[]>(
       `/pub/products/search?${ids
-        .map(id => `fq=alternateIds_Ean:${id}`)
+        .map((id) => `fq=alternateIds_Ean:${id}`)
         .join('&')}`,
       { metric: 'catalog-productByEan' }
     )
@@ -101,7 +104,7 @@ export class Catalog extends AppClient {
 
   public productsById = (ids: string[]) =>
     this.get<Product[]>(
-      `/pub/products/search?${ids.map(id => `fq=productId:${id}`).join('&')}`,
+      `/pub/products/search?${ids.map((id) => `fq=productId:${id}`).join('&')}`,
       { metric: 'catalog-productById' }
     )
 
@@ -113,7 +116,7 @@ export class Catalog extends AppClient {
   public productsByReference = (ids: string[]) =>
     this.get<Product[]>(
       `/pub/products/search?${ids
-        .map(id => `fq=alternateIds_RefId:${id}`)
+        .map((id) => `fq=alternateIds_RefId:${id}`)
         .join('&')}`,
       { metric: 'catalog-productByReference' }
     )
@@ -121,13 +124,14 @@ export class Catalog extends AppClient {
   public productBySku = (skuIds: string[]) =>
     this.get<Product[]>(
       `/pub/products/search?${skuIds
-        .map(skuId => `fq=skuId:${skuId}`)
+        .map((skuId) => `fq=skuId:${skuId}`)
         .join('&')}`,
       { metric: 'catalog-productBySku' }
     )
 
   public products = (args: SearchArgs, useRaw = false) => {
     const method = useRaw ? this.getRaw : this.get
+
     return method<Product[]>(this.productSearchUrl(args), {
       metric: 'catalog-products',
     })
@@ -137,7 +141,9 @@ export class Catalog extends AppClient {
     const {
       headers: { resources },
     } = await this.getRaw(this.productSearchUrl(args))
+
     const quantity = resources.split('/')[1]
+
     return parseInt(quantity, 10)
   }
 
@@ -152,11 +158,12 @@ export class Catalog extends AppClient {
       metric: 'catalog-categories',
     })
 
-  public facets = (facets: string = '') => {
+  public facets = (facets = '') => {
     const [path, options] = decodeURI(facets).split('?')
+
     return this.get(
       `/pub/facets/search/${encodeURI(
-        `${path.trim()}${options ? '?' + options : ''}`
+        `${path.trim()}${options ? `?${options}` : ''}`
       )}`,
       { metric: 'catalog-facets' }
     )
@@ -183,6 +190,7 @@ export class Catalog extends AppClient {
   private get = <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | undefined = (this
       .context! as CustomIOContext).segment
+
     const { channel: salesChannel = '' } = segmentData || {}
 
     config.params = {
@@ -198,6 +206,7 @@ export class Catalog extends AppClient {
   private getRaw = <T = any>(url: string, config: RequestConfig = {}) => {
     const segmentData: SegmentData | undefined = (this
       .context! as CustomIOContext).segment
+
     const { channel: salesChannel = '' } = segmentData || {}
 
     config.params = {
@@ -206,6 +215,7 @@ export class Catalog extends AppClient {
     }
 
     config.inflightKey = inflightKey
+
     return this.http.getRaw<T>(`${this.basePath}${url}`, config)
   }
 
@@ -225,38 +235,51 @@ export class Catalog extends AppClient {
     const sanitizedQuery = encodeURIComponent(
       decodeURIComponent(query || '').trim()
     )
+
     if (hideUnavailableItems) {
       const segmentData = (this.context as CustomIOContext).segment
+
       salesChannel = (segmentData && segmentData.channel.toString()) || ''
     }
+
     let url = `/pub/products/search/${sanitizedQuery}?`
+
     if (category && !query) {
       url += `&fq=C:/${category}/`
     }
+
     if (specificationFilters && specificationFilters.length > 0) {
-      url += specificationFilters.map(filter => `&fq=${filter}`)
+      url += specificationFilters.map((filter) => `&fq=${filter}`)
     }
+
     if (priceRange) {
       url += `&fq=P:[${priceRange}]`
     }
+
     if (collection) {
       url += `&fq=productClusterIds:${collection}`
     }
+
     if (salesChannel) {
       url += `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
     }
+
     if (orderBy) {
       url += `&O=${orderBy}`
     }
+
     if (map) {
       url += `&map=${map}`
     }
+
     if (from != null && from > -1) {
       url += `&_from=${from}`
     }
+
     if (to != null && to > -1) {
       url += `&_to=${to}`
     }
+
     return url
   }
 }

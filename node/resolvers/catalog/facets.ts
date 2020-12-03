@@ -14,7 +14,7 @@ const objToNameValue = (
 
 const formatCategoriesTree = (root: any) => {
   const format = (tree: any[] = []): any => {
-    return tree.map(node => {
+    return tree.map((node) => {
       return {
         ...node,
         Children: format(node.Children),
@@ -40,10 +40,7 @@ const addSelected = (
 
     const isSelected =
       zip(
-        query
-          .toLowerCase()
-          .split('/')
-          .map(decodeURIComponent),
+        query.toLowerCase().split('/').map(decodeURIComponent),
         map.toLowerCase().split(',')
       ).find(
         ([slug, slugMap]) => slug === currentFacetSlug && facet.Map === slugMap
@@ -63,7 +60,7 @@ const baseFacetResolvers = {
   link: prop('Link'),
   linkEncoded: prop('LinkEncoded'),
   map: prop('Map'),
-  value: prop('Value')
+  value: prop('Value'),
 }
 
 export const resolvers = {
@@ -96,8 +93,9 @@ export const resolvers = {
 
     children: prop('Children'),
 
-    href: ({Link}: {Link: string}) => {
+    href: ({ Link }: { Link: string }) => {
       const [linkPath] = Link.split('?')
+
       return pathToCategoryHref(linkPath)
     },
 

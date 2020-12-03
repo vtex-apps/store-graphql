@@ -25,9 +25,11 @@ export function statusToError(e: any) {
   if (status === 401) {
     throw new AuthenticationError(e)
   }
+
   if (status === 403) {
     throw new ForbiddenError(e)
   }
+
   if (status === 400) {
     throw new UserInputError(e)
   }

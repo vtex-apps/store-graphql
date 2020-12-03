@@ -21,7 +21,9 @@ const convertCheckoutAddressToProfile = (
   if (!checkoutAddress) {
     return checkoutAddress
   }
+
   const { geoCoordinates, ...rest } = checkoutAddress
+
   return { ...rest, geoCoordinate: geoCoordinates }
 }
 
