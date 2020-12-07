@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- `updateOrderFormMarketingData` on checkout mutations
+- `updateOrderFormMarketingData` in checkout mutations
 
 ## [2.136.6] - 2020-12-03
 
