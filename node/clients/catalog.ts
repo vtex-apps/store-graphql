@@ -56,30 +56,11 @@ export class Catalog extends AppClient {
       : '/proxy/catalog'
   }
 
-  private searchEncodeURI = (str: string) => {
-    const result = str.replace(/[%"'.()]/g, (c: string) => {
-      switch (c) {
-        case '%':
-          return "@perc@"
-        case '"':
-          return "@quo@"
-        case '\'':
-          return "@squo@"
-        case '.':
-          return "@dot@"
-        case '(':
-          return "@lpar@"
-        case ')':
-          return "@rpar@"
-        default: {
-          return c
-        }
-      }
-    })
-    return result
+  private removeSpecialCharacters = (str: string) => {
+    return str.replace(/[%"'.()+]/g, '')
   }
 
-  public pageType = (path: string, query: string = '') => {
+  public pageType = (path: string, query = '') => {
     const pageTypePath = path.startsWith('/') ? path.substr(1) : path
 
     const pageTypeQuery = !query || query.startsWith('?') ? query : `?${query}`
@@ -186,7 +167,9 @@ export class Catalog extends AppClient {
 
     return this.get(
       `/pub/facets/search/${encodeURI(
-        `${this.searchEncodeURI(encodeURIComponent(path.trim()))}${options ? '?' + options : ''}`
+        `${this.removeSpecialCharacters(path.trim())}${
+          options ? `?${options}` : ''
+        }`
       )}`,
       { metric: 'catalog-facets' }
     )
@@ -255,12 +238,10 @@ export class Catalog extends AppClient {
     map = '',
     hideUnavailableItems = false,
   }: SearchArgs) => {
-    // const sanitizedQuery = encodeURIComponent(
-    //   decodeURIComponent(query || '').trim()
-    // )
-    const sanitizedQuery = this.searchEncodeURI(encodeURIComponent(
-      this.searchEncodeURI(decodeURIComponent(query || '').trim())
-    ))
+    const sanitizedQuery = encodeURIComponent(
+      this.removeSpecialCharacters(decodeURIComponent(query || '').trim())
+    )
+
     if (hideUnavailableItems) {
       const segmentData = (this.context as CustomIOContext).segment
 
