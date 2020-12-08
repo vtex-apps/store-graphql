@@ -56,6 +56,10 @@ export class Catalog extends AppClient {
       : '/proxy/catalog'
   }
 
+  private removeSpecialCharacters = (str: string) => {
+    return str.replace(/[%"'.()+]/g, '')
+  }
+
   public pageType = (path: string, query = '') => {
     const pageTypePath = path.startsWith('/') ? path.substr(1) : path
 
@@ -163,7 +167,9 @@ export class Catalog extends AppClient {
 
     return this.get(
       `/pub/facets/search/${encodeURI(
-        `${path.trim()}${options ? `?${options}` : ''}`
+        `${this.removeSpecialCharacters(path.trim())}${
+          options ? `?${options}` : ''
+        }`
       )}`,
       { metric: 'catalog-facets' }
     )
@@ -233,7 +239,7 @@ export class Catalog extends AppClient {
     hideUnavailableItems = false,
   }: SearchArgs) => {
     const sanitizedQuery = encodeURIComponent(
-      decodeURIComponent(query || '').trim()
+      this.removeSpecialCharacters(decodeURIComponent(query || '').trim())
     )
 
     if (hideUnavailableItems) {
