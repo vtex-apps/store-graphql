@@ -426,7 +426,7 @@ type Query {
     MasterData schema name.
     """
     schema: String!
-  ): DocumentSchemaV2
+  ): DocumentSchemaV2 @cacheControl(scope: PUBLIC)
 
   """
   Get the benefits associated with a list of products
