@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `scope: public` to `document` and `documents`'s Master Data queries.
 
 ## [2.136.8] - 2020-12-08
 ### Added

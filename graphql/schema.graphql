@@ -379,7 +379,8 @@ type Query {
     Defines which account will be required
     """
     account: String
-  ): [Document]
+  ): [Document] @cacheControl(scope: PUBLIC, maxAge: SHORT)
+
 
   """
   Get document
@@ -401,7 +402,7 @@ type Query {
     Defines in which account the request will be made
     """
     account: String
-  ): Document
+  ): Document @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """
   Get a document schema
