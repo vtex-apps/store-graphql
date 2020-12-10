@@ -9,20 +9,27 @@ const DEFAULT_QUANTITY = '1'
 
 export const fieldResolvers = {
   Benefit: {
-    items: async (benefit: any, _: any, {clients: {catalog}}: Context) => {
+    items: async (benefit: any, _: any, { clients: { catalog } }: Context) => {
       const { teaserType, conditions, effects } = benefit
 
-      if (teaserType === CATALOG) {
-        const {
-          parameters: conditionsParameters,
-          minimumQuantity = parseInt(DEFAULT_QUANTITY, 10),
-        } = conditions
+      if (teaserType !== CATALOG) {
+        return
+      }
 
-        const { parameters: effectsParameters } = effects
+      const {
+        parameters: conditionsParameters,
+        minimumQuantity = parseInt(DEFAULT_QUANTITY, 10),
+      } = conditions
 
-        const items = await Promise.all(
-          conditionsParameters.map(async (conditionsParameter: any, index: any) => {
-            const skuIds: string[] = conditionsParameter.value.split(SKU_SEPARATOR)
+      const { parameters: effectsParameters } = effects
+
+      const items = await Promise.all(
+        conditionsParameters.map(
+          async (conditionsParameter: any, index: any) => {
+            const skuIds: string[] = conditionsParameter.value.split(
+              SKU_SEPARATOR
+            )
+
             const discount = effectsParameters[index].value
             const products = await catalog.productBySku(skuIds)
 
@@ -42,13 +49,13 @@ export const fieldResolvers = {
                 minQuantity: minimumQuantity,
               }
             })
-          })
+          }
         )
-        return flatten(items)
-      }
-      return
-    }
-  }
+      )
+
+      return flatten(items)
+    },
+  },
 }
 
 export const queries = {
@@ -69,7 +76,9 @@ export const queries = {
             },
           ],
     }
+
     const benefitsData = await checkoutQueries.shipping(_, requestBody, config)
+
     return path(['ratesAndBenefitsData', 'teaser'], benefitsData) || []
   },
 }

@@ -19,7 +19,9 @@ export const resolvers = {
       const {
         headers: { resources },
       } = productsRaw
+
       const quantity = resources.split('/')[1]
+
       return parseInt(quantity, 10)
     },
     products: path(['productsRaw', 'data']),
@@ -31,16 +33,15 @@ export const resolvers = {
       const query = translatedArgs.query || ''
       const map = translatedArgs.map || ''
       const queryAndMap = zip(
-        query
-          .toLowerCase()
-          .split('/')
-          .map(decodeURIComponent),
+        query.toLowerCase().split('/').map(decodeURIComponent),
         map.split(',')
       )
+
       const categoriesSearched = queryAndMap
         .filter(([_, m]) => m === 'c')
         .map(([q]) => q)
-      const categoriesCount = map.split(',').filter(m => m === 'c').length
+
+      const categoriesCount = map.split(',').filter((m) => m === 'c').length
       const categories =
         !!categoriesCount && Functions.isGoCommerceAcc(account)
           ? await catalog.categories(categoriesCount)

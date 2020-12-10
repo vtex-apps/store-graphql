@@ -93,7 +93,7 @@ interface SimulationInstallment {
 
 interface PaymentData {
   installmentOptions: InstallmentOption[]
-  paymentSystems: {
+  paymentSystems: Array<{
     id: string
     name: string
     groupName: string
@@ -116,7 +116,7 @@ interface PaymentData {
     requiresAuthentication: boolean
     dueDate: string
     availablePayments: any | null
-  }[]
+  }>
   payments: any[]
   giftCards: any[]
   giftCardMessages: any[]
@@ -140,32 +140,32 @@ interface OrderForm {
   messages: any[]
   items: OrderFormItem[]
   selectableGifts: any[]
-  totalizers: { id: string; name: string; value: number }[]
+  totalizers: Array<{ id: string; name: string; value: number }>
   shippingData: {
     address: CheckoutAddress
     logisticsInfo: LogisticsInfo[]
     selectedAddresses: CheckoutAddress[]
     availableAddresses: CheckoutAddress[]
-    pickupPoints: {
+    pickupPoints: Array<{
       friendlyName: string
       address: CheckoutAddress
       additionalInfo: string
       id: string
-      businessHours: {
+      businessHours: Array<{
         DayOfWeek: number
         OpeningTime: string
         ClosingTime: string
-      }[]
-    }[]
+      }>
+    }>
   }
   clientProfileData: any | null
   paymentData: PaymentData
   marketingData: OrderFormMarketingData | null
-  sellers: {
+  sellers: Array<{
     id: string
     name: string
     logo: string
-  }[]
+  }>
   clientPreferencesData: OrderFormClientPreferencesData
   commercialConditionData: any | null
   storePreferencesData: {
@@ -245,13 +245,13 @@ interface SLAItem {
   id: string
   deliveryChannel: string
   name: string
-  deliveryIds: {
+  deliveryIds: Array<{
     courierId: string
     warehouseId: string
     dockId: string
     courierName: string
     quantity: number
-  }[]
+  }>
   shippingEstimate: string
   shippingEstimateDate: string | null
   lockTTL: string | null
@@ -280,7 +280,7 @@ interface LogisticsInfo {
   slas: SLAItem[]
   shipsTo: string[]
   itemId: string
-  deliveryChannels: { id: string }[]
+  deliveryChannels: Array<{ id: string }>
 }
 
 interface SimulationOrderForm extends OrderForm {
@@ -291,13 +291,13 @@ interface SLA {
   id: string
   deliveryChannel: string
   name: string
-  deliveryIds: {
+  deliveryIds: Array<{
     courierId: string
     warehouseId: string
     dockId: string
     courierName: string
     quantity: number
-  }[]
+  }>
   shippingEstimate: string
   shippingEstimateDate: string | null
   lockTTL: string | null
@@ -320,7 +320,7 @@ interface SLA {
 
 interface ItemWithSimulationInput {
   itemId: string
-  sellers: {
+  sellers: Array<{
     sellerId: string
-  }[]
+  }>
 }

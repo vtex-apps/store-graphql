@@ -4,8 +4,23 @@ import { filter, path } from 'ramda'
 import { Clients } from '../../clients'
 import { Catalog } from '../../clients/catalog'
 
-export const fields = ['name', 'isPublic', 'isEditable', 'owner', 'createdIn', 'updatedIn', 'items', 'id']
-export const fieldsListProduct = ['id', 'quantity', 'skuId', 'productId', 'createdIn']
+export const fields = [
+  'name',
+  'isPublic',
+  'isEditable',
+  'owner',
+  'createdIn',
+  'updatedIn',
+  'items',
+  'id',
+]
+export const fieldsListProduct = [
+  'id',
+  'quantity',
+  'skuId',
+  'productId',
+  'createdIn',
+]
 export const acronymListProduct = 'LP'
 export const acronymList = 'WL'
 
@@ -26,13 +41,18 @@ const checkListItemQuantity = (quantity: any) => {
 // If it isn't, it throws an exception.
 const checkProduct = async (item: Item, catalog: Catalog) => {
   const response = await catalog.productBySku([path(['skuId'], item) as string])
+
   if (!response.length) {
     throw new UserInputError('Cannot add an invalid product')
   }
 }
 
 const checkDuplicatedListItem = (items: Item[], item: Item) => {
-  const itemDuplicated = filter((i: Item) => path(['skuId'], i) === path(['skuId'], item), items)
+  const itemDuplicated = filter(
+    (i: Item) => path(['skuId'], i) === path(['skuId'], item),
+    items
+  )
+
   if (itemDuplicated.length > 1) {
     throw new UserInputError('Cannot add duplicated items.')
   }
@@ -40,13 +60,14 @@ const checkDuplicatedListItem = (items: Item[], item: Item) => {
 
 const validateListItem = (items: Item[], item: Item, clients: Clients) => {
   const { catalog } = clients
+
   checkListItemQuantity(path(['quantity'], item))
   checkDuplicatedListItem(items, item)
   checkProduct(item, catalog)
 }
 
 const validateItems = (items: Item[] = [], clients: Clients) => {
-  items.forEach(item => validateListItem(items, item, clients))
+  items.forEach((item) => validateListItem(items, item, clients))
 }
 
 export { validateItems, validateListItem }

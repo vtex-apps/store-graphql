@@ -8,7 +8,7 @@ import {
 import { statusToError } from '../utils'
 
 export class Portal extends JanusClient {
-  public constructor(ctx: IOContext, options?: InstanceOptions) {
+  constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
       ...options,
       headers: {

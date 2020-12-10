@@ -14,7 +14,7 @@ import {
 const FOUR_SECONDS = 4 * 1000
 
 export class LogisticsClient extends JanusClient {
-  public constructor(ctx: IOContext, options?: InstanceOptions) {
+  constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
       ...options,
       headers: {

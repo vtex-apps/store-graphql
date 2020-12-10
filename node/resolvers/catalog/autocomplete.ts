@@ -15,6 +15,7 @@ import { path, split } from 'ramda'
  */
 const extractSlug = (item: any) => {
   const href = split('/', item.href)
+
   return item.criteria ? `${href[3]}/${href[4]}` : href[3]
 }
 

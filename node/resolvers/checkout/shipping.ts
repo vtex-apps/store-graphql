@@ -4,6 +4,7 @@ export const fieldResolvers = {
       if (deliveryChannel === 'pickup-in-point') {
         return pickupStoreInfo.friendlyName
       }
+
       return name
     },
   },

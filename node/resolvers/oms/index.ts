@@ -5,6 +5,7 @@ export const queries = {
     const {
       clients: { oms },
     } = ctx
+
     return isUserLoggedIn(ctx) ? oms.userLastOrder() : null
   },
 

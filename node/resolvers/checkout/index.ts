@@ -6,7 +6,6 @@ import httpResolver from '../httpResolver'
 import { queries as logisticsQueries } from '../logistics/index'
 import paths from '../paths'
 import { fieldResolvers as slasResolvers } from './checkoutSLA'
-
 import { resolvers as assemblyOptionsItemResolvers } from './assemblyOptionItem'
 import {
   addOptionsForItems,
@@ -16,10 +15,11 @@ import {
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
-
 import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
-import { getSimulationPayloadsByItem, orderFormItemToSeller } from './../../utils/simulation'
-
+import {
+  getSimulationPayloadsByItem,
+  orderFormItemToSeller,
+} from '../../utils/simulation'
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
 
@@ -27,6 +27,7 @@ const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
 
 const isWhitelistedSetCookie = (cookie: string) => {
   const [key] = cookie.split('=')
+
   return SetCookieWhitelist.includes(key)
 }
 
@@ -73,7 +74,9 @@ interface SLAFromLogistics {
   }
 }
 
-const checkouSlaFromLogisticPickup = (logisticPickup: LogisticPickupPoint): SLAFromLogistics => {
+const checkouSlaFromLogisticPickup = (
+  logisticPickup: LogisticPickupPoint
+): SLAFromLogistics => {
   return {
     id: logisticPickup.id,
     shippingEstimate: null,
@@ -81,9 +84,12 @@ const checkouSlaFromLogisticPickup = (logisticPickup: LogisticPickupPoint): SLAF
       friendlyName: logisticPickup.name,
       address: {
         ...logisticPickupResolvers.PickupPoint.address(logisticPickup),
-        geoCoordinates: [logisticPickup.address.location.longitude, logisticPickup.address.location.latitude]
-      }
-    }
+        geoCoordinates: [
+          logisticPickup.address.location.longitude,
+          logisticPickup.address.location.latitude,
+        ],
+      },
+    },
   }
 }
 
@@ -92,7 +98,7 @@ type AllSLAs = SLAItem | SLAFromLogistics
 const shouldUpdateMarketingData = (
   orderFormMarketingTags: OrderFormMarketingData | null,
   utmParams?: UTMParams,
-  utmiParams?: UTMIParams,
+  utmiParams?: UTMIParams
 ) => {
   const {
     utmCampaign = null,
@@ -103,18 +109,25 @@ const shouldUpdateMarketingData = (
     utmipage = null,
   } = orderFormMarketingTags || {}
 
-  if (!utmParams?.source && !utmParams?.medium && !utmParams?.campaign && !utmiParams?.campaign && !utmiParams?.page && !utmiParams?.part) {
+  if (
+    !utmParams?.source &&
+    !utmParams?.medium &&
+    !utmParams?.campaign &&
+    !utmiParams?.campaign &&
+    !utmiParams?.page &&
+    !utmiParams?.part
+  ) {
     // Avoid updating at any costs if all fields are invalid
     return false
   }
 
   return (
-    ((utmParams?.source ?? null) !== utmSource) ||
-    ((utmParams?.medium ?? null) !== utmMedium) ||
-    ((utmParams?.campaign ?? null) !== utmCampaign) ||
-    ((utmiParams?.part ?? null) !== utmiPart) ||
-    ((utmiParams?.page ?? null) !== utmipage) ||
-    ((utmiParams?.campaign ?? null) !== utmiCampaign)
+    (utmParams?.source ?? null) !== utmSource ||
+    (utmParams?.medium ?? null) !== utmMedium ||
+    (utmParams?.campaign ?? null) !== utmCampaign ||
+    (utmiParams?.part ?? null) !== utmiPart ||
+    (utmiParams?.page ?? null) !== utmipage ||
+    (utmiParams?.campaign ?? null) !== utmiCampaign
   )
 }
 
@@ -132,6 +145,7 @@ export const fieldResolvers = {
     items: (orderForm: OrderForm) => {
       const childs = reject(isParentItem, orderForm.items)
       const assemblyOptionsMap = buildAssemblyOptionsMap(orderForm)
+
       return orderForm.items.map((item, index) => ({
         ...item,
         assemblyOptionsData: {
@@ -144,9 +158,11 @@ export const fieldResolvers = {
     },
     pickupPointCheckedIn: (orderForm: OrderForm, _: any, ctx: Context) => {
       const { isCheckedIn, checkedInPickupPointId } = orderForm
+
       if (!isCheckedIn || !checkedInPickupPointId) {
         return null
       }
+
       return logisticsQueries.pickupPoint(
         {},
         { id: checkedInPickupPointId },
@@ -194,6 +210,7 @@ export async function syncWithStoreLocale(
       )
     } catch (e) {
       console.error(e)
+
       return orderForm
     }
   }
@@ -201,19 +218,20 @@ export async function syncWithStoreLocale(
   return orderForm
 }
 
-export async function setCheckoutCookies(rawHeaders: Record<string, any>, ctx: Context) {
+export async function setCheckoutCookies(
+  rawHeaders: Record<string, any>,
+  ctx: Context
+) {
   const responseSetCookies: string[] =
     (rawHeaders && rawHeaders['set-cookie']) || []
 
   const host = ctx.get('x-forwarded-host')
-  const forwardedSetCookies = responseSetCookies.filter(
-    isWhitelistedSetCookie
-  )
-  const parseAndClean = compose(
-    parseCookie,
-    replaceDomain(host)
-  )
+  const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+
+  const parseAndClean = compose(parseCookie, replaceDomain(host))
+
   const cleanCookies = forwardedSetCookies.map(parseAndClean)
+
   forEach(
     ({ name, value, options }) => ctx.cookies.set(name, value, options),
     cleanCookies
@@ -242,8 +260,8 @@ export const queries: Record<string, Resolver> = {
 
   searchOrderForm: async (_, { orderFormId }, ctx) => {
     const {
-      clients: { checkout }
-        } = ctx
+      clients: { checkout },
+    } = ctx
 
     const orderForm = await checkout.orderForm(orderFormId)
 
@@ -282,24 +300,28 @@ export const queries: Record<string, Resolver> = {
       },
     }
 
-    const [simulation, allPickupsOutput] = await Promise.all([checkout.simulation(simulationPayload), logistics.nearPickupPoints(lat, long)])
+    const [simulation, allPickupsOutput] = await Promise.all([
+      checkout.simulation(simulationPayload),
+      logistics.nearPickupPoints(lat, long),
+    ])
 
     const slas = simulation?.logisticsInfo?.[0]?.slas ?? []
-    const slasPickup = slas.filter(sla => sla.deliveryChannel === 'pickup-in-point') as AllSLAs[]
+    const slasPickup = slas.filter(
+      (sla) => sla.deliveryChannel === 'pickup-in-point'
+    ) as AllSLAs[]
 
-    const slaIdsSet = slasPickup.reduce(
-      (acc, { pickupStoreInfo }) => {
-        if (pickupStoreInfo.address?.addressId) {
-          acc.add(pickupStoreInfo.address.addressId)
-        }
-        return acc
-      },
-      new Set<string>()
-    )
+    const slaIdsSet = slasPickup.reduce((acc, { pickupStoreInfo }) => {
+      if (pickupStoreInfo.address?.addressId) {
+        acc.add(pickupStoreInfo.address.addressId)
+      }
 
-    allPickupsOutput.items.forEach(logisticItem => {
+      return acc
+    }, new Set<string>())
+
+    allPickupsOutput.items.forEach((logisticItem) => {
       if (logisticItem.isActive && !slaIdsSet.has(logisticItem.id)) {
         const checkouSla = checkouSlaFromLogisticPickup(logisticItem)
+
         slasPickup.push(checkouSla)
       }
     })
@@ -319,25 +341,44 @@ export const queries: Record<string, Resolver> = {
     )) as SLA[]
 
     return slas.find(
-      s => path(['pickupStoreInfo', 'address', 'addressId'], s) === pickupId
+      (s) => path(['pickupStoreInfo', 'address', 'addressId'], s) === pickupId
     )
   },
 
-  itemsWithSimulation: async (_, { items }: {items: ItemWithSimulationInput[]}, ctx: Context) => {
+  itemsWithSimulation: async (
+    _,
+    { items }: { items: ItemWithSimulationInput[] },
+    ctx: Context
+  ) => {
     const {
       clients: { checkout },
-      vtex: { segment }
+      vtex: { segment },
     } = ctx
 
-    return items.map(item => {
+    return items.map((item) => {
       return new Promise((resolve) => {
-        const simulationPayloads = getSimulationPayloadsByItem(item, segment?.priceTables, segment?.regionId)
-        const simulationPromises = simulationPayloads.map(payload => checkout.simulation(payload))
-        Promise.all(simulationPromises).then(simulations => {
-          const sellers: Partial<Seller>[] = simulations.map(simulation => {
-            const [simulationItem] = simulation.items
-            return orderFormItemToSeller({...simulationItem, paymentData: simulation.paymentData})
-          })
+        const simulationPayloads = getSimulationPayloadsByItem(
+          item,
+          segment?.priceTables,
+          segment?.regionId
+        )
+
+        const simulationPromises = simulationPayloads.map((payload) =>
+          checkout.simulation(payload)
+        )
+
+        Promise.all(simulationPromises).then((simulations) => {
+          const sellers: Array<Partial<Seller>> = simulations.map(
+            (simulation) => {
+              const [simulationItem] = simulation.items
+
+              return orderFormItemToSeller({
+                ...simulationItem,
+                paymentData: simulation.paymentData,
+              })
+            }
+          )
+
           resolve({
             itemId: item.itemId,
             sellers,
@@ -361,21 +402,35 @@ interface UTMIParams {
 }
 
 export const mutations: Record<string, Resolver> = {
-  addItem: async (_, { orderFormId: paramsOrderFormId, items, utmParams, utmiParams }: AddItemArgs, ctx: Context) => {
+  addItem: async (
+    _,
+    {
+      orderFormId: paramsOrderFormId,
+      items,
+      utmParams,
+      utmiParams,
+    }: AddItemArgs,
+    ctx: Context
+  ) => {
     const {
       clients: { checkout },
-      vtex
+      vtex,
     } = ctx
-    const orderFormId = vtex.orderFormId
+
+    const { orderFormId } = vtex
+
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     if (items == null) {
       throw new UserInputError('No items to add provided')
     }
 
     if (orderFormId !== paramsOrderFormId) {
-      ctx.vtex.logger.warn(`Different orderFormId found: provided=${paramsOrderFormId} and in cookies=${orderFormId}`)
+      ctx.vtex.logger.warn(
+        `Different orderFormId found: provided=${paramsOrderFormId} and in cookies=${orderFormId}`
+      )
     }
 
     const { marketingData, items: previousItems } = await checkout.orderForm()
@@ -384,6 +439,7 @@ export const mutations: Record<string, Resolver> = {
       const newMarketingData = {
         ...(marketingData || {}),
       }
+
       newMarketingData.utmCampaign = utmParams?.campaign
       newMarketingData.utmMedium = utmParams?.medium
       newMarketingData.utmSource = utmParams?.source
@@ -399,29 +455,35 @@ export const mutations: Record<string, Resolver> = {
         )
       }
 
-      const atLeastOneValidField = Object.values(newMarketingData).some(value => {
-        if (value == null || value === '') {
-          return false
+      const atLeastOneValidField = Object.values(newMarketingData).some(
+        (value) => {
+          if (value == null || value === '') {
+            return false
+          }
+
+          if (Array.isArray(value) && value.length === 0) {
+            return false
+          }
+
+          return true
         }
-        if (Array.isArray(value) && value.length === 0) {
-          return false
-        }
-        return true
-      })
+      )
 
       // If all fields of newMarketingData are invalid, it causes checkout to answer with an error 400
       if (atLeastOneValidField) {
         try {
-          await checkout.updateOrderFormMarketingData(orderFormId, newMarketingData)
+          await checkout.updateOrderFormMarketingData(
+            orderFormId,
+            newMarketingData
+          )
         } catch (e) {
           ctx.vtex.logger.error({
             message: 'Error when updating orderformmarketing data',
             id: orderFormId,
             chkArgs: JSON.stringify(newMarketingData),
-            graphqlArgs: JSON.stringify({ utmParams, utmiParams })
+            graphqlArgs: JSON.stringify({ utmParams, utmiParams }),
           })
         }
-
       }
     }
 
@@ -445,6 +507,7 @@ export const mutations: Record<string, Resolver> = {
     { clients: { checkout } }
   ) => {
     await checkout.cancelOrder(orderFormId, reason)
+
     return true
   },
 
@@ -472,17 +535,27 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     return checkout.setOrderFormCustomData(orderFormId, appId, field, value)
   },
 
-  updateItems: (_, { orderFormId: paramsOrderFormId, items }, { clients: { checkout }, vtex }) => {
-    const orderFormId = vtex.orderFormId
+  updateItems: (
+    _,
+    { orderFormId: paramsOrderFormId, items },
+    { clients: { checkout }, vtex }
+  ) => {
+    const { orderFormId } = vtex
+
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     if (orderFormId !== paramsOrderFormId) {
-      vtex.logger.warn(`Different orderFormId found: provided=${paramsOrderFormId} and in cookies=${vtex.orderFormId}`)
+      vtex.logger.warn(
+        `Different orderFormId found: provided=${paramsOrderFormId} and in cookies=${vtex.orderFormId}`
+      )
     }
+
     return checkout.updateItems(orderFormId, items)
   },
 
@@ -494,6 +567,7 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     return checkout.updateOrderFormIgnoreProfile(orderFormId, ignoreProfileData)
   },
 
@@ -505,6 +579,7 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
@@ -516,17 +591,20 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     return checkout.updateOrderFormProfile(orderFormId, fields)
   },
 
   updateOrderFormShipping: async (_, { address }, ctx) => {
     const {
       clients: { checkout },
-      vtex: { orderFormId }
+      vtex: { orderFormId },
     } = ctx
+
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     return checkout.updateOrderFormShipping(orderFormId, {
       clearAddressIfPostalCodeNotFound: false,
       selectedAddresses: [address],
@@ -541,12 +619,14 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     const body = {
       composition: {
         items: options,
       },
       noSplitItem: true,
     }
+
     return checkout.addAssemblyOptions(
       orderFormId,
       itemId,
@@ -563,6 +643,7 @@ export const mutations: Record<string, Resolver> = {
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
+
     return checkout.updateOrderFormCheckin(orderFormId, checkin)
   },
 

@@ -18,7 +18,7 @@ export function getProfile(context: Context, customFields?: string) {
 
   return profile
     .getProfileInfo(currentProfile, extraFields)
-    .then(profileData => {
+    .then((profileData) => {
       if (profileData) {
         return {
           ...profileData,
@@ -37,6 +37,7 @@ export function getPasswordLastUpdate(context: Context) {
     },
     vtex: { account },
   } = context
+
   const url = paths.getUser(account)
   const parsedCookies = parse(cookie)
   const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
@@ -72,14 +73,14 @@ export async function getPayments(context: Context) {
   }
 
   const addresses = await getAddresses(context)
-  const availableAccounts = JSON.parse(paymentsRawData.paymentData)
-    .availableAccounts
+  const { availableAccounts } = JSON.parse(paymentsRawData.paymentData)
 
   return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account
     const accountAddress = addresses.find(
-      addr => addr.addressName === availableAddresses[0]
+      (addr) => addr.addressName === availableAddresses[0]
     )
+
     return { ...cleanAccount, id: accountId, address: accountAddress }
   })
 }
@@ -119,6 +120,7 @@ export function updateProfilePicture(mutationsName: string, context: Context) {
   console.warn(
     `The ${mutationsName} mutation is deprecated and no longer supported.`
   )
+
   return getProfile(context)
 }
 
@@ -158,6 +160,7 @@ export function updateAddress(
   } = context
 
   const addressesData = {} as any
+
   addressesData[id] = JSON.stringify({
     ...addressFields,
     geoCoordinate: geoCoordinates,
@@ -197,7 +200,7 @@ export async function saveAddress(
   const currentAddresses = await profile.getUserAddresses(currentProfile)
 
   return currentAddresses.find(
-    address => address.addressName === newId
+    (address) => address.addressName === newId
   ) as Address
 }
 

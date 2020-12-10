@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.136.8] - 2020-12-08
+### Added
+- `scope: public` to `getPublicSchema` query.
+
+## [2.136.7] - 2020-12-08
+### Fixed
+- Remove special characters from search.
+
+## [2.136.6] - 2020-12-03
+
+### Changed
+- Updated VTEX tooling
+- Auto-fixed linting in all files
+
+## [2.136.5] - 2020-12-02
+
+## [2.136.4] - 2020-12-01
+### Fixed
+- Sanitize profile and address related fields.
+
+## [2.136.3] - 2020-11-25
+### Changed
+- Use `dataentities` as a prefix on Master Data client.
+
+## [2.136.2] - 2020-11-20
+### Changed
+- Remove `orderForm` query cache.
+
+## [2.136.1] - 2020-11-16
+### Fixed
+- Fills the `PriceWithoutDiscount` field in the `itemsWithSimulation` query.
+- Use `sellingPrice` instead of `price` in the `itemsWithSimulation` query.
+
+## [2.136.0] - 2020-10-29
+### Added
+- `fields` argument to `subscribeNewsletter` mutation.
+
+## [2.135.1] - 2020-10-26
+
+### Fixed
+
+- Uses correct fallback for category href
+
+## [2.135.0] - 2020-10-09
+
+### Added
+- New `account` param on createDocument mutations
+
 ## [2.134.0] - 2020-09-30
 ### Added
 - Translated `slug` and `href` fields from the Category type
@@ -17,7 +65,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.132.0] - 2020-09-21
 ### Added
-- New `account` field on `document` query. 
+- New `account` field on `document` query.
 
 ## [2.131.2] - 2020-09-15
 ### Added
@@ -42,7 +90,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.129.0] - 2020-08-27
 ### Added
-- New `account` field on `updateDocuments` query. 
+- New `account` field on `updateDocuments` query.
 
 ## [2.128.0] - 2020-08-27
 ### Added
@@ -62,7 +110,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.126.0] - 2020-07-09
 ### Added
-- New `account` field on `documents` query. 
+- New `account` field on `documents` query.
 
 ## [2.125.0] - 2020-07-09
 ### Added

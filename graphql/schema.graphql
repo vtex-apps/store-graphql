@@ -291,7 +291,7 @@ type Query {
   Returns checkout cart details
   """
   orderForm: OrderForm
-    @cacheControl(scope: PRIVATE)
+    @cacheControl(maxAge: ZERO, scope: PRIVATE)
     @withOrderFormId
     @withSegment
 
@@ -426,7 +426,7 @@ type Query {
     MasterData schema name.
     """
     schema: String!
-  ): DocumentSchemaV2
+  ): DocumentSchemaV2 @cacheControl(scope: PUBLIC)
 
   """
   Get the benefits associated with a list of products
@@ -676,7 +676,7 @@ type Mutation {
   """
   Subscribe to newsletter
   """
-  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean): Boolean
+  subscribeNewsletter(email: String, isNewsletterOptIn: Boolean, fields: NewsletterFieldsInput): Boolean
     @cacheControl(scope: PRIVATE)
 
   """
@@ -855,6 +855,7 @@ type Mutation {
   createDocument(
     acronym: String!
     document: DocumentInput
+    account: String
     schema: String
   ): DocumentResponse
   updateDocument(
@@ -873,6 +874,7 @@ type Mutation {
   createDocumentV2(
     dataEntity: String!
     document: DocumentInputV2
+    account: String
     schema: String
   ): DocumentResponseV2 @cacheControl(scope: PRIVATE)
 

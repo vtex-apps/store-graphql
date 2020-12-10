@@ -13,11 +13,16 @@ const sortMapAndQuery = (map: string[], query: string[]) => {
   const sorted = sort(([a], [b]) => {
     if (a !== b && a === 'productClusterIds') {
       return -1
-    } else if (a !== b && a === 'c') {
+    }
+
+    if (a !== b && a === 'c') {
       return -1
-    } else if (a === b && a === 'c') {
+    }
+
+    if (a === b && a === 'c') {
       return 0
     }
+
     return 1
   }, zipped)
 
@@ -83,9 +88,10 @@ export const resolvers = {
       } = ctx
 
       try {
-        return catalog.productsQuantity(
-          Object.assign({}, root.queryArgs, getQueryAndFacets(root.queryArgs))
-        )
+        return catalog.productsQuantity({
+          ...root.queryArgs,
+          ...getQueryAndFacets(root.queryArgs),
+        })
       } catch (e) {
         return 0
       }

@@ -17,6 +17,10 @@ const FALSE = 'False'
 
 interface SubscribeNewsletterArgs {
   email: string
+  fields?: {
+    name?: string
+    phone?: string
+  }
   isNewsletterOptIn: boolean
 }
 
@@ -44,19 +48,39 @@ export const mutations = {
 
   subscribeNewsletter: async (
     _: any,
-    { email, isNewsletterOptIn }: SubscribeNewsletterArgs,
+    { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
-    const profile = context.clients.profile
+    const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
         ? TRUE
         : FALSE
+
+    const updatedPersonalPreferences: PersonalPreferences = {
+      isNewsletterOptIn: optIn,
+    }
+
+    if (fields) {
+      const userProfile = await profile.getProfileInfo({ email, userId: '' })
+
+      const userHasFirstName = Boolean(userProfile.firstName)
+      const userHasPhone = Boolean(userProfile.cellPhone)
+
+      // Prevents 'firstName' field from being overridden.
+      if (!userHasFirstName && fields.name) {
+        updatedPersonalPreferences.firstName = fields.name
+      }
+
+      // Prevents 'homePhone' field from being overridden.
+      if (!userHasPhone && fields.phone) {
+        updatedPersonalPreferences.homePhone = fields.phone
+      }
+    }
+
     await profile.updatePersonalPreferences(
       { email, userId: '' },
-      {
-        isNewsletterOptIn: optIn,
-      }
+      updatedPersonalPreferences
     )
 
     return true
@@ -73,6 +97,7 @@ export const queries = {
       vtex: { segment },
       cookies,
     } = context
+
     const salesChannel = segment ? segment.channel : null
 
     const { sessionData } = await customSession.getSession(
@@ -90,7 +115,7 @@ export const queries = {
       .catch(() => [])
 
     // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
-    const available = availableSalesChannels.find(sc => sc.Id == salesChannel)
+    const available = availableSalesChannels.find((sc) => sc.Id == salesChannel)
 
     return {
       allowed: Boolean(available),
