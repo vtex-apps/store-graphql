@@ -18,6 +18,7 @@ const FALSE = 'False'
 interface SubscribeNewsletterArgs {
   email: string
   fields?: {
+    [index: string]: string | number | boolean | null | undefined
     name?: string
     phone?: string
   }
@@ -63,9 +64,10 @@ export const mutations = {
 
     if (fields) {
       const userProfile = await profile.getProfileInfo({ email, userId: '' })
-
       const userHasFirstName = Boolean(userProfile.firstName)
       const userHasPhone = Boolean(userProfile.cellPhone)
+
+      const { name, phone, ...customFields } = fields
 
       // Prevents 'firstName' field from being overridden.
       if (!userHasFirstName && fields.name) {
@@ -75,6 +77,15 @@ export const mutations = {
       // Prevents 'homePhone' field from being overridden.
       if (!userHasPhone && fields.phone) {
         updatedPersonalPreferences.homePhone = fields.phone
+      }
+
+      for (const field in customFields) {
+        const userHasField = Boolean(userProfile[field])
+        const fieldValue = fields[field]
+
+        if (!userHasField && fieldValue !== null) {
+          updatedPersonalPreferences[field] = fieldValue
+        }
       }
     }
 
@@ -115,6 +126,7 @@ export const queries = {
       .catch(() => [])
 
     // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
+    // eslint-disable-next-line eqeqeq
     const available = availableSalesChannels.find((sc) => sc.Id == salesChannel)
 
     return {
