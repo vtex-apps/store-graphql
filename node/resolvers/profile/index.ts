@@ -25,6 +25,53 @@ interface SubscribeNewsletterArgs {
   isNewsletterOptIn: boolean
 }
 
+/**
+ * Remove private user profile fields that we should not be considered
+ * 'customFields'.
+ *
+ * @param profileFieldsToUpdate
+ */
+function removeLockedUserProfileFields(
+  profileFieldsToUpdate: SubscribeNewsletterArgs['fields']
+) {
+  if (!profileFieldsToUpdate) {
+    return {}
+  }
+
+  const lockedFields = [
+    'birthDate',
+    'cellPhone',
+    'businessPhone',
+    'fancyName',
+    'corporateName',
+    'document',
+    'email',
+    'isPJ',
+    'firstName',
+    'gender',
+    'homePhone',
+    'isFreeStateRegistration',
+    'lastName',
+    'documentType',
+    'nickName',
+    'stateRegistration',
+    'userId',
+    'customerClass',
+    'createdIn',
+    'businessDocument',
+  ]
+
+  const filteredFields = Object.keys(profileFieldsToUpdate)
+    .filter((key) => !lockedFields.includes(key))
+    .reduce((acc, key) => {
+      acc[key] = profileFieldsToUpdate[key]
+
+      return acc
+    }, {} as typeof profileFieldsToUpdate)
+
+  return filteredFields
+}
+
 export const mutations = {
   createAddress: (_: any, { fields }: any, context: Context) =>
     createAddress(context, fields),
@@ -65,40 +112,9 @@ export const mutations = {
     if (fields) {
       const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
-      /**
-       * These fields should not be considered 'customFields', and we shouldn't
-       * enable them to be changed directly through that.
-       * */
-      const lockedFields = [
-        'birthDate',
-        'cellPhone',
-        'businessPhone',
-        'fancyName',
-        'corporateName',
-        'document',
-        'email',
-        'isPJ',
-        'firstName',
-        'gender',
-        'homePhone',
-        'isFreeStateRegistration',
-        'lastName',
-        'documentType',
-        'nickName',
-        'stateRegistration',
-        'userId',
-        'customerClass',
-        'createdIn',
-        'businessDocument',
-      ]
-
-      const { name, phone, ...customFields } = Object.keys(fields)
-        .filter((key) => !lockedFields.includes(key))
-        .reduce((acc, key) => {
-          acc[key] = fields[key]
-
-          return acc
-        }, {} as typeof fields)
+      const { name, phone, ...customFields } = removeLockedUserProfileFields(
+        fields
+      )
 
       const userHasFirstName = Boolean(userProfile.firstName)
       const userHasPhone = Boolean(userProfile.cellPhone)
