@@ -192,9 +192,7 @@ input ProfileInput {
   """
   DEPRECATED
   """
-  phone: String
-    @deprecated
-    @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  phone: String @deprecated @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's birth date
   """
@@ -214,9 +212,7 @@ input ProfileInput {
   """
   DEPRECATED
   """
-  tradeName: String
-    @deprecated
-    @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  tradeName: String @deprecated @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's company corporate name
   """
@@ -224,13 +220,11 @@ input ProfileInput {
   """
   User's company corporate document (e.g. CNPJ)
   """
-  corporateDocument: String
-    @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  corporateDocument: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   User's company state registration
   """
-  stateRegistration: String
-    @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  stateRegistration: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   """
   Whether the user is a corporation or not
   """
