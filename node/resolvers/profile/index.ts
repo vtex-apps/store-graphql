@@ -64,25 +64,60 @@ export const mutations = {
 
     if (fields) {
       const userProfile = await profile.getProfileInfo({ email, userId: '' })
+
+      /**
+       * These fields should not be considered 'customFields', and we shouldn't
+       * enable them to be changed directly through that.
+       * */
+      const lockedFields = [
+        'birthDate',
+        'cellPhone',
+        'businessPhone',
+        'fancyName',
+        'corporateName',
+        'document',
+        'email',
+        'isPJ',
+        'firstName',
+        'gender',
+        'homePhone',
+        'isFreeStateRegistration',
+        'lastName',
+        'documentType',
+        'nickName',
+        'stateRegistration',
+        'userId',
+        'customerClass',
+        'createdIn',
+        'businessDocument',
+      ]
+
+      const { name, phone, ...customFields } = Object.keys(fields)
+        .filter((key) => !lockedFields.includes(key))
+        .reduce((acc, key) => {
+          acc[key] = fields[key]
+
+          return acc
+        }, {} as typeof fields)
+
       const userHasFirstName = Boolean(userProfile.firstName)
       const userHasPhone = Boolean(userProfile.cellPhone)
 
-      const { name, phone, ...customFields } = fields
-
       // Prevents 'firstName' field from being overridden.
-      if (!userHasFirstName && fields.name) {
-        updatedPersonalPreferences.firstName = fields.name
+      if (!userHasFirstName && name) {
+        updatedPersonalPreferences.firstName = name
       }
 
       // Prevents 'homePhone' field from being overridden.
-      if (!userHasPhone && fields.phone) {
-        updatedPersonalPreferences.homePhone = fields.phone
+      if (!userHasPhone && phone) {
+        updatedPersonalPreferences.homePhone = phone
       }
 
       for (const field in customFields) {
         const userHasField = Boolean(userProfile[field])
         const fieldValue = fields[field]
 
+        // Prevents any customField from being overridden.
         if (!userHasField && fieldValue !== null) {
           updatedPersonalPreferences[field] = fieldValue
         }
