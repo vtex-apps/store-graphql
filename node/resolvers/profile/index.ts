@@ -18,58 +18,12 @@ const FALSE = 'False'
 interface SubscribeNewsletterArgs {
   email: string
   fields?: {
-    [index: string]: string | number | boolean | null | undefined
     name?: string
     phone?: string
+    bindingUrl?: string
+    bindingId?: string
   }
   isNewsletterOptIn: boolean
-}
-
-/**
- * Remove private user profile fields that we should not be considered
- * 'customFields'.
- *
- * @param profileFieldsToUpdate
- */
-function removeLockedUserProfileFields(
-  profileFieldsToUpdate: SubscribeNewsletterArgs['fields']
-) {
-  if (!profileFieldsToUpdate) {
-    return {}
-  }
-
-  const lockedFields = [
-    'birthDate',
-    'cellPhone',
-    'businessPhone',
-    'fancyName',
-    'corporateName',
-    'document',
-    'email',
-    'isPJ',
-    'firstName',
-    'gender',
-    'homePhone',
-    'isFreeStateRegistration',
-    'lastName',
-    'documentType',
-    'nickName',
-    'stateRegistration',
-    'userId',
-    'customerClass',
-    'createdIn',
-    'businessDocument',
-  ]
-
-  const filteredFields = Object.keys(profileFieldsToUpdate)
-    .filter((key) => !lockedFields.includes(key))
-    .reduce((acc, key) => {
-      acc[key] = profileFieldsToUpdate[key]
-
-      return acc
-    }, {} as typeof profileFieldsToUpdate)
-
-  return filteredFields
 }
 
 export const mutations = {
@@ -112,12 +66,12 @@ export const mutations = {
     if (fields) {
       const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
-      const { name, phone, ...customFields } = removeLockedUserProfileFields(
-        fields
-      )
+      const { name, phone, bindingId, bindingUrl } = fields
 
       const userHasFirstName = Boolean(userProfile.firstName)
       const userHasPhone = Boolean(userProfile.cellPhone)
+      const userHasBindingId = Boolean(userProfile.bindingId)
+      const userHasBindingUrl = Boolean(userProfile.bindingUrl)
 
       // Prevents 'firstName' field from being overridden.
       if (!userHasFirstName && name) {
@@ -129,14 +83,14 @@ export const mutations = {
         updatedPersonalPreferences.homePhone = phone
       }
 
-      for (const field in customFields) {
-        const userHasField = Boolean(userProfile[field])
-        const fieldValue = fields[field]
+      // Prevents 'bindingId' field from being overridden.
+      if (!userHasBindingId && bindingId) {
+        updatedPersonalPreferences.bindingId = bindingId
+      }
 
-        // Prevents any customField from being overridden.
-        if (!userHasField && fieldValue !== null) {
-          updatedPersonalPreferences[field] = fieldValue
-        }
+      // Prevents 'bindingUrl' field from being overridden.
+      if (!userHasBindingUrl && bindingUrl) {
+        updatedPersonalPreferences.bindingUrl = bindingUrl
       }
     }
 
