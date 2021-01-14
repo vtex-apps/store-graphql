@@ -10,9 +10,6 @@
     "node": "4.x",
     "docs": "0.x"
   },
-  "scripts": {
-    "prereleasy": "bash lint.sh"
-  },
   "dependencies": {
     "vtex.messages": "1.x",
     "vtex.rewriter": "1.x",

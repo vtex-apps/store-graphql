@@ -20,6 +20,8 @@ interface SubscribeNewsletterArgs {
   fields?: {
     name?: string
     phone?: string
+    bindingUrl?: string
+    bindingId?: string
   }
   isNewsletterOptIn: boolean
 }
@@ -64,17 +66,31 @@ export const mutations = {
     if (fields) {
       const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
+      const { name, phone, bindingId, bindingUrl } = fields
+
       const userHasFirstName = Boolean(userProfile.firstName)
       const userHasPhone = Boolean(userProfile.cellPhone)
+      const userHasBindingId = Boolean(userProfile.bindingId)
+      const userHasBindingUrl = Boolean(userProfile.bindingUrl)
 
       // Prevents 'firstName' field from being overridden.
-      if (!userHasFirstName && fields.name) {
-        updatedPersonalPreferences.firstName = fields.name
+      if (!userHasFirstName && name) {
+        updatedPersonalPreferences.firstName = name
       }
 
       // Prevents 'homePhone' field from being overridden.
-      if (!userHasPhone && fields.phone) {
-        updatedPersonalPreferences.homePhone = fields.phone
+      if (!userHasPhone && phone) {
+        updatedPersonalPreferences.homePhone = phone
+      }
+
+      // Prevents 'bindingId' field from being overridden.
+      if (!userHasBindingId && bindingId) {
+        updatedPersonalPreferences.bindingId = bindingId
+      }
+
+      // Prevents 'bindingUrl' field from being overridden.
+      if (!userHasBindingUrl && bindingUrl) {
+        updatedPersonalPreferences.bindingUrl = bindingUrl
       }
     }
 
@@ -115,6 +131,7 @@ export const queries = {
       .catch(() => [])
 
     // Checking with `==` since `sc.Id` is an Integer and salesChannel a string
+    // eslint-disable-next-line eqeqeq
     const available = availableSalesChannels.find((sc) => sc.Id == salesChannel)
 
     return {

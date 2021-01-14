@@ -95,6 +95,7 @@ declare global {
   }
 
   interface PersonalPreferences {
+    [key: string]: string | number | boolean | undefined
     firstName?: string
     homePhone?: string
     isNewsletterOptIn?: 'True' | 'False'
