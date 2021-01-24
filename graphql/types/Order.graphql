@@ -27,6 +27,7 @@ type OrderItem {
   id: String
   productId: String
   refId: String
+  productRefId: String
   name: String
   skuName: String
   tax: Float
@@ -49,6 +50,14 @@ type OrderItem {
   parentItemIndex: Int
   parentAssemblyBinding: String
   bundleItems: [OrderItem]
+  attachments: [OrderItemAttachment!]!
+}
+
+scalar AttachmentContent
+
+type OrderItemAttachment {
+  name: String
+  content: AttachmentContent
 }
 
 type OrderItemAdditionalInfo {
