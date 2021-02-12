@@ -73,6 +73,16 @@ const paths = {
     }${returnUrl && `&returnUrl=${returnUrl}`}`,
   loginSessions: (scope: any, account: any) =>
     `${paths.vtexId}/sessions?scope=${scope}&an=${account}`,
+  logOutFromSession: ({
+    scope,
+    account,
+    sessionId,
+  }: {
+    scope: any
+    account: any
+    sessionId: any
+  }) =>
+    `${paths.vtexId}/sessions/${sessionId}/revoke?scope=${scope}&an=${account}`,
   vtexId: `http://vtexid.vtex.com.br/api/vtexid`,
   vtexIdPub: `http://vtexid.vtex.com.br/api/vtexid/pub`,
   vtexIdPvt: `http://vtexid.vtex.com.br/api/vtexid/pvt`,
