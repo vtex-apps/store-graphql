@@ -105,6 +105,10 @@ TODO
 - `updateAddress`
 - `deleteAddress`
 
+### VTEXID
+
+- `logOutFromSession` - Logs out from a specific login session (this can't be the current one - it doesn't delete the cookie)
+
 ## Contributing
 
 TODO

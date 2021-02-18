@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.140.0] - 2021-04-14
 ### Added
+- `logOutFromSession` mutation
+
+### Added
 - `loginSessionsInfo` query
 
 ## [2.139.1] - 2021-03-29
