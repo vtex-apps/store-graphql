@@ -281,7 +281,7 @@ export const mutations = {
       return null
     }
 
-    makeRequest({
+    await makeRequest({
       url: paths.logOutFromSession({ account, scope: account, sessionId }),
       ctx: ioContext,
       vtexIdVersion: uiVersion,
