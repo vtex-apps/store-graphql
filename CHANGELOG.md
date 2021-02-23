@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `deliveryChannel` and `isPickupStore` fields to ShippingSLA type.
+- `isPickupStore` field to PickupStoreInfoSLA type.
+
+### Fixed
+- `pickupStoreInfo` field type reference from `PickupStoreInfo` to `PickupStoreInfoSLA`
 
 ## [2.138.0] - 2021-01-27
 ### Added
