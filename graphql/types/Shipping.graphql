@@ -30,15 +30,18 @@ type ShippingSLA {
   shippingEstimate: String
   shippingEstimateDate: String
   deliveryIds: [DeliveryIds]
+  deliveryChannel: String
   friendlyName: String
-  pickupStoreInfo: PickupStoreInfo
+  pickupPointId: String
+  pickupStoreInfo: PickupStoreInfoSLA
 }
 
-type pickupStoreInfo {
+type PickupStoreInfoSLA {
   friendlyName: String
   address: PickupAddress
   additionalInfo: String
   dockId: String
+  isPickupStore: Boolean
 }
 
 type PickupAddress {
