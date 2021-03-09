@@ -33,10 +33,10 @@ type ShippingSLA {
   deliveryChannel: String
   friendlyName: String
   pickupPointId: String
-  pickupStoreInfo: PickupStoreInfoSLA
+  pickupStoreInfo: pickupStoreInfo
 }
 
-type PickupStoreInfoSLA {
+type pickupStoreInfo {
   friendlyName: String
   address: PickupAddress
   additionalInfo: String
