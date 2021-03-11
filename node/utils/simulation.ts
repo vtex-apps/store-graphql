@@ -28,6 +28,7 @@ export const orderFormItemToSeller = (
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
+    AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0
   } as CommertialOffer
 
   const installmentOptions =
