@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.139.1] - 2021-03-29
+
 ### Fixed
 - Brand slugify on `resolvers/catalog/brand` same as catalog
 
