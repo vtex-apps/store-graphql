@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Brand slugify on `resolvers/catalog/brand` same as catalog
+
 ## [2.139.0] - 2021-03-11
 ### Added
 - `AvailableQuantity` to the `itemsWithSimulation` query.
