@@ -44,7 +44,6 @@ export async function makeRequest<T = any>({
   const composedHeaders = {
     'X-Vtex-Use-Https': 'true',
     'vtex-ui-id-version': vtexIdVersion,
-    accept: 'application/vnd.vtex.ds.v10+json',
     ...(cookieHeader && { Cookie: cookieHeader }),
     ...(body && { 'content-type': 'application/x-www-form-urlencoded' }),
   }
