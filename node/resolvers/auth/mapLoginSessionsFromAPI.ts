@@ -12,9 +12,7 @@ const getLastAccessDateFromHistory = (history: LoginAccess[]) => {
   return null
 }
 
-const deviceTypeByParserType: {
-  [K in string]: DeviceType
-} = {
+const deviceTypeByParserType: Record<string, DeviceType> = {
   console: 'DESKTOP',
   mobile: 'MOBILE',
   tablet: 'TABLET',
