@@ -48,9 +48,7 @@ export function getPasswordLastUpdate(context: Context) {
     ctx: context.vtex,
     url,
     authCookieAdmin: userCookie,
-  }).then((response: any) => {
-    return response.data.passwordLastUpdate
-  })
+  }).then((response: any) => response.data.passwordLastUpdate)
 }
 
 export function getAddresses(context: Context) {
