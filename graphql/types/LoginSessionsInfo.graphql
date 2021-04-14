@@ -1,0 +1,23 @@
+enum DeviceType {
+  MOBILE
+  TABLET
+  DESKTOP
+}
+
+type LoginSession {
+  id: ID!
+  cacheId: ID!
+  deviceType: DeviceType!
+  city: String
+  lastAccess: String!
+  browser: String
+  os: String
+  ip: String
+  fullAddress: String
+  firstAccess: String!
+}
+
+type LoginSessionsInfo {
+  currentLoginSessionId: ID
+  loginSessions: [LoginSession!]
+}

@@ -44,11 +44,11 @@ export function getPasswordLastUpdate(context: Context) {
 
   if (!userCookie) return null
 
-  return makeRequest(context.vtex, url, 'GET', undefined, userCookie).then(
-    (response: any) => {
-      return response.data.passwordLastUpdate
-    }
-  )
+  return makeRequest({
+    ctx: context.vtex,
+    url,
+    authCookieAdmin: userCookie,
+  }).then((response: any) => response.data.passwordLastUpdate)
 }
 
 export function getAddresses(context: Context) {
