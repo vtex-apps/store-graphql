@@ -78,9 +78,9 @@ const paths = {
     account,
     sessionId,
   }: {
-    scope: any
-    account: any
-    sessionId: any
+    scope: string
+    account: string
+    sessionId: string
   }) =>
     `${paths.vtexId}/sessions/${sessionId}/revoke?scope=${scope}&an=${account}`,
   vtexId: `http://vtexid.vtex.com.br/api/vtexid`,
