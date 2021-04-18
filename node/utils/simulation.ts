@@ -1,3 +1,5 @@
+const ALLOWED_TEASER_TYPES = ["Catalog", "Profiler", "ConditionalPrice"]
+
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   priceTable?: string,
@@ -21,14 +23,16 @@ export const getSimulationPayloadsByItem = (
 }
 
 export const orderFormItemToSeller = (
-  orderFormItem: OrderFormItem & { paymentData: any }
+  orderFormItem: OrderFormItem & { paymentData: any, ratesAndBenefitsData: any }
 ) => {
   const commertialOffer = {
     Price: orderFormItem.sellingPrice / 100,
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
-    AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0
+    AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0,
+    Teasers: getTeasersFromRatesAndBenefitsData(orderFormItem.ratesAndBenefitsData),
+    DiscountHighLight: getDiscountHighLightsFromRatesAndBenefitsData(orderFormItem.ratesAndBenefitsData)
   } as CommertialOffer
 
   const installmentOptions =
@@ -52,4 +56,25 @@ export const orderFormItemToSeller = (
     sellerId: orderFormItem.id,
     commertialOffer,
   }
+}
+
+const getTeasersFromRatesAndBenefitsData = (ratesAndBenefitsData: any) => {
+  if (!ratesAndBenefitsData) {
+    return []
+  }
+
+  return ratesAndBenefitsData.teaser
+    .filter((teaser: any) => ALLOWED_TEASER_TYPES.includes(teaser.teaserType))
+    .map((teaser: any) => ({"<Name>k__BackingField": teaser.name}))
+}
+
+
+const getDiscountHighLightsFromRatesAndBenefitsData = (ratesAndBenefitsData: any) => {
+  if (!ratesAndBenefitsData) {
+    return []
+  }
+
+  return ratesAndBenefitsData.rateAndBenefitsIdentifiers
+    .filter((rateAndBenefitsIdentifier: any) => rateAndBenefitsIdentifier.featured)
+    .map((rateAndBenefitsIdentifier: any) => ({"<Name>k__BackingField": rateAndBenefitsIdentifier.name}))
 }
