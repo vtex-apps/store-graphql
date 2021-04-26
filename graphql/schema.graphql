@@ -380,7 +380,6 @@ type Query {
     account: String
   ): [Document] @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
-
   """
   Get document
   """
@@ -873,6 +872,11 @@ type Mutation {
     @deprecated(
       reason: "See https://github.com/vtex-apps/store-graphql/issues/182"
     )
+
+  """
+  Logs out from a specific login session
+  """
+  logOutFromSession(sessionId: ID): ID @cacheControl(scope: PRIVATE)
 
   """
   Impersonate a customer

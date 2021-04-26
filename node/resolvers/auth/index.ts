@@ -257,6 +257,41 @@ export const mutations = {
     return true
   },
 
+  /**
+   * Log out from specified login sessions of user (identified by the cookie)
+   * @return login session ID
+   */
+  logOutFromSession: async (
+    _: any,
+    {
+      sessionId,
+    }: {
+      sessionId: string
+    },
+    {
+      request: {
+        headers: { 'vtex-ui-id-version': uiVersion },
+      },
+      vtex: ioContext,
+    }: any
+  ) => {
+    const { storeUserAuthToken, account } = ioContext
+
+    if (!storeUserAuthToken) {
+      return null
+    }
+
+    await makeRequest({
+      url: paths.logOutFromSession({ account, scope: account, sessionId }),
+      ctx: ioContext,
+      vtexIdVersion: uiVersion,
+      method: 'POST',
+      authCookieStore: storeUserAuthToken,
+    })
+
+    return sessionId
+  },
+
   oAuth: async (_: any, args: any, { vtex: ioContext }: any) => {
     const { provider, redirectUrl } = args
     const VtexSessionToken = await getSessionToken(ioContext, redirectUrl)

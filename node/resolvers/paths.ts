@@ -71,8 +71,18 @@ const paths = {
     }/authentication/start?appStart=true&scope=${scope}&accountName=${account}${
       redirect && `&callbackUrl=${redirect}`
     }${returnUrl && `&returnUrl=${returnUrl}`}`,
-  loginSessions: (scope: any, account: any) =>
+  loginSessions: (scope: string, account: string) =>
     `${paths.vtexId}/sessions?scope=${scope}&an=${account}`,
+  logOutFromSession: ({
+    scope,
+    account,
+    sessionId,
+  }: {
+    scope: string
+    account: string
+    sessionId: string
+  }) =>
+    `${paths.vtexId}/sessions/${sessionId}/revoke?scope=${scope}&an=${account}`,
   vtexId: `http://vtexid.vtex.com.br/api/vtexid`,
   vtexIdPub: `http://vtexid.vtex.com.br/api/vtexid/pub`,
   vtexIdPvt: `http://vtexid.vtex.com.br/api/vtexid/pvt`,
