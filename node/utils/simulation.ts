@@ -23,7 +23,7 @@ export const getSimulationPayloadsByItem = (
 }
 
 export const orderFormItemToSeller = (
-  orderFormItem: OrderFormItem & { paymentData: any, ratesAndBenefitsData: any }
+  orderFormItem: OrderFormItem & { paymentData: any, ratesAndBenefitsData: RatesAndBenefitsData }
 ) => {
   const commertialOffer = {
     Price: orderFormItem.sellingPrice / 100,
@@ -31,8 +31,8 @@ export const orderFormItemToSeller = (
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
     AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0,
-    Teasers: getTeasersFromRatesAndBenefitsData(orderFormItem.ratesAndBenefitsData),
-    DiscountHighLight: getDiscountHighLightsFromRatesAndBenefitsData(orderFormItem.ratesAndBenefitsData)
+    Teasers: getTeasers(orderFormItem.ratesAndBenefitsData),
+    DiscountHighLight: getDiscountHighLights(orderFormItem.ratesAndBenefitsData)
   } as CommertialOffer
 
   const installmentOptions =
@@ -48,6 +48,7 @@ export const orderFormItemToSeller = (
         TotalValuePlusInterestRate: installment.total / 100,
         NumberOfInstallments: installment.count,
         PaymentSystemName: installmentOption.paymentName,
+        Name: generatePaymentName(installment.interestRate, installmentOption.paymentName, installment.count)
       } as Installment)
     })
   )
@@ -58,23 +59,33 @@ export const orderFormItemToSeller = (
   }
 }
 
-const getTeasersFromRatesAndBenefitsData = (ratesAndBenefitsData: any) => {
+const getTeasers = (ratesAndBenefitsData: RatesAndBenefitsData) => {
   if (!ratesAndBenefitsData) {
     return []
   }
 
   return ratesAndBenefitsData.teaser
     .filter((teaser: any) => ALLOWED_TEASER_TYPES.includes(teaser.teaserType))
-    .map((teaser: any) => ({"<Name>k__BackingField": teaser.name}))
+    .map((teaser: any) => ({"<Name>k__BackingField": teaser.name, ...teaser}))
 }
 
 
-const getDiscountHighLightsFromRatesAndBenefitsData = (ratesAndBenefitsData: any) => {
+const getDiscountHighLights = (ratesAndBenefitsData: RatesAndBenefitsData) => {
   if (!ratesAndBenefitsData) {
     return []
   }
 
   return ratesAndBenefitsData.rateAndBenefitsIdentifiers
     .filter((rateAndBenefitsIdentifier: any) => rateAndBenefitsIdentifier.featured)
-    .map((rateAndBenefitsIdentifier: any) => ({"<Name>k__BackingField": rateAndBenefitsIdentifier.name}))
+    .map((rateAndBenefitsIdentifier: any) => ({"<Name>k__BackingField": rateAndBenefitsIdentifier.name, ...rateAndBenefitsIdentifier}))
+}
+
+const generatePaymentName = (interestRate: number | null, paymentSystemName: string | null, numberOfInstallments: number) => {
+  if (interestRate === null) {
+    return paymentSystemName
+  } else if (interestRate == 0) {
+    return `${paymentSystemName} ${numberOfInstallments === 1 ? 'à vista' : `${numberOfInstallments} vezes sem juros`}`
+  } else {
+    return `${paymentSystemName} ${numberOfInstallments === 1 ? 'à vista com juros' : `${numberOfInstallments} vezes com juros`}`
+  }
 }
