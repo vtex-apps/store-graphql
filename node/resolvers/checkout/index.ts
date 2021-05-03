@@ -375,6 +375,7 @@ export const queries: Record<string, Resolver> = {
               return orderFormItemToSeller({
                 ...simulationItem,
                 paymentData: simulation.paymentData,
+                ratesAndBenefitsData: simulation.ratesAndBenefitsData
               })
             }
           )
