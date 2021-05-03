@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.142.0] - 2021-05-03
+
 ### Added
 - `teasers` and `discountHighlights` and payment name to the `itemsWithSimulation`.
 
