@@ -72,8 +72,6 @@ export async function getPayments(context: Context) {
     return null
   }
 
-  console.log(paymentsRawData, 'payments raw dataaaa')
-  debugger
   const addresses = await getAddresses(context)
   const { availableAccounts } = JSON.parse(paymentsRawData.paymentData)
 
