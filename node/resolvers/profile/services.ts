@@ -68,10 +68,12 @@ export async function getPayments(context: Context) {
 
   const paymentsRawData = await profile.getUserPayments(currentProfile)
 
-  if (!paymentsRawData) {
+  if (!paymentsRawData || paymentsRawData.availableAccounts == null) {
     return null
   }
 
+  console.log(paymentsRawData, 'payments raw dataaaa')
+  debugger
   const addresses = await getAddresses(context)
   const { availableAccounts } = JSON.parse(paymentsRawData.paymentData)
 
