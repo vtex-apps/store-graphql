@@ -1,9 +1,10 @@
+import { SegmentData } from "@vtex/api"
+
 const ALLOWED_TEASER_TYPES = ["Catalog", "Profiler", "ConditionalPrice"]
 
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
-  priceTable?: string,
-  regionId?: string
+  segment?: SegmentData
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     return {
@@ -15,9 +16,13 @@ export const getSimulationPayloadsByItem = (
 
   return payloadItems.map((item) => {
     return {
-      priceTables: priceTable ? [priceTable] : undefined,
+      priceTables: segment?.priceTables ? [segment.priceTables] : undefined,
       items: [item],
-      shippingData: { logisticsInfo: [{ regionId }] },
+      shippingData: { logisticsInfo: [{ regionId: segment?.regionId }] },
+      marketingData: segment ? {
+        utmCampaign: segment.utm_campaign,
+        utmSource: segment.utm_source,
+      } : undefined
     }
   })
 }
