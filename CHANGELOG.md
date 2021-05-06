@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Parsing `undefined` `availableAccounts` in get Profile `getPayments`.
+- `getPayments` resolver result when `availableAccounts` is not defined.
 
 ## [2.142.2] - 2021-05-06
 
