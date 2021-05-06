@@ -2,6 +2,17 @@ import { SegmentData } from "@vtex/api"
 
 const ALLOWED_TEASER_TYPES = ["Catalog", "Profiler", "ConditionalPrice"]
 
+const getMarketingData = (segment?: SegmentData) => {
+  if (!segment || !segment.utm_campaign || !segment.utm_source) {
+    return
+  }
+
+  return {
+    utmCampaign: segment!.utm_campaign ,
+    utmSource: segment!.utm_source,
+  }
+}
+
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   segment?: SegmentData
@@ -19,10 +30,7 @@ export const getSimulationPayloadsByItem = (
       priceTables: segment?.priceTables ? [segment.priceTables] : undefined,
       items: [item],
       shippingData: { logisticsInfo: [{ regionId: segment?.regionId }] },
-      marketingData: segment ? {
-        utmCampaign: segment.utm_campaign,
-        utmSource: segment.utm_source,
-      } : undefined
+      marketingData: getMarketingData(segment)
     }
   })
 }
