@@ -8,8 +8,8 @@ const getMarketingData = (segment?: SegmentData) => {
   }
 
   return {
-    utmCampaign: segment!.utm_campaign ,
-    utmSource: segment!.utm_source,
+    utmCampaign: segment.utm_campaign,
+    utmSource: segment.utm_source,
   }
 }
 
