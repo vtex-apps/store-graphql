@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.142.2] - 2021-05-06
+
 ### Fixed
 - checkout returns 400 when there is no UTM info.
 
