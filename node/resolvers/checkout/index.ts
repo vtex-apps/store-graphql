@@ -359,8 +359,7 @@ export const queries: Record<string, Resolver> = {
       return new Promise((resolve) => {
         const simulationPayloads = getSimulationPayloadsByItem(
           item,
-          segment?.priceTables,
-          segment?.regionId
+          segment
         )
 
         const simulationPromises = simulationPayloads.map((payload) =>
