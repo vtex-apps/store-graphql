@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.142.0] - 2021-05-03
 
 ### Added
-- utm info to the `itemsWithSimulation` query.
+- UTM info to the `itemsWithSimulation` query.
 
 ### Added
 - `teasers` and `discountHighlights` and payment name to the `itemsWithSimulation`.
