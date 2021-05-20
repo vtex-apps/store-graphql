@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.142.3] - 2021-05-20
+
 ### Fixed
 
 - `getPayments` resolver result when `availableAccounts` is not defined.
