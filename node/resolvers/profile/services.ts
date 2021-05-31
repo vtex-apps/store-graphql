@@ -68,12 +68,14 @@ export async function getPayments(context: Context) {
 
   const paymentsRawData = await profile.getUserPayments(currentProfile)
 
-  if (!paymentsRawData?.availableAccounts) {
+  const parsedPaymentData = JSON.parse(paymentsRawData.paymentData)
+
+  if (!parsedPaymentData?.availableAccounts) {
     return null
   }
 
   const addresses = await getAddresses(context)
-  const { availableAccounts } = JSON.parse(paymentsRawData.paymentData)
+  const { availableAccounts } = parsedPaymentData
 
   return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account
