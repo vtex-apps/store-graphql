@@ -68,7 +68,7 @@ export async function getPayments(context: Context) {
 
   const paymentsRawData = await profile.getUserPayments(currentProfile)
 
-  if (!paymentsRawData?.availableAccounts) {
+  if (!paymentsRawData?.paymentData) {
     return null
   }
 
