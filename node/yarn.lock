@@ -6179,9 +6179,9 @@ verror@1.10.0:
   version "1.53.3"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rewriter@1.53.3/public/@types/vtex.rewriter#46c0251427139b7f13b719f86fb056daf4468534"
 
-"vtex.store-graphql@https://featurebopis--paylesslatamqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.142.4+build1623858165/public/@types/vtex.store-graphql":
-  version "2.142.4"
-  resolved "https://featurebopis--paylesslatamqa.myvtex.com/_v/private/typings/linked/v1/vtex.store-graphql@2.142.4+build1623858165/public/@types/vtex.store-graphql#70be1e372f9a3de85d4bd05041085f6882be9636"
+"vtex.store-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.127.0/public/@types/vtex.store-graphql":
+  version "2.127.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.127.0/public/@types/vtex.store-graphql#af9ed9f957a70cd9007917def0aed5e1d02970c5"
 
 w3c-hr-time@^1.0.1:
   version "1.0.1"
