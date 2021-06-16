@@ -279,6 +279,10 @@ type Query {
     """
     postalCode: String
     """
+    geoCoordinates to freight calculator
+    """
+    geoCoordinates: [String]
+    """
     Country of postal code
     """
     country: String
