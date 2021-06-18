@@ -6,6 +6,7 @@ import {
   UserInputError,
 } from '@vtex/api'
 import FormData from 'form-data'
+import validator from 'validator'
 
 import { statusToError } from '../utils'
 
@@ -137,17 +138,36 @@ export class MasterData extends ExternalClient {
 
   private get routes() {
     return {
-      attachments: (acronym: string, id: string, fields: string) =>
-        `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}/${fields}/attachments`,
-      document: (acronym: string, id: string) =>
-        `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}`,
-      documents: (acronym: string) =>
-        `${DATAENTITIES_PREFIX}/${acronym}/documents`,
-      schema: (acronym: string, schema: string) =>
-        `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}`,
-      publicSchema: (acronym: string, schema: string) =>
-        `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}/public`,
-      search: (acronym: string) => `${DATAENTITIES_PREFIX}/${acronym}/search`,
+      attachments: (acronym: string, id: string, fields: string) => {
+        checkForURLsInStringArguments(acronym, id, fields)
+
+        return `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}/${fields}/attachments`
+      },
+      document: (acronym: string, id: string) => {
+        checkForURLsInStringArguments(acronym, id)
+
+        return `${DATAENTITIES_PREFIX}/${acronym}/documents/${id}`
+      },
+      documents: (acronym: string) => {
+        checkForURLsInStringArguments(acronym)
+
+        return `${DATAENTITIES_PREFIX}/${acronym}/documents`
+      },
+      schema: (acronym: string, schema: string) => {
+        checkForURLsInStringArguments(acronym, schema)
+
+        return `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}`
+      },
+      publicSchema: (acronym: string, schema: string) => {
+        checkForURLsInStringArguments(acronym, schema)
+
+        return `${DATAENTITIES_PREFIX}/${acronym}/schemas/${schema}/public`
+      },
+      search: (acronym: string) => {
+        checkForURLsInStringArguments(acronym)
+
+        return `${DATAENTITIES_PREFIX}/${acronym}/search`
+      },
     }
   }
 }
@@ -167,6 +187,21 @@ function paginationArgsToHeaders({ page, pageSize }: PaginationArgs) {
 
 function generateFieldsArg(fields: string[]) {
   return fields.join(',')
+}
+
+/**
+ * This function throws an error if any of the passed args are an URL.
+ * We need to perform this check to protect our servers against possible
+ * SSRF attacks.
+ *
+ * @param {...string[]} args
+ */
+function checkForURLsInStringArguments(...args: string[]) {
+  for (let idx = 0; idx < args.length; idx++) {
+    if (validator.isURL(args[idx])) {
+      throw new UserInputError('Invalid arguments')
+    }
+  }
 }
 
 interface PaginationArgs {
