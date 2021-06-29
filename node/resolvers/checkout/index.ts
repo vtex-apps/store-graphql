@@ -365,7 +365,10 @@ export const queries: Record<string, Resolver> = {
 
   itemsWithSimulation: async (
     _,
-    { items }: { items: ItemWithSimulationInput[] },
+    {
+      items,
+      regionId,
+    }: { items: ItemWithSimulationInput[]; regionId?: string },
     ctx: Context
   ) => {
     const {
@@ -375,7 +378,11 @@ export const queries: Record<string, Resolver> = {
 
     return items.map((item) => {
       return new Promise((resolve) => {
-        const simulationPayloads = getSimulationPayloadsByItem(item, segment)
+        const simulationPayloads = getSimulationPayloadsByItem(
+          item,
+          segment,
+          regionId
+        )
 
         const simulationPromises = simulationPayloads.map((payload) =>
           pvtCheckout.simulation(payload)
@@ -390,6 +397,7 @@ export const queries: Record<string, Resolver> = {
                 ...simulationItem,
                 paymentData: simulation.paymentData,
                 ratesAndBenefitsData: simulation.ratesAndBenefitsData,
+                logisticsInfo: simulation.logisticsInfo ?? [],
               })
             }
           )

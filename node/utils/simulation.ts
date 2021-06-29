@@ -3,19 +3,43 @@ import { SegmentData } from '@vtex/api'
 const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
 const getMarketingData = (segment?: SegmentData) => {
-  if (!segment || !segment.utm_campaign || !segment.utm_source) {
+  if (
+    !segment?.utm_campaign &&
+    !segment?.utm_source &&
+    !segment?.utmi_campaign
+  ) {
     return
   }
 
-  return {
-    utmCampaign: segment.utm_campaign,
-    utmSource: segment.utm_source,
+  let marketingData = {}
+
+  if (segment?.utm_campaign) {
+    marketingData = {
+      utmCampaign: segment?.utm_campaign,
+    }
   }
+
+  if (segment?.utm_source) {
+    marketingData = {
+      ...marketingData,
+      utmSource: segment?.utm_source,
+    }
+  }
+
+  if (segment?.utmi_campaign) {
+    marketingData = {
+      ...marketingData,
+      utmiCampaign: segment?.utmi_campaign,
+    }
+  }
+
+  return marketingData
 }
 
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
-  segment?: SegmentData
+  segment?: SegmentData,
+  regionId?: string
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     return {
@@ -25,11 +49,13 @@ export const getSimulationPayloadsByItem = (
     } as PayloadItem
   })
 
-  return payloadItems.map((item) => {
+  return payloadItems.map((payloadItem) => {
     return {
       priceTables: segment?.priceTables ? [segment.priceTables] : undefined,
-      items: [item],
-      shippingData: { logisticsInfo: [{ regionId: segment?.regionId }] },
+      items: [payloadItem],
+      shippingData: {
+        logisticsInfo: [{ regionId: regionId ?? segment?.regionId }],
+      },
       marketingData: getMarketingData(segment),
     }
   })
@@ -39,14 +65,24 @@ export const orderFormItemToSeller = (
   orderFormItem: OrderFormItem & {
     paymentData: any
     ratesAndBenefitsData: RatesAndBenefitsData
+    logisticsInfo: any[]
   }
 ) => {
+  const unitMultiplier = orderFormItem.unitMultiplier ?? 1
+  const [logisticsInfo] = orderFormItem.logisticsInfo
+
   const commertialOffer = {
-    Price: orderFormItem.sellingPrice / 100,
+    Price: orderFormItem.sellingPrice
+      ? Number((orderFormItem.sellingPrice / (unitMultiplier * 100)).toFixed(2))
+      : orderFormItem.price / 100,
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
-    AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0,
+    AvailableQuantity:
+      orderFormItem?.availability === 'available' &&
+      (logisticsInfo ? logisticsInfo.stockBalance : 1)
+        ? 10000
+        : 0,
     Teasers: getTeasers(orderFormItem.ratesAndBenefitsData),
     DiscountHighLight: getDiscountHighLights(
       orderFormItem.ratesAndBenefitsData
@@ -59,7 +95,7 @@ export const orderFormItemToSeller = (
   commertialOffer.Installments = []
 
   installmentOptions.forEach((installmentOption: InstallmentOption) =>
-    installmentOption.installments.map((installment) => {
+    installmentOption.installments.forEach((installment) => {
       commertialOffer.Installments.push({
         Value: installment.value / 100,
         InterestRate: installment.interestRate,
@@ -113,17 +149,19 @@ const generatePaymentName = (
 ) => {
   if (interestRate === null) {
     return paymentSystemName
-  } else if (interestRate == 0) {
+  }
+
+  if (interestRate === 0) {
     return `${paymentSystemName} ${
       numberOfInstallments === 1
         ? 'à vista'
         : `${numberOfInstallments} vezes sem juros`
     }`
-  } else {
-    return `${paymentSystemName} ${
-      numberOfInstallments === 1
-        ? 'à vista com juros'
-        : `${numberOfInstallments} vezes com juros`
-    }`
   }
+
+  return `${paymentSystemName} ${
+    numberOfInstallments === 1
+      ? 'à vista com juros'
+      : `${numberOfInstallments} vezes com juros`
+  }`
 }

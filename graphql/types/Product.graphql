@@ -1,58 +1,114 @@
 type Product {
-  """ Brand of the product """
+  """
+  Brand of the product
+  """
   brand: String @translatableV2
-  """ Id of the brand of the product """
+  """
+  Id of the brand of the product
+  """
   brandId: Int
-  """ linkText is used as cacheId """
+  """
+  linkText is used as cacheId
+  """
   cacheId: ID
   categoryId: ID
-  """ Categories of the product """
-  categories: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
-  """ Categories ids of the product """
-  categoriesIds: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
-  """ Product's categories """
+  """
+  Categories of the product
+  """
+  categories: [String]
+    @deprecated(
+      reason: "Use 'categoryTree' field for internationalization support"
+    )
+  """
+  Categories ids of the product
+  """
+  categoriesIds: [String]
+    @deprecated(
+      reason: "Use 'categoryTree' field for internationalization support"
+    )
+  """
+  Product's categories
+  """
   categoryTree: [Category]
-  """ List of related products """
+  """
+  List of related products
+  """
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
-  """ Product description """
+  """
+  Product description
+  """
   description: String @translatableV2
-  """ SKU objects of the product """
+  """
+  SKU objects of the product
+  """
   items: [SKU]
-  """ Product URL """
+  """
+  Product URL
+  """
   link: String
-  """ Product slug """
+  """
+  Product slug
+  """
   linkText: String
-  """ Product ID """
+  """
+  Product ID
+  """
   productId: ID
-  """ Product name """
+  """
+  Product name
+  """
   productName: String @translatableV2
-  """ Array of product properties  """
+  """
+  Array of product properties
+  """
   properties: [Property]
-  """ Array of product properties  """
+  """
+  Array of product properties
+  """
   propertyGroups: [PropertyGroup]
-  """ Product reference """
+  """
+  Product reference
+  """
   productReference: String
-  """ Title used by html tag"""
+  """
+  Title used by html tag
+  """
   titleTag: String @translatableV2
-  """ Description used by html tag"""
+  """
+  Description used by html tag
+  """
   metaTagDescription: String @translatableV2
-  """ Related Products """
+  """
+  Related Products
+  """
   recommendations: Recommendation
-  """ JSON specification of the product"""
+  """
+  JSON specification of the product
+  """
   jsonSpecifications: String
-  """ List of benefits associated with this product """
+  """
+  List of benefits associated with this product
+  """
   benefits: [Benefit]
   itemMetadata: ItemMetadata
-   """ Array of product SpecificationGroup """
+  """
+  Array of product SpecificationGroup
+  """
   specificationGroups: [SpecificationGroup]
 }
 
 type OnlyProduct {
   brand: String
   categoryId: ID
-  categories: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
-  categoriesIds: [String] @deprecated(reason: "Use 'categoryTree' field for internationalization support")
+  categories: [String]
+    @deprecated(
+      reason: "Use 'categoryTree' field for internationalization support"
+    )
+  categoriesIds: [String]
+    @deprecated(
+      reason: "Use 'categoryTree' field for internationalization support"
+    )
   categoryTree: [Category]
   clusterHighlights: [ClusterHighlight]
   productClusters: [ProductClusters]
@@ -102,7 +158,7 @@ type SKU {
   measurementUnit: String
   unitMultiplier: Float
   kitItems: [KitItem]
-  images (quantity: Int = 10) : [Image]
+  images(quantity: Int = 10): [Image]
   videos: [Video]
   sellers: [Seller]
   variations: [Property]
@@ -165,7 +221,10 @@ enum InstallmentsCriteria {
 }
 
 type Offer {
-  Installments (criteria: InstallmentsCriteria = ALL, rates: Boolean = true): [Installment]
+  Installments(
+    criteria: InstallmentsCriteria = ALL
+    rates: Boolean = true
+  ): [Installment]
   Price: Float
   ListPrice: Float
   spotPrice: Float
@@ -176,20 +235,44 @@ type Offer {
   Tax: Float
   CacheVersionUsedToCallCheckout: String
   DeliverySlaSamples: [DeliverySlaSamples]
-  """List of discount highlights"""
+  """
+  List of discount highlights
+  """
   discountHighlights: [Discount!]
   teasers: [Teaser!]
-  """List of gifts associated with the product"""
+  """
+  List of gifts associated with the product
+  """
   giftSkuIds: [String]
+}
+
+type Parameter {
+  name: String
+  value: String
+}
+
+type TeaserCondition {
+  minimumQuantity: Int
+  parameters: [Parameter]
+}
+
+type TeaserEffect {
+  parameters: [Parameter]
 }
 
 type Teaser {
   name: String
+  conditions: TeaserCondition
+  effects: TeaserEffect
 }
 
-""" Discount object """
+"""
+Discount object
+"""
 type Discount {
-  """ Discount name """
+  """
+  Discount name
+  """
   name: String
 }
 
@@ -228,7 +311,7 @@ type Video {
 }
 
 type SpecificationGroup {
-  name: String @translatableV2,
+  name: String @translatableV2
   specifications: [SpecificationGroupProperty]
 }
 
@@ -279,4 +362,3 @@ input ItemInput {
 input SellerInput {
   sellerId: ID
 }
-
