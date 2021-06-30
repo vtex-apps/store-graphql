@@ -1,6 +1,6 @@
-import { SegmentData } from "@vtex/api"
+import { SegmentData } from '@vtex/api'
 
-const ALLOWED_TEASER_TYPES = ["Catalog", "Profiler", "ConditionalPrice"]
+const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
 const getMarketingData = (segment?: SegmentData) => {
   if (!segment || !segment.utm_campaign || !segment.utm_source) {
@@ -30,13 +30,16 @@ export const getSimulationPayloadsByItem = (
       priceTables: segment?.priceTables ? [segment.priceTables] : undefined,
       items: [item],
       shippingData: { logisticsInfo: [{ regionId: segment?.regionId }] },
-      marketingData: getMarketingData(segment)
+      marketingData: getMarketingData(segment),
     }
   })
 }
 
 export const orderFormItemToSeller = (
-  orderFormItem: OrderFormItem & { paymentData: any, ratesAndBenefitsData: RatesAndBenefitsData }
+  orderFormItem: OrderFormItem & {
+    paymentData: any
+    ratesAndBenefitsData: RatesAndBenefitsData
+  }
 ) => {
   const commertialOffer = {
     Price: orderFormItem.sellingPrice / 100,
@@ -45,7 +48,9 @@ export const orderFormItemToSeller = (
     PriceWithoutDiscount: orderFormItem.price / 100,
     AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0,
     Teasers: getTeasers(orderFormItem.ratesAndBenefitsData),
-    DiscountHighLight: getDiscountHighLights(orderFormItem.ratesAndBenefitsData)
+    DiscountHighLight: getDiscountHighLights(
+      orderFormItem.ratesAndBenefitsData
+    ),
   } as CommertialOffer
 
   const installmentOptions =
@@ -61,7 +66,11 @@ export const orderFormItemToSeller = (
         TotalValuePlusInterestRate: installment.total / 100,
         NumberOfInstallments: installment.count,
         PaymentSystemName: installmentOption.paymentName,
-        Name: generatePaymentName(installment.interestRate, installmentOption.paymentName, installment.count)
+        Name: generatePaymentName(
+          installment.interestRate,
+          installmentOption.paymentName,
+          installment.count
+        ),
       } as Installment)
     })
   )
@@ -79,9 +88,8 @@ const getTeasers = (ratesAndBenefitsData: RatesAndBenefitsData) => {
 
   return ratesAndBenefitsData.teaser
     .filter((teaser: any) => ALLOWED_TEASER_TYPES.includes(teaser.teaserType))
-    .map((teaser: any) => ({"<Name>k__BackingField": teaser.name, ...teaser}))
+    .map((teaser: any) => ({ '<Name>k__BackingField': teaser.name, ...teaser }))
 }
-
 
 const getDiscountHighLights = (ratesAndBenefitsData: RatesAndBenefitsData) => {
   if (!ratesAndBenefitsData) {
@@ -89,16 +97,33 @@ const getDiscountHighLights = (ratesAndBenefitsData: RatesAndBenefitsData) => {
   }
 
   return ratesAndBenefitsData.rateAndBenefitsIdentifiers
-    .filter((rateAndBenefitsIdentifier: any) => rateAndBenefitsIdentifier.featured)
-    .map((rateAndBenefitsIdentifier: any) => ({"<Name>k__BackingField": rateAndBenefitsIdentifier.name, ...rateAndBenefitsIdentifier}))
+    .filter(
+      (rateAndBenefitsIdentifier: any) => rateAndBenefitsIdentifier.featured
+    )
+    .map((rateAndBenefitsIdentifier: any) => ({
+      '<Name>k__BackingField': rateAndBenefitsIdentifier.name,
+      ...rateAndBenefitsIdentifier,
+    }))
 }
 
-const generatePaymentName = (interestRate: number | null, paymentSystemName: string | null, numberOfInstallments: number) => {
+const generatePaymentName = (
+  interestRate: number | null,
+  paymentSystemName: string | null,
+  numberOfInstallments: number
+) => {
   if (interestRate === null) {
     return paymentSystemName
   } else if (interestRate == 0) {
-    return `${paymentSystemName} ${numberOfInstallments === 1 ? 'à vista' : `${numberOfInstallments} vezes sem juros`}`
+    return `${paymentSystemName} ${
+      numberOfInstallments === 1
+        ? 'à vista'
+        : `${numberOfInstallments} vezes sem juros`
+    }`
   } else {
-    return `${paymentSystemName} ${numberOfInstallments === 1 ? 'à vista com juros' : `${numberOfInstallments} vezes com juros`}`
+    return `${paymentSystemName} ${
+      numberOfInstallments === 1
+        ? 'à vista com juros'
+        : `${numberOfInstallments} vezes com juros`
+    }`
   }
 }
