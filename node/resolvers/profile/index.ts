@@ -52,7 +52,9 @@ const checkUserAuthorization = async ({
     }
   }
 
-  return validUser
+  if (!validUser) {
+    throw new ForbiddenError('Forbidden')
+  }
 }
 
 interface SubscribeNewsletterArgs {
@@ -99,16 +101,12 @@ export const mutations = {
       throw new AuthenticationError('Unauthorized')
     }
 
-    const validUser = await checkUserAuthorization({
+    checkUserAuthorization({
       ctx: context.vtex,
       account,
       storeUserAuthToken,
       email,
     })
-
-    if (!validUser) {
-      throw new ForbiddenError('Forbidden')
-    }
 
     const { profile } = context.clients
     const optIn =
