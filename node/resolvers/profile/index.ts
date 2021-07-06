@@ -1,6 +1,9 @@
+import { AuthenticationError, ForbiddenError } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
+import { makeRequest } from '../auth'
+import paths from '../paths'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -14,6 +17,43 @@ import {
 
 const TRUE = 'True'
 const FALSE = 'False'
+
+interface CheckUserAuthorizationParams {
+  account: string
+  storeUserAuthToken: string
+  ctx: any
+  email: string
+}
+
+interface UserTokenData {
+  userId: string
+  user: string
+  userType: string
+}
+
+const checkUserAuthorization = async ({
+  ctx,
+  account,
+  storeUserAuthToken: authCookieStore,
+  email,
+}: CheckUserAuthorizationParams) => {
+  const url = paths.checkUserAuthorization({ account })
+  const { data: userTokenData } = await makeRequest<UserTokenData | null>({
+    ctx,
+    url,
+    authCookieStore,
+  })
+
+  let validUser = !!userTokenData && userTokenData.user.length === email.length
+
+  for (let i = 0; i < email.length; i++) {
+    if (email[i] !== userTokenData?.user[i]) {
+      validUser = false
+    }
+  }
+
+  return validUser
+}
 
 interface SubscribeNewsletterArgs {
   email: string
@@ -53,6 +93,23 @@ export const mutations = {
     { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
+    const { account, storeUserAuthToken } = context.vtex
+
+    if (!storeUserAuthToken) {
+      throw new AuthenticationError('Unauthorized')
+    }
+
+    const validUser = await checkUserAuthorization({
+      ctx: context.vtex,
+      account,
+      storeUserAuthToken,
+      email,
+    })
+
+    if (!validUser) {
+      throw new ForbiddenError('Forbidden')
+    }
+
     const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
