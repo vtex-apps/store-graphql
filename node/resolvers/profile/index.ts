@@ -1,4 +1,4 @@
-import { AuthenticationError, ForbiddenError } from '@vtex/api'
+import { AuthenticationError, ForbiddenError, IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
@@ -19,9 +19,7 @@ const TRUE = 'True'
 const FALSE = 'False'
 
 interface CheckUserAuthorizationParams {
-  account: string
-  storeUserAuthToken: string
-  ctx: any
+  ctx: IOContext
   email: string
 }
 
@@ -33,10 +31,9 @@ interface UserTokenData {
 
 const checkUserAuthorization = async ({
   ctx,
-  account,
-  storeUserAuthToken: authCookieStore,
   email,
 }: CheckUserAuthorizationParams) => {
+  const { account, storeUserAuthToken: authCookieStore } = ctx
   const url = paths.checkUserAuthorization({ account })
   const { data: userTokenData } = await makeRequest<UserTokenData | null>({
     ctx,
@@ -95,7 +92,7 @@ export const mutations = {
     { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
-    const { account, storeUserAuthToken } = context.vtex
+    const { storeUserAuthToken } = context.vtex
 
     if (!storeUserAuthToken) {
       throw new AuthenticationError('Unauthorized')
@@ -103,8 +100,6 @@ export const mutations = {
 
     checkUserAuthorization({
       ctx: context.vtex,
-      account,
-      storeUserAuthToken,
       email,
     })
 
