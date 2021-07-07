@@ -1,9 +1,8 @@
-import { AuthenticationError, ForbiddenError, IOContext } from '@vtex/api'
+import { AuthenticationError, ForbiddenError } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import { makeRequest } from '../auth'
-import paths from '../paths'
+import type { IdentityDataSource } from '../../dataSources/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -19,27 +18,19 @@ const TRUE = 'True'
 const FALSE = 'False'
 
 interface CheckUserAuthorizationParams {
-  ctx: IOContext
+  identity: IdentityDataSource
+  storeUserAuthToken: string
   email: string
 }
 
-interface UserTokenData {
-  userId: string
-  user: string
-  userType: string
-}
-
 const checkUserAuthorization = async ({
-  ctx,
+  identity,
+  storeUserAuthToken,
   email,
 }: CheckUserAuthorizationParams) => {
-  const { account, storeUserAuthToken: authCookieStore } = ctx
-  const url = paths.checkUserAuthorization({ account })
-  const { data: userTokenData } = await makeRequest<UserTokenData | null>({
-    ctx,
-    url,
-    authCookieStore,
-  })
+  const userTokenData = await identity.getUserWithToken(storeUserAuthToken)
+
+  console.log(userTokenData, userTokenData?.user.length === email.length)
 
   let validUser = !!userTokenData && userTokenData.user.length === email.length
 
@@ -98,8 +89,9 @@ export const mutations = {
       throw new AuthenticationError('Unauthorized')
     }
 
-    checkUserAuthorization({
-      ctx: context.vtex,
+    await checkUserAuthorization({
+      identity: context.dataSources.identity,
+      storeUserAuthToken,
       email,
     })
 

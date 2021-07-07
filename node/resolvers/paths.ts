@@ -83,8 +83,6 @@ const paths = {
     sessionId: string
   }) =>
     `${paths.vtexId}/sessions/${sessionId}/revoke?scope=${scope}&an=${account}`,
-  checkUserAuthorization: ({ account }: { account: string }) =>
-    `${paths.vtexIdPub}/authenticated/user?an=${account}`,
   vtexId: `http://vtexid.vtex.com.br/api/vtexid`,
   vtexIdPub: `http://vtexid.vtex.com.br/api/vtexid/pub`,
   vtexIdPvt: `http://vtexid.vtex.com.br/api/vtexid/pvt`,
