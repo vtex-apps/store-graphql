@@ -30,8 +30,6 @@ const checkUserAuthorization = async ({
 }: CheckUserAuthorizationParams) => {
   const userTokenData = await identity.getUserWithToken(storeUserAuthToken)
 
-  console.log(userTokenData, userTokenData?.user.length === email.length)
-
   let validUser = !!userTokenData && userTokenData.user.length === email.length
 
   for (let i = 0; i < email.length; i++) {
