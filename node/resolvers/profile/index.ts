@@ -1,4 +1,4 @@
-import { AuthenticationError, ForbiddenError } from '@vtex/api'
+import { AuthenticationError, ForbiddenError, IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
@@ -17,17 +17,21 @@ import {
 const TRUE = 'True'
 const FALSE = 'False'
 
-interface CheckUserAuthorizationParams {
+interface CheckUserAuthenticationParams {
   identity: IdentityDataSource
-  storeUserAuthToken: string
+  storeUserAuthToken: IOContext['storeUserAuthToken']
   email: string
 }
 
-const checkUserAuthorization = async ({
+export const checkUserAuthentication = async ({
   identity,
   storeUserAuthToken,
   email,
-}: CheckUserAuthorizationParams) => {
+}: CheckUserAuthenticationParams) => {
+  if (!storeUserAuthToken) {
+    throw new AuthenticationError('Unauthorized')
+  }
+
   const userTokenData = await identity.getUserWithToken(storeUserAuthToken)
 
   let validUser = !!userTokenData && userTokenData.user.length === email.length
@@ -81,18 +85,6 @@ export const mutations = {
     { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
-    const { storeUserAuthToken } = context.vtex
-
-    if (!storeUserAuthToken) {
-      throw new AuthenticationError('Unauthorized')
-    }
-
-    await checkUserAuthorization({
-      identity: context.dataSources.identity,
-      storeUserAuthToken,
-      email,
-    })
-
     const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
@@ -103,9 +95,19 @@ export const mutations = {
       isNewsletterOptIn: optIn,
     }
 
-    if (fields) {
-      const userProfile = await profile.getProfileInfo({ email, userId: '' })
+    const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
+    if (userProfile.createdIn) {
+      const { storeUserAuthToken } = context.vtex
+
+      await checkUserAuthentication({
+        identity: context.dataSources.identity,
+        storeUserAuthToken,
+        email,
+      })
+    }
+
+    if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
 
       const userHasFirstName = Boolean(userProfile.firstName)
