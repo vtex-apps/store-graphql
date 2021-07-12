@@ -23,7 +23,7 @@ interface CheckUserAuthenticationParams {
   email: string
 }
 
-export const checkUserAuthentication = async ({
+const checkUserAuthentication = async ({
   identity,
   storeUserAuthToken,
   email,
