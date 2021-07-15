@@ -3,7 +3,7 @@ import { forEachObjIndexed } from 'ramda'
 
 import { RESTDataSource } from './RESTDataSource'
 
-interface User {
+export interface User {
   userId: string
   user: string
   userType: string

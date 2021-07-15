@@ -1,8 +1,8 @@
-import { AuthenticationError, ForbiddenError, IOContext } from '@vtex/api'
+import { IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import type { IdentityDataSource } from '../../dataSources/identity'
+import type { IdentityDataSource, User } from '../../dataSources/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -27,24 +27,24 @@ const checkUserAuthentication = async ({
   identity,
   storeUserAuthToken,
   email,
-}: CheckUserAuthenticationParams) => {
-  if (!storeUserAuthToken) {
-    throw new AuthenticationError('Unauthorized')
+}: CheckUserAuthenticationParams): Promise<boolean> => {
+  let validUser = !!storeUserAuthToken
+  let userTokenData: Partial<User> | null = { user: '' }
+
+  if (storeUserAuthToken) {
+    userTokenData = await identity.getUserWithToken(storeUserAuthToken)
   }
 
-  const userTokenData = await identity.getUserWithToken(storeUserAuthToken)
-
-  let validUser = !!userTokenData && userTokenData.user.length === email.length
+  validUser =
+    validUser && !!userTokenData && userTokenData?.user?.length === email.length
 
   for (let i = 0; i < email.length; i++) {
-    if (email[i] !== userTokenData?.user[i]) {
+    if (email[i] !== userTokenData?.user?.[i]) {
       validUser = false
     }
   }
 
-  if (!validUser) {
-    throw new ForbiddenError('Forbidden')
-  }
+  return validUser
 }
 
 interface SubscribeNewsletterArgs {
@@ -97,16 +97,6 @@ export const mutations = {
 
     const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
-    if (userProfile.createdIn) {
-      const { storeUserAuthToken } = context.vtex
-
-      await checkUserAuthentication({
-        identity: context.dataSources.identity,
-        storeUserAuthToken,
-        email,
-      })
-    }
-
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
 
@@ -136,10 +126,24 @@ export const mutations = {
       }
     }
 
-    await profile.updatePersonalPreferences(
-      { email, userId: '' },
-      updatedPersonalPreferences
-    )
+    let updateData = true
+
+    if (userProfile.createdIn) {
+      const { storeUserAuthToken } = context.vtex
+
+      updateData = await checkUserAuthentication({
+        identity: context.dataSources.identity,
+        storeUserAuthToken,
+        email,
+      })
+    }
+
+    if (updateData) {
+      await profile.updatePersonalPreferences(
+        { email, userId: '' },
+        updatedPersonalPreferences
+      )
+    }
 
     return true
   },
