@@ -17,17 +17,17 @@ import {
 const TRUE = 'True'
 const FALSE = 'False'
 
-interface CheckUserAuthenticationParams {
+interface CheckUserAuthorizationParams {
   identity: IdentityDataSource
   storeUserAuthToken: IOContext['storeUserAuthToken']
   email: string
 }
 
-const checkUserAuthentication = async ({
+const checkUserAuthorization = async ({
   identity,
   storeUserAuthToken,
   email,
-}: CheckUserAuthenticationParams): Promise<boolean> => {
+}: CheckUserAuthorizationParams): Promise<boolean> => {
   let validUser = !!storeUserAuthToken
   let userTokenData: Partial<User> | null = { user: '' }
 
@@ -131,7 +131,7 @@ export const mutations = {
     if (userProfile.createdIn) {
       const { storeUserAuthToken } = context.vtex
 
-      updateData = await checkUserAuthentication({
+      updateData = await checkUserAuthorization({
         identity: context.dataSources.identity,
         storeUserAuthToken,
         email,
