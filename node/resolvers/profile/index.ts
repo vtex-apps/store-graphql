@@ -1,6 +1,8 @@
+import { IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
+import type { IdentityDataSource, User } from '../../dataSources/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -14,6 +16,36 @@ import {
 
 const TRUE = 'True'
 const FALSE = 'False'
+
+interface CheckUserAuthorizationParams {
+  identity: IdentityDataSource
+  storeUserAuthToken: IOContext['storeUserAuthToken']
+  email: string
+}
+
+const checkUserAuthorization = async ({
+  identity,
+  storeUserAuthToken,
+  email,
+}: CheckUserAuthorizationParams): Promise<boolean> => {
+  let validUser = !!storeUserAuthToken
+  let userTokenData: Partial<User> | null = { user: '' }
+
+  if (storeUserAuthToken) {
+    userTokenData = await identity.getUserWithToken(storeUserAuthToken)
+  }
+
+  validUser =
+    validUser && !!userTokenData && userTokenData?.user?.length === email.length
+
+  for (let i = 0; i < email.length; i++) {
+    if (email[i] !== userTokenData?.user?.[i]) {
+      validUser = false
+    }
+  }
+
+  return validUser
+}
 
 interface SubscribeNewsletterArgs {
   email: string
@@ -63,9 +95,9 @@ export const mutations = {
       isNewsletterOptIn: optIn,
     }
 
-    if (fields) {
-      const userProfile = await profile.getProfileInfo({ email, userId: '' })
+    const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
+    if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
 
       const userHasFirstName = Boolean(userProfile.firstName)
@@ -94,10 +126,24 @@ export const mutations = {
       }
     }
 
-    await profile.updatePersonalPreferences(
-      { email, userId: '' },
-      updatedPersonalPreferences
-    )
+    let updateData = true
+
+    if (userProfile.createdIn) {
+      const { storeUserAuthToken } = context.vtex
+
+      updateData = await checkUserAuthorization({
+        identity: context.dataSources.identity,
+        storeUserAuthToken,
+        email,
+      })
+    }
+
+    if (updateData) {
+      await profile.updatePersonalPreferences(
+        { email, userId: '' },
+        updatedPersonalPreferences
+      )
+    }
 
     return true
   },

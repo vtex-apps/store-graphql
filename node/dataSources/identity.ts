@@ -3,9 +3,15 @@ import { forEachObjIndexed } from 'ramda'
 
 import { RESTDataSource } from './RESTDataSource'
 
+export interface User {
+  userId: string
+  user: string
+  userType: string
+}
+
 export class IdentityDataSource extends RESTDataSource {
   public getUserWithToken = (token: string) => {
-    return this.get(
+    return this.get<User | null>(
       `authenticated/user?authToken=${encodeURIComponent(token)}`,
       undefined,
       { metric: 'vtexid-getUserWithToken' }
