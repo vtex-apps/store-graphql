@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.143.0] - 2021-07-22
+
 ### Added
 - `x-vtex-user-agent` to the checkout call.
 
