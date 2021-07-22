@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- `x-vtex-user-agent` to the checkout call.
+
+### Changed
+- `itemsWithSimulation` cache scope.
+
 ## [2.142.7] - 2021-07-20
 ### Added
 - Authorization to subscribeNewsletter resolver
