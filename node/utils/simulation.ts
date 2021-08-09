@@ -76,7 +76,7 @@ export const orderFormItemToSeller = (
   )
 
   return {
-    sellerId: orderFormItem.id,
+    sellerId: orderFormItem.seller,
     commertialOffer,
   }
 }

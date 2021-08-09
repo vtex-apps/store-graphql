@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- `sellerId` in `itemsWithSimulation` query that was using item ID.
+
 ## [2.143.0] - 2021-07-22
 
 ### Added
