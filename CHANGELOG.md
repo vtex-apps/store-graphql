@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Added `priceDefinition` structure on OrderForm.graphql an `priceDefinition` typings
 ## [2.143.1] - 2021-08-09
 
 ### Fixed
