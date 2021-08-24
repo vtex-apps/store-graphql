@@ -347,7 +347,10 @@ export const queries: Record<string, Resolver> = {
 
   itemsWithSimulation: async (
     _,
-    { items, regionId }: { items: ItemWithSimulationInput[], regionId?: string },
+    {
+      items,
+      regionId,
+    }: { items: ItemWithSimulationInput[]; regionId?: string },
     ctx: Context
   ) => {
     const {
@@ -375,7 +378,7 @@ export const queries: Record<string, Resolver> = {
               return orderFormItemToSeller({
                 ...simulationItem,
                 paymentData: simulation.paymentData,
-                ratesAndBenefitsData: simulation.ratesAndBenefitsData
+                ratesAndBenefitsData: simulation.ratesAndBenefitsData,
               })
             }
           )

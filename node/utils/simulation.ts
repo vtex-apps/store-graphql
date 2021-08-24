@@ -3,28 +3,33 @@ import { SegmentData } from '@vtex/api'
 const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
 const getMarketingData = (segment?: SegmentData) => {
-  if(!segment?.utm_campaign && !segment?.utm_source && !segment?.utmi_campaign) {
+  if (
+    !segment?.utm_campaign &&
+    !segment?.utm_source &&
+    !segment?.utmi_campaign
+  ) {
     return
   }
 
   let marketingData = {}
-  if(segment?.utm_campaign) {
+
+  if (segment?.utm_campaign) {
     marketingData = {
-      utmCampaign: segment?.utm_campaign
+      utmCampaign: segment?.utm_campaign,
     }
   }
 
-  if(segment?.utm_source) {
+  if (segment?.utm_source) {
     marketingData = {
       ...marketingData,
-      utmSource: segment?.utm_source
+      utmSource: segment?.utm_source,
     }
   }
 
-  if(segment?.utmi_campaign) {
+  if (segment?.utmi_campaign) {
     marketingData = {
       ...marketingData,
-      utmiCampaign: segment?.utmi_campaign
+      utmiCampaign: segment?.utmi_campaign,
     }
   }
 
@@ -34,7 +39,7 @@ const getMarketingData = (segment?: SegmentData) => {
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   segment?: SegmentData,
-  regionId?: string,
+  regionId?: string
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     return {
@@ -44,11 +49,13 @@ export const getSimulationPayloadsByItem = (
     } as PayloadItem
   })
 
-  return payloadItems.map((item) => {
+  return payloadItems.map((payloadItem) => {
     return {
       priceTables: segment?.priceTables ? [segment.priceTables] : undefined,
-      items: [item],
-      shippingData: { logisticsInfo: [{ regionId: regionId ?? segment?.regionId }] },
+      items: [payloadItem],
+      shippingData: {
+        logisticsInfo: [{ regionId: regionId ?? segment?.regionId }],
+      },
       marketingData: getMarketingData(segment),
     }
   })
@@ -82,7 +89,7 @@ export const orderFormItemToSeller = (
   commertialOffer.Installments = []
 
   installmentOptions.forEach((installmentOption: InstallmentOption) =>
-    installmentOption.installments.map((installment) => {
+    installmentOption.installments.forEach((installment) => {
       commertialOffer.Installments.push({
         Value: installment.value / 100,
         InterestRate: installment.interestRate,
@@ -136,17 +143,19 @@ const generatePaymentName = (
 ) => {
   if (interestRate === null) {
     return paymentSystemName
-  } else if (interestRate == 0) {
+  }
+
+  if (interestRate === 0) {
     return `${paymentSystemName} ${
       numberOfInstallments === 1
         ? 'à vista'
         : `${numberOfInstallments} vezes sem juros`
     }`
-  } else {
-    return `${paymentSystemName} ${
-      numberOfInstallments === 1
-        ? 'à vista com juros'
-        : `${numberOfInstallments} vezes com juros`
-    }`
   }
+
+  return `${paymentSystemName} ${
+    numberOfInstallments === 1
+      ? 'à vista com juros'
+      : `${numberOfInstallments} vezes com juros`
+  }`
 }
