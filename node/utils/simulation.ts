@@ -33,7 +33,8 @@ const getMarketingData = (segment?: SegmentData) => {
 
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
-  segment?: SegmentData
+  segment?: SegmentData,
+  regionId?: string,
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     return {
@@ -47,7 +48,7 @@ export const getSimulationPayloadsByItem = (
     return {
       priceTables: segment?.priceTables ? [segment.priceTables] : undefined,
       items: [item],
-      shippingData: { logisticsInfo: [{ regionId: segment?.regionId }] },
+      shippingData: { logisticsInfo: [{ regionId: regionId ?? segment?.regionId }] },
       marketingData: getMarketingData(segment),
     }
   })
