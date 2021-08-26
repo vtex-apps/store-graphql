@@ -379,6 +379,7 @@ export const queries: Record<string, Resolver> = {
                 ...simulationItem,
                 paymentData: simulation.paymentData,
                 ratesAndBenefitsData: simulation.ratesAndBenefitsData,
+                logisticsInfo: simulation.logisticsInfo ?? [],
               })
             }
           )

@@ -65,9 +65,11 @@ export const orderFormItemToSeller = (
   orderFormItem: OrderFormItem & {
     paymentData: any
     ratesAndBenefitsData: RatesAndBenefitsData
+    logisticsInfo: any[]
   }
 ) => {
   const unitMultiplier = orderFormItem.unitMultiplier ?? 1
+  const [logisticsInfo] = orderFormItem.logisticsInfo
 
   const commertialOffer = {
     Price: orderFormItem.sellingPrice
@@ -76,7 +78,11 @@ export const orderFormItemToSeller = (
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
-    AvailableQuantity: orderFormItem?.availability === 'available' ? 10000 : 0,
+    AvailableQuantity:
+      orderFormItem?.availability === 'available' &&
+      (logisticsInfo ? logisticsInfo.stockBalance : 1)
+        ? 10000
+        : 0,
     Teasers: getTeasers(orderFormItem.ratesAndBenefitsData),
     DiscountHighLight: getDiscountHighLights(
       orderFormItem.ratesAndBenefitsData

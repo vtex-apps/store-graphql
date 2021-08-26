@@ -13,10 +13,8 @@ export class Checkout extends JanusClient {
     super(ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
-        ...(ctx.storeUserAuthToken
-          ? { VtexIdclientAutCookie: ctx.storeUserAuthToken }
-          : null),
+        ...options?.headers,
+        ...(ctx.authToken ? { VtexIdclientAutCookie: ctx.authToken } : null),
         'x-vtex-user-agent': ctx.userAgent,
       },
     })
@@ -318,7 +316,7 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId ?? ''}`,
       orders: `${base}/orders`,
       simulation: (queryString: string) =>
-        `${base}/orderForms/simulation${queryString}`,
+        `/api/checkout/pvt/orderForms/simulation${queryString}`,
       changeToAnonymousUser: (orderFormId: string) =>
         `/checkout/changeToAnonymousUser/${orderFormId}`,
     }
