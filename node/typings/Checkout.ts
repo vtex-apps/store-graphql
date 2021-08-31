@@ -73,6 +73,16 @@ interface OrderFormItem {
   unitMultiplier: number
   assemblies: CheckoutAssemblyItem[]
   attachmentOfferings: CheckoutAttachmentOffering[]
+  priceDefinition: {
+    calculatedSellingPrice: number
+    sellingPrices: SellingPrice[]
+    total: number
+  }
+}
+
+interface SellingPrice {
+  quantity: number
+  value: number
 }
 
 interface InstallmentOption {

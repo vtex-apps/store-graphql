@@ -115,6 +115,18 @@ type OrderFormItem {
   """
   unitMultiplier: Float
   canHaveAttachment: Boolean
+  priceDefinition: PriceDefinition
+}
+
+type PriceDefinition {
+  calculatedSellingPrice: Float
+  sellingPrices: [SellingPrice]
+  total: Float
+}
+
+type SellingPrice {
+  quantity: Float
+  value: Float
 }
 
 type ItemAdditionalInfo {
