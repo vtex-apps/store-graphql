@@ -6,9 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Added
-- Added `priceDefinition` structure on OrderForm.graphql an `priceDefinition` typings
+- `priceDefinition` property to `OrderFormItem` type  on OrderForm.graphql.
+- `priceDefinition` typings to `Checkout.ts`.
+
 ## [2.143.1] - 2021-08-09
 
 ### Fixed
