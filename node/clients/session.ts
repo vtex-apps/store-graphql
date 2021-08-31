@@ -1,6 +1,5 @@
 import { JanusClient } from '@vtex/api'
 import parseCookie from 'cookie'
-import { prop } from 'ramda'
 
 interface VtexIdCookies {
   account: string | null
@@ -18,12 +17,7 @@ export class Session extends JanusClient {
    * Get the session data using the given token
    */
   public getSession = async (token: string, items: string[]) => {
-    const {
-      data: sessionData,
-      headers: {
-        'set-cookie': [setCookies],
-      },
-    } = await this.http.getRaw(routes.base, {
+    const { data: sessionData, headers } = await this.http.getRaw(routes.base, {
       headers: {
         'Content-Type': 'application/json',
         Cookie: `vtex_session=${token};`,
@@ -34,12 +28,9 @@ export class Session extends JanusClient {
       },
     })
 
-    const parsedCookie = parseCookie.parse(setCookies)
-    const sessionToken = prop(SESSION_COOKIE, parsedCookie)
-
     return {
       sessionData,
-      sessionToken,
+      sessionToken: extractSessionCookie(headers) ?? token,
     }
   }
 
@@ -77,4 +68,17 @@ export class Session extends JanusClient {
 
     return this.http.post(routes.base, data, config)
   }
+}
+
+function extractSessionCookie(headers: Record<string, string>) {
+  for (const setCookie of headers['set-cookie'] ?? []) {
+    const parsedCookie = parseCookie.parse(setCookie)
+    const sessionCookie = parsedCookie[SESSION_COOKIE]
+
+    if (sessionCookie != null) {
+      return sessionCookie
+    }
+  }
+
+  return null
 }
