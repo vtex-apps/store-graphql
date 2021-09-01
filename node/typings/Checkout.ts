@@ -336,29 +336,29 @@ interface ItemWithSimulationInput {
 }
 
 interface RatesAndBenefitsData {
-  rateAndBenefitsIdentifiers: Array<{
+  rateAndBenefitsIdentifiers: {
     id: string
     name: string
     featured: boolean
     description: string
-  }>
-  teaser: Array<{
+  }[]
+  teaser: {
     featured: boolean
     id: string
     name: string
     conditions: {
-      parameters: Array<{
+      parameters: {
         name: string
         value: string
-      }>
+      }[]
       minimumQuantity: number
     }
     effects: {
-      parameters: Array<{
+      parameters: {
         name: string
         value: string
-      }>
+      }[]
     }
     teaserType: string
-  }>
+  }[]
 }
