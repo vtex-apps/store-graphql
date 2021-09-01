@@ -5,9 +5,9 @@ import {
   IOResponse,
   IOContext,
 } from '@vtex/api'
+import { AxiosError } from 'axios'
 
 import { checkoutCookieFormat, statusToError } from '../utils'
-import { AxiosError } from 'axios'
 
 export class Checkout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -196,13 +196,11 @@ export class Checkout extends JanusClient {
     return this.get(this.routes.changeToAnonymousUser(orderFormId), {
       metric: 'checkout-change-to-anonymous',
     }).catch((err) => {
+      // This endpoint is expected to return a redirect to
+      // the user, so we can ignore the error if it is a 3xx
       if (!err.response || /^3..$/.test((err as AxiosError).code ?? '')) {
         throw err
       }
-
-      // This endpoint is expected to return a redirect to
-      // the user, so we can ignore the error if it is a 3xx
-      return
     })
   }
 
