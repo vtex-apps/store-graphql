@@ -241,11 +241,27 @@ export async function setCheckoutCookies(
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
-      clients: { checkout },
-      vtex: { segment },
+      clients: { checkout, checkoutNoCookies },
+      vtex: { segment, logger },
     } = ctx
 
-    const { headers, data } = await checkout.orderFormRaw()
+    let { headers: responseHeaders, data } = await checkout.orderFormRaw()
+
+    const hasBrokenCookie = data?.clientProfileData?.email?.startsWith(
+      'vrn--vtexsphinx--aws-us-east-1'
+    )
+
+    if (hasBrokenCookie) {
+      logger.info({
+        message: 'Broken order form',
+        orderFormId: data.orderFormId,
+      })
+
+      const obj = await checkoutNoCookies.orderFormRaw()
+
+      data = obj.data
+      responseHeaders = obj.headers
+    }
 
     const orderForm = await syncWithStoreLocale(
       data,
@@ -253,7 +269,7 @@ export const queries: Record<string, Resolver> = {
       checkout
     )
 
-    setCheckoutCookies(headers, ctx)
+    setCheckoutCookies(responseHeaders, ctx)
 
     return orderForm
   },

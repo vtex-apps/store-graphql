@@ -1,9 +1,9 @@
 import {
   InstanceOptions,
-  IOContext,
   JanusClient,
   RequestConfig,
   IOResponse,
+  IOContext,
 } from '@vtex/api'
 
 import { checkoutCookieFormat, statusToError } from '../utils'
@@ -13,7 +13,7 @@ export class Checkout extends JanusClient {
     super(ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         ...(ctx.storeUserAuthToken
           ? { VtexIdclientAutCookie: ctx.storeUserAuthToken }
           : null),
@@ -322,5 +322,21 @@ export class Checkout extends JanusClient {
       changeToAnonymousUser: (orderFormId: string) =>
         `/checkout/changeToAnonymousUser/${orderFormId}`,
     }
+  }
+}
+
+export class CheckoutNoCookies extends Checkout {
+  constructor(ctx: IOContext, options?: InstanceOptions) {
+    super(
+      {
+        ...ctx,
+        // @ts-ignore
+        orderFormId: undefined,
+      },
+      {
+        ...options,
+        headers: {},
+      }
+    )
   }
 }
