@@ -560,7 +560,7 @@ type Query {
 
   checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
 
-  itemsWithSimulation(items: [ItemInput], regionId: String): [SKU]
+  itemsWithSimulation(items: [ItemInput]): [SKU]
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
 }
