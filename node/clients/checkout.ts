@@ -5,6 +5,7 @@ import {
   IOResponse,
   IOContext,
 } from '@vtex/api'
+import { AxiosError } from 'axios'
 
 import { checkoutCookieFormat, statusToError } from '../utils'
 
@@ -191,15 +192,15 @@ export class Checkout extends JanusClient {
       .catch(statusToError) as Promise<IOResponse<OrderForm>>
   }
 
-  public changeToAnonymousUser = () => {
-    const { orderFormId } = this.context as CustomIOContext
-
-    if (!orderFormId) {
-      throw new Error('Missing orderFormId. Use withOrderFormId directive.')
-    }
-
+  public changeToAnonymousUser = (orderFormId: string) => {
     return this.get(this.routes.changeToAnonymousUser(orderFormId), {
       metric: 'checkout-change-to-anonymous',
+    }).catch((err) => {
+      // This endpoint is expected to return a redirect to
+      // the user, so we can ignore the error if it is a 3xx
+      if (!err.response || /^3..$/.test((err as AxiosError).code ?? '')) {
+        throw err
+      }
     })
   }
 
@@ -322,21 +323,5 @@ export class Checkout extends JanusClient {
       changeToAnonymousUser: (orderFormId: string) =>
         `/checkout/changeToAnonymousUser/${orderFormId}`,
     }
-  }
-}
-
-export class CheckoutNoCookies extends Checkout {
-  constructor(ctx: IOContext, options?: InstanceOptions) {
-    super(
-      {
-        ...ctx,
-        // @ts-ignore
-        orderFormId: undefined,
-      },
-      {
-        ...options,
-        headers: {},
-      }
-    )
   }
 }
