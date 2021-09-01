@@ -327,19 +327,3 @@ export class Checkout extends JanusClient {
     }
   }
 }
-
-export class CheckoutNoCookies extends Checkout {
-  constructor(ctx: IOContext, options?: InstanceOptions) {
-    super(
-      {
-        ...ctx,
-        // @ts-ignore
-        orderFormId: undefined,
-      },
-      {
-        ...options,
-        headers: {},
-      }
-    )
-  }
-}
