@@ -369,7 +369,7 @@ export const queries: Record<string, Resolver> = {
     ctx: Context
   ) => {
     const {
-      clients: { checkout },
+      clients: { pvtCheckout },
       vtex: { segment },
     } = ctx
 
@@ -378,7 +378,7 @@ export const queries: Record<string, Resolver> = {
         const simulationPayloads = getSimulationPayloadsByItem(item, segment)
 
         const simulationPromises = simulationPayloads.map((payload) =>
-          checkout.simulation(payload)
+          pvtCheckout.simulation(payload)
         )
 
         Promise.all(simulationPromises).then((simulations) => {
