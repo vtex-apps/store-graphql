@@ -2,7 +2,7 @@ import { IOClients } from '@vtex/api'
 
 import { CallCenterOperator } from './callCenterOperator'
 import { Catalog } from './catalog'
-import { Checkout } from './checkout'
+import { Checkout, CheckoutNoCookies } from './checkout'
 import { MasterData } from './masterdata'
 import { ProfileClient } from './profile'
 import { OMS } from './oms'
@@ -18,6 +18,10 @@ export class Clients extends IOClients {
 
   public get checkout() {
     return this.getOrSet('checkout', Checkout)
+  }
+
+  public get checkoutNoCookies() {
+    return this.getOrSet('checkoutNoCookies', CheckoutNoCookies)
   }
 
   public get callCenterOperator() {

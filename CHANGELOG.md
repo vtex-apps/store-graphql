@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Broken orderForms with app ID in `clientProfileData.email`.
 
-## [2.145.0] - 2021-08-31 [YANKED] 
+## [2.145.0] - 2021-08-31 [YANKED]
 
 ### Fixed
 - Use `unitMultiplier` to calculate the price.
