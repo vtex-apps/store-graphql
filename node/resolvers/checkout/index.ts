@@ -241,7 +241,7 @@ export async function setCheckoutCookies(
 export const queries: Record<string, Resolver> = {
   orderForm: async (_, __, ctx) => {
     const {
-      clients: { checkout, checkoutNoCookies },
+      clients: { checkout },
       vtex: { segment, logger },
     } = ctx
 
@@ -257,7 +257,9 @@ export const queries: Record<string, Resolver> = {
         orderFormId: data.orderFormId,
       })
 
-      const obj = await checkoutNoCookies.orderFormRaw()
+      await checkout.changeToAnonymousUser(data.orderFormId)
+
+      const obj = await checkout.orderFormRaw()
 
       data = obj.data
       responseHeaders = obj.headers
@@ -373,10 +375,7 @@ export const queries: Record<string, Resolver> = {
 
     return items.map((item) => {
       return new Promise((resolve) => {
-        const simulationPayloads = getSimulationPayloadsByItem(
-          item,
-          segment
-        )
+        const simulationPayloads = getSimulationPayloadsByItem(item, segment)
 
         const simulationPromises = simulationPayloads.map((payload) =>
           checkout.simulation(payload)
@@ -390,7 +389,7 @@ export const queries: Record<string, Resolver> = {
               return orderFormItemToSeller({
                 ...simulationItem,
                 paymentData: simulation.paymentData,
-                ratesAndBenefitsData: simulation.ratesAndBenefitsData
+                ratesAndBenefitsData: simulation.ratesAndBenefitsData,
               })
             }
           )
