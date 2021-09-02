@@ -77,7 +77,7 @@ interface OrderFormItem {
     calculatedSellingPrice: number
     sellingPrices: SellingPrice[]
     total: number
-  }
+  } | null
 }
 
 interface SellingPrice {

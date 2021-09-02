@@ -72,8 +72,13 @@ export const orderFormItemToSeller = (
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
   const commertialOffer = {
-    Price: orderFormItem.sellingPrice
-      ? Number((orderFormItem.sellingPrice / (unitMultiplier * 100)).toFixed(2))
+    Price: orderFormItem.priceDefinition?.calculatedSellingPrice
+      ? Number(
+          (
+            orderFormItem.priceDefinition.calculatedSellingPrice /
+            (unitMultiplier * 100)
+          ).toFixed(2)
+        )
       : orderFormItem.price / 100,
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,

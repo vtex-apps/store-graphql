@@ -5,7 +5,7 @@ import {
   RequestConfig,
 } from '@vtex/api'
 
-import { checkoutCookieFormat, statusToError } from '../utils'
+import { statusToError } from '../utils'
 
 export class PvtCheckout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -20,10 +20,8 @@ export class PvtCheckout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId, segmentToken, sessionToken } = this
-      .context as CustomIOContext
+    const { segmentToken, sessionToken } = this.context as CustomIOContext
 
-    const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
     const segmentTokenCookie = segmentToken
       ? `vtex_segment=${segmentToken};`
       : ''
@@ -33,7 +31,7 @@ export class PvtCheckout extends JanusClient {
       : ''
 
     return {
-      Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
+      Cookie: `${segmentTokenCookie}${sessionTokenCookie}`,
     }
   }
 
