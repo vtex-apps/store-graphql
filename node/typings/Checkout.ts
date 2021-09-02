@@ -77,7 +77,7 @@ interface OrderFormItem {
     calculatedSellingPrice: number
     sellingPrices: SellingPrice[]
     total: number
-  }
+  } | null
 }
 
 interface SellingPrice {
@@ -336,29 +336,29 @@ interface ItemWithSimulationInput {
 }
 
 interface RatesAndBenefitsData {
-  rateAndBenefitsIdentifiers: {
+  rateAndBenefitsIdentifiers: Array<{
     id: string
     name: string
     featured: boolean
     description: string
-  }[]
-  teaser: {
+  }>
+  teaser: Array<{
     featured: boolean
     id: string
     name: string
     conditions: {
-      parameters: {
+      parameters: Array<{
         name: string
         value: string
-      }[]
+      }>
       minimumQuantity: number
     }
     effects: {
-      parameters: {
+      parameters: Array<{
         name: string
         value: string
-      }[]
+      }>
     }
     teaserType: string
-  }[]
+  }>
 }

@@ -365,20 +365,27 @@ export const queries: Record<string, Resolver> = {
 
   itemsWithSimulation: async (
     _,
-    { items }: { items: ItemWithSimulationInput[] },
+    {
+      items,
+      regionId,
+    }: { items: ItemWithSimulationInput[]; regionId?: string },
     ctx: Context
   ) => {
     const {
-      clients: { checkout },
+      clients: { pvtCheckout },
       vtex: { segment },
     } = ctx
 
     return items.map((item) => {
       return new Promise((resolve) => {
-        const simulationPayloads = getSimulationPayloadsByItem(item, segment)
+        const simulationPayloads = getSimulationPayloadsByItem(
+          item,
+          segment,
+          regionId
+        )
 
         const simulationPromises = simulationPayloads.map((payload) =>
-          checkout.simulation(payload)
+          pvtCheckout.simulation(payload)
         )
 
         Promise.all(simulationPromises).then((simulations) => {
@@ -390,6 +397,7 @@ export const queries: Record<string, Resolver> = {
                 ...simulationItem,
                 paymentData: simulation.paymentData,
                 ratesAndBenefitsData: simulation.ratesAndBenefitsData,
+                logisticsInfo: simulation.logisticsInfo ?? [],
               })
             }
           )
