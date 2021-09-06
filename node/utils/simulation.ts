@@ -61,6 +61,14 @@ export const getSimulationPayloadsByItem = (
   })
 }
 
+export const getSpotPrice = (offer: CommertialOffer) => {
+  const sellingPrice = offer.Price
+  const spotPrice: number | undefined = offer.Installments.find(({NumberOfInstallments, Value}) => {
+    return (NumberOfInstallments === 1 && Value < sellingPrice)
+  })?.Value;
+  return spotPrice || sellingPrice
+}
+
 export const orderFormItemToSeller = (
   orderFormItem: OrderFormItem & {
     paymentData: any
@@ -115,6 +123,8 @@ export const orderFormItemToSeller = (
       } as Installment)
     })
   )
+
+  commertialOffer.spotPrice = getSpotPrice(commertialOffer)
 
   return {
     sellerId: orderFormItem.seller,

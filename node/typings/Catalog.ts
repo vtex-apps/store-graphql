@@ -126,6 +126,7 @@ interface CommertialOffer {
   }>
   GetInfoErrorMessage: any | null
   CacheVersionUsedToCallCheckout: string
+  spotPrice: number
 }
 
 interface Seller {
