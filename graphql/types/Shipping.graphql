@@ -86,14 +86,14 @@ type LogisticsItem {
   availability: String
 }
 
-type Totals {
-  id: String
-  name: String
-  value: Int
-}
-
 input ShippingItem {
   id: String
   quantity: String
   seller: String
+}
+
+type Totals {
+  id: String
+  name: String
+  value: Int
 }
