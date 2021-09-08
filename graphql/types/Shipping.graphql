@@ -2,6 +2,7 @@ type ShippingData {
   items: [LogisticsItem]
   logisticsInfo: [LogisticsInfo]
   messages: [MessageInfo]
+  totals: [Totals]
 }
 
 type MessageInfo {
@@ -83,6 +84,12 @@ type LogisticsItem {
   measurementUnit: String
   unitMultiplier: Int
   availability: String
+}
+
+type Totals {
+  id: String
+  name: String
+  value: Int
 }
 
 input ShippingItem {
