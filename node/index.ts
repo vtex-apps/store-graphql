@@ -31,6 +31,9 @@ export default new Service<Clients, void, CustomContext>({
         concurrency: 10,
         timeout: THIRTY_SECONDS_MS,
       },
+      pvtCheckout: {
+        timeout: THREE_SECONDS_MS,
+      },
       default: {
         retries: 2,
         timeout: THREE_SECONDS_MS,
