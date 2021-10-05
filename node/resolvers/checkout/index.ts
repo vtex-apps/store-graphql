@@ -377,7 +377,7 @@ export const queries: Record<string, Resolver> = {
     } = ctx
 
     return items.map((item) => {
-      return new Promise((resolve) => {
+      return new Promise(async (resolve) => {
         const simulationPayloads = getSimulationPayloadsByItem(
           item,
           segment,
@@ -388,24 +388,42 @@ export const queries: Record<string, Resolver> = {
           pvtCheckout.simulation(payload)
         )
 
-        Promise.all(simulationPromises).then((simulations) => {
-          const sellers: Array<Partial<Seller>> = simulations.map(
-            (simulation) => {
-              const [simulationItem] = simulation.items
+        const simulations = await Promise.all(simulationPromises.map((p => p.catch(e => e))))
 
-              return orderFormItemToSeller({
-                ...simulationItem,
-                paymentData: simulation.paymentData,
-                ratesAndBenefitsData: simulation.ratesAndBenefitsData,
-                logisticsInfo: simulation.logisticsInfo ?? [],
-              })
+        const sellers = simulations.map(
+          (simulation, idx) => {
+            if (simulation instanceof Error) {
+              console.error(simulations)
+
+              return {
+                sellerId: item.sellers[idx].sellerId,
+                commertialOffer: {
+                  spotPrice: null,
+                  AvailableQuantity: 0,
+                  Price: null,
+                  ListPrice: null,
+                  PriceValidUntil: null,
+                  discountHighlights: [],
+                  teasers: [],
+                  Installments: []
+                }
+              }
             }
-          )
 
-          resolve({
-            itemId: item.itemId,
-            sellers,
-          })
+            const [simulationItem] = simulation.items
+
+            return orderFormItemToSeller({
+              ...simulationItem,
+              paymentData: simulation.paymentData,
+              ratesAndBenefitsData: simulation.ratesAndBenefitsData,
+              logisticsInfo: simulation.logisticsInfo ?? [],
+            })
+          }
+        )
+
+        resolve({
+          itemId: item.itemId,
+          sellers,
         })
       })
     })
