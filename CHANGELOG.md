@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.146.2] - 2021-10-05
+
 ### Fixed
 - `itemsWithSimulation` stuck when there is a simulation error.
 - Catch `itemsWithSimulation` errors by seller.
