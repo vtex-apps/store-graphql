@@ -4,34 +4,44 @@ import { forEachObjIndexed } from 'ramda'
 import { RESTDataSource } from './RESTDataSource'
 
 export interface User {
-  userId: string
+  authStatus: string
+  id: string
   user: string
-  userType: string
+  account: string
+  audience: string
 }
 
 export class IdentityDataSource extends RESTDataSource {
-  public getUserWithToken = (token: string) => {
-    return this.get<User | null>(
-      `authenticated/user?authToken=${encodeURIComponent(token)}`,
-      undefined,
+  public getUserWithToken = ({
+    token,
+    account,
+  }: {
+    token: string
+    account: string
+  }) => {
+    return this.post<User | null>(
+      `credential/validate?an=${account}`,
+      {
+        token,
+      },
       { metric: 'vtexid-getUserWithToken' }
     )
   }
 
   public get baseURL() {
-    return `http://vtexid.vtex.com.br/api/vtexid/pub`
+    return `http://api.vtexinternal.com/api/vtexid`
   }
 
   protected willSendRequest(request: RequestOptions) {
     const {
-      vtex: { authToken },
+      vtex: { storeUserAuthToken },
     } = this.context
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
-        'Proxy-Authorization': authToken,
-        VtexIdClientAutCookie: authToken,
+        'Proxy-Authorization': storeUserAuthToken ?? '',
+        VtexIdClientAutCookie: storeUserAuthToken ?? '',
         'X-Vtex-Proxy-To': `http://vtexid.vtex.com.br`,
       }
     )
