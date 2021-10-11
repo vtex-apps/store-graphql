@@ -21,18 +21,23 @@ interface CheckUserAuthorizationParams {
   identity: IdentityDataSource
   storeUserAuthToken: IOContext['storeUserAuthToken']
   email: string
+  account: string
 }
 
 const checkUserAuthorization = async ({
   identity,
   storeUserAuthToken,
   email,
+  account,
 }: CheckUserAuthorizationParams): Promise<boolean> => {
   let validUser = !!storeUserAuthToken
   let userTokenData: Partial<User> | null = { user: '' }
 
   if (storeUserAuthToken) {
-    userTokenData = await identity.getUserWithToken(storeUserAuthToken)
+    userTokenData = await identity.getUserWithToken({
+      token: storeUserAuthToken,
+      account,
+    })
   }
 
   validUser =
@@ -85,6 +90,10 @@ export const mutations = {
     { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
+    const {
+      vtex: { account },
+    } = context
+
     const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
@@ -95,7 +104,9 @@ export const mutations = {
       isNewsletterOptIn: optIn,
     }
 
-    const userProfile = await profile.getProfileInfo({ email, userId: '' })
+    const userProfile = await profile
+      .getProfileInfo({ email, userId: '' })
+      .catch(() => ({}))
 
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
@@ -135,6 +146,7 @@ export const mutations = {
         identity: context.dataSources.identity,
         storeUserAuthToken,
         email,
+        account,
       })
     }
 

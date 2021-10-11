@@ -62,7 +62,7 @@ async function getCurrentProfileFromCookies(
   const {
     dataSources: { identity },
     clients: { profile },
-    vtex: { adminUserAuthToken, storeUserAuthToken },
+    vtex: { adminUserAuthToken, storeUserAuthToken, account },
     request: {
       headers: { cookie },
     },
@@ -75,8 +75,8 @@ async function getCurrentProfileFromCookies(
 
   if (userToken) {
     return identity
-      .getUserWithToken(userToken)
-      .then((data) => (data ? { userId: data.userId, email: data.user } : null))
+      .getUserWithToken({ token: userToken, account })
+      .then((data) => (data ? { userId: data.id, email: data.user } : null))
   }
 
   if (!userToken && !!adminToken) {
