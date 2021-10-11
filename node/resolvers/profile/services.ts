@@ -1,3 +1,4 @@
+import { ForbiddenError } from '@vtex/api'
 import { parse } from 'cookie'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 import { MutationSaveAddressArgs, AddressInput } from 'vtex.store-graphql'
@@ -23,7 +24,7 @@ export async function getProfile(context: Context, customFields?: string) {
   })
 
   if (!identityProfile || identityProfile.account !== account) {
-    return { email: currentProfile.email }
+    throw new ForbiddenError('403 - Forbidden')
   }
 
   return profile
