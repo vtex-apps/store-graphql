@@ -29,20 +29,20 @@ export class IdentityDataSource extends RESTDataSource {
   }
 
   public get baseURL() {
-    return 'http://api.vtexcommercestable.com.br/api/vtexid'
+    return 'http://portal.vtexcommercestable.com.br/api/vtexid'
   }
 
   protected willSendRequest(request: RequestOptions) {
     const {
-      vtex: { storeUserAuthToken },
+      vtex: { authToken },
     } = this.context
 
     forEachObjIndexed(
       (value: string, header) => request.headers.set(header, value),
       {
-        'Proxy-Authorization': storeUserAuthToken ?? '',
-        VtexIdClientAutCookie: storeUserAuthToken ?? '',
-        'X-Vtex-Proxy-To': `http://api.vtexcommercestable.com.br`,
+        'Proxy-Authorization': authToken,
+        VtexIdClientAutCookie: authToken,
+        'X-Vtex-Proxy-To': `http://portal.vtexcommercestable.com.br`,
       }
     )
   }

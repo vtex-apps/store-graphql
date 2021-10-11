@@ -76,7 +76,7 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "api.vtexcommercestable.com.br",
+        "host": "portal.vtexcommercestable.com.br",
         "path": "/api/vtexid/credential/validate"
       }
     },
