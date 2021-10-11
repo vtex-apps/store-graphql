@@ -23,6 +23,7 @@ export class ProfileClient extends JanusClient {
         ...(options && options.headers),
         VtexIdClientAutCookie: context.storeUserAuthToken ?? '',
       },
+      params: { an: context.account },
       timeout: FIVE_SECONDS_MS,
     })
   }

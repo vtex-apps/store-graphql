@@ -29,7 +29,7 @@ export class IdentityDataSource extends RESTDataSource {
   }
 
   public get baseURL() {
-    return `http://api.vtexinternal.com/api/vtexid`
+    return 'http://api.vtexinternal.com/api/vtexid'
   }
 
   protected willSendRequest(request: RequestOptions) {
@@ -42,7 +42,7 @@ export class IdentityDataSource extends RESTDataSource {
       {
         'Proxy-Authorization': storeUserAuthToken ?? '',
         VtexIdClientAutCookie: storeUserAuthToken ?? '',
-        'X-Vtex-Proxy-To': `http://vtexid.vtex.com.br`,
+        'X-Vtex-Proxy-To': `http://api.vtexinternal.com`,
       }
     )
   }
