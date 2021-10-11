@@ -41,7 +41,10 @@ const checkUserAuthorization = async ({
   }
 
   validUser =
-    validUser && !!userTokenData && userTokenData?.user?.length === email.length
+    validUser &&
+    !!userTokenData &&
+    userTokenData?.user?.length === email.length &&
+    userTokenData.account === account
 
   for (let i = 0; i < email.length; i++) {
     if (email[i] !== userTokenData?.user?.[i]) {

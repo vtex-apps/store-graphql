@@ -76,7 +76,11 @@ async function getCurrentProfileFromCookies(
   if (userToken) {
     return identity
       .getUserWithToken({ token: userToken, account })
-      .then((data) => (data ? { userId: data.id, email: data.user } : null))
+      .then((data) =>
+        data && data.account === account
+          ? { userId: data.id, email: data.user }
+          : null
+      )
   }
 
   if (!userToken && !!adminToken) {
