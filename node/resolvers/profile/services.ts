@@ -17,12 +17,14 @@ export async function getProfile(context: Context, customFields?: string) {
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
 
-  const identityProfile = await identity.getUserWithToken({
-    token: storeUserAuthToken ?? '',
-    account,
-  })
+  const identityProfile = await identity.getUserWithToken(
+    storeUserAuthToken ?? ''
+  )
 
-  if (!identityProfile || identityProfile.account !== account) {
+  if (
+    !identityProfile ||
+    ('account' in identityProfile && identityProfile.account !== account)
+  ) {
     return { email: currentProfile.email }
   }
 

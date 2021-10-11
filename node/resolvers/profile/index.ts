@@ -34,10 +34,7 @@ const checkUserAuthorization = async ({
   let userTokenData: Partial<User> | null = { user: '' }
 
   if (storeUserAuthToken) {
-    userTokenData = await identity.getUserWithToken({
-      token: storeUserAuthToken,
-      account,
-    })
+    userTokenData = await identity.getUserWithToken(storeUserAuthToken ?? '')
   }
 
   validUser =
