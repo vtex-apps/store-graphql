@@ -76,6 +76,13 @@
     {
       "name": "outbound-access",
       "attrs": {
+        "host": "api.vtexcommercestable.com.br",
+        "path": "/api/vtexid/credential/validate"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
         "host": "{{account}}.vtexpayments.com.br",
         "path": "/api/pvt/sessions"
       }

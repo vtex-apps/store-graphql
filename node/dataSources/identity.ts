@@ -5,10 +5,10 @@ import { RESTDataSource } from './RESTDataSource'
 
 export interface User {
   authStatus: string
-  id: string
-  user: string
-  account: string
-  audience: string
+  id?: string
+  user?: string
+  account?: string
+  audience?: string
 }
 
 export class IdentityDataSource extends RESTDataSource {
@@ -19,7 +19,7 @@ export class IdentityDataSource extends RESTDataSource {
     token: string
     account: string
   }) => {
-    return this.post<User | null>(
+    return this.post<User>(
       `credential/validate?an=${account}`,
       {
         token,
@@ -29,7 +29,7 @@ export class IdentityDataSource extends RESTDataSource {
   }
 
   public get baseURL() {
-    return 'http://api.vtexinternal.com/api/vtexid'
+    return 'http://api.vtexcommercestable.com.br/api/vtexid'
   }
 
   protected willSendRequest(request: RequestOptions) {
@@ -42,7 +42,7 @@ export class IdentityDataSource extends RESTDataSource {
       {
         'Proxy-Authorization': storeUserAuthToken ?? '',
         VtexIdClientAutCookie: storeUserAuthToken ?? '',
-        'X-Vtex-Proxy-To': `http://api.vtexinternal.com`,
+        'X-Vtex-Proxy-To': `http://api.vtexcommercestable.com.br`,
       }
     )
   }
