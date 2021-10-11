@@ -6,15 +6,25 @@ import { generateRandomName } from '../../utils'
 import { makeRequest } from '../auth'
 import paths from '../paths'
 
-export function getProfile(context: Context, customFields?: string) {
+export async function getProfile(context: Context, customFields?: string) {
   const {
     clients: { profile },
-    vtex: { currentProfile },
+    vtex: { currentProfile, storeUserAuthToken, account },
+    dataSources: { identity },
   } = context
 
   const extraFields = customFields
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
+
+  const identityProfile = await identity.getUserWithToken({
+    token: storeUserAuthToken ?? '',
+    account,
+  })
+
+  if (!identityProfile || identityProfile.account !== account) {
+    return { email: currentProfile.email }
+  }
 
   return profile
     .getProfileInfo(currentProfile, extraFields)
