@@ -2,7 +2,7 @@ import { IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import type { IdentityDataSource, User } from '../../dataSources/identity'
+import type { IdentityDataSource } from '../../dataSources/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -31,14 +31,11 @@ const checkUserAuthorization = async ({
   account,
 }: CheckUserAuthorizationParams): Promise<boolean> => {
   let validUser = !!storeUserAuthToken
-  let userTokenData: Partial<User> | null = { user: '' }
 
-  if (storeUserAuthToken) {
-    userTokenData = await identity.getUserWithToken({
-      token: storeUserAuthToken,
-      account,
-    })
-  }
+  const userTokenData = await identity.getUserWithToken({
+    token: storeUserAuthToken ?? '',
+    account,
+  })
 
   validUser =
     validUser &&
