@@ -23,7 +23,7 @@ export async function getProfile(context: Context, customFields?: string) {
     account,
   })
 
-  if (!identityProfile || identityProfile.account !== account) {
+  if (identityProfile?.account !== account) {
     throw new ForbiddenError('403 - Forbidden')
   }
 
