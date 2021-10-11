@@ -31,20 +31,20 @@ const checkUserAuthorization = async ({
   account,
 }: CheckUserAuthorizationParams): Promise<boolean> => {
   let validUser = !!storeUserAuthToken
-  let userTokenData: Partial<User> | null = { user: '' }
 
-  if (storeUserAuthToken) {
-    userTokenData = await identity.getUserWithToken(storeUserAuthToken ?? '')
-  }
+  const userTokenData = await identity.getUserWithToken(
+    storeUserAuthToken ?? ''
+  )
 
   validUser =
     validUser &&
-    !!userTokenData &&
+    Boolean(userTokenData) &&
+    'id' in userTokenData &&
     userTokenData?.user?.length === email.length &&
     userTokenData.account === account
 
   for (let i = 0; i < email.length; i++) {
-    if (email[i] !== userTokenData?.user?.[i]) {
+    if (validUser && email[i] !== (userTokenData as User)?.user?.[i]) {
       validUser = false
     }
   }
