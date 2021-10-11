@@ -9,24 +9,12 @@ import paths from '../paths'
 export async function getProfile(context: Context, customFields?: string) {
   const {
     clients: { profile },
-    vtex: { currentProfile, storeUserAuthToken, account },
-    dataSources: { identity },
+    vtex: { currentProfile },
   } = context
 
   const extraFields = customFields
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
-
-  const identityProfile = await identity.getUserWithToken(
-    storeUserAuthToken ?? ''
-  )
-
-  if (
-    !identityProfile ||
-    ('account' in identityProfile && identityProfile.account !== account)
-  ) {
-    return { email: currentProfile.email }
-  }
 
   return profile
     .getProfileInfo(currentProfile, extraFields)
