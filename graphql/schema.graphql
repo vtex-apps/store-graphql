@@ -560,9 +560,11 @@ type Query {
 
   checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
 
-  itemsWithSimulation(items: [ItemInput], regionId: String): [SKU]
-    @cacheControl(scope: SEGMENT, maxAge: SHORT)
-    @withSegment
+  itemsWithSimulation(
+    items: [ItemInput]
+    regionId: String
+    salesChannel: String
+  ): [SKU] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 }
 
 type Mutation {

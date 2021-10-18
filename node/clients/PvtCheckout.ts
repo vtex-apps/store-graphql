@@ -35,17 +35,16 @@ export class PvtCheckout extends JanusClient {
     }
   }
 
-  private getChannelQueryString = () => {
+  private getChannelQueryString = (salesChannel?: string) => {
     const { segment } = this.context as CustomIOContext
-    const channel = segment?.channel
-    const queryString = channel ? `?sc=${channel}` : ''
+    const channel = salesChannel ?? segment?.channel
 
-    return queryString
+    return channel ? `?sc=${channel}` : ''
   }
 
-  public simulation = (simulation: SimulationPayload) =>
+  public simulation = (simulation: SimulationPayload, salesChannel?: string) =>
     this.post<SimulationOrderForm>(
-      this.routes.simulation(this.getChannelQueryString()),
+      this.routes.simulation(this.getChannelQueryString(salesChannel)),
       simulation,
       {
         metric: 'pvt-checkout-simulation',

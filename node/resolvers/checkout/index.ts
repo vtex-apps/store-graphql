@@ -368,7 +368,12 @@ export const queries: Record<string, Resolver> = {
     {
       items,
       regionId,
-    }: { items: ItemWithSimulationInput[]; regionId?: string },
+      salesChannel,
+    }: {
+      items: ItemWithSimulationInput[]
+      regionId?: string
+      salesChannel?: string
+    },
     ctx: Context
   ) => {
     const {
@@ -385,41 +390,41 @@ export const queries: Record<string, Resolver> = {
         )
 
         const simulationPromises = simulationPayloads.map((payload) =>
-          pvtCheckout.simulation(payload)
+          pvtCheckout.simulation(payload, salesChannel)
         )
 
-        const simulations = await Promise.all(simulationPromises.map((p => p.catch(e => e))))
+        const simulations = await Promise.all(
+          simulationPromises.map((p) => p.catch((e: any) => e))
+        )
 
-        const sellers = simulations.map(
-          (simulation, idx) => {
-            if (simulation instanceof Error) {
-              console.error(simulations)
+        const sellers = simulations.map((simulation, idx) => {
+          if (simulation instanceof Error) {
+            console.error(simulations)
 
-              return {
-                sellerId: item.sellers[idx].sellerId,
-                commertialOffer: {
-                  spotPrice: null,
-                  AvailableQuantity: 0,
-                  Price: null,
-                  ListPrice: null,
-                  PriceValidUntil: null,
-                  discountHighlights: [],
-                  teasers: [],
-                  Installments: []
-                }
-              }
+            return {
+              sellerId: item.sellers[idx].sellerId,
+              commertialOffer: {
+                spotPrice: null,
+                AvailableQuantity: 0,
+                Price: null,
+                ListPrice: null,
+                PriceValidUntil: null,
+                discountHighlights: [],
+                teasers: [],
+                Installments: [],
+              },
             }
-
-            const [simulationItem] = simulation.items
-
-            return orderFormItemToSeller({
-              ...simulationItem,
-              paymentData: simulation.paymentData,
-              ratesAndBenefitsData: simulation.ratesAndBenefitsData,
-              logisticsInfo: simulation.logisticsInfo ?? [],
-            })
           }
-        )
+
+          const [simulationItem] = simulation.items
+
+          return orderFormItemToSeller({
+            ...simulationItem,
+            paymentData: simulation.paymentData,
+            ratesAndBenefitsData: simulation.ratesAndBenefitsData,
+            logisticsInfo: simulation.logisticsInfo ?? [],
+          })
+        })
 
         resolve({
           itemId: item.itemId,
