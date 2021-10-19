@@ -401,7 +401,11 @@ export const mutations = {
     await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.sendEmailVerification(args.email, VtexSessionToken),
+      url: paths.sendEmailVerification(),
+      body: {
+        authenticationToken: VtexSessionToken,
+        email: args.email,
+      },
     })
     response.set(
       'Set-Cookie',

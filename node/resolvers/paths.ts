@@ -63,8 +63,8 @@ const paths = {
     newPassword: any
   ) =>
     `${paths.vtexIdPub}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${newPassword}&currentPassword=${currentPassword}`,
-  sendEmailVerification: (email: any, token: any) =>
-    `${paths.vtexIdPub}/authentication/accesskey/send?authenticationToken=${token}&email=${email}`,
+  sendEmailVerification: () =>
+    `${paths.vtexIdPub}/authentication/accesskey/send`,
   sessionToken: (scope: any, account: any, redirect = '/', returnUrl = '/') =>
     `${
       paths.vtexIdPub
