@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Update sendEmailVerification mutation to stop sending email on querystring.
+- Update redefinePassword mutation to stop sending email and password on querystring.
+- Update recoveryPassword mutation to stop sending email and password on querystring.
+
 ## [2.147.1] - 2021-10-18
 
 ### Fixed
