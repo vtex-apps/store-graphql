@@ -323,18 +323,21 @@ export const mutations = {
       throw new UserInputError(E_PASS)
     }
 
+    const body = {
+      authenticationToken: VtexSessionToken,
+      login: args.email,
+      newPassword: args.newPassword,
+      accessKey: args.code,
+    }
+
     const {
       headers,
       data: { authStatus },
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.recoveryPassword(
-        VtexSessionToken,
-        args.email,
-        args.newPassword,
-        args.code
-      ),
+      url: paths.recoveryPassword(),
+      body,
     })
 
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
