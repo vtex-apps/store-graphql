@@ -336,7 +336,7 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.recoveryPassword(),
+      url: paths.setPassword(),
       body,
     })
 
@@ -372,7 +372,7 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.redefinePassword(),
+      url: paths.setPassword(),
       body,
       vtexIdVersion: args.vtexIdVersion,
     })

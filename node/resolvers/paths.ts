@@ -54,10 +54,7 @@ const paths = {
     `${paths.vtexIdPvt}/user/detailedinfo?scope=${accountName}`,
   oAuth: (authenticationToken: any, providerName: any) =>
     `${paths.vtexIdPub}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
-  recoveryPassword: () =>
-    `${paths.vtexIdPub}/authentication/classic/setpassword`,
-  redefinePassword: () =>
-    `${paths.vtexIdPub}/authentication/classic/setpassword`,
+  setPassword: () => `${paths.vtexIdPub}/authentication/classic/setpassword`,
   sendEmailVerification: () =>
     `${paths.vtexIdPub}/authentication/accesskey/send`,
   sessionToken: (scope: any, account: any, redirect = '/', returnUrl = '/') =>
