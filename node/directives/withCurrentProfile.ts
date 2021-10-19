@@ -22,6 +22,11 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
         return null
       }
 
+      // If current profile doesn't exist, a new profile will be created. Don't need check it
+      if (currentProfile) {
+        await checkUserAccount(context, currentProfile)
+      }
+
       context.vtex.currentProfile = await validatedProfile(
         context,
         currentProfile as CurrentProfile
@@ -149,4 +154,24 @@ function isValidCallcenterOperator(context: Context, email: string) {
 
 function isLogged(currentProfile: CurrentProfile | null) {
   return currentProfile && currentProfile.email
+}
+
+async function checkUserAccount(context: Context, userProfile: CurrentProfile) {
+  const {
+    dataSources: { identity },
+    vtex: { adminUserAuthToken, storeUserAuthToken, account },
+  } = context
+
+  if (!adminUserAuthToken && !storeUserAuthToken) {
+    throw new AuthenticationError('')
+  }
+
+  const profile = await identity.getUserWithToken({
+    token: storeUserAuthToken! ?? adminUserAuthToken!,
+    account,
+  })
+
+  if (profile.account !== account || profile.user !== userProfile.email) {
+    throw new AuthenticationError('')
+  }
 }

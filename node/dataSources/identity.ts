@@ -6,8 +6,10 @@ import { RESTDataSource } from './RESTDataSource'
 export interface User {
   authStatus: string
   id?: string
+  // email
   user?: string
   account?: string
+  // store, admin
   audience?: string
 }
 
