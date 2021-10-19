@@ -56,13 +56,8 @@ const paths = {
     `${paths.vtexIdPub}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
   recoveryPassword: (token: any, email: any, password: any, code: any) =>
     `${paths.vtexIdPub}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${password}&accessKey=${code}`,
-  redefinePassword: (
-    token: any,
-    email: any,
-    currentPassword: any,
-    newPassword: any
-  ) =>
-    `${paths.vtexIdPub}/authentication/classic/setpassword?authenticationToken=${token}&login=${email}&newPassword=${newPassword}&currentPassword=${currentPassword}`,
+  redefinePassword: () =>
+    `${paths.vtexIdPub}/authentication/classic/setpassword`,
   sendEmailVerification: () =>
     `${paths.vtexIdPub}/authentication/accesskey/send`,
   sessionToken: (scope: any, account: any, redirect = '/', returnUrl = '/') =>

@@ -356,15 +356,12 @@ export const mutations = {
     }
 
     const VtexSessionToken = await getSessionToken(ioContext)
-    const escapedEmail = encodeURIComponent(args.email)
-    const escapedPass = encodeURIComponent(args.currentPassword)
-    const escapedNewPass = encodeURIComponent(args.newPassword)
-    const passPath = paths.redefinePassword(
-      VtexSessionToken,
-      escapedEmail,
-      escapedPass,
-      escapedNewPass
-    )
+    const body = {
+      authenticationToken: VtexSessionToken,
+      login: args.email,
+      newPassword: args.currentPassword,
+      currentPassword: args.newPassword,
+    }
 
     const {
       headers,
@@ -372,7 +369,8 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: passPath,
+      url: paths.redefinePassword(),
+      body,
       vtexIdVersion: args.vtexIdVersion,
     })
 
