@@ -1,4 +1,3 @@
-import { ForbiddenError } from '@vtex/api'
 import { parse } from 'cookie'
 import { compose, mapObjIndexed, pick, split, values } from 'ramda'
 import { MutationSaveAddressArgs, AddressInput } from 'vtex.store-graphql'
@@ -10,22 +9,12 @@ import paths from '../paths'
 export async function getProfile(context: Context, customFields?: string) {
   const {
     clients: { profile },
-    vtex: { currentProfile, storeUserAuthToken, account },
-    dataSources: { identity },
+    vtex: { currentProfile },
   } = context
 
   const extraFields = customFields
     ? `${customFields},profilePicture,id`
     : `profilePicture,id`
-
-  const identityProfile = await identity.getUserWithToken({
-    token: storeUserAuthToken ?? '',
-    account,
-  })
-
-  if (identityProfile?.account !== account) {
-    throw new ForbiddenError('403 - Forbidden')
-  }
 
   return profile
     .getProfileInfo(currentProfile, extraFields)
