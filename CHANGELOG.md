@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- `withCurrentProfile` Logs
+
+### Changed
+- Identity API
+
 ## [2.147.3] - 2021-10-22
 
 ### Changed
