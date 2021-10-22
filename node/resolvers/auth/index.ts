@@ -323,18 +323,21 @@ export const mutations = {
       throw new UserInputError(E_PASS)
     }
 
+    const body = {
+      authenticationToken: VtexSessionToken,
+      login: args.email,
+      newPassword: args.newPassword,
+      accessKey: args.code,
+    }
+
     const {
       headers,
       data: { authStatus },
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.recoveryPassword(
-        VtexSessionToken,
-        args.email,
-        args.newPassword,
-        args.code
-      ),
+      url: paths.setPassword(),
+      body,
     })
 
     return setVtexIdAuthCookie(ioContext, response, headers, authStatus)
@@ -356,15 +359,12 @@ export const mutations = {
     }
 
     const VtexSessionToken = await getSessionToken(ioContext)
-    const escapedEmail = encodeURIComponent(args.email)
-    const escapedPass = encodeURIComponent(args.currentPassword)
-    const escapedNewPass = encodeURIComponent(args.newPassword)
-    const passPath = paths.redefinePassword(
-      VtexSessionToken,
-      escapedEmail,
-      escapedPass,
-      escapedNewPass
-    )
+    const body = {
+      authenticationToken: VtexSessionToken,
+      login: args.email,
+      newPassword: args.currentPassword,
+      currentPassword: args.newPassword,
+    }
 
     const {
       headers,
@@ -372,7 +372,8 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: passPath,
+      url: paths.setPassword(),
+      body,
       vtexIdVersion: args.vtexIdVersion,
     })
 
@@ -401,7 +402,11 @@ export const mutations = {
     await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.sendEmailVerification(args.email, VtexSessionToken),
+      url: paths.sendEmailVerification(),
+      body: {
+        authenticationToken: VtexSessionToken,
+        email: args.email,
+      },
     })
     response.set(
       'Set-Cookie',
