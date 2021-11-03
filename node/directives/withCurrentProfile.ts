@@ -55,7 +55,7 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
           caller: tokenUser.user ?? '',
           fieldName,
           fieldType: (returnType as any).name,
-          operation: `${operation} ${name?.value ?? ''}`,
+          operation: name?.value ? `${operation} ${name?.value}` : operation,
         }
 
         logger.warn(logData)

@@ -9,10 +9,8 @@ export interface DefaultUser {
 
 export interface User extends DefaultUser {
   id: string
-  // email
   user: string
   account: string
-  // store, admin
   audience: string
 }
 
