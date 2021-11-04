@@ -3,23 +3,34 @@ import { forEachObjIndexed } from 'ramda'
 
 import { RESTDataSource } from './RESTDataSource'
 
-export interface User {
-  userId: string
+export interface DefaultUser {
+  authStatus: string
+}
+
+export interface User extends DefaultUser {
+  id: string
   user: string
-  userType: string
+  account: string
+  audience: string
 }
 
 export class IdentityDataSource extends RESTDataSource {
   public getUserWithToken = (token: string) => {
-    return this.get<User | null>(
-      `authenticated/user?authToken=${encodeURIComponent(token)}`,
-      undefined,
+    const {
+      vtex: { account },
+    } = this.context
+
+    return this.post<DefaultUser | User>(
+      `credential/validate?an=${account}`,
+      {
+        token,
+      },
       { metric: 'vtexid-getUserWithToken' }
     )
   }
 
   public get baseURL() {
-    return `http://vtexid.vtex.com.br/api/vtexid/pub`
+    return 'http://portal.vtexcommercestable.com.br/api/vtexid'
   }
 
   protected willSendRequest(request: RequestOptions) {
@@ -32,7 +43,7 @@ export class IdentityDataSource extends RESTDataSource {
       {
         'Proxy-Authorization': authToken,
         VtexIdClientAutCookie: authToken,
-        'X-Vtex-Proxy-To': `http://vtexid.vtex.com.br`,
+        'X-Vtex-Proxy-To': `http://portal.vtexcommercestable.com.br`,
       }
     )
   }

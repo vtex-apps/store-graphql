@@ -22,6 +22,45 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
         return null
       }
 
+      const {
+        vtex: { storeUserAuthToken, adminUserAuthToken, account },
+        dataSources: { identity },
+      } = context
+
+      const tokenUser = await identity.getUserWithToken(
+        storeUserAuthToken ?? adminUserAuthToken ?? ''
+      )
+
+      if (tokenUser.account !== account) {
+        const {
+          fieldName,
+          returnType,
+          operation: { operation, name },
+        } = info
+
+        const {
+          vtex: { logger, host },
+          req: {
+            headers: { 'user-agent': userAgent, referer },
+          },
+        } = context
+
+        const logData = {
+          host,
+          referer,
+          userAgent,
+          message: 'Type: CrossTokenAccount',
+          account,
+          tokenAccount: tokenUser.account ?? '',
+          caller: tokenUser.user ?? '',
+          fieldName,
+          fieldType: (returnType as any).name,
+          operation: name?.value ? `${operation} ${name?.value}` : operation,
+        }
+
+        logger.warn(logData)
+      }
+
       context.vtex.currentProfile = await validatedProfile(
         context,
         currentProfile as CurrentProfile
@@ -76,7 +115,9 @@ async function getCurrentProfileFromCookies(
   if (userToken) {
     return identity
       .getUserWithToken(userToken)
-      .then((data) => (data ? { userId: data.userId, email: data.user } : null))
+      .then((data) =>
+        data && 'id' in data ? { userId: data.id, email: data.user } : null
+      )
   }
 
   if (!userToken && !!adminToken) {
