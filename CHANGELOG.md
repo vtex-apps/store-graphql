@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade `ua-parser-js` version to latest to avoid hijacked versions (https://github.com/faisalman/ua-parser-js/issues/536)
+
 ## [2.149.3] - 2022-03-03
 ### Removed
 - `withCurrentProfile` directive from `subscribeNewsletter` mutation.
