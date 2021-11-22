@@ -1,3 +1,5 @@
+directive @withAuthMetrics on FIELD_DEFINITION
+
 type Query {
   """
   Returns a specified product
@@ -910,39 +912,44 @@ type Mutation {
     document: DocumentInput
     account: String
     schema: String
-  ): DocumentResponse
+  ): DocumentResponse @withAuthMetrics
   updateDocument(
     acronym: String!
     document: DocumentInput
     account: String
     schema: String
-  ): DocumentResponse
+  ): DocumentResponse @withAuthMetrics
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
+    @withAuthMetrics
   uploadAttachment(
     acronym: String!
     documentId: String!
     field: String!
     file: Upload!
-  ): AttachmentResponse
+  ): AttachmentResponse @withAuthMetrics
   createDocumentV2(
     dataEntity: String!
     document: DocumentInputV2
     account: String
     schema: String
-  ): DocumentResponseV2 @cacheControl(scope: PRIVATE)
+  ): DocumentResponseV2 @cacheControl(scope: PRIVATE) @withAuthMetrics
 
   """
   List
   """
-  createList(list: ListInput): List @cacheControl(scope: PRIVATE)
+  createList(list: ListInput): List
+    @cacheControl(scope: PRIVATE)
+    @withAuthMetrics
   """
    Update the list informations and its items.
   If the item given does not have the itemId, add it as a new item in the list.
   If the item given has got an itemId, but its quantity is 0, remove it from the list.
   Otherwise, update it.
   """
-  updateList(id: ID!, list: ListInput): List @cacheControl(scope: PRIVATE)
-  deleteList(id: ID!): List @cacheControl(scope: PRIVATE)
+  updateList(id: ID!, list: ListInput): List
+    @cacheControl(scope: PRIVATE)
+    @withAuthMetrics
+  deleteList(id: ID!): List @cacheControl(scope: PRIVATE) @withAuthMetrics
 
   savePickupInSession(address: OrderFormAddressInput, name: String): Session
     @cacheControl(scope: PRIVATE)
