@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.148.0] - 2021-11-23
+
 ### Added
 - Logs to sensitive graphql queries to monitor authorization usage
 
