@@ -3,6 +3,7 @@ import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
 import type { IdentityDataSource, User } from '../../dataSources/identity'
+import { AccountName, allowedAccounts } from '../../utils/allowListAccounts'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -40,6 +41,7 @@ const checkUserAuthorization = async ({
     validUser &&
     Boolean(userTokenData) &&
     'id' in userTokenData &&
+    !allowedAccounts(account as AccountName, userTokenData.account) &&
     userTokenData?.user?.length === email.length &&
     userTokenData.account === account
 

@@ -6,6 +6,8 @@ import { AuthenticationError, ResolverError } from '@vtex/api'
 
 import { getSession } from '../resolvers/session/service'
 import { SessionFields } from '../resolvers/session/sessionResolver'
+import { allowedAccounts } from '../utils/allowListAccounts'
+import type { AccountName } from '../utils/allowListAccounts'
 
 export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
@@ -203,6 +205,8 @@ async function checkUserAccount(
   if (
     tokenUser &&
     'id' in tokenUser &&
+    // check if account exists in allow list and the user token account exists for that account.
+    !allowedAccounts(account as AccountName, tokenUser.account) &&
     (tokenUser.account !== account || tokenUser.user !== userProfile.email)
   ) {
     throw new AuthenticationError('')
