@@ -1,9 +1,8 @@
-import { IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import type { IdentityDataSource, User } from '../../dataSources/identity'
-import { AccountName, allowedAccounts } from '../../utils/allowListAccounts'
+import type { User } from '../../dataSources/identity'
+import { allowedAccounts } from '../../utils/allowListAccounts'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -19,34 +18,37 @@ const TRUE = 'True'
 const FALSE = 'False'
 
 interface CheckUserAuthorizationParams {
-  identity: IdentityDataSource
-  storeUserAuthToken: IOContext['storeUserAuthToken']
+  context: Context
   email: string
-  account: string
 }
 
 const checkUserAuthorization = async ({
-  identity,
-  storeUserAuthToken,
+  context,
   email,
-  account,
 }: CheckUserAuthorizationParams): Promise<boolean> => {
+  const {
+    vtex: { storeUserAuthToken, account },
+    dataSources: { identity },
+  } = context
+
   let validUser = !!storeUserAuthToken
 
-  const userTokenData = await identity.getUserWithToken(
-    storeUserAuthToken ?? ''
+  const tokenUser = await identity.getUserWithToken(storeUserAuthToken ?? '')
+
+  const allowedAccount = await allowedAccounts(
+    context,
+    'account' in tokenUser ? tokenUser.account : ''
   )
 
   validUser =
     validUser &&
-    Boolean(userTokenData) &&
-    'id' in userTokenData &&
-    !allowedAccounts(account as AccountName, userTokenData.account) &&
-    userTokenData?.user?.length === email.length &&
-    userTokenData.account === account
+    Boolean(tokenUser) &&
+    'id' in tokenUser &&
+    (!allowedAccount || tokenUser.account === account) &&
+    tokenUser.user.length === email.length
 
   for (let i = 0; i < email.length; i++) {
-    if (validUser && email[i] !== (userTokenData as User)?.user?.[i]) {
+    if (validUser && email[i] !== (tokenUser as User)?.user?.[i]) {
       validUser = false
     }
   }
@@ -92,10 +94,6 @@ export const mutations = {
     { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
-    const {
-      vtex: { account },
-    } = context
-
     const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
@@ -142,13 +140,9 @@ export const mutations = {
     let updateData = true
 
     if (userProfile.createdIn) {
-      const { storeUserAuthToken } = context.vtex
-
       updateData = await checkUserAuthorization({
-        identity: context.dataSources.identity,
-        storeUserAuthToken,
+        context,
         email,
-        account,
       })
     }
 
