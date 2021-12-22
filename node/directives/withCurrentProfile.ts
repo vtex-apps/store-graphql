@@ -210,8 +210,10 @@ async function checkUserAccount(
     tokenUser &&
     'id' in tokenUser &&
     // check if account exists in allow list and the user token account exists for that account.
-    !allowedAccount &&
-    (tokenUser.account !== account || tokenUser.user !== userProfile.email)
+    !(
+      (allowedAccount || tokenUser.account === account) &&
+      tokenUser.user === userProfile.email
+    )
   ) {
     throw new AuthenticationError('')
   }

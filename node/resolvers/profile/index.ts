@@ -44,7 +44,7 @@ const checkUserAuthorization = async ({
     validUser &&
     Boolean(tokenUser) &&
     'id' in tokenUser &&
-    (!allowedAccount || tokenUser.account === account) &&
+    (allowedAccount || tokenUser.account === account) &&
     tokenUser.user.length === email.length
 
   for (let i = 0; i < email.length; i++) {

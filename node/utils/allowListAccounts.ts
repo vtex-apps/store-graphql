@@ -9,13 +9,10 @@ export const allowedAccounts = async (
   tokenAccount: string
 ) => {
   // check if account exists in allow list and the user token account exists for that account.
-  const appSettings = (await context.clients.apps.getAppSettings(
-    appName
-  )) as StoreGraphQLSettings
+  const trustedAccounts: string[] =
+    ((await context.clients.apps.getAppSettings(
+      appName
+    )) as StoreGraphQLSettings).trustedAccounts ?? []
 
-  if (!appSettings?.trustedAccounts) {
-    return false
-  }
-
-  return appSettings.trustedAccounts.includes(tokenAccount)
+  return trustedAccounts.includes(tokenAccount)
 }
