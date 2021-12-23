@@ -2,7 +2,7 @@ import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
 import type { User } from '../../dataSources/identity'
-import { allowedAccounts } from '../../utils/allowListAccounts'
+import { isTrustedAccount } from '../../utils/trustedAccounts'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -35,7 +35,7 @@ const checkUserAuthorization = async ({
 
   const tokenUser = await identity.getUserWithToken(storeUserAuthToken ?? '')
 
-  const allowedAccount = await allowedAccounts(
+  const trustedAccount = await isTrustedAccount(
     context,
     'account' in tokenUser ? tokenUser.account : ''
   )
@@ -44,7 +44,7 @@ const checkUserAuthorization = async ({
     validUser &&
     Boolean(tokenUser) &&
     'id' in tokenUser &&
-    (allowedAccount || tokenUser.account === account) &&
+    (trustedAccount || tokenUser.account === account) &&
     tokenUser.user.length === email.length
 
   for (let i = 0; i < email.length; i++) {

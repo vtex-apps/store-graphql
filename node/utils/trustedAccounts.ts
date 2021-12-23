@@ -4,7 +4,7 @@ interface StoreGraphQLSettings {
   trustedAccounts?: string[]
 }
 
-export const allowedAccounts = async (
+export const isTrustedAccount = async (
   context: Context,
   tokenAccount: string
 ) => {
