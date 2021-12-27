@@ -23,7 +23,7 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
         return null
       }
 
-      // If current profile doesn't exist, a new profile will be created. Don't need check it
+      // If the current profile doesn't exist, a new profile will be created, there is no need to check it
       if (currentProfile) {
         await checkUserAccount(context, currentProfile, info)
       }
