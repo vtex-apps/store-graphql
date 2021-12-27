@@ -8,7 +8,6 @@ export const isTrustedAccount = async (
   context: Context,
   tokenAccount: string
 ) => {
-  // check if account exists in allow list and the user token account exists for that account.
   const trustedAccounts: string[] =
     ((await context.clients.apps.getAppSettings(
       appName
