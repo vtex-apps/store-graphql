@@ -16,21 +16,6 @@
     "vtex.catalog-api-proxy": "0.x",
     "vtex.file-manager": "0.x"
   },
-  "settingsSchema": {
-    "title": "VTEX Store Graphql",
-    "type": "object",
-    "properties": {
-      "trustedAccounts": {
-        "title": "Trusted accounts",
-        "type": "array",
-        "default": [],
-        "items": {
-          "type": "string"
-        },
-        "description": "Enter trusted account names"
-      }
-    }
-  },
   "policies": [
     {
       "name": "outbound-access",

@@ -6,7 +6,6 @@ import { AuthenticationError, ResolverError } from '@vtex/api'
 
 import { getSession } from '../resolvers/session/service'
 import { SessionFields } from '../resolvers/session/sessionResolver'
-import { isTrustedAccount } from '../utils/trustedAccounts'
 
 export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
@@ -201,18 +200,10 @@ async function checkUserAccount(
     logger.warn(logData)
   }
 
-  const trustedAccount =
-    'account' in tokenUser
-      ? await isTrustedAccount(context, tokenUser.account)
-      : false
-
   if (
     tokenUser &&
     'id' in tokenUser &&
-    !(
-      (trustedAccount || tokenUser.account === account) &&
-      tokenUser.user === userProfile.email
-    )
+    !(tokenUser.account === account && tokenUser.user === userProfile.email)
   ) {
     throw new AuthenticationError('')
   }
