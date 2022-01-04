@@ -200,10 +200,18 @@ async function checkUserAccount(
     logger.warn(logData)
   }
 
+  const isUserCallCenterOperator =
+    'id' in tokenUser
+      ? await isValidCallcenterOperator(context, tokenUser.user)
+      : false
+
   if (
     tokenUser &&
     'id' in tokenUser &&
-    !(tokenUser.account === account && tokenUser.user === userProfile.email)
+    !(
+      tokenUser.account === account &&
+      (isUserCallCenterOperator || tokenUser.user === userProfile.email)
+    )
   ) {
     throw new AuthenticationError('')
   }
