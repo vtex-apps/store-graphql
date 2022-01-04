@@ -167,7 +167,7 @@ async function checkUserAccount(
   }
 
   const tokenUser = await identity.getUserWithToken(
-    storeUserAuthToken! ?? adminUserAuthToken!
+    adminUserAuthToken! ?? storeUserAuthToken!
   )
 
   if (tokenUser && 'id' in tokenUser && tokenUser.account !== account) {
@@ -200,10 +200,8 @@ async function checkUserAccount(
     logger.warn(logData)
   }
 
-  const isUserCallCenterOperator =
-    'id' in tokenUser
-      ? await isValidCallcenterOperator(context, tokenUser.user)
-      : false
+  // If has admin user auth token, off course is a call center operator
+  const isUserCallCenterOperator = adminUserAuthToken && !storeUserAuthToken
 
   if (
     tokenUser &&
