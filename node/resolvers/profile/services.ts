@@ -6,7 +6,7 @@ import { generateRandomName } from '../../utils'
 import { makeRequest } from '../auth'
 import paths from '../paths'
 
-export async function getProfile(context: Context, customFields?: string) {
+export function getProfile(context: Context, customFields?: string) {
   const {
     clients: { profile },
     vtex: { currentProfile },
