@@ -1,5 +1,5 @@
 import { parse as parseCookie } from 'cookie'
-import { defaultFieldResolver, GraphQLField } from 'graphql'
+import { defaultFieldResolver, GraphQLField, GraphQLResolveInfo } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import jwtDecode from 'jwt-decode'
 import { AuthenticationError, ResolverError } from '@vtex/api'
@@ -22,43 +22,9 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
         return null
       }
 
-      const {
-        vtex: { storeUserAuthToken, adminUserAuthToken, account },
-        dataSources: { identity },
-      } = context
-
-      const tokenUser = await identity.getUserWithToken(
-        storeUserAuthToken ?? adminUserAuthToken ?? ''
-      )
-
-      if (tokenUser.account !== account) {
-        const {
-          fieldName,
-          returnType,
-          operation: { operation, name },
-        } = info
-
-        const {
-          vtex: { logger, host },
-          req: {
-            headers: { 'user-agent': userAgent, referer },
-          },
-        } = context
-
-        const logData = {
-          host,
-          referer,
-          userAgent,
-          message: 'Type: CrossTokenAccount',
-          account,
-          tokenAccount: tokenUser.account ?? '',
-          caller: tokenUser.user ?? '',
-          fieldName,
-          fieldType: (returnType as any).name,
-          operation: name?.value ? `${operation} ${name?.value}` : operation,
-        }
-
-        logger.warn(logData)
+      // If the current profile doesn't exist, a new profile will be created, there is no need to check it
+      if (currentProfile) {
+        await checkUserAccount(context, currentProfile, info)
       }
 
       context.vtex.currentProfile = await validatedProfile(
@@ -184,4 +150,61 @@ function isValidCallcenterOperator(context: Context, email: string) {
 
 function isLogged(currentProfile: CurrentProfile | null) {
   return currentProfile && currentProfile.email
+}
+
+async function checkUserAccount(
+  context: Context,
+  userProfile: CurrentProfile,
+  resolverInfo: GraphQLResolveInfo
+) {
+  const {
+    dataSources: { identity },
+    vtex: { adminUserAuthToken, storeUserAuthToken, account },
+  } = context
+
+  if (!adminUserAuthToken && !storeUserAuthToken) {
+    throw new AuthenticationError('')
+  }
+
+  const tokenUser = await identity.getUserWithToken(
+    storeUserAuthToken! ?? adminUserAuthToken!
+  )
+
+  if (tokenUser && 'id' in tokenUser && tokenUser.account !== account) {
+    const {
+      fieldName,
+      returnType,
+      operation: { operation, name },
+    } = resolverInfo
+
+    const {
+      vtex: { logger, host },
+      req: {
+        headers: { 'user-agent': userAgent, referer },
+      },
+    } = context
+
+    const logData = {
+      host,
+      referer,
+      userAgent,
+      message: 'Type: CrossTokenAccount',
+      account,
+      tokenAccount: tokenUser.account ?? '',
+      caller: tokenUser.user ?? '',
+      fieldName,
+      fieldType: (returnType as any).name,
+      operation: name?.value ? `${operation} ${name?.value}` : operation,
+    }
+
+    logger.warn(logData)
+  }
+
+  if (
+    tokenUser &&
+    'id' in tokenUser &&
+    !(tokenUser.account === account && tokenUser.user === userProfile.email)
+  ) {
+    throw new AuthenticationError('')
+  }
 }
