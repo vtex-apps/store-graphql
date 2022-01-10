@@ -1,7 +1,8 @@
+import { IOContext } from '@vtex/api'
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import type { User } from '../../dataSources/identity'
+import type { IdentityDataSource, User } from '../../dataSources/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -17,32 +18,28 @@ const TRUE = 'True'
 const FALSE = 'False'
 
 interface CheckUserAuthorizationParams {
-  context: Context
+  identity: IdentityDataSource
+  storeUserAuthToken: IOContext['storeUserAuthToken']
   email: string
 }
 
 const checkUserAuthorization = async ({
-  context,
+  identity,
+  storeUserAuthToken,
   email,
 }: CheckUserAuthorizationParams): Promise<boolean> => {
-  const {
-    vtex: { storeUserAuthToken, account },
-    dataSources: { identity },
-  } = context
-
   let validUser = !!storeUserAuthToken
+  let userTokenData: Partial<User> | null = { user: '' }
 
-  const tokenUser = await identity.getUserWithToken(storeUserAuthToken ?? '')
+  if (storeUserAuthToken) {
+    userTokenData = await identity.getUserWithToken(storeUserAuthToken)
+  }
 
   validUser =
-    validUser &&
-    Boolean(tokenUser) &&
-    'id' in tokenUser &&
-    tokenUser.account === account &&
-    tokenUser.user.length === email.length
+    validUser && !!userTokenData && userTokenData?.user?.length === email.length
 
   for (let i = 0; i < email.length; i++) {
-    if (validUser && email[i] !== (tokenUser as User)?.user?.[i]) {
+    if (email[i] !== userTokenData?.user?.[i]) {
       validUser = false
     }
   }
@@ -98,9 +95,7 @@ export const mutations = {
       isNewsletterOptIn: optIn,
     }
 
-    const userProfile = await profile
-      .getProfileInfo({ email, userId: '' })
-      .catch(() => ({}))
+    const userProfile = await profile.getProfileInfo({ email, userId: '' })
 
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
@@ -134,8 +129,11 @@ export const mutations = {
     let updateData = true
 
     if (userProfile.createdIn) {
+      const { storeUserAuthToken } = context.vtex
+
       updateData = await checkUserAuthorization({
-        context,
+        identity: context.dataSources.identity,
+        storeUserAuthToken,
         email,
       })
     }
