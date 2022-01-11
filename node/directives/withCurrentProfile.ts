@@ -69,14 +69,16 @@ async function getCurrentProfileFromSession(
       throw new ResolverError('Error fetching session data')
     }
 
-    const profile = session?.impersonate?.profile
-      ? session.impersonate.profile
-      : session.profile
+    const profile = session?.impersonate?.profile ?? session.profile
 
     return {
       currentProfile: profile
         ? ({ email: profile.email, userId: profile.id } as CurrentProfile)
         : null,
+      // If is impersonate is a call center op
+      userType: session?.impersonate?.profile
+        ? 'CallCenterOperator'
+        : 'StoreUser',
     }
   })
 }
