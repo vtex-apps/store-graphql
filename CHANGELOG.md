@@ -7,13 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
+- Use `storeUserAuthToken` to call new identity API.
 - Check if user is call center operator on withCurrentProfile.
 
 ## [2.149.1] - 2021-12-28
 ### Removed
 - Trusted accounts app setting.
 
-## [2.149.0] - 2021-12-27
+## [2.149.0] - 2021-12-27 [YANKED]
 ### Changed
 - Use `storeUserAuthToken` to call new identity API.
 
