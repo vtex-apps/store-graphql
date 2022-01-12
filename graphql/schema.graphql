@@ -703,7 +703,7 @@ type Mutation {
     email: String
     isNewsletterOptIn: Boolean
     fields: NewsletterFieldsInput
-  ): Boolean @cacheControl(scope: PRIVATE)
+  ): Boolean @withCurrentProfile @cacheControl(scope: PRIVATE)
 
   """
   Order Form

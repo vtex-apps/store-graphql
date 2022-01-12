@@ -1,64 +1,52 @@
 import { parse as parseCookie } from 'cookie'
-import { defaultFieldResolver, GraphQLField } from 'graphql'
+import { defaultFieldResolver, GraphQLField, GraphQLResolveInfo } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import jwtDecode from 'jwt-decode'
 import { AuthenticationError, ResolverError } from '@vtex/api'
 
 import { getSession } from '../resolvers/session/service'
 import { SessionFields } from '../resolvers/session/sessionResolver'
+import { DefaultUser, User } from '../dataSources/identity'
+
+type UserType = 'StoreUser' | 'CallCenterOperator'
+interface ProfileInfos<ProfileType = CurrentProfile | null> {
+  currentProfile: ProfileType
+  userType?: UserType
+  userData?: User | DefaultUser
+}
 
 export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
     field.resolve = async (root, args, context, info) => {
-      const currentProfile: CurrentProfile | null = await getCurrentProfileFromSession(
+      const profileInfos: ProfileInfos = await getCurrentProfileFromSession(
         context
       )
-        .catch(() => getCurrentProfileFromCookies(context))
-        .catch(() => null)
+        .catch(() => {
+          if (context.vtex.storeUserAuthToken) {
+            return getStoreUserProfileFromCookie(context)
+          }
+
+          return getCurrentProfileFromCookies(context)
+        })
+        .catch(() => ({
+          currentProfile: null,
+        }))
+
+      const { currentProfile } = profileInfos
 
       if (!isLogged(currentProfile)) {
         return null
       }
 
-      const {
-        vtex: { storeUserAuthToken, adminUserAuthToken, account },
-        dataSources: { identity },
-      } = context
-
-      const tokenUser = await identity.getUserWithToken(
-        storeUserAuthToken ?? adminUserAuthToken ?? ''
-      )
-
-      if (tokenUser.account !== account) {
-        const {
-          fieldName,
-          returnType,
-          operation: { operation, name },
-        } = info
-
-        const {
-          vtex: { logger, host },
-          req: {
-            headers: { 'user-agent': userAgent, referer },
-          },
-        } = context
-
-        const logData = {
-          host,
-          referer,
-          userAgent,
-          message: 'Type: CrossTokenAccount',
-          account,
-          tokenAccount: tokenUser.account ?? '',
-          caller: tokenUser.user ?? '',
-          fieldName,
-          fieldType: (returnType as any).name,
-          operation: name?.value ? `${operation} ${name?.value}` : operation,
-        }
-
-        logger.warn(logData)
+      // If the current profile doesn't exist, a new profile will be created, there is no need to check it
+      if (profileInfos.currentProfile !== null) {
+        await checkUserAccount(
+          context,
+          profileInfos as ProfileInfos<CurrentProfile>,
+          info
+        )
       }
 
       context.vtex.currentProfile = await validatedProfile(
@@ -71,9 +59,9 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   }
 }
 
-function getCurrentProfileFromSession(
+async function getCurrentProfileFromSession(
   context: Context
-): Promise<CurrentProfile | null> {
+): Promise<ProfileInfos> {
   return getSession(context).then((currentSession) => {
     const session = currentSession as SessionFields
 
@@ -81,25 +69,45 @@ function getCurrentProfileFromSession(
       throw new ResolverError('Error fetching session data')
     }
 
-    const profile =
-      session.impersonate && session.impersonate.profile
-        ? session.impersonate.profile
-        : session.profile
+    const profile = session?.impersonate?.profile ?? session.profile
 
-    return profile
-      ? ({
-          email: profile && profile.email,
-          userId: profile && profile.id,
-        } as CurrentProfile)
-      : null
+    return {
+      currentProfile: profile
+        ? ({ email: profile.email, userId: profile.id } as CurrentProfile)
+        : null,
+      // If is impersonate is a call center op
+      userType: session?.impersonate?.profile
+        ? 'CallCenterOperator'
+        : 'StoreUser',
+    }
+  })
+}
+
+async function getStoreUserProfileFromCookie(
+  context: Context
+): Promise<ProfileInfos> {
+  const {
+    vtex: { storeUserAuthToken: userToken },
+    dataSources: { identity },
+  } = context
+
+  return identity.getUserWithToken(userToken!).then((data) => {
+    if (data && 'id' in data) {
+      return {
+        currentProfile: { userId: data.id, email: data.user },
+        userData: data,
+        userType: 'StoreUser',
+      }
+    }
+
+    return { currentProfile: null }
   })
 }
 
 async function getCurrentProfileFromCookies(
   context: Context
-): Promise<CurrentProfile | null> {
+): Promise<ProfileInfos> {
   const {
-    dataSources: { identity },
     clients: { profile },
     vtex: { adminUserAuthToken, storeUserAuthToken },
     request: {
@@ -112,18 +120,10 @@ async function getCurrentProfileFromCookies(
   const userToken = storeUserAuthToken
   const adminToken = adminUserAuthToken
 
-  if (userToken) {
-    return identity
-      .getUserWithToken(userToken)
-      .then((data) =>
-        data && 'id' in data ? { userId: data.id, email: data.user } : null
-      )
-  }
-
   if (!userToken && !!adminToken) {
     const adminInfo = jwtDecode(adminToken) as any
 
-    const callOpUserEmail = adminInfo && adminInfo.sub
+    const callOpUserEmail = adminInfo?.sub
     const isValidCallOp =
       callOpUserEmail &&
       (await isValidCallcenterOperator(context, callOpUserEmail))
@@ -136,10 +136,13 @@ async function getCurrentProfileFromCookies(
 
     return profile
       .getProfileInfo({ email: customerEmail, userId: '' })
-      .then(({ email, userId }) => ({ email, userId }))
+      .then(({ email, userId }) => ({
+        currentProfile: { email, userId },
+        userType: 'CallCenterOperator',
+      }))
   }
 
-  return null
+  return { currentProfile: null }
 }
 
 async function validatedProfile(
@@ -169,7 +172,7 @@ async function validatedProfile(
   return { userId, email: currentProfile.email }
 }
 
-function isValidCallcenterOperator(context: Context, email: string) {
+async function isValidCallcenterOperator(context: Context, email: string) {
   const {
     clients: { callCenterOperator, licenseManager },
     vtex: { authToken },
@@ -184,4 +187,75 @@ function isValidCallcenterOperator(context: Context, email: string) {
 
 function isLogged(currentProfile: CurrentProfile | null) {
   return currentProfile && currentProfile.email
+}
+
+async function checkUserAccount(
+  context: Context,
+  {
+    currentProfile,
+    userData: storeUser,
+    userType,
+  }: ProfileInfos<CurrentProfile>,
+  resolverInfo: GraphQLResolveInfo
+) {
+  const {
+    dataSources: { identity },
+    vtex: { adminUserAuthToken, storeUserAuthToken, account },
+  } = context
+
+  if (!adminUserAuthToken && !storeUserAuthToken) {
+    throw new AuthenticationError('')
+  }
+
+  let tokenUser = storeUser
+
+  if (!tokenUser) {
+    tokenUser = await identity.getUserWithToken(
+      storeUserAuthToken! ?? adminUserAuthToken!
+    )
+  }
+
+  if (tokenUser && 'account' in tokenUser && tokenUser.account !== account) {
+    const {
+      fieldName,
+      returnType,
+      operation: { operation, name },
+    } = resolverInfo
+
+    const {
+      vtex: { logger, host },
+      req: {
+        headers: { 'user-agent': userAgent, referer },
+      },
+    } = context
+
+    const logData = {
+      host,
+      referer,
+      userAgent,
+      message: 'Type: CrossTokenAccount',
+      account,
+      tokenAccount: tokenUser.account ?? '',
+      caller: tokenUser.user ?? '',
+      fieldName,
+      fieldType: (returnType as any).name,
+      operation: name?.value ? `${operation} ${name?.value}` : operation,
+    }
+
+    logger.warn(logData)
+  }
+
+  // If has admin user auth token, off course is a call center operator
+  const isUserCallCenterOperator = userType === 'CallCenterOperator'
+
+  if (
+    tokenUser &&
+    'id' in tokenUser &&
+    !(
+      tokenUser.account === account &&
+      (isUserCallCenterOperator || tokenUser.user === currentProfile?.email)
+    )
+  ) {
+    throw new AuthenticationError('')
+  }
 }
