@@ -211,7 +211,7 @@ async function checkUserAccount(
 
   if (!tokenUser) {
     tokenUser = await identity.getUserWithToken(
-      adminUserAuthToken! ?? storeUserAuthToken!
+      storeUserAuthToken! ?? adminUserAuthToken!
     )
   }
 
