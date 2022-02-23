@@ -1,7 +1,7 @@
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import type { User } from '../../dataSources/identity'
+import type { DefaultUser, User } from '../../dataSources/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -32,7 +32,11 @@ const checkUserAuthorization = async ({
 
   let validUser = !!storeUserAuthToken
 
-  const tokenUser = await identity.getUserWithToken(storeUserAuthToken ?? '')
+  const tokenUser = await identity
+    .getUserWithToken(storeUserAuthToken ?? '')
+    .catch(() => {
+      return { authStatus: '' } as DefaultUser
+    })
 
   validUser =
     validUser &&
