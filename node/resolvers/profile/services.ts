@@ -17,7 +17,7 @@ export async function getProfile(context: Context, customFields?: string) {
     : `profilePicture,id`
 
   return profile
-    .getProfileInfo(currentProfile, extraFields)
+    .getProfileInfo(currentProfile, context, extraFields)
     .then((profileData) => {
       if (profileData) {
         return {
@@ -57,7 +57,7 @@ export function getAddresses(context: Context) {
     vtex: { currentProfile },
   } = context
 
-  return profile.getUserAddresses(currentProfile)
+  return profile.getUserAddresses(currentProfile, context)
 }
 
 export async function getPayments(context: Context) {
@@ -66,7 +66,7 @@ export async function getPayments(context: Context) {
     vtex: { currentProfile },
   } = context
 
-  const paymentsRawData = await profile.getUserPayments(currentProfile)
+  const paymentsRawData = await profile.getUserPayments(currentProfile, context)
 
   if (!paymentsRawData?.paymentData) {
     return null
@@ -111,6 +111,7 @@ export async function updateProfile(
     .updateProfileInfo(
       currentProfile,
       newData,
+      context,
       extraFields && extraFields.customFieldsStr
     )
     .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
@@ -135,7 +136,7 @@ export function createAddress(context: Context, address: AddressInput) {
   const addressesData = mapNewAddressToProfile(address, currentProfile)
 
   return profile
-    .updateAddress(currentProfile, addressesData)
+    .updateAddress(currentProfile, addressesData, context)
     .then(() => getProfile(context))
 }
 
@@ -146,7 +147,7 @@ export function deleteAddress(context: Context, addressName: string) {
   } = context
 
   return profile
-    .deleteAddress(currentProfile, addressName)
+    .deleteAddress(currentProfile, addressName, context)
     .then(() => getProfile(context))
 }
 
@@ -168,7 +169,7 @@ export function updateAddress(
   })
 
   return profile
-    .updateAddress(currentProfile, addressesData)
+    .updateAddress(currentProfile, addressesData, context)
     .then(() => getProfile(context))
 }
 
@@ -195,9 +196,9 @@ export async function saveAddress(
   const addressesData = mapNewAddressToProfile(args.address, currentProfile)
   const [newId] = Object.keys(addressesData)
 
-  await profile.updateAddress(currentProfile, addressesData)
+  await profile.updateAddress(currentProfile, addressesData, context)
 
-  const currentAddresses = await profile.getUserAddresses(currentProfile)
+  const currentAddresses = await profile.getUserAddresses(currentProfile, context)
 
   return currentAddresses.find(
     (address) => address.addressName === newId

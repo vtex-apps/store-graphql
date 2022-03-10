@@ -94,6 +94,54 @@ declare global {
     customFields?: ProfileCustomField[]
   }
 
+  interface Account {
+    HostName: string,
+    MainAccountName: string,
+    IsPersisted: boolean,
+    IsRemoved: boolean,
+    Id: string,
+    Cnpj: string,
+    CompanyName: string,
+    TradingName: string,
+    AccountName: string,
+    DefaultUrl: string,
+    Address: string,
+    Number: string,
+    Complement: string,
+    District: string,
+    City: string,
+    State: string,
+    PostalCode: string,
+    Country: string,
+    Telephone: string,
+    IsActive: boolean,
+    Sponsor: string,
+    Logo: string,
+    AppId: string,
+    IsOperating: boolean,
+    LV: string,
+    Sigla: string,
+    AppKeys: string,
+    CreationDate: string,
+    OperationDate: string,
+    InactivationDate: string,
+    ParentAccountId: string,
+    ParentAccountName: string,
+    ChildAccounts: string[],
+    Platform: string,
+    Licenses: number[],
+    Workspace: string,
+    Stores: string[],
+    Privacy: {
+      PII: string,
+    } | null
+    Infra: {
+      Provider: string,
+      Region: string
+    } | null
+    PIIEnabled: boolean
+  }
+
   interface PersonalPreferences {
     [key: string]: string | number | boolean | undefined
     firstName?: string
