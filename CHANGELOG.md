@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- B2B impersonation not loading profile page
 ## [2.149.3] - 2022-03-03
 ### Removed
 - `withCurrentProfile` directive from `subscribeNewsletter` mutation.
