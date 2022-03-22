@@ -158,6 +158,22 @@
       "name": "vtex.file-manager:file-manager-read-write"
     },
     {
+      "name": "GetItemResource"
+    },
+    {
+      "name": "PutItemResource"
+    },
+    {
+      "name": "DeleteItemResource"
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "profile-system-beta.vtex.systems",
+        "path": "/api/profile-system/profiles/*"
+      }
+    },
+    {
       "name": "outbound-access",
       "attrs": {
         "host": "portal.vtexcommercestable.com.br",
