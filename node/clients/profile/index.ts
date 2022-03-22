@@ -22,9 +22,22 @@ export class ProfileClient extends JanusClient {
     this.getProfileClient(context).
       then(profileClient => profileClient.getProfileInfo(user, customFields))
 
-  public getUserAddresses = (user: CurrentProfile, context: Context) =>
+  public createProfile = (profile: Profile, context: Context) =>
     this.getProfileClient(context).
-      then(profileClient => profileClient.getUserAddresses(user))
+      then(profileClient => profileClient.createProfile(profile))
+
+  public getUserAddresses = (user: CurrentProfile, context: Context, currentUserProfile?: Profile) =>
+    this.getProfileClient(context).
+      then(profileClient => {
+        if (!currentUserProfile) {
+          return profileClient.getProfileInfo(user)
+            .then(userProfile => {
+              return profileClient.getUserAddresses(user, userProfile, undefined)
+            })
+        }
+
+        return profileClient.getUserAddresses(user, currentUserProfile, undefined)
+      })
 
   public getUserPayments = (user: CurrentProfile, context: Context) =>
     this.getProfileClient(context).
@@ -54,10 +67,6 @@ export class ProfileClient extends JanusClient {
   ) =>
     this.getProfileClient(context).
       then(profileClient => profileClient.updatePersonalPreferences(user, personalPreferences))
-
-  public createProfile = (profile: Profile, context: Context) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.createProfile(profile))
 
   private getProfileClient = (context: Context) => {
     let licenseManager = context.clients.licenseManagerExtended

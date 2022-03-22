@@ -56,21 +56,59 @@ declare global {
   }
 
   interface Address {
-    id: string
-    userId: string
-    receiverName?: string
-    complement?: string
-    neighborhood?: string
-    country?: string
-    state?: string
-    number?: string
-    street?: string
-    postalCode?: string
-    city?: string
-    reference?: string
     addressName?: string
     addressType?: string
-    geoCoordinates?: string
+    city?: string
+    complement?: string
+    country?: string
+    geoCoordinates?: string[]
+    id: string
+    neighborhood?: string
+    number?: string
+    postalCode?: string
+    receiverName?: string
+    reference?: string
+    state?: string
+    street?: string
+    userId: string
+  }
+
+  interface AddressV2 {
+    id: string
+    document: {
+      administrativeAreaLevel1?: string
+      addressType?: string
+      countryCode?: string
+      extend?: string
+      geoCoordinates?: string[]
+      locality?: string
+      localityAreaLevel1?: string
+      name?: string
+      nearly?: string
+      postalCode?: string
+      profileId?: string
+      route?: string
+      streetNumber?: string
+      receiverName?: string
+      neighborhood?: string
+    }
+    meta?: {
+      version: string
+      author: string
+      creationDate: string
+      lastUpdateDate: string
+    }
+  }
+
+  interface ProfileV2 {
+    id: string
+    document: Profile
+    meta: {
+      version: string
+      author: string
+      creationDate: string
+      lastUpdateDate: string
+    }
   }
 
   interface Profile {
@@ -92,6 +130,9 @@ declare global {
     tradeName?: string
     payments?: PaymentProfile[]
     customFields?: ProfileCustomField[]
+    id: string
+    pii: boolean
+    isNewsletterOptIn?: boolean
   }
 
   interface Account {
@@ -264,5 +305,10 @@ declare global {
   interface Reference {
     Key: string
     Value: string
+  }
+
+  interface PIIRequest {
+    useCase: string,
+    onBehalfOf: string
   }
 }

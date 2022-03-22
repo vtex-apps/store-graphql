@@ -38,14 +38,5 @@ export class LicenseManagerExtendedClient extends LicenseManager {
   protected get = <T>(url: string, config?: RequestConfig) =>
     this.http.get<T>(url, config).catch<any>(statusToError)
 
-  protected post = <T>(url: string, data?: any, config?: RequestConfig) =>
-    this.http.post<T>(url, data, config).catch<any>(statusToError)
-
-  protected delete = <T>(url: string, config?: RequestConfig) =>
-    this.http.delete<T>(url, config).catch<any>(statusToError)
-
-  protected patch = <T>(url: string, data?: any, config?: RequestConfig) =>
-    this.http.patch<T>(url, data, config).catch<any>(statusToError)
-
   private baseUrl = '/api/pvt/accounts'
 }

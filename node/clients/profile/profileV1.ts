@@ -28,7 +28,6 @@ export class ProfileClientV1 extends JanusClient {
   }
 
   public getProfileInfo = (user: CurrentProfile, customFields?: string) => {
-    console.log("Will use V1")
     return this.get<Profile>(
       `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
       {
@@ -37,10 +36,14 @@ export class ProfileClientV1 extends JanusClient {
           extraFields: customFields,
         },
       }
-    )
+    ).then(profile => {
+      profile.pii = false
+
+      return profile
+    })
   }
 
-  public getUserAddresses = (user: CurrentProfile) =>
+  public getUserAddresses = (user: CurrentProfile, _: Profile) =>
     this.get(`${this.baseUrl}/${getUserIdentification(user)}/addresses`, {
       metric: 'profile-system-getUserAddresses',
     }).then(mapAddressesObjToList)

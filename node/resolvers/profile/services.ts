@@ -51,13 +51,13 @@ export function getPasswordLastUpdate(context: Context) {
   }).then((response: any) => response.data.passwordLastUpdate)
 }
 
-export function getAddresses(context: Context) {
+export function getAddresses(context: Context, currentUserProfile?: Profile) {
   const {
     clients: { profile },
     vtex: { currentProfile },
   } = context
 
-  return profile.getUserAddresses(currentProfile, context)
+  return profile.getUserAddresses(currentProfile, context, currentUserProfile)
 }
 
 export async function getPayments(context: Context) {
@@ -78,7 +78,7 @@ export async function getPayments(context: Context) {
   return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account
     const accountAddress = addresses.find(
-      (addr) => addr.addressName === availableAddresses[0]
+      (addr: Address) => addr.addressName === availableAddresses[0]
     )
 
     return { ...cleanAccount, id: accountId, address: accountAddress }
@@ -196,12 +196,16 @@ export async function saveAddress(
   const addressesData = mapNewAddressToProfile(args.address, currentProfile)
   const [newId] = Object.keys(addressesData)
 
-  await profile.updateAddress(currentProfile, addressesData, context)
+  const result = await profile.updateAddress(currentProfile, addressesData, context)
+
+  if (result && result.document) {
+    return result.document
+  }
 
   const currentAddresses = await profile.getUserAddresses(currentProfile, context)
 
   return currentAddresses.find(
-    (address) => address.addressName === newId
+    (address: Address) => address.addressName === newId
   ) as Address
 }
 

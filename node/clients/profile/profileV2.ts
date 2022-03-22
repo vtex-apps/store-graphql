@@ -1,102 +1,257 @@
 import {
   InstanceOptions,
   IOContext,
-  JanusClient,
+  ExternalClient,
   RequestConfig,
 } from '@vtex/api'
+import { AxiosError } from 'axios'
 
 import { statusToError } from '../../utils'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
-function mapAddressesObjToList(addressesObj: any): Address[] {
-  return Object.values<string>(addressesObj).map(
-    (stringifiedObj) => JSON.parse(stringifiedObj) as Address
-  )
-}
+export class ProfileClientV2 extends ExternalClient {
+  account: string
+  defaultPIIRequest: PIIRequest
 
-export class ProfileClientV2 extends JanusClient {
   constructor(context: IOContext, options?: InstanceOptions) {
-    super(context, {
+    super("https://profile-system-beta.vtex.systems", context, {
       ...options,
       headers: {
         ...(options && options.headers),
-        VtexIdClientAutCookie: context.authToken ?? '',
+        userAgent: context.userAgent,
+        VtexIdClientAutCookie: context.authToken,
       },
       timeout: FIVE_SECONDS_MS,
     })
+
+    this.account = context.account
+
+    this.defaultPIIRequest = {
+      useCase: "MyAcocunts",
+      onBehalfOf: "user"
+    } as PIIRequest
   }
 
-  public getProfileInfo = (user: CurrentProfile, customFields?: string) => {
-    console.log("Will use V2")
-    return this.get<Profile>(
-      `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
+  public getProfileInfo = (user: CurrentProfile, customFields?: string, piiRequest?: PIIRequest) => {
+    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    let url = this.getPIIUrl(`${this.baseUrl}/${userKey}`, alternativeKey, piiRequest)
+
+    return this.get<ProfileV2>(
+      url,
       {
-        metric: 'profile-system-getProfileInfo',
+        metric: 'profile-system-v2-getProfileInfo',
         params: {
           extraFields: customFields,
         },
       }
-    )
+    ).then((profile: ProfileV2[]) => {
+      if (profile.length > 0) {
+        let profileV2 = profile[0].document
+        profileV2.pii = true
+        profileV2.id = profile[0].id
+
+        return profileV2
+      }
+
+      return {} as Profile
+    })
   }
 
-  public getUserAddresses = (user: CurrentProfile) =>
-    this.get(`${this.baseUrl}/${getUserIdentification(user)}/addresses`, {
-      metric: 'profile-system-getUserAddresses',
-    }).then(mapAddressesObjToList)
+  public createProfile = (profile: Profile) =>
+    this.post<ProfileV2>(`${this.baseUrl}?an=${this.account}`, profile)
+      .then((profileV2: ProfileV2) => {
+        let newProfile = profileV2.document as Profile
+        newProfile.id = profileV2.id
+        return newProfile
+      })
 
-  public getUserPayments = (user: CurrentProfile) =>
-    this.get(`${this.baseUrl}/${getUserIdentification(user)}/vcs-checkout`, {
-      metric: 'profile-system-getUserPayments',
-    })
+  public updatePersonalPreferences = (
+    user: CurrentProfile,
+    personalPreferences: PersonalPreferences
+  ) => {
+    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    let parsedPersonalPreferences = Object.keys(personalPreferences).reduce((preferences: any, key) => {
+      preferences[key] = personalPreferences[key] === 'True'
+      return preferences
+    }, {})
+
+    return this.patch(
+      `${this.baseUrl}/${userKey}?an=${this.account}&alternativeKey=${alternativeKey}`,
+      parsedPersonalPreferences,
+      {
+        metric: 'profile-system-v2-subscribeNewsletter',
+      }
+    )
+  }
 
   public updateProfileInfo = (
     user: CurrentProfile,
     profile: Profile | { profilePicture: string },
     customFields?: string
-  ) =>
-    this.post<Profile>(
-      `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
+  ) => {
+    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+
+    if (!(profile as Profile)?.gender) {
+      const profileCast = profile as Profile
+      profileCast.gender = ""
+    }
+
+    return this.patch(
+      `${this.baseUrl}/${userKey}?an=${this.account}&alternativeKey=${alternativeKey}`,
       profile,
       {
-        metric: 'profile-system-updateProfileInfo',
+        metric: 'profile-system-v2-updateProfileInfo',
         params: {
           extraFields: customFields,
         },
       }
     )
+  }
 
-  public updateAddress = (user: CurrentProfile, addressesData: any) =>
-    this.post(
-      `${this.baseUrl}/${getUserIdentification(user)}/addresses`,
-      addressesData,
-      {
-        metric: 'profile-system-updateAddress',
+  public getUserAddresses = (_: CurrentProfile, currentUserProfile: Profile, piiRequest?: PIIRequest) => {
+    let url = this.getPIIUrl(`${this.baseUrl}/${currentUserProfile.userId}/addresses`, undefined, piiRequest)
+
+    return this.get<Address[]>(url, { metric: 'profile-system-v2-getUserAddresses', })
+      .then((addresses: AddressV2[]) => this.translateToV1Address(addresses))
+      .catch<any>(e => {
+        const { response } = e as AxiosError
+        const { status } = response!
+        if (status == 404) {
+          return [] as AddressV2[]
+        }
+
+        return statusToError(e)
+      })
+  }
+
+  private translateToV1Address = (addresses: AddressV2[]) =>
+    addresses.map((address: AddressV2) => {
+      let addressV2 = address.document
+
+      return {
+        addressName: addressV2.name,
+        city: addressV2.localityAreaLevel1,
+        complement: addressV2.extend,
+        country: addressV2.countryCode,
+        geoCoordinates: addressV2.geoCoordinates,
+        id: address.id,
+        number: addressV2.streetNumber,
+        postalCode: addressV2.postalCode,
+        receiverName: addressV2.receiverName,
+        reference: addressV2.nearly,
+        state: addressV2.administrativeAreaLevel1,
+        street: addressV2.route,
+        userId: addressV2.profileId,
+        addressType: addressV2.addressType || "residential",
+        neighborhood: addressV2.neighborhood,
+      } as Address
+    })
+
+  private translateToV2Address = (addresses: Address[]) =>
+    addresses.map((address: Address) => {
+      return {
+        id: address.id,
+        document: {
+          administrativeAreaLevel1: address.state,
+          addressType: address.addressType || "residential",
+          countryCode: address.country,
+          extend: address.complement || "",
+          geoCoordinates: address.geoCoordinates,
+          localityAreaLevel1: address.city,
+          name: address.addressName,
+          nearly: address.reference || "",
+          postalCode: address.postalCode,
+          profileId: address.userId,
+          route: address.street,
+          streetNumber: address.number,
+          receiverName: address.receiverName,
+          neighborhood: address.neighborhood,
+        }
+      } as AddressV2
+  })
+
+  private mapAddressesObjToList(addressesObj: any): Address[] {
+    return Object.entries<string>(addressesObj).map(
+      ([key, stringifiedObj]) => {
+        let address = JSON.parse(stringifiedObj) as Address
+        address.addressName = key
+        return address
       }
     )
+  }
 
-  public deleteAddress = (user: CurrentProfile, addressName: string) =>
-    this.delete(
-      `${this.baseUrl}/${getUserIdentification(user)}/addresses/${addressName}`,
-      {
-        metric: 'profile-system-deleteAddress',
+  public updateAddress = (user: CurrentProfile, addressesData: any) => {
+    let addressesV1 = this.mapAddressesObjToList(addressesData)
+
+    addressesV1 = addressesV1.map((addr:  any) => {
+      addr.geoCoordinates = addr.geoCoordinate
+      return addr
+    })
+
+    let addressesV2 = this.translateToV2Address(addressesV1)
+    let toChange = addressesV2.filter(addr => addr.document.name == addressesV1[0].addressName)[0]
+
+    return this.getProfileInfo(user)
+      .then(profile => {
+          return this.getUserAddresses(user, profile)
+          .then((addresses: Address[]) => {
+            const address = addresses.filter(addr => addr.addressName === addressesV1[0].addressName)[0]
+            if (address) {
+              return this.patch(
+                `${this.baseUrl}/${profile.id}/addresses/${address.id}?an=${this.account}`,
+                toChange.document,
+                {
+                  metric: 'profile-system-v2-updateAddress',
+                }
+              )
+            }
+
+            return this.post(
+              `${this.baseUrl}/${profile.id}/addresses?an=${this.account}`,
+              toChange.document,
+              {
+                metric: 'profile-system-v2-createAddress'
+              }
+            )
+          })
+      })
+  }
+
+  public deleteAddress = (user: CurrentProfile, addressName: string) => {
+    return this.getProfileInfo(user)
+      .then(profile => {
+          this.getUserAddresses(user, profile)
+          .then((addresses: Address[]) => {
+            const address = addresses.filter(addr => addr.addressName === addressName)[0]
+            return this.delete(
+              `${this.baseUrl}/${profile.id}/addresses/${address.id}?an=${this.account}`,
+              {
+                metric: 'profile-system-v2-deleteAddress',
+              }
+            )
+          }
+        )
       }
     )
+  }
 
-  public updatePersonalPreferences = (
-    user: CurrentProfile,
-    personalPreferences: PersonalPreferences
-  ) =>
-    this.post(
-      `${this.baseUrl}/${getUserIdentification(user)}/personalPreferences/`,
-      personalPreferences,
-      {
-        metric: 'profile-system-subscribeNewsletter',
+  public getUserPayments = (user: CurrentProfile, piiRequest?: PIIRequest) => {
+    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    let url = this.getPIIUrl(`${this.baseUrl}/${userKey}/purchase-info/unmask`, alternativeKey, piiRequest)
+
+    return this.get(url, {
+      metric: 'profile-system-v2-getUserPayments',
+    }).catch<any>(e => {
+      const { response } = e as AxiosError
+      const { status } = response!
+      if (status == 404) {
+        return [] as PaymentProfile[]
       }
-    )
 
-  public createProfile = (profile: Profile) =>
-    this.post(this.baseUrl, { personalData: profile })
+      return statusToError(e)
+    })
+  }
 
   protected get = <T>(url: string, config?: RequestConfig) =>
     this.http.get<T>(url, config).catch<any>(statusToError)
@@ -110,9 +265,47 @@ export class ProfileClientV2 extends JanusClient {
   protected patch = <T>(url: string, data?: any, config?: RequestConfig) =>
     this.http.patch<T>(url, data, config).catch<any>(statusToError)
 
-  private baseUrl = '/api/profile-system/pvt/profiles'
-}
+  private baseUrl = 'api/profile-system/profiles'
 
-function getUserIdentification(user: CurrentProfile) {
-  return user.userId || encodeURIComponent(user.email)
+  private getUserKeyAndAlternateKey(user: CurrentProfile) {
+      let alternativeKey
+      let userKey
+
+      if (user.email) {
+        alternativeKey = "email"
+        userKey = user.email
+      } else {
+        userKey = user.userId
+      }
+
+    return {
+      userKey,
+      alternativeKey
+    }
+  }
+
+  private getPIIUrl(url: string, alternativeKey?: string, piiRequest?: PIIRequest){
+    let params = [
+      ["an", this.account],
+    ]
+
+    if (alternativeKey) {
+      params.push(["alternativeKey", alternativeKey])
+    }
+
+    let currentPIIRequest = piiRequest || this.defaultPIIRequest
+
+    if (currentPIIRequest) {
+      params.push(
+        ["useCase", currentPIIRequest.useCase],
+        ["onBehalfOf", currentPIIRequest.onBehalfOf]
+      )
+
+      url += "/unmask"
+    }
+
+    let queryString = params.map(el => el.join("=")).join("&")
+
+    return `${url}?${queryString}`
+  }
 }
