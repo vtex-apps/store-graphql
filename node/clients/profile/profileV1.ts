@@ -27,8 +27,8 @@ export class ProfileClientV1 extends JanusClient {
     })
   }
 
-  public getProfileInfo = (user: CurrentProfile, customFields?: string) => {
-    return this.get<Profile>(
+  public getProfileInfo = (user: CurrentProfile, customFields?: string) =>
+    this.get<Profile>(
       `${this.baseUrl}/${getUserIdentification(user)}/personalData`,
       {
         metric: 'profile-system-getProfileInfo',
@@ -41,7 +41,6 @@ export class ProfileClientV1 extends JanusClient {
 
       return profile
     })
-  }
 
   public getUserAddresses = (user: CurrentProfile, _: Profile) =>
     this.get(`${this.baseUrl}/${getUserIdentification(user)}/addresses`, {

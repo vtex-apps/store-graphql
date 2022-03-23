@@ -23,7 +23,7 @@ export class LicenseManagerExtendedClient extends LicenseManager {
 
   public getCurrentAccount = (customFields?: string) =>
     this.get<Account>(
-      `${this.baseUrl}/${this.context.account}`,
+     `${this.baseUrl}/${this.context.account}`,
       {
         metric: 'account-getAccount',
         params: {
