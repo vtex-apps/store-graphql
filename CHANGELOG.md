@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Added support for the new Profile System that has to be used if an account is PII enabled
+
 ## [2.149.3] - 2022-03-03
 ### Removed
 - `withCurrentProfile` directive from `subscribeNewsletter` mutation.
