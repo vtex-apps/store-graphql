@@ -50,6 +50,7 @@ export class ProfileClientV2 extends ExternalClient {
         let profileV2 = profile[0].document
         profileV2.pii = true
         profileV2.id = profile[0].id
+        profileV2.isNewsletterOptIn = profileV2.isNewsletterOptIn || false
 
         return profileV2
       }
@@ -92,9 +93,10 @@ export class ProfileClientV2 extends ExternalClient {
   ) => {
     let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
 
-    if (!(profile as Profile)?.gender) {
+    if (!(profile as Profile)) {
       const profileCast = profile as Profile
-      profileCast.gender = ""
+      profileCast.gender = profileCast.gender || ""
+      profileCast.document = profileCast.document || ""
     }
 
     return this.patch(
@@ -110,7 +112,7 @@ export class ProfileClientV2 extends ExternalClient {
   }
 
   public getUserAddresses = (_: CurrentProfile, currentUserProfile: Profile, piiRequest?: PIIRequest) => {
-    let url = this.getPIIUrl(`${this.baseUrl}/${currentUserProfile.userId}/addresses`, undefined, piiRequest)
+    let url = this.getPIIUrl(`${this.baseUrl}/${currentUserProfile.id}/addresses`, undefined, piiRequest)
 
     return this.get<Address[]>(url, { metric: 'profile-system-v2-getUserAddresses', })
       .then((addresses: AddressV2[]) => this.translateToV1Address(addresses))
