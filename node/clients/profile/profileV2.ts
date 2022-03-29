@@ -14,8 +14,8 @@ export class ProfileClientV2 extends ExternalClient {
   account: string
   defaultPIIRequest: PIIRequest
 
-  constructor(context: IOContext, options?: InstanceOptions) {
-    super("https://profile-system-beta.vtex.systems", context, {
+  constructor(baseUrl: string, context: IOContext, options?: InstanceOptions) {
+    super(baseUrl, context, {
       ...options,
       headers: {
         ...(options && options.headers),
