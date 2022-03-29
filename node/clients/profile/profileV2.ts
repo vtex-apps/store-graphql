@@ -37,10 +37,12 @@ export class ProfileClientV2 extends ExternalClient {
       }
     ).then((profile: ProfileV2[]) => {
       if (profile.length > 0) {
-        let profileV2 = profile[0].document
-        profileV2.pii = true
-        profileV2.id = profile[0].id
-        profileV2.isNewsletterOptIn = profileV2.isNewsletterOptIn || false
+        const profileV2 = {
+          ...profile[0].document,
+          pii = true,
+          id = profile[0].id,
+          isNewsletterOptIn = profileV2.isNewsletterOptIn || false,
+        }
 
         return profileV2
       }
