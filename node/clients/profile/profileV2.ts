@@ -10,8 +10,8 @@ import { statusToError } from '../../utils'
 const FIVE_SECONDS_MS = 5 * 1000
 
 export class ProfileClientV2 extends ExternalClient {
-  account: string
-  defaultPIIRequest: PIIRequest
+  protected account: string
+  private defaultPIIRequest: PIIRequest
 
   constructor(baseUrl: string, context: IOContext, options?: InstanceOptions) {
     super(baseUrl, context, {
@@ -101,7 +101,7 @@ export class ProfileClientV2 extends ExternalClient {
     profile: Profile | { profilePicture: string },
     customFields?: string
   ) => {
-    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
 
     if (!(profile as Profile)) {
       const profileCast = profile as Profile
@@ -126,7 +126,7 @@ export class ProfileClientV2 extends ExternalClient {
     currentUserProfile: Profile,
     piiRequest?: PIIRequest
   ) => {
-    let url = this.getPIIUrl(
+    const url = this.getPIIUrl(
       `${this.baseUrl}/${currentUserProfile.id}/addresses`,
       undefined,
       piiRequest
@@ -214,7 +214,7 @@ export class ProfileClientV2 extends ExternalClient {
 
     const addressesV2 = this.translateToV2Address(addressesV1)
     const toChange = addressesV2.filter(
-      (addr) => addr.document.name == addressesV1[0].addressName
+      (addr) => addr.document.name === addressesV1[0].addressName
     )[0]
 
     return this.getProfileInfo(user).then((profile) => {
