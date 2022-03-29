@@ -88,9 +88,11 @@ export class ProfileClientV2 extends ExternalClient {
     let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
 
     if (!(profile as Profile)) {
-      const profileCast = profile as Profile
-      profileCast.gender = profileCast.gender || ""
-      profileCast.document = profileCast.document || ""
+      const profileCast = {
+        ...profile as Profile,
+        gender: profile.gender ?? ''
+        document: profile.document ?? ''
+      }
     }
 
     return this.patch(
