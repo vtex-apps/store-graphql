@@ -121,7 +121,7 @@ export class ProfileClientV2 extends ExternalClient {
       .then((addresses: AddressV2[]) => this.translateToV1Address(addresses))
       .catch<any>(e => {
         const { status } = e.response ?? {}
-        if (status == 404) {
+        if (status === 404) {
           return [] as AddressV2[]
         }
 
