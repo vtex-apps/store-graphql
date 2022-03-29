@@ -113,8 +113,7 @@ export class ProfileClientV2 extends ExternalClient {
     return this.get<Address[]>(url, { metric: 'profile-system-v2-getUserAddresses', })
       .then((addresses: AddressV2[]) => this.translateToV1Address(addresses))
       .catch<any>(e => {
-        const { response } = e as AxiosError
-        const { status } = response!
+        const { status } = e.response ?? {}
         if (status == 404) {
           return [] as AddressV2[]
         }
