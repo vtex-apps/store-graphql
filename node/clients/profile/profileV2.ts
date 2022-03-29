@@ -54,8 +54,10 @@ export class ProfileClientV2 extends ExternalClient {
   public createProfile = (profile: Profile) =>
     this.post<ProfileV2>(`${this.baseUrl}?an=${this.account}`, profile)
       .then((profileV2: ProfileV2) => {
-        let newProfile = profileV2.document as Profile
-        newProfile.id = profileV2.id
+        const newProfile = {
+          ...profileV2.document as Profile
+          id = profileV2.id
+        }
         return newProfile
       })
 
