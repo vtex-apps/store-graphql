@@ -76,10 +76,9 @@ export class ProfileClientV2 extends ExternalClient {
     personalPreferences: PersonalPreferences
   ) => {
     const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
-    let parsedPersonalPreferences = Object.keys(personalPreferences).reduce((preferences: any, key) => {
-      preferences[key] = personalPreferences[key] === 'True'
-      return preferences
-    }, {})
+    const parsedPersonalPreferences = Object.fromEntries(Object.entries(personalPreferences).map(([key, value]) => {
+      return [key, value === 'True']
+    }))
 
     return this.patch(
       `${this.baseUrl}/${userKey}?alternativeKey=${alternativeKey}`,
