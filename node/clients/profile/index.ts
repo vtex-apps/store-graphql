@@ -69,7 +69,7 @@ export class ProfileClient extends JanusClient {
       then(profileClient => profileClient.updatePersonalPreferences(user, personalPreferences))
 
   private getProfileClient = (context: Context) => {
-    let licenseManager = context.clients.licenseManagerExtended
+    const licenseManager = context.clients.licenseManagerExtended
 
     return licenseManager.getCurrentAccount().then(account => {
       if (account.PIIEnabled) {
