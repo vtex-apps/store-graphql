@@ -24,8 +24,8 @@ export class ProfileClientV2 extends ExternalClient {
   }
 
   public getProfileInfo = (user: CurrentProfile, customFields?: string, piiRequest?: PIIRequest) => {
-    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
-    let url = this.getPIIUrl(`${this.baseUrl}/${userKey}`, alternativeKey, piiRequest)
+    const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    const url = this.getPIIUrl(`${this.baseUrl}/${userKey}`, alternativeKey, piiRequest)
 
     return this.get<ProfileV2>(
       url,
