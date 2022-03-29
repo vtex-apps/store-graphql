@@ -4,7 +4,6 @@ import {
   ExternalClient,
   RequestConfig,
 } from '@vtex/api'
-import { AxiosError } from 'axios'
 
 import { statusToError } from '../../utils'
 
@@ -186,15 +185,13 @@ export class ProfileClientV2 extends ExternalClient {
   }
 
   public updateAddress = (user: CurrentProfile, addressesData: any) => {
-    let addressesV1 = this.mapAddressesObjToList(addressesData)
-
-    addressesV1 = addressesV1.map((addr:  any) => {
+    const addressesV1 = this.mapAddressesObjToList(addressesData).map((addr:  any) => {
       addr.geoCoordinates = addr.geoCoordinate
       return addr
     })
 
-    let addressesV2 = this.translateToV2Address(addressesV1)
-    let toChange = addressesV2.filter(addr => addr.document.name == addressesV1[0].addressName)[0]
+    const addressesV2 = this.translateToV2Address(addressesV1)
+    const toChange = addressesV2.filter(addr => addr.document.name == addressesV1[0].addressName)[0]
 
     return this.getProfileInfo(user)
       .then(profile => {
@@ -247,9 +244,8 @@ export class ProfileClientV2 extends ExternalClient {
     return this.get(url, {
       metric: 'profile-system-v2-getUserPayments',
     }).catch<any>(e => {
-      const { response } = e as AxiosError
-      const { status } = response!
-      if (status == 404) {
+      const { status } = e.response ?? {}
+      if (status === 404) {
         return [] as PaymentProfile[]
       }
 
@@ -289,15 +285,13 @@ export class ProfileClientV2 extends ExternalClient {
   }
 
   private getPIIUrl(url: string, alternativeKey?: string, piiRequest?: PIIRequest){
-    let params = [
-      ["an", this.account],
-    ]
+    const params = []
 
     if (alternativeKey) {
       params.push(["alternativeKey", alternativeKey])
     }
 
-    let currentPIIRequest = piiRequest || this.defaultPIIRequest
+    const currentPIIRequest = piiRequest || this.defaultPIIRequest
 
     if (currentPIIRequest) {
       params.push(
@@ -308,7 +302,7 @@ export class ProfileClientV2 extends ExternalClient {
       url += "/unmask"
     }
 
-    let queryString = params.map(el => el.join("=")).join("&")
+    const queryString = params.map(el => el.join("=")).join("&")
 
     return `${url}?${queryString}`
   }
