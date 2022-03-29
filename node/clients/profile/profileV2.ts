@@ -130,7 +130,7 @@ export class ProfileClientV2 extends ExternalClient {
 
   private translateToV1Address = (addresses: AddressV2[]) =>
     addresses.map((address: AddressV2) => {
-      let addressV2 = address.document
+      const addressV2 = address.document
 
       return {
         addressName: addressV2.name,
@@ -177,9 +177,13 @@ export class ProfileClientV2 extends ExternalClient {
   private mapAddressesObjToList(addressesObj: any): Address[] {
     return Object.entries<string>(addressesObj).map(
       ([key, stringifiedObj]) => {
-        let address = JSON.parse(stringifiedObj) as Address
-        address.addressName = key
-        return address
+        try {
+          const address = JSON.parse(stringifiedObj) as Address
+          address.addressName = key
+          return address
+        } catch (e) {
+          return {} as Address
+        }
       }
     )
   }
