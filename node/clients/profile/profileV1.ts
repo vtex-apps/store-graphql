@@ -36,7 +36,7 @@ export class ProfileClientV1 extends JanusClient {
           extraFields: customFields,
         },
       }
-    ).then(profile => {
+    ).then((profile) => {
       profile.pii = false
 
       return profile

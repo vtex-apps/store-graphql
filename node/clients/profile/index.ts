@@ -1,8 +1,4 @@
-import {
-  InstanceOptions,
-  IOContext,
-  JanusClient,
-} from '@vtex/api'
+import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
@@ -18,30 +14,39 @@ export class ProfileClient extends JanusClient {
     })
   }
 
-  public getProfileInfo = (user: CurrentProfile, context: Context, customFields?: string) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.getProfileInfo(user, customFields))
+  public getProfileInfo = (
+    user: CurrentProfile,
+    context: Context,
+    customFields?: string
+  ) =>
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.getProfileInfo(user, customFields)
+    )
 
   public createProfile = (profile: Profile, context: Context) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.createProfile(profile))
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.createProfile(profile)
+    )
 
-  public getUserAddresses = (user: CurrentProfile, context: Context, currentUserProfile?: Profile) =>
-    this.getProfileClient(context).
-      then(profileClient => {
-        if (!currentUserProfile) {
-          return profileClient.getProfileInfo(user)
-            .then(userProfile => {
-              return profileClient.getUserAddresses(user, userProfile, undefined)
-            })
-        }
+  public getUserAddresses = (
+    user: CurrentProfile,
+    context: Context,
+    currentUserProfile?: Profile
+  ) =>
+    this.getProfileClient(context).then((profileClient) => {
+      if (!currentUserProfile) {
+        return profileClient.getProfileInfo(user).then((userProfile) => {
+          return profileClient.getUserAddresses(user, userProfile, undefined)
+        })
+      }
 
-        return profileClient.getUserAddresses(user, currentUserProfile, undefined)
-      })
+      return profileClient.getUserAddresses(user, currentUserProfile, undefined)
+    })
 
   public getUserPayments = (user: CurrentProfile, context: Context) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.getUserPayments(user))
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.getUserPayments(user)
+    )
 
   public updateProfileInfo = (
     user: CurrentProfile,
@@ -49,35 +54,47 @@ export class ProfileClient extends JanusClient {
     context: Context,
     customFields?: string
   ) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.updateProfileInfo(user, profile, customFields))
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.updateProfileInfo(user, profile, customFields)
+    )
 
-  public updateAddress = (user: CurrentProfile, addressesData: any, context: Context) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.updateAddress(user, addressesData))
+  public updateAddress = (
+    user: CurrentProfile,
+    addressesData: any,
+    context: Context
+  ) =>
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.updateAddress(user, addressesData)
+    )
 
-  public deleteAddress = (user: CurrentProfile, addressName: string, context: Context) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.deleteAddress(user, addressName))
+  public deleteAddress = (
+    user: CurrentProfile,
+    addressName: string,
+    context: Context
+  ) =>
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.deleteAddress(user, addressName)
+    )
 
   public updatePersonalPreferences = (
     user: CurrentProfile,
     personalPreferences: PersonalPreferences,
     context: Context
   ) =>
-    this.getProfileClient(context).
-      then(profileClient => profileClient.updatePersonalPreferences(user, personalPreferences))
+    this.getProfileClient(context).then((profileClient) =>
+      profileClient.updatePersonalPreferences(user, personalPreferences)
+    )
 
   private getProfileClient = (context: Context) => {
     const licenseManager = context.clients.licenseManagerExtended
 
-    return licenseManager.getCurrentAccount().then(account => {
+    return licenseManager.getCurrentAccount().then((account) => {
       if (account.PIIEnabled) {
-        if (account.Privacy?.PII.toLowerCase() == "us") {
+        if (account.Privacy?.PII.toLowerCase() == 'us') {
           return context.clients.profileV2US
         }
-        if (account.Privacy?.PII.toLowerCase() == "eu") {
-          return context.clients.profileV2EU
+        if (account.Privacy?.PII.toLowerCase() == 'eu') {
+          return context.clients.profileV2US
         }
       }
       return context.clients.profileV1

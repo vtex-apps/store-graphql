@@ -157,19 +157,24 @@ async function validatedProfile(
     .getProfileInfo(currentProfile, context, 'id')
     .catch(() => {})) || { id: '', userId: '' } // 404 case.
 
-
   if (id) {
     return { userId, email: currentProfile.email }
   }
 
   return profile
-    .createProfile({
-      email: currentProfile.email,
-      userId,
-    } as Profile, context)
-    .then(
-      (newProfile: Profile) =>
-        profile.getProfileInfo({ userId: newProfile.userId, email: '' }, context, undefined)
+    .createProfile(
+      {
+        email: currentProfile.email,
+        userId,
+      } as Profile,
+      context
+    )
+    .then((newProfile: Profile) =>
+      profile.getProfileInfo(
+        { userId: newProfile.userId, email: '' },
+        context,
+        undefined
+      )
     )
 }
 

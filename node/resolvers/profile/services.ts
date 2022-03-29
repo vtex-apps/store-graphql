@@ -196,13 +196,20 @@ export async function saveAddress(
   const addressesData = mapNewAddressToProfile(args.address, currentProfile)
   const [newId] = Object.keys(addressesData)
 
-  const result = await profile.updateAddress(currentProfile, addressesData, context)
+  const result = await profile.updateAddress(
+    currentProfile,
+    addressesData,
+    context
+  )
 
   if (result && result.document) {
     return result.document
   }
 
-  const currentAddresses = await profile.getUserAddresses(currentProfile, context)
+  const currentAddresses = await profile.getUserAddresses(
+    currentProfile,
+    context
+  )
 
   return currentAddresses.find(
     (address: Address) => address.addressName === newId

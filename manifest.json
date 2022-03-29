@@ -169,6 +169,13 @@
     {
       "name": "outbound-access",
       "attrs": {
+        "host": "profile-system-beta.vtex.systems",
+        "path": "/api/profile-system/profiles/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
         "host": "profile-system-eu-west-1.vtex.systems",
         "path": "/api/profile-system/profiles/*"
       }
