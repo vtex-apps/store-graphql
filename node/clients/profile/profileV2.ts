@@ -63,7 +63,7 @@ export class ProfileClientV2 extends ExternalClient {
     user: CurrentProfile,
     personalPreferences: PersonalPreferences
   ) => {
-    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
     let parsedPersonalPreferences = Object.keys(personalPreferences).reduce((preferences: any, key) => {
       preferences[key] = personalPreferences[key] === 'True'
       return preferences
