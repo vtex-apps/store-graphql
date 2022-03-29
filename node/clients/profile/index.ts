@@ -76,7 +76,7 @@ export class ProfileClient extends JanusClient {
         if (account.Infra?.Region.toLowerCase() === "us") {
             return context.clients.profileV2US
         }
-        if (account.Infra?.Region.toLowerCase() == "eu") {
+        if (account.Infra?.Region.toLowerCase() === "eu") {
             return context.clients.profileV2EU
         }
       }
