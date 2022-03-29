@@ -73,11 +73,11 @@ export class ProfileClient extends JanusClient {
 
     return licenseManager.getCurrentAccount().then(account => {
       if (account.PIIEnabled) {
-        if (account.Infra?.Region.toLowerCase() === "us") {
-            return context.clients.profileV2US
+        if (account.Privacy?.PII.toLowerCase() == "us") {
+          return context.clients.profileV2US
         }
-        if (account.Infra?.Region.toLowerCase() === "eu") {
-            return context.clients.profileV2EU
+        if (account.Privacy?.PII.toLowerCase() == "eu") {
+          return context.clients.profileV2US
         }
       }
       return context.clients.profileV1

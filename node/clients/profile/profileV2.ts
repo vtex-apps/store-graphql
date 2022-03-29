@@ -39,10 +39,11 @@ export class ProfileClientV2 extends ExternalClient {
       if (profile.length > 0) {
         const profileV2 = {
           ...profile[0].document,
-          pii = true,
-          id = profile[0].id,
-          isNewsletterOptIn = profileV2.isNewsletterOptIn || false,
+          pii: true,
+          id: profile[0].id,
         }
+
+        profileV2.isNewsletterOptIn = profileV2.isNewsletterOptIn || false
 
         return profileV2
       }
@@ -54,11 +55,10 @@ export class ProfileClientV2 extends ExternalClient {
   public createProfile = (profile: Profile) =>
     this.post<ProfileV2>(`${this.baseUrl}?an=${this.account}`, profile)
       .then((profileV2: ProfileV2) => {
-        const newProfile = {
-          ...profileV2.document as Profile
-          id = profileV2.id
+        return {
+          ...profileV2.document as Profile,
+          id: profileV2.id
         }
-        return newProfile
       })
 
   public updatePersonalPreferences = (
@@ -88,11 +88,9 @@ export class ProfileClientV2 extends ExternalClient {
     let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
 
     if (!(profile as Profile)) {
-      const profileCast = {
-        ...profile as Profile,
-        gender: profile.gender ?? ''
-        document: profile.document ?? ''
-      }
+      const profileCast = profile as Profile
+      profileCast.gender = profileCast.gender || ""
+      profileCast.document = profileCast.document || ""
     }
 
     return this.patch(

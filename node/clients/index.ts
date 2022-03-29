@@ -46,11 +46,11 @@ export class Clients extends IOClients {
   }
 
   public get profileV2EU() {
-    return this.getOrSet('profileV2EU', ProfileClientV2US)
+    return this.getOrSet('profileV2EU', ProfileClientV2EU)
   }
 
   public get profileV2US() {
-    return this.getOrSet('profileV2US', ProfileClientV2EU)
+    return this.getOrSet('profileV2US', ProfileClientV2US)
   }
 
   public get licenseManagerExtended() {
