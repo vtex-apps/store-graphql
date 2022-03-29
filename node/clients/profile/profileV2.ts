@@ -8,22 +8,12 @@ import { AxiosError } from 'axios'
 
 import { statusToError } from '../../utils'
 
-const FIVE_SECONDS_MS = 5 * 1000
-
 export class ProfileClientV2 extends ExternalClient {
   account: string
   defaultPIIRequest: PIIRequest
 
   constructor(baseUrl: string, context: IOContext, options?: InstanceOptions) {
-    super(baseUrl, context, {
-      ...options,
-      headers: {
-        ...(options && options.headers),
-        userAgent: context.userAgent,
-        VtexIdClientAutCookie: context.authToken,
-      },
-      timeout: FIVE_SECONDS_MS,
-    })
+    super(baseUrl, context, options)
 
     this.account = context.account
 
