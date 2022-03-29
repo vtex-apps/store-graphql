@@ -77,7 +77,7 @@ export class ProfileClient extends JanusClient {
           return context.clients.profileV2US
         }
         if (account.Privacy?.PII.toLowerCase() == "eu") {
-          return context.clients.profileV2US
+          return context.clients.profileV2EU
         }
       }
       return context.clients.profileV1

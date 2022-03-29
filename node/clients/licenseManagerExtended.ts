@@ -23,14 +23,13 @@ export class LicenseManagerExtendedClient extends LicenseManager {
 
   public getCurrentAccount = (customFields?: string) =>
     this.get<Account>(
-     `${this.baseUrl}/${this.context.account}`,
+      `${this.baseUrl}/${this.context.account}`,
       {
         metric: 'account-getAccount',
-        params: {
-          extraFields: customFields,
-        },
-      }
-    ).then((account: Account) => {
+      params: {
+        extraFields: customFields,
+      },
+    }).then((account: Account) => {
       account.PIIEnabled = Boolean(account.Privacy)
       return account
     })

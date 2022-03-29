@@ -8,12 +8,22 @@ import { AxiosError } from 'axios'
 
 import { statusToError } from '../../utils'
 
+const FIVE_SECONDS_MS = 5 * 1000
+
 export class ProfileClientV2 extends ExternalClient {
   account: string
   defaultPIIRequest: PIIRequest
 
   constructor(baseUrl: string, context: IOContext, options?: InstanceOptions) {
-    super(baseUrl, context, options)
+    super(baseUrl, context, {
+      ...options,
+      headers: {
+        ...(options && options.headers),
+        VtexIdClientAutCookie: context.authToken ?? '',
+      },
+      timeout: FIVE_SECONDS_MS,
+      params: { an: context.account },
+    })
 
     this.account = context.account
 
@@ -53,7 +63,7 @@ export class ProfileClientV2 extends ExternalClient {
   }
 
   public createProfile = (profile: Profile) =>
-    this.post<ProfileV2>(`${this.baseUrl}?an=${this.account}`, profile)
+    this.post<ProfileV2>(`${this.baseUrl}`, profile)
       .then((profileV2: ProfileV2) => {
         return {
           ...profileV2.document as Profile,
@@ -72,7 +82,7 @@ export class ProfileClientV2 extends ExternalClient {
     }, {})
 
     return this.patch(
-      `${this.baseUrl}/${userKey}?an=${this.account}&alternativeKey=${alternativeKey}`,
+      `${this.baseUrl}/${userKey}?alternativeKey=${alternativeKey}`,
       parsedPersonalPreferences,
       {
         metric: 'profile-system-v2-subscribeNewsletter',
@@ -94,7 +104,7 @@ export class ProfileClientV2 extends ExternalClient {
     }
 
     return this.patch(
-      `${this.baseUrl}/${userKey}?an=${this.account}&alternativeKey=${alternativeKey}`,
+      `${this.baseUrl}/${userKey}?alternativeKey=${alternativeKey}`,
       profile,
       {
         metric: 'profile-system-v2-updateProfileInfo',
@@ -194,7 +204,7 @@ export class ProfileClientV2 extends ExternalClient {
             const address = addresses.filter(addr => addr.addressName === addressesV1[0].addressName)[0]
             if (address) {
               return this.patch(
-                `${this.baseUrl}/${profile.id}/addresses/${address.id}?an=${this.account}`,
+                `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
                 toChange.document,
                 {
                   metric: 'profile-system-v2-updateAddress',
@@ -203,7 +213,7 @@ export class ProfileClientV2 extends ExternalClient {
             }
 
             return this.post(
-              `${this.baseUrl}/${profile.id}/addresses?an=${this.account}`,
+              `${this.baseUrl}/${profile.id}/addresses`,
               toChange.document,
               {
                 metric: 'profile-system-v2-createAddress'
@@ -220,7 +230,7 @@ export class ProfileClientV2 extends ExternalClient {
           .then((addresses: Address[]) => {
             const address = addresses.filter(addr => addr.addressName === addressName)[0]
             return this.delete(
-              `${this.baseUrl}/${profile.id}/addresses/${address.id}?an=${this.account}`,
+              `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
               {
                 metric: 'profile-system-v2-deleteAddress',
               }
