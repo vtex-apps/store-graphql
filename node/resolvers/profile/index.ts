@@ -103,7 +103,7 @@ export const mutations = {
     }
 
     const userProfile = await profile
-      .getProfileInfo({ email, userId: '' })
+      .getProfileInfo({ email, userId: '' }, context, undefined)
       .catch(() => ({}))
 
     if (fields) {
@@ -147,7 +147,8 @@ export const mutations = {
     if (updateData) {
       await profile.updatePersonalPreferences(
         { email, userId: '' },
-        updatedPersonalPreferences
+        updatedPersonalPreferences,
+        context
       )
     }
 

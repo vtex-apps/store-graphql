@@ -5,7 +5,7 @@ import {
   RequestConfig,
 } from '@vtex/api'
 
-import { statusToError } from '../utils'
+import { statusToError } from '../../utils'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
@@ -15,7 +15,7 @@ function mapAddressesObjToList(addressesObj: any): Address[] {
   )
 }
 
-export class ProfileClient extends JanusClient {
+export class ProfileClientV1 extends JanusClient {
   constructor(context: IOContext, options?: InstanceOptions) {
     super(context, {
       ...options,
@@ -36,9 +36,13 @@ export class ProfileClient extends JanusClient {
           extraFields: customFields,
         },
       }
-    )
+    ).then((profile) => {
+      profile.pii = false
 
-  public getUserAddresses = (user: CurrentProfile) =>
+      return profile
+    })
+
+  public getUserAddresses = (user: CurrentProfile, _: Profile) =>
     this.get(`${this.baseUrl}/${getUserIdentification(user)}/addresses`, {
       metric: 'profile-system-getUserAddresses',
     }).then(mapAddressesObjToList)

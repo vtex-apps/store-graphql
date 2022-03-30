@@ -18,8 +18,8 @@ export default {
     cacheId: prop('id'),
   },
   Profile: {
-    address: (_: any, __: any, context: any) => getAddresses(context),
-    addresses: (_: any, __: any, context: any) => getAddresses(context),
+    address: (obj: any, __: any, context: any) => getAddresses(context, obj),
+    addresses: (obj: any, __: any, context: any) => getAddresses(context, obj),
     birthDate: (obj: any) =>
       obj.birthDate ? new Date(obj.birthDate).toISOString() : obj.birthDate,
     cacheId: prop('email'),
@@ -38,6 +38,7 @@ export default {
     corporateDocument: (obj: any, _: any, __: any) => obj.businessDocument,
     isCorporate: (obj: any, _: any, __: any) => obj.isPJ === 'True',
     tradeName: (obj: any, _: any, __: any) => obj.fancyName,
+    pii: (obj: any, _: any, __: any) => obj.pii,
   },
   ProfileCustomField: {
     cacheId: (root: any) => root.key,

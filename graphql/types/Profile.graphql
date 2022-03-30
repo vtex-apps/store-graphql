@@ -91,6 +91,10 @@ type Profile {
   User's last password update time
   """
   passwordLastUpdate: String
+  """
+  Shows if PII is being audited
+  """
+  pii: Boolean
 }
 
 """
