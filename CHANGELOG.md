@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.150.0] - 2022-03-30
+
 ### Added
 - support for the new Profile System that has to be used if an account is PII enabled
 
