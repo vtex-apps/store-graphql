@@ -262,8 +262,8 @@ export class ProfileClientV2 extends ExternalClient {
   }
 
   public getUserPayments = (user: CurrentProfile, piiRequest?: PIIRequest) => {
-    let { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
-    let url = this.getPIIUrl(
+    const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
+    const url = this.getPIIUrl(
       `${this.baseUrl}/${userKey}/purchase-info/unmask`,
       alternativeKey,
       piiRequest
