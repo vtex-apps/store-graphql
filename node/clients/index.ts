@@ -7,8 +7,7 @@ import { PvtCheckout } from './PvtCheckout'
 import { MasterData } from './masterdata'
 import { ProfileClient } from './profile'
 import { ProfileClientV1 } from './profile/profileV1'
-import { ProfileClientV2US } from './profile/profileV2US'
-import { ProfileClientV2EU } from './profile/profileV2EU'
+import { ProfileClientV2 } from './profile/profileV2'
 import { LicenseManagerExtendedClient } from './licenseManagerExtended'
 import { OMS } from './oms'
 import { Portal } from './portal'
@@ -45,12 +44,8 @@ export class Clients extends IOClients {
     return this.getOrSet('profileV1', ProfileClientV1)
   }
 
-  public get profileV2EU() {
-    return this.getOrSet('profileV2EU', ProfileClientV2EU)
-  }
-
-  public get profileV2US() {
-    return this.getOrSet('profileV2US', ProfileClientV2US)
+  public get profileV2() {
+    return this.getOrSet('profileV2', ProfileClientV2)
   }
 
   public get licenseManagerExtended() {
