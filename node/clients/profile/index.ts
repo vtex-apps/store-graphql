@@ -3,6 +3,9 @@ import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 const FIVE_SECONDS_MS = 5 * 1000
 
 export class ProfileClient extends JanusClient {
+  private US_REGION_KEY = 'us'
+  private EU_REGION_KEY = 'eu'
+
   constructor(context: IOContext, options?: InstanceOptions) {
     super(context, {
       ...options,
@@ -90,12 +93,11 @@ export class ProfileClient extends JanusClient {
 
     return licenseManager.getCurrentAccount().then((account) => {
       if (account.PIIEnabled) {
-        if (account.Privacy?.PII.toLowerCase() === 'us') {
+        if (account.Privacy?.PII.toLowerCase() === this.US_REGION_KEY) {
           return context.clients.profileV2US
         }
-        if (account.Privacy?.PII.toLowerCase() === 'eu') {
-          // THIS IS ON PURPOSE. Waiting for the Storage team fix the EU Profile System
-          return context.clients.profileV2US
+        if (account.Privacy?.PII.toLowerCase() === this.EU_REGION_KEY) {
+          return context.clients.profileV2EU
         }
       }
       return context.clients.profileV1
