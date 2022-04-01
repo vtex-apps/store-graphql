@@ -12,6 +12,7 @@ const FIVE_SECONDS_MS = 5 * 1000
 export class ProfileClientV2 extends JanusClient {
   protected account: string
   private defaultPIIRequest: PIIRequest
+  private NULL_TO_STRING_KEYS: [string] = ['birthDate']
 
   constructor(context: IOContext, options?: InstanceOptions) {
     super(context, {
@@ -103,15 +104,11 @@ export class ProfileClientV2 extends JanusClient {
   ) => {
     const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
 
-    if (!(profile as Profile)) {
-      const profileCast = profile as Profile
-      profileCast.gender = profileCast.gender || ''
-      profileCast.document = profileCast.document || ''
-    }
+    const cleanProfile = this.cleanUpProfileData(profile as Profile)
 
     return this.patch(
       `${this.baseUrl}/${userKey}?alternativeKey=${alternativeKey}`,
-      profile,
+      cleanProfile,
       {
         metric: 'profile-system-v2-updateProfileInfo',
         params: {
@@ -120,6 +117,21 @@ export class ProfileClientV2 extends JanusClient {
       }
     )
   }
+
+  private cleanUpProfileData = (profile: Profile) =>
+    Object.fromEntries(
+      Object.entries(profile)
+        .map(([key, value]) => {
+          if (value === null && this.NULL_TO_STRING_KEYS.includes(key)) {
+            return [key, '']
+          }
+          if (value !== null) {
+            return [key, value]
+          }
+          return []
+        })
+        .filter(([key, _]) => key)
+    )
 
   public getUserAddresses = (
     _: CurrentProfile,
