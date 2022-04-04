@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Using Janus when using the new Profile System
+
 ## [2.150.0] - 2022-03-30
 
 ### Added

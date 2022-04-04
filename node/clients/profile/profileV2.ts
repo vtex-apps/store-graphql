@@ -1,7 +1,7 @@
 import {
   InstanceOptions,
   IOContext,
-  ExternalClient,
+  JanusClient,
   RequestConfig,
 } from '@vtex/api'
 
@@ -9,12 +9,12 @@ import { statusToError } from '../../utils'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
-export class ProfileClientV2 extends ExternalClient {
+export class ProfileClientV2 extends JanusClient {
   protected account: string
   private defaultPIIRequest: PIIRequest
 
-  constructor(baseUrl: string, context: IOContext, options?: InstanceOptions) {
-    super(baseUrl, context, {
+  constructor(context: IOContext, options?: InstanceOptions) {
+    super(context, {
       ...options,
       headers: {
         ...(options && options.headers),
@@ -293,7 +293,7 @@ export class ProfileClientV2 extends ExternalClient {
   protected patch = <T>(url: string, data?: any, config?: RequestConfig) =>
     this.http.patch<T>(url, data, config).catch<any>(statusToError)
 
-  private baseUrl = 'api/profile-system/profiles'
+  private baseUrl = 'api/storage/profile-system/profiles'
 
   private getUserKeyAndAlternateKey(user: CurrentProfile) {
     let alternativeKey
