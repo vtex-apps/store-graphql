@@ -87,7 +87,8 @@ export class ProfileClientV1 extends JanusClient {
 
   public updatePersonalPreferences = (
     user: CurrentProfile,
-    personalPreferences: PersonalPreferences
+    personalPreferences: PersonalPreferences,
+    _: Profile
   ) =>
     this.post(
       `${this.baseUrl}/${getUserIdentification(user)}/personalPreferences/`,
