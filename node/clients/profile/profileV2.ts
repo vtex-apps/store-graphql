@@ -121,7 +121,7 @@ export class ProfileClientV2 extends JanusClient {
       })
     )
 
-    let purchaseInfo = {
+    const purchaseInfo = {
       clientPreferences: {
         ...parsedPersonalPreferences,
       },
