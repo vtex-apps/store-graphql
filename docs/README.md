@@ -126,17 +126,17 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/regis-samurai"><img src="https://avatars0.githubusercontent.com/u/38638226?v=4" width="100px;" alt=""/><br /><sub><b>Reginaldo</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=regis-samurai" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="https://github.com/juliomoreira"><img src="https://avatars2.githubusercontent.com/u/1207017?v=4" width="100px;" alt=""/><br /><sub><b>Julio Moreira</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=juliomoreira" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="https://github.com/gustavopvasconcellos"><img src="https://avatars1.githubusercontent.com/u/49173685?v=4" width="100px;" alt=""/><br /><sub><b>gustavopvasconcellos</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=gustavopvasconcellos" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="https://github.com/lucasayb"><img src="https://avatars2.githubusercontent.com/u/17356081?v=4" width="100px;" alt=""/><br /><sub><b>Lucas Yamamoto</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=lucasayb" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="https://github.com/lucaspacheco-acct"><img src="https://avatars0.githubusercontent.com/u/59736416?v=4" width="100px;" alt=""/><br /><sub><b>Lucas Pacheco</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=lucaspacheco-acct" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="https://github.com/BeatrizMiranda"><img src="https://avatars2.githubusercontent.com/u/28959326?v=4" width="100px;" alt=""/><br /><sub><b>Beatriz Miranda</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=BeatrizMiranda" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="http://carafizi.com/"><img src="https://avatars3.githubusercontent.com/u/51974587?v=4" width="100px;" alt=""/><br /><sub><b>Gabriel Carafizi</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=carafizi1" title="Code">ðŸ’»</a></td>
+    <td align="center"><a href="https://github.com/regis-samurai"><img src="https://avatars0.githubusercontent.com/u/38638226?v=4" width="100px;" alt=""/><br /><sub><b>Reginaldo</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=regis-samurai" title="Code">=»</a></td>
+    <td align="center"><a href="https://github.com/juliomoreira"><img src="https://avatars2.githubusercontent.com/u/1207017?v=4" width="100px;" alt=""/><br /><sub><b>Julio Moreira</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=juliomoreira" title="Code">=»</a></td>
+    <td align="center"><a href="https://github.com/gustavopvasconcellos"><img src="https://avatars1.githubusercontent.com/u/49173685?v=4" width="100px;" alt=""/><br /><sub><b>gustavopvasconcellos</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=gustavopvasconcellos" title="Code">=»</a></td>
+    <td align="center"><a href="https://github.com/lucasayb"><img src="https://avatars2.githubusercontent.com/u/17356081?v=4" width="100px;" alt=""/><br /><sub><b>Lucas Yamamoto</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=lucasayb" title="Code">=»</a></td>
+    <td align="center"><a href="https://github.com/lucaspacheco-acct"><img src="https://avatars0.githubusercontent.com/u/59736416?v=4" width="100px;" alt=""/><br /><sub><b>Lucas Pacheco</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=lucaspacheco-acct" title="Code">=»</a></td>
+    <td align="center"><a href="https://github.com/BeatrizMiranda"><img src="https://avatars2.githubusercontent.com/u/28959326?v=4" width="100px;" alt=""/><br /><sub><b>Beatriz Miranda</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=BeatrizMiranda" title="Code">=»</a></td>
+    <td align="center"><a href="http://carafizi.com/"><img src="https://avatars3.githubusercontent.com/u/51974587?v=4" width="100px;" alt=""/><br /><sub><b>Gabriel Carafizi</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=carafizi1" title="Code">=»</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/marcosewbank"><img src="https://avatars3.githubusercontent.com/u/27689698?v=4" width="100px;" alt=""/><br /><sub><b>Marcos AndrÃ© Suarez Ewbank</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=marcosewbank" title="Code">ðŸ’»</a></td>
-    <td align="center"><a href="https://github.com/leoWorkingGood"><img src="https://avatars2.githubusercontent.com/u/51805410?v=4" width="100px;" alt=""/><br /><sub><b>leoWorkingGood</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=leoWorkingGood" title="Code">ðŸ’»</a></td>
+    <td align="center"><a href="https://github.com/marcosewbank"><img src="https://avatars3.githubusercontent.com/u/27689698?v=4" width="100px;" alt=""/><br /><sub><b>Marcos André Suarez Ewbank</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=marcosewbank" title="Code">=»</a></td>
+    <td align="center"><a href="https://github.com/leoWorkingGood"><img src="https://avatars2.githubusercontent.com/u/51805410?v=4" width="100px;" alt=""/><br /><sub><b>leoWorkingGood</b></sub></a><br /><a href="https://github.com/vtex-apps/store-graphql/commits?author=leoWorkingGood" title="Code">=»</a></td>
   </tr>
 </table>
 
@@ -144,3 +144,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+
+**Upcoming documentation:**
+
+ - [Writing newsletter option to the correct place](https://github.com/vtex-apps/store-graphql/pull/602)
