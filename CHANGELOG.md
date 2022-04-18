@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.152.0] - 2022-04-18
+
 ### Fixed
 - Writing user preferences in the purchase-info data
 
