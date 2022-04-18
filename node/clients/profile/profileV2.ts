@@ -328,7 +328,7 @@ export class ProfileClientV2 extends JanusClient {
     this.http.patch<T>(url, data, config).catch<any>(statusToError)
 
   protected put = <T>(url: string, data?: any, config?: RequestConfig) =>
-    this.http.patch<T>(url, data, config).catch<any>(statusToError)
+    this.http.put<T>(url, data, config).catch<any>(statusToError)
 
   private baseUrl = 'api/storage/profile-system/profiles'
 
