@@ -135,6 +135,17 @@ declare global {
     isNewsletterOptIn?: boolean
   }
 
+  interface PurchaseInfo {
+    id: string
+    document: {
+      clientPreferences: {
+        userId: string
+        localeDefault: string
+        isNewsletterOptIn?: boolean
+      }
+    }
+  }
+
   interface Account {
     HostName: string
     MainAccountName: string

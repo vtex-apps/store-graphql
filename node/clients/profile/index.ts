@@ -79,11 +79,25 @@ export class ProfileClient extends JanusClient {
   public updatePersonalPreferences = (
     user: CurrentProfile,
     personalPreferences: PersonalPreferences,
-    context: Context
+    context: Context,
+    currentUserProfile?: Profile
   ) =>
-    this.getProfileClient(context).then((profileClient) =>
-      profileClient.updatePersonalPreferences(user, personalPreferences)
-    )
+    this.getProfileClient(context).then((profileClient) => {
+      if (!currentUserProfile) {
+        return profileClient.getProfileInfo(user).then((userProfile) => {
+          profileClient.updatePersonalPreferences(
+            user,
+            personalPreferences,
+            userProfile
+          )
+        })
+      }
+      return profileClient.updatePersonalPreferences(
+        user,
+        personalPreferences,
+        currentUserProfile
+      )
+    })
 
   private getProfileClient = (context: Context) => {
     const licenseManager = context.clients.licenseManagerExtended

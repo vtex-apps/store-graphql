@@ -49,20 +49,54 @@ export class ProfileClientV2 extends JanusClient {
       params: {
         extraFields: customFields,
       },
-    }).then((profile: ProfileV2[]) => {
-      if (profile.length > 0) {
-        const profileV2 = {
-          ...profile[0].document,
-          pii: true,
-          id: profile[0].id,
+    })
+      .then((profile: ProfileV2[]) => {
+        if (profile.length > 0) {
+          const profileV2 = {
+            ...profile[0].document,
+            pii: true,
+            id: profile[0].id,
+          }
+
+          return profileV2
         }
 
-        profileV2.isNewsletterOptIn = profileV2.isNewsletterOptIn || false
+        return {} as Profile
+      })
+      .then((profile: Profile) => this.fillWithPreferences(profile, piiRequest))
+  }
 
-        return profileV2
+  private fillWithPreferences = (profile: Profile, piiRequest?: PIIRequest) => {
+    return this.getPurchaseInfo(profile, piiRequest)
+      .then((purchaseInfoList: PurchaseInfo[]) => {
+        const purchaseInfo = purchaseInfoList[0]
+
+        profile.isNewsletterOptIn =
+          purchaseInfo.document.clientPreferences?.isNewsletterOptIn ?? false
+        return profile
+      })
+      .catch(() => {
+        profile.isNewsletterOptIn = false
+        return profile
+      })
+  }
+
+  private getPurchaseInfo = (profile: Profile, piiRequest?: PIIRequest) => {
+    const url = this.getPIIUrl(
+      `${this.baseUrl}/${profile.id}/purchase-info`,
+      undefined,
+      piiRequest
+    )
+
+    return this.get<PurchaseInfo>(url, {
+      metric: 'profile-system-v2-getUserPreferences',
+    }).catch<any>((e) => {
+      const { status } = e.response ?? {}
+      if (status === 404) {
+        return [] as PurchaseInfo[]
       }
 
-      return {} as Profile
+      return statusToError(e)
     })
   }
 
@@ -77,19 +111,25 @@ export class ProfileClientV2 extends JanusClient {
     )
 
   public updatePersonalPreferences = (
-    user: CurrentProfile,
-    personalPreferences: PersonalPreferences
+    _: CurrentProfile,
+    personalPreferences: PersonalPreferences,
+    currentUserProfile: Profile
   ) => {
-    const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
     const parsedPersonalPreferences = Object.fromEntries(
       Object.entries(personalPreferences).map(([key, value]) => {
         return [key, value === 'True']
       })
     )
 
-    return this.patch(
-      `${this.baseUrl}/${userKey}?alternativeKey=${alternativeKey}`,
-      parsedPersonalPreferences,
+    const purchaseInfo = {
+      clientPreferences: {
+        ...parsedPersonalPreferences,
+      },
+    }
+
+    return this.put(
+      `${this.baseUrl}/${currentUserProfile.id}/purchase-info`,
+      purchaseInfo,
       {
         metric: 'profile-system-v2-subscribeNewsletter',
       }
@@ -102,12 +142,6 @@ export class ProfileClientV2 extends JanusClient {
     customFields?: string
   ) => {
     const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
-
-    if (!(profile as Profile)) {
-      const profileCast = profile as Profile
-      profileCast.gender = profileCast.gender || ''
-      profileCast.document = profileCast.document || ''
-    }
 
     return this.patch(
       `${this.baseUrl}/${userKey}?alternativeKey=${alternativeKey}`,
@@ -292,6 +326,9 @@ export class ProfileClientV2 extends JanusClient {
 
   protected patch = <T>(url: string, data?: any, config?: RequestConfig) =>
     this.http.patch<T>(url, data, config).catch<any>(statusToError)
+
+  protected put = <T>(url: string, data?: any, config?: RequestConfig) =>
+    this.http.put<T>(url, data, config).catch<any>(statusToError)
 
   private baseUrl = 'api/storage/profile-system/profiles'
 
