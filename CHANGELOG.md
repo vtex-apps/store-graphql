@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Discrepancy in simulation's Price duo unitMultiplier
+- Discrepancy in simulation's Price due to unitMultiplier
 
 ## [2.152.0] - 2022-04-18
 
