@@ -114,6 +114,7 @@ interface CommertialOffer {
   BuyTogether: any[]
   ItemMetadataAttachment: any[]
   Price: number
+  PriceWithPriceTags: number
   ListPrice: number
   PriceWithoutDiscount: number
   RewardValue: number
