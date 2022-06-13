@@ -61,6 +61,22 @@ export const getSimulationPayloadsByItem = (
   })
 }
 
+const getCommertialOfferPrice = (
+  orderFormItem: OrderFormItem,
+  unitMultiplier: number
+) => {
+  const isUnitMultiplierAnInteger = Number.isInteger(unitMultiplier)
+
+  const calculatedSellingPrice =
+    orderFormItem.priceDefinition?.calculatedSellingPrice
+
+  if (isUnitMultiplierAnInteger && calculatedSellingPrice) {
+    return Number((calculatedSellingPrice / (unitMultiplier * 100)).toFixed(2))
+  }
+
+  return orderFormItem.price / 100
+}
+
 export const orderFormItemToSeller = (
   orderFormItem: OrderFormItem & {
     paymentData: any
@@ -72,14 +88,7 @@ export const orderFormItemToSeller = (
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
   const commertialOffer = {
-    Price: orderFormItem.priceDefinition?.calculatedSellingPrice
-      ? Number(
-          (
-            orderFormItem.priceDefinition.calculatedSellingPrice /
-            (unitMultiplier * 100)
-          ).toFixed(2)
-        )
-      : orderFormItem.price / 100,
+    Price: getCommertialOfferPrice(orderFormItem, unitMultiplier),
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
