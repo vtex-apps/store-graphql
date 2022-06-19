@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Changed how to calculate price in `commertialOffer`, now considering price + pricetags instead of sellingPrice / unitMultiplier
+
 ## [2.152.2] - 2022-06-28
 
 ### Fixed
-- InterestRate should be in its percet format
+- InterestRate should be in its percent format
 
 ## [2.152.1] - 2022-05-23 [YANKED]
 
