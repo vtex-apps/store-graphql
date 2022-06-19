@@ -71,9 +71,7 @@ export const orderFormItemToSeller = (
 
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
-  const priceTags = orderFormItem.priceTags?.reduce(
-    (discount, priceTag: PriceTag) => discount + priceTag.value, 0
-  )
+  const priceTags = orderFormItem.priceTags?.reduce((discount, priceTag: PriceTag) => discount + priceTag.value, 0)
 
   const commertialOffer = {
     Price: (orderFormItem.price + priceTags) / 100,
