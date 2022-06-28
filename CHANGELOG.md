@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- InterestRate should be in its percet format
+
 ## [2.152.1] - 2022-05-23 [YANKED]
 
 ### Fixed

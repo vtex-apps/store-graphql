@@ -103,7 +103,7 @@ export const orderFormItemToSeller = (
     installmentOption.installments.forEach((installment) => {
       commertialOffer.Installments.push({
         Value: installment.value / 100,
-        InterestRate: installment.interestRate,
+        InterestRate: installment.interestRate / 100,
         TotalValuePlusInterestRate: installment.total / 100,
         NumberOfInstallments: installment.count,
         PaymentSystemName: installmentOption.paymentName,
