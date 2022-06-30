@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.152.3] - 2022-06-30
+
 ### Fixed
 - Changed how to calculate price in `commertialOffer`, now considering price + pricetags instead of sellingPrice / unitMultiplier
 
