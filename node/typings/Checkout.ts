@@ -57,7 +57,7 @@ interface OrderFormItem {
   parentItemIndex: number | null
   parentAssemblyBinding: string | null
   productCategoryIds: string
-  priceTags: string[]
+  priceTags: PriceTag[]
   measurementUnit: string
   additionalInfo: {
     brandName: string
@@ -78,6 +78,12 @@ interface OrderFormItem {
     sellingPrices: SellingPrice[]
     total: number
   } | null
+}
+
+interface PriceTag {
+  value: number
+  rawValue: number
+  isPercentual: boolean
 }
 
 interface SellingPrice {

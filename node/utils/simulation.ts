@@ -68,18 +68,13 @@ export const orderFormItemToSeller = (
     logisticsInfo: any[]
   }
 ) => {
-  const unitMultiplier = orderFormItem.unitMultiplier ?? 1
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
+  const priceTags = orderFormItem.priceTags?.reduce(
+    (discount, priceTag: PriceTag) => discount + priceTag.value, 0)
+
   const commertialOffer = {
-    Price: orderFormItem.priceDefinition?.calculatedSellingPrice
-      ? Number(
-          (
-            orderFormItem.priceDefinition.calculatedSellingPrice /
-            (unitMultiplier * 100)
-          ).toFixed(2)
-        )
-      : orderFormItem.price / 100,
+    Price: (orderFormItem.price + priceTags) / 100,
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
