@@ -17,6 +17,7 @@ type PickupPoint {
   """
   If false, it means pickup point is currently disabled
   """
+  pickupHolidays: [HolidayHours]
   isActive: Boolean
   """
   Distance in kilometers if this is a search result
@@ -48,6 +49,21 @@ type BusinessHours {
   Closing time in format HH:MM:SS
   """
   closingTime: String
+}
+
+type HolidayHours {
+  """
+  date time in format HH:MM:SS
+  """
+  date: String
+  """
+  hourBegin time in format HH:MM:SS
+  """
+  hourBegin: String
+  """
+  hourEnd time in format HH:MM:SS
+  """
+  hourEnd: String
 }
 
 type NearPickupPointQueryResponse {
