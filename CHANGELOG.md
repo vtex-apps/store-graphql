@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Price shouldn't consider tax, this is sellingPriceWithoutTax, considering only discounts in pricetags at `simulation.ts`  
+
 ## [2.152.3] - 2022-06-30
 
 ### Fixed

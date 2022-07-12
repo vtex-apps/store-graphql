@@ -81,6 +81,7 @@ interface OrderFormItem {
 }
 
 interface PriceTag {
+  name: string,
   value: number
   rawValue: number
   isPercentual: boolean
