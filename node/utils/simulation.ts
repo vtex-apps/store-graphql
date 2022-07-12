@@ -72,8 +72,8 @@ export const orderFormItemToSeller = (
 
   const discountPriceTags = orderFormItem.priceTags?.reduce(
     (discount, priceTag: PriceTag) =>
-      priceTag.name.includes("discount") ? discount + priceTag.value: discount,
-       0
+      priceTag.name.includes('discount') ? discount + priceTag.value: discount,
+      0
   )
 
   const commertialOffer = {
