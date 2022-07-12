@@ -81,7 +81,6 @@ export const orderFormItemToSeller = (
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
-    Tax: orderFormItem.tax,
     AvailableQuantity:
       orderFormItem?.availability === 'available' &&
       (logisticsInfo ? logisticsInfo.stockBalance : 1)
