@@ -17,8 +17,11 @@ type PickupPoint {
   """
   If false, it means pickup point is currently disabled
   """
-  pickupHolidays: [HolidayHours]
   isActive: Boolean
+  """
+    Pickup point restrictions
+  """
+  pickupHolidays: [HolidayHours]
   """
   Distance in kilometers if this is a search result
   """
