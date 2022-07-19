@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.153.0] - 2022-07-19
+
 ### Added
 - Added query to logistics to return holidays
 
