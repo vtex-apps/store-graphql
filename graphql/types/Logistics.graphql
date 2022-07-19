@@ -19,6 +19,10 @@ type PickupPoint {
   """
   isActive: Boolean
   """
+    Pickup point restrictions
+  """
+  pickupHolidays: [HolidayHours]
+  """
   Distance in kilometers if this is a search result
   """
   distance: Float
@@ -48,6 +52,21 @@ type BusinessHours {
   Closing time in format HH:MM:SS
   """
   closingTime: String
+}
+
+type HolidayHours {
+  """
+  date time in format HH:MM:SS
+  """
+  date: String
+  """
+  hourBegin time in format HH:MM:SS
+  """
+  hourBegin: String
+  """
+  hourEnd time in format HH:MM:SS
+  """
+  hourEnd: String
 }
 
 type NearPickupPointQueryResponse {
