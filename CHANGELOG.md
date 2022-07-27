@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+### Fixed
+- Revert change on how to calculate price in `commertialOffer` done at [#608](https://github.com/vtex-apps/store-graphql/pull/608)
 ## [2.153.0] - 2022-07-19
 
 ### Added
