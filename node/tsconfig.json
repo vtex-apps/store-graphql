@@ -15,6 +15,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "es2019"
+    "target": "es2019",
+    "lib": ["ES2019"]
   }
 }
