@@ -48,10 +48,9 @@ interface UtmiParams {
 const convertToBool = (str: any) => !!str && toLower(str) === 'true'
 
 const priceTables = (profile: SessionProfile): string[] => {
-  const priceTables =
-    profile && profile.priceTables && profile.priceTables.value
+  const priceTablesValue = profile?.priceTables?.value
 
-  return priceTables ? priceTables.split(',') : []
+  return priceTablesValue ? priceTablesValue.split(',') : []
 }
 
 const profileFields = (
@@ -60,7 +59,7 @@ const profileFields = (
 ): ProfileFields => ({
   document: path(['document', 'value'], profile),
   email:
-    path(['email', 'value'], profile) ||
+    path(['email', 'value'], profile) ??
     path(['storeUserEmail', 'value'], user),
   firstName: path(['firstName', 'value'], profile),
   id: path(['id', 'value'], profile),
@@ -96,7 +95,9 @@ const setUtmiParams = (publicFields: SessionPublic) => ({
   part: path(['utmi_pc', 'value'], publicFields),
 })
 
-export const sessionFields = (session: Session): SessionFields | {} => {
+export const sessionFields = (
+  session: Session
+): SessionFields | Record<string, unknown> => {
   const { namespaces } = session
 
   return namespaces

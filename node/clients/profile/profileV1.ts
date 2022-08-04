@@ -20,7 +20,7 @@ export class ProfileClientV1 extends JanusClient {
     super(context, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         VtexIdClientAutCookie: context.authToken ?? '',
       },
       timeout: FIVE_SECONDS_MS,
