@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.153.2] - 2022-08-04
+
 ## [2.153.1] - 2022-07-28
 ### Fixed
 - Revert change on how to calculate price in `commertialOffer` done at [#608](https://github.com/vtex-apps/store-graphql/pull/608)
