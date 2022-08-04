@@ -56,7 +56,8 @@ export class MasterData extends ExternalClient {
 
   public createDocument = (
     acronym: string,
-    fields: Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    fields: object,
     schema?: string,
     account?: string
     // eslint-disable-next-line max-params
@@ -72,7 +73,8 @@ export class MasterData extends ExternalClient {
   public updateDocument = (
     acronym: string,
     id: string,
-    fields: Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    fields: object,
     account?: string,
     schema?: string
     // eslint-disable-next-line max-params
