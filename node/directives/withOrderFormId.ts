@@ -7,6 +7,7 @@ export class WithOrderFormId extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
+    // eslint-disable-next-line max-params
     field.resolve = async (root, args, ctx: Context, info) => {
       const checkoutOrderFormId = getOrderFormIdFromCookie(ctx.cookies)
 

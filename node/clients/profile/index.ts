@@ -7,7 +7,7 @@ export class ProfileClient extends JanusClient {
     super(context, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         VtexIdClientAutCookie: context.authToken ?? '',
       },
       timeout: FIVE_SECONDS_MS,
@@ -53,6 +53,7 @@ export class ProfileClient extends JanusClient {
     profile: Profile | { profilePicture: string },
     context: Context,
     customFields?: string
+    // eslint-disable-next-line max-params
   ) =>
     this.getProfileClient(context).then((profileClient) =>
       profileClient.updateProfileInfo(user, profile, customFields)
@@ -81,6 +82,7 @@ export class ProfileClient extends JanusClient {
     personalPreferences: PersonalPreferences,
     context: Context,
     currentUserProfile?: Profile
+    // eslint-disable-next-line max-params
   ) =>
     this.getProfileClient(context).then((profileClient) => {
       if (!currentUserProfile) {
@@ -92,6 +94,7 @@ export class ProfileClient extends JanusClient {
           )
         })
       }
+
       return profileClient.updatePersonalPreferences(
         user,
         personalPreferences,
@@ -102,10 +105,11 @@ export class ProfileClient extends JanusClient {
   private getProfileClient = (context: Context) => {
     const licenseManager = context.clients.licenseManagerExtended
 
-    return licenseManager.getCurrentAccount().then((account) => {
+    return licenseManager.getCurrentAccount().then((account: Account) => {
       if (account.PIIEnabled) {
         return context.clients.profileV2
       }
+
       return context.clients.profileV1
     })
   }

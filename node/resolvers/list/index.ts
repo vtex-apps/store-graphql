@@ -53,6 +53,7 @@ const addListItem = async (item: Item, masterdata: MasterData) => {
 }
 
 const addItems = async (
+  // eslint-disable-next-line @typescript-eslint/default-param-last
   items: Item[] = [],
   { clients, clients: { masterdata } }: Context
 ) => {
@@ -91,6 +92,7 @@ const updateItems = async (items: Item[], masterdata: MasterData) => {
 
   const itemsIdAdded = await Promise.all(
     map(
+      // eslint-disable-next-line no-return-await
       async (item: Item) => await addListItem(item, masterdata),
       itemsToBeAdded
     )
@@ -99,7 +101,7 @@ const updateItems = async (items: Item[], masterdata: MasterData) => {
   const itemsIdUpdated = map((item: Item) => {
     masterdata.updateDocument(
       acronymListProduct,
-      path(['id'], item) || '',
+      path(['id'], item) ?? '',
       item
     )
 

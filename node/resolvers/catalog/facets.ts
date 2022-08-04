@@ -27,6 +27,7 @@ const formatCategoriesTree = (root: any) => {
 
 const addSelected = (
   facets: any[],
+  // eslint-disable-next-line no-shadow
   { query, map }: { query: string; map: string }
 ): any => {
   return facets.map((facet: any) => {

@@ -23,6 +23,7 @@ export async function uploadAttachment(args: any, ctx: Context) {
 
   const formData = new FormData()
 
+  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   const randomName = generateRandomName() + getFileExtension(filename)
 
   formData.append(field, buffer, {

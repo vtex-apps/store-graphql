@@ -107,7 +107,7 @@ const shouldUpdateMarketingData = (
     utmiCampaign = null,
     utmiPart = null,
     utmipage = null,
-  } = orderFormMarketingTags || {}
+  } = orderFormMarketingTags ?? {}
 
   if (
     !utmParams?.source &&
@@ -222,8 +222,7 @@ export async function setCheckoutCookies(
   rawHeaders: Record<string, any>,
   ctx: Context
 ) {
-  const responseSetCookies: string[] =
-    (rawHeaders && rawHeaders['set-cookie']) || []
+  const responseSetCookies: string[] = rawHeaders?.['set-cookie'] || []
 
   const host = ctx.get('x-forwarded-host')
   const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
@@ -382,6 +381,7 @@ export const queries: Record<string, Resolver> = {
     } = ctx
 
     return items.map((item) => {
+      // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
         const simulationPayloads = getSimulationPayloadsByItem(
           item,
@@ -483,7 +483,7 @@ export const mutations: Record<string, Resolver> = {
 
     if (shouldUpdateMarketingData(marketingData, utmParams, utmiParams)) {
       const newMarketingData = {
-        ...(marketingData || {}),
+        ...(marketingData ?? {}),
       }
 
       newMarketingData.utmCampaign = utmParams?.campaign
@@ -542,6 +542,7 @@ export const mutations: Record<string, Resolver> = {
 
     await addOptionsForItems(withOptions, checkout, addItem, previousItems)
 
+    // eslint-disable-next-line no-return-await
     return withOptions.length === 0 ? addItem : await checkout.orderForm()
   },
 
@@ -698,6 +699,7 @@ export const mutations: Record<string, Resolver> = {
       clients: { checkout },
     } = ctx
 
+    // eslint-disable-next-line no-shadow
     const { data, headers } = await checkout.newOrderForm(orderFormId)
 
     await setCheckoutCookies(headers, ctx)

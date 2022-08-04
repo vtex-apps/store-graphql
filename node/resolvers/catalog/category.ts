@@ -71,7 +71,7 @@ export const resolvers = {
             id.toString(),
             getTypeForCategory(path),
             binding.id
-          )) || path
+          )) ?? path
         : path
     },
 
@@ -113,7 +113,7 @@ export const resolvers = {
           id.toString(),
           getTypeForCategory(cleanUrl(url)),
           binding.id
-        )) || url
+        )) ?? url
 
       return lastSegment(translatedRoute)
     },

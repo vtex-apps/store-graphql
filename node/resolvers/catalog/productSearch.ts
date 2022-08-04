@@ -20,7 +20,7 @@ export const resolvers = {
         headers: { resources },
       } = productsRaw
 
-      const quantity = resources.split('/')[1]
+      const [, quantity] = resources.split('/')
 
       return parseInt(quantity, 10)
     },
@@ -30,14 +30,15 @@ export const resolvers = {
       _: any,
       { vtex: { account }, clients: { catalog } }: Context
     ) => {
-      const query = translatedArgs.query || ''
-      const map = translatedArgs.map || ''
+      const query = translatedArgs.query ?? ''
+      const map = translatedArgs.map ?? ''
       const queryAndMap = zip(
         query.toLowerCase().split('/').map(decodeURIComponent),
         map.split(',')
       )
 
       const categoriesSearched = queryAndMap
+        // eslint-disable-next-line no-shadow
         .filter(([_, m]) => m === 'c')
         .map(([q]) => q)
 

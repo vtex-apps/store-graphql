@@ -98,7 +98,7 @@ const joinOptionsWithType = (options: AssemblyOptionInput[]) => {
 
   for (const option of options) {
     const { assemblyId, ...rest } = option
-    const currentArray = (result[assemblyId] && result[assemblyId].items) || []
+    const currentArray = result[assemblyId]?.items || []
 
     if (rest.id) {
       currentArray.push(rest)
@@ -119,6 +119,7 @@ const addOptionsRecursive = async (
   orderForm: OrderForm,
   oldItems: OrderFormItem[],
   checkout: Context['clients']['checkout']
+  // eslint-disable-next-line max-params
 ) => {
   const recentlyAdded = getNewItemsOnly(oldItems, orderForm.items)
 
@@ -137,6 +138,7 @@ const addOptionsRecursive = async (
       continue
     }
 
+    // eslint-disable-next-line no-await-in-loop
     await addOptionsLogic({
       checkout,
       itemIndex: parentIndex,
@@ -164,6 +166,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
 
   for (const assemblyId of idsToRemove) {
     const parsedOptions = joinedToRemove[assemblyId]
+    // eslint-disable-next-line no-await-in-loop
     const response = await checkout
       .removeAssemblyOptions(
         orderForm.orderFormId,
@@ -171,6 +174,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
         assemblyId,
         removeAssemblyBody(parsedOptions)
       )
+      // eslint-disable-next-line no-loop-func
       .catch(() => ({ data: recentOrderForm }))
 
     recentOrderForm = response.data
@@ -179,6 +183,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
 
+    // eslint-disable-next-line no-await-in-loop
     recentOrderForm = await checkout
       .addAssemblyOptions(
         orderForm.orderFormId,
@@ -186,16 +191,19 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
         assemblyId,
         addAssemblyBody(parsedOptions)
       )
+      // eslint-disable-next-line no-loop-func
       .catch(() => recentOrderForm)
   }
 
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
     const itemsWithRecursiveOptions = parsedOptions.items.filter(
+      // eslint-disable-next-line no-shadow
       ({ options }) => !!options
     )
 
     if (itemsWithRecursiveOptions.length > 0) {
+      // eslint-disable-next-line no-await-in-loop
       await addOptionsRecursive(
         itemsWithRecursiveOptions,
         assemblyId,
@@ -219,6 +227,7 @@ export const addOptionsForItems = async (
   checkout: Context['clients']['checkout'],
   orderForm: OrderForm,
   oldItems: OrderFormItem[]
+  // eslint-disable-next-line max-params
 ) => {
   const recentlyAdded =
     items.length > 0 ? getNewItemsOnly(oldItems, orderForm.items) : []
@@ -242,6 +251,7 @@ export const addOptionsForItems = async (
       continue
     }
 
+    // eslint-disable-next-line no-await-in-loop
     await addOptionsLogic({
       checkout,
       itemIndex: parentIndex,
@@ -313,8 +323,7 @@ const getItemComposition = (
     return undefined
   }
 
-  const items =
-    (childAssemblyData.composition && childAssemblyData.composition.items) || []
+  const items = childAssemblyData.composition?.items ?? []
 
   return find<CompositionItem>(propEq('id', id), items)
 }
@@ -338,6 +347,7 @@ export const buildAddedOptionsForItem = (
   childs: OrderFormItem[],
   assemblyOptionsMap: Record<string, AssemblyOption[]>,
   orderForm: OrderForm
+  // eslint-disable-next-line max-params
 ) => {
   const children = filter<OrderFormItem>(isSonOfItem(index), childs)
 
@@ -351,7 +361,7 @@ export const buildAddedOptionsForItem = (
     const compositionItem = getItemComposition(
       childItem.id,
       childAssemblyData
-    ) || { initialQuantity: 0 }
+    ) ?? { initialQuantity: 0 }
 
     return {
       choiceType: getItemChoiceType(childAssemblyData),
@@ -406,7 +416,7 @@ const isInitialItemMissing = (
   return {
     initialQuantity: initialItem.initialQuantity,
     name: metadataItem.name,
-    removedQuantity: initialItem.initialQuantity - (selectedQuantity || 0),
+    removedQuantity: initialItem.initialQuantity - (selectedQuantity ?? 0),
   }
 }
 

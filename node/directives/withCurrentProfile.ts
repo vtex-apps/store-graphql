@@ -19,6 +19,7 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
+    // eslint-disable-next-line max-params
     field.resolve = async (root, args, context, info) => {
       const profileInfos: ProfileInfos = await getCurrentProfileFromSession(
         context
@@ -192,7 +193,7 @@ async function isValidCallcenterOperator(context: Context, email: string) {
 }
 
 function isLogged(currentProfile: CurrentProfile | null) {
-  return currentProfile && currentProfile.email
+  return currentProfile?.email
 }
 
 async function checkUserAccount(

@@ -43,7 +43,7 @@ export class Checkout extends JanusClient {
 
   private getChannelQueryString = () => {
     const { segment } = this.context as CustomIOContext
-    const channel = segment && segment.channel
+    const channel = segment?.channel
     const queryString = channel ? `?sc=${channel}` : ''
 
     return queryString
@@ -68,6 +68,7 @@ export class Checkout extends JanusClient {
     appId: string,
     field: string,
     value: any
+    // eslint-disable-next-line max-params
   ) =>
     this.put(
       this.routes.orderFormCustomData(orderFormId, appId, field),
@@ -145,6 +146,7 @@ export class Checkout extends JanusClient {
     itemId: string | number,
     assemblyOptionsId: string,
     body: any
+    // eslint-disable-next-line max-params
   ) =>
     this.post<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),
@@ -157,6 +159,7 @@ export class Checkout extends JanusClient {
     itemId: string | number,
     assemblyOptionsId: string,
     body: any
+    // eslint-disable-next-line max-params
   ) =>
     this.delete<OrderForm>(
       this.routes.assemblyOptions(orderFormId, itemId, assemblyOptionsId),

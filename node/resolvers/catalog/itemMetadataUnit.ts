@@ -8,10 +8,10 @@ type AnyMetadataItem = Partial<MetadataItem & CatalogMetadataItem>
 export const resolvers = {
   ItemMetadataUnit: {
     imageUrl: ({ imageUrl, MainImage }: AnyMetadataItem) =>
-      imageUrl || MainImage,
-    skuName: ({ skuName, Name }: AnyMetadataItem) => skuName || Name,
-    name: ({ name, NameComplete }: AnyMetadataItem) => name || NameComplete,
+      imageUrl ?? MainImage,
+    skuName: ({ skuName, Name }: AnyMetadataItem) => skuName ?? Name,
+    name: ({ name, NameComplete }: AnyMetadataItem) => name ?? NameComplete,
     productId: ({ productId, ProductId }: AnyMetadataItem) =>
-      productId || ProductId,
+      productId ?? ProductId,
   },
 }

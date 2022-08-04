@@ -16,6 +16,7 @@ const getPriceForItem = (
   fatherIndex: number,
   fatherItem: OrderFormItem,
   orderForm: OrderForm
+  // eslint-disable-next-line max-params
 ): number => {
   const [itemChildren, others] = partition(
     propEq('parentItemIndex', fatherIndex),
@@ -46,7 +47,7 @@ export const resolvers = {
       return attachmentOfferings && attachmentOfferings.length > 0
     },
     imageUrl: ({ imageUrl }: Params) =>
-      imageUrl && imageUrl.replace('http://', 'https://'),
+      imageUrl?.replace('http://', 'https://'),
     listPrice: ({ listPrice }: Params) => listPrice / 100,
     price: ({ price }: Params) => price / 100,
     sellingPrice: ({ sellingPrice }: Params) => sellingPrice / 100,

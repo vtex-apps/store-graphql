@@ -18,7 +18,7 @@ export class LogisticsClient extends JanusClient {
     super(ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         VtexIdclientAutCookie: ctx.authToken,
       },
       timeout: FOUR_SECONDS,

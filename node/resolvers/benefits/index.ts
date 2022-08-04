@@ -36,7 +36,7 @@ export const fieldResolvers = {
             return products.map((product: any) => {
               const benefitSKUIds: any = []
 
-              product.items.map((item: any) => {
+              product.items.forEach((item: any) => {
                 if (indexOf(item.itemId, skuIds) > -1) {
                   benefitSKUIds.push(item.itemId)
                 }

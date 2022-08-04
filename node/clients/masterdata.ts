@@ -17,7 +17,7 @@ export class MasterData extends ExternalClient {
     super(`http://api.vtex.com/${ctx.account}`, ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         ...{ Accept: 'application/vnd.vtex.ds.v10+json' },
         ...(ctx.adminUserAuthToken
           ? { VtexIdclientAutCookie: ctx.adminUserAuthToken }
@@ -44,6 +44,7 @@ export class MasterData extends ExternalClient {
     id: string,
     fields: string[],
     account?: string
+    // eslint-disable-next-line max-params
   ) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
@@ -55,9 +56,10 @@ export class MasterData extends ExternalClient {
 
   public createDocument = (
     acronym: string,
-    fields: object,
+    fields: Record<string, unknown>,
     schema?: string,
     account?: string
+    // eslint-disable-next-line max-params
   ) =>
     this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
@@ -70,9 +72,10 @@ export class MasterData extends ExternalClient {
   public updateDocument = (
     acronym: string,
     id: string,
-    fields: object,
+    fields: Record<string, unknown>,
     account?: string,
     schema?: string
+    // eslint-disable-next-line max-params
   ) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
@@ -90,6 +93,7 @@ export class MasterData extends ExternalClient {
     schema?: string,
     sort?: string,
     account?: string
+    // eslint-disable-next-line max-params
   ) => {
     return this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
@@ -114,6 +118,7 @@ export class MasterData extends ExternalClient {
     id: string,
     fields: string,
     formData: FormData
+    // eslint-disable-next-line max-params
   ) =>
     this.post<any>(this.routes.attachments(acronym, id, fields), formData, {
       headers: formData.getHeaders(),

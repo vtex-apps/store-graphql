@@ -38,6 +38,7 @@ class CustomGraphQLError extends Error {
 
 export function throwOnGraphQLErrors<T extends Serializable>(message: string) {
   return function maybeGraphQLResponse(response: GraphQLResponse<T>) {
+    // eslint-disable-next-line no-self-compare
     if (response?.errors?.length || 0 > 0) {
       throw new CustomGraphQLError(message, response.errors!)
     }
@@ -68,6 +69,7 @@ export class Rewriter extends AppGraphQLClient {
         }
       )
       .then(throwOnGraphQLErrors('Error getting route data from vtex.rewriter'))
+      // eslint-disable-next-line no-shadow
       .then((data) => {
         return data.data!.internal.routes
       })
