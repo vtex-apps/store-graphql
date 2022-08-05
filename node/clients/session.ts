@@ -43,7 +43,6 @@ export class Session extends JanusClient {
     items: string[],
     token: any,
     vtexIdCookies: VtexIdCookies
-    // eslint-disable-next-line max-params
   ) => {
     const data = { public: { [key]: { value } } }
     let cookies = `vtex_session=${token};`

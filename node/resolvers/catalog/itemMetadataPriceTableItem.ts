@@ -1,4 +1,3 @@
-/* eslint-disable max-params */
 import { isEmpty, path } from 'ramda'
 
 import { getItemChoiceType, CHOICE_TYPES } from '../checkout/attachmentsHelper'

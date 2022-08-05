@@ -1,4 +1,3 @@
-/* eslint-disable max-params */
 import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 
 const FIVE_SECONDS_MS = 5 * 1000

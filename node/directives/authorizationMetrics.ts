@@ -43,7 +43,6 @@ export class AuthorizationMetrics extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
-    // eslint-disable-next-line max-params
     field.resolve = async (root, args, ctx, info) => {
       checkForAuthorization(ctx, info)
 

@@ -76,7 +76,6 @@ const setVtexIdAuthCookie = (
   response: any,
   headers: any,
   authStatus: any
-  // eslint-disable-next-line max-params
 ) => {
   if (authStatus === 'Success') {
     const authAccount = `VtexIdclientAutCookie_${ioContext.account}`

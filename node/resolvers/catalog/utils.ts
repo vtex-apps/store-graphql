@@ -119,7 +119,6 @@ export const searchContextGetCategory = async (
   catalog: Context['clients']['catalog'],
   isVtex: boolean,
   logger: Context['clients']['logger']
-  // eslint-disable-next-line max-params
 ) => {
   if (!isVtex) {
     return getIdFromTree(args, catalog)

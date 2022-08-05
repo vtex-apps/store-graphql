@@ -19,7 +19,6 @@ export class WithCurrentProfile extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
-    // eslint-disable-next-line max-params
     field.resolve = async (root, args, context, info) => {
       const profileInfos: ProfileInfos = await getCurrentProfileFromSession(
         context

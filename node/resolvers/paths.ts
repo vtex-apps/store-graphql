@@ -57,7 +57,6 @@ const paths = {
   setPassword: () => `${paths.vtexIdPub}/authentication/classic/setpassword`,
   sendEmailVerification: () =>
     `${paths.vtexIdPub}/authentication/accesskey/send`,
-  // eslint-disable-next-line max-params
   sessionToken: (scope: any, account: any, redirect = '/', returnUrl = '/') =>
     `${
       paths.vtexIdPub

@@ -16,7 +16,6 @@ const getPriceForItem = (
   fatherIndex: number,
   fatherItem: OrderFormItem,
   orderForm: OrderForm
-  // eslint-disable-next-line max-params
 ): number => {
   const [itemChildren, others] = partition(
     propEq('parentItemIndex', fatherIndex),
