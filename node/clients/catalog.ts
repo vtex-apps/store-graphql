@@ -254,8 +254,7 @@ export class Catalog extends AppClient {
     }
 
     if (specificationFilters && specificationFilters.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      url += specificationFilters.map((filter) => `&fq=${filter}`)
+      url = `${url}${specificationFilters.map((filter) => `&fq=${filter}`)}`
     }
 
     if (priceRange) {
