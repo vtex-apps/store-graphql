@@ -4,6 +4,7 @@ import { compose, last, split, toLower } from 'ramda'
 
 import { catalogSlugify, Slugify } from './slug'
 
+// eslint-disable-next-line no-restricted-syntax
 export enum CatalogCrossSellingTypes {
   whoboughtalsobought = 'whoboughtalsobought',
   similars = 'similars',

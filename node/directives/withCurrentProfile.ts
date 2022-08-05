@@ -192,7 +192,7 @@ async function isValidCallcenterOperator(context: Context, email: string) {
 }
 
 function isLogged(currentProfile: CurrentProfile | null) {
-  return currentProfile && currentProfile.email
+  return currentProfile?.email
 }
 
 async function checkUserAccount(

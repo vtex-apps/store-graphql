@@ -23,7 +23,7 @@ export async function uploadAttachment(args: any, ctx: Context) {
 
   const formData = new FormData()
 
-  const randomName = generateRandomName() + getFileExtension(filename)
+  const randomName = `${generateRandomName()}${getFileExtension(filename)}`
 
   formData.append(field, buffer, {
     contentType: mimetype,

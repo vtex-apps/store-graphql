@@ -98,7 +98,7 @@ const joinOptionsWithType = (options: AssemblyOptionInput[]) => {
 
   for (const option of options) {
     const { assemblyId, ...rest } = option
-    const currentArray = (result[assemblyId] && result[assemblyId].items) || []
+    const currentArray = result[assemblyId]?.items || []
 
     if (rest.id) {
       currentArray.push(rest)
@@ -121,6 +121,7 @@ const addOptionsRecursive = async (
   checkout: Context['clients']['checkout']
 ) => {
   const recentlyAdded = getNewItemsOnly(oldItems, orderForm.items)
+  const results = []
 
   for (const item of items) {
     const parentItem = findRecentlyAddedParent(
@@ -137,14 +138,18 @@ const addOptionsRecursive = async (
       continue
     }
 
-    await addOptionsLogic({
-      checkout,
-      itemIndex: parentIndex,
-      options: item.options,
-      orderForm,
-      oldItems,
-    })
+    results.push(
+      addOptionsLogic({
+        checkout,
+        itemIndex: parentIndex,
+        options: item.options,
+        orderForm,
+        oldItems,
+      })
+    )
   }
+
+  await Promise.all(results)
 }
 
 const addOptionsLogic = async (input: AddOptionsLogicInput) => {
@@ -164,6 +169,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
 
   for (const assemblyId of idsToRemove) {
     const parsedOptions = joinedToRemove[assemblyId]
+    // eslint-disable-next-line no-await-in-loop
     const response = await checkout
       .removeAssemblyOptions(
         orderForm.orderFormId,
@@ -171,6 +177,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
         assemblyId,
         removeAssemblyBody(parsedOptions)
       )
+      // eslint-disable-next-line no-loop-func
       .catch(() => ({ data: recentOrderForm }))
 
     recentOrderForm = response.data
@@ -179,6 +186,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
 
+    // eslint-disable-next-line no-await-in-loop
     recentOrderForm = await checkout
       .addAssemblyOptions(
         orderForm.orderFormId,
@@ -186,25 +194,32 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
         assemblyId,
         addAssemblyBody(parsedOptions)
       )
+      // eslint-disable-next-line no-loop-func
       .catch(() => recentOrderForm)
   }
+
+  const results = []
 
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
     const itemsWithRecursiveOptions = parsedOptions.items.filter(
-      ({ options }) => !!options
+      (arg) => !!arg.options
     )
 
     if (itemsWithRecursiveOptions.length > 0) {
-      await addOptionsRecursive(
-        itemsWithRecursiveOptions,
-        assemblyId,
-        recentOrderForm,
-        oldItems,
-        checkout
+      results.push(
+        addOptionsRecursive(
+          itemsWithRecursiveOptions,
+          assemblyId,
+          recentOrderForm,
+          oldItems,
+          checkout
+        )
       )
     }
   }
+
+  await Promise.all(results)
 }
 
 /**
@@ -222,6 +237,8 @@ export const addOptionsForItems = async (
 ) => {
   const recentlyAdded =
     items.length > 0 ? getNewItemsOnly(oldItems, orderForm.items) : []
+
+  const results = []
 
   for (const item of items) {
     if (!item.options || item.options.length === 0) {
@@ -242,14 +259,18 @@ export const addOptionsForItems = async (
       continue
     }
 
-    await addOptionsLogic({
-      checkout,
-      itemIndex: parentIndex,
-      options: item.options,
-      orderForm,
-      oldItems,
-    })
+    results.push(
+      addOptionsLogic({
+        checkout,
+        itemIndex: parentIndex,
+        options: item.options,
+        orderForm,
+        oldItems,
+      })
+    )
   }
+
+  await Promise.all(results)
 }
 
 const filterCompositionNull = (assemblyOptions: AssemblyOption[]) =>
@@ -313,8 +334,7 @@ const getItemComposition = (
     return undefined
   }
 
-  const items =
-    (childAssemblyData.composition && childAssemblyData.composition.items) || []
+  const items = childAssemblyData.composition?.items ?? []
 
   return find<CompositionItem>(propEq('id', id), items)
 }
@@ -351,7 +371,7 @@ export const buildAddedOptionsForItem = (
     const compositionItem = getItemComposition(
       childItem.id,
       childAssemblyData
-    ) || { initialQuantity: 0 }
+    ) ?? { initialQuantity: 0 }
 
     return {
       choiceType: getItemChoiceType(childAssemblyData),
@@ -406,7 +426,7 @@ const isInitialItemMissing = (
   return {
     initialQuantity: initialItem.initialQuantity,
     name: metadataItem.name,
-    removedQuantity: initialItem.initialQuantity - (selectedQuantity || 0),
+    removedQuantity: initialItem.initialQuantity - (selectedQuantity ?? 0),
   }
 }
 
