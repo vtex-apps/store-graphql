@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Fixing null streetNumber bug
+
 ## [2.154.0] - 2022-08-04
 
 ### Fixed
