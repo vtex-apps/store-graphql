@@ -107,10 +107,9 @@ const brandFromList = async (
   slug: string,
   catalog: Context['clients']['catalog']
 ) => {
-  // eslint-disable-next-line no-shadow
-  const brandFromList = await getBrandFromSlug(toLower(slug), catalog)
+  const dataBrandFromList = await getBrandFromSlug(toLower(slug), catalog)
 
-  return brandFromList ? brandFromList.id : null
+  return dataBrandFromList?.id ?? null
 }
 
 const getBrandId = async (
@@ -153,9 +152,10 @@ const categoriesOnlyQuery = compose<
   string
 >(join('/'), map(prop('0')), filter(isTupleMap))
 
-// eslint-disable-next-line no-shadow
-const getAndParsePagetype = async (path: string, ctx: Context) => {
-  const pagetype = await ctx.clients.catalog.pageType(path).catch(() => null)
+const getAndParsePagetype = async (pathQuery: string, ctx: Context) => {
+  const pagetype = await ctx.clients.catalog
+    .pageType(pathQuery)
+    .catch(() => null)
 
   if (!pagetype) {
     return { titleTag: null, metaTagDescription: null }
@@ -168,8 +168,7 @@ const getAndParsePagetype = async (path: string, ctx: Context) => {
 }
 
 const getCategoryMetadata = async (
-  // eslint-disable-next-line no-shadow
-  { map, query }: SearchMetadataArgs,
+  options: SearchMetadataArgs,
   ctx: Context
 ) => {
   const {
@@ -177,8 +176,8 @@ const getCategoryMetadata = async (
   } = ctx
 
   const queryAndMap: TupleString[] = zip(
-    (query ?? '').split('/'),
-    (map ?? '').split(',')
+    (options.query ?? '').split('/'),
+    (options.map ?? '').split(',')
   )
 
   const cleanQuery = categoriesOnlyQuery(queryAndMap)
@@ -239,9 +238,8 @@ const getSearchMetaData = async (
   args: SearchMetadataArgs,
   ctx: Context
 ) => {
-  // eslint-disable-next-line no-shadow
-  const map = args.map ?? ''
-  const firstMap = head(map.split(','))
+  const argsMap = args.map ?? ''
+  const firstMap = head(argsMap.split(','))
 
   if (firstMap === 'c') {
     return getCategoryMetadata(args, ctx)
@@ -323,45 +321,40 @@ export const queries = {
     }
   },
 
-  facets: async (
-    _: any,
-    // eslint-disable-next-line no-shadow
-    { facets, query, map, hideUnavailableItems }: FacetsArgs,
-    ctx: Context
-  ) => {
+  facets: async (_: any, args: FacetsArgs, ctx: Context) => {
     const {
       clients: { catalog },
       clients,
     } = ctx
 
-    if (facets?.includes('undefined')) {
+    if (args.facets?.includes('undefined')) {
       throw new UserInputError('Bad facets parameter provided')
     }
 
     let result
     const translatedQuery = await translateToStoreDefaultLanguage(
       clients,
-      query
+      args.query
     )
 
     const segmentData = ctx.vtex.segment
     const salesChannel = segmentData?.channel.toString() ?? ''
 
-    const unavailableString = hideUnavailableItems
+    const unavailableString = args.hideUnavailableItems
       ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
       : ''
 
-    if (facets) {
-      result = await catalog.facets(facets)
+    if (args.facets) {
+      result = await catalog.facets(args.facets)
     } else {
       result = await catalog.facets(
-        `${translatedQuery}?map=${map}${unavailableString}`
+        `${translatedQuery}?map=${args.map}${unavailableString}`
       )
     }
 
     result.queryArgs = {
       query: translatedQuery,
-      map,
+      map: args.map,
     }
 
     return result
@@ -568,10 +561,7 @@ export const queries = {
    * @author Bruno Dias
    */
   search: async (_: any, args: any, ctx: Context) => {
-    // eslint-disable-next-line no-shadow
-    const { map, query } = args
-
-    if (query == null || map == null) {
+    if (args.query == null || args.map == null) {
       throw new UserInputError('Search query/map cannot be null')
     }
 
@@ -614,9 +604,8 @@ export const queries = {
     return response
   },
 
-  // eslint-disable-next-line no-shadow
-  pageType: async (_: any, { path, query }: PageTypeArgs, ctx: Context) => {
-    const response = await ctx.clients.catalog.pageType(path, query)
+  pageType: async (_: any, args: PageTypeArgs, ctx: Context) => {
+    const response = await ctx.clients.catalog.pageType(args.path, args.query)
 
     return {
       id: response.id,

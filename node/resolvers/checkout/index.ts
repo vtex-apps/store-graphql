@@ -699,10 +699,11 @@ export const mutations: Record<string, Resolver> = {
       clients: { checkout },
     } = ctx
 
-    // eslint-disable-next-line no-shadow
-    const { data, headers } = await checkout.newOrderForm(orderFormId)
+    const { data, headers: responseHeaders } = await checkout.newOrderForm(
+      orderFormId
+    )
 
-    await setCheckoutCookies(headers, ctx)
+    await setCheckoutCookies(responseHeaders, ctx)
 
     return data
   },

@@ -27,22 +27,21 @@ const formatCategoriesTree = (root: any) => {
 
 const addSelected = (
   facets: any[],
-  // eslint-disable-next-line no-shadow
-  { query, map }: { query: string; map: string }
+  options: { query: string; map: string }
 ): any => {
   return facets.map((facet: any) => {
     let children = facet.Children
 
     if (children) {
-      children = addSelected(children, { query, map })
+      children = addSelected(children, options)
     }
 
     const currentFacetSlug = decodeURIComponent(facet.Value).toLowerCase()
 
     const isSelected =
       zip(
-        query.toLowerCase().split('/').map(decodeURIComponent),
-        map.toLowerCase().split(',')
+        options.query.toLowerCase().split('/').map(decodeURIComponent),
+        options.map.toLowerCase().split(',')
       ).find(
         ([slug, slugMap]) => slug === currentFacetSlug && facet.Map === slugMap
       ) !== undefined

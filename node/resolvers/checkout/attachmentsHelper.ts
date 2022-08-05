@@ -198,8 +198,7 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
     const itemsWithRecursiveOptions = parsedOptions.items.filter(
-      // eslint-disable-next-line no-shadow
-      ({ options }) => !!options
+      (arg) => !!arg.options
     )
 
     if (itemsWithRecursiveOptions.length > 0) {

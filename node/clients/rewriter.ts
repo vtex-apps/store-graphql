@@ -58,7 +58,7 @@ export class Rewriter extends AppGraphQLClient {
   }
 
   public getRoute = async (id: string, type: string, bindingId: string) => {
-    const data = await this.graphql
+    const responseData = await this.graphql
       .query<GetRoutesResponse, { id: string; type: string }>(
         {
           query: getRouteQuery,
@@ -69,11 +69,10 @@ export class Rewriter extends AppGraphQLClient {
         }
       )
       .then(throwOnGraphQLErrors('Error getting route data from vtex.rewriter'))
-      // eslint-disable-next-line no-shadow
       .then((data) => {
         return data.data!.internal.routes
       })
 
-    return data.find((route) => route.binding === bindingId)?.route
+    return responseData.find((route) => route.binding === bindingId)?.route
   }
 }

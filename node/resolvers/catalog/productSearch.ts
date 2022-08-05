@@ -38,8 +38,7 @@ export const resolvers = {
       )
 
       const categoriesSearched = queryAndMap
-        // eslint-disable-next-line no-shadow
-        .filter(([_, m]) => m === 'c')
+        .filter(([__, m]) => m === 'c')
         .map(([q]) => q)
 
       const categoriesCount = map.split(',').filter((m) => m === 'c').length
