@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import {
   InstanceOptions,
   IOContext,
@@ -44,7 +45,6 @@ export class MasterData extends ExternalClient {
     id: string,
     fields: string[],
     account?: string
-    // eslint-disable-next-line max-params
   ) =>
     this.get<T>(this.routes.document(acronym, id), {
       metric: 'masterdata-getDocument',
@@ -60,7 +60,6 @@ export class MasterData extends ExternalClient {
     fields: object,
     schema?: string,
     account?: string
-    // eslint-disable-next-line max-params
   ) =>
     this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
       metric: 'masterdata-createDocument',
@@ -77,7 +76,6 @@ export class MasterData extends ExternalClient {
     fields: object,
     account?: string,
     schema?: string
-    // eslint-disable-next-line max-params
   ) =>
     this.patch(this.routes.document(acronym, id), fields, {
       metric: 'masterdata-updateDocument',
@@ -95,7 +93,6 @@ export class MasterData extends ExternalClient {
     schema?: string,
     sort?: string,
     account?: string
-    // eslint-disable-next-line max-params
   ) => {
     return this.get<T[]>(this.routes.search(acronym), {
       headers: paginationArgsToHeaders(pagination),
@@ -120,7 +117,6 @@ export class MasterData extends ExternalClient {
     id: string,
     fields: string,
     formData: FormData
-    // eslint-disable-next-line max-params
   ) =>
     this.post<any>(this.routes.attachments(acronym, id, fields), formData, {
       headers: formData.getHeaders(),

@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 
 const FIVE_SECONDS_MS = 5 * 1000
@@ -53,7 +54,6 @@ export class ProfileClient extends JanusClient {
     profile: Profile | { profilePicture: string },
     context: Context,
     customFields?: string
-    // eslint-disable-next-line max-params
   ) =>
     this.getProfileClient(context).then((profileClient) =>
       profileClient.updateProfileInfo(user, profile, customFields)
@@ -82,7 +82,6 @@ export class ProfileClient extends JanusClient {
     personalPreferences: PersonalPreferences,
     context: Context,
     currentUserProfile?: Profile
-    // eslint-disable-next-line max-params
   ) =>
     this.getProfileClient(context).then((profileClient) => {
       if (!currentUserProfile) {

@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import {
   all,
   filter,
@@ -119,7 +120,6 @@ const addOptionsRecursive = async (
   orderForm: OrderForm,
   oldItems: OrderFormItem[],
   checkout: Context['clients']['checkout']
-  // eslint-disable-next-line max-params
 ) => {
   const recentlyAdded = getNewItemsOnly(oldItems, orderForm.items)
 
@@ -227,7 +227,6 @@ export const addOptionsForItems = async (
   checkout: Context['clients']['checkout'],
   orderForm: OrderForm,
   oldItems: OrderFormItem[]
-  // eslint-disable-next-line max-params
 ) => {
   const recentlyAdded =
     items.length > 0 ? getNewItemsOnly(oldItems, orderForm.items) : []
@@ -347,7 +346,6 @@ export const buildAddedOptionsForItem = (
   childs: OrderFormItem[],
   assemblyOptionsMap: Record<string, AssemblyOption[]>,
   orderForm: OrderForm
-  // eslint-disable-next-line max-params
 ) => {
   const children = filter<OrderFormItem>(isSonOfItem(index), childs)
 
