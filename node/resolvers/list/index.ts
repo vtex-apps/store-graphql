@@ -91,11 +91,7 @@ const updateItems = async (items: Item[], masterdata: MasterData) => {
   deleteItems(itemsToBeDeleted, masterdata)
 
   const itemsIdAdded = await Promise.all(
-    map(
-      // eslint-disable-next-line no-return-await
-      async (item: Item) => await addListItem(item, masterdata),
-      itemsToBeAdded
-    )
+    map(async (item: Item) => addListItem(item, masterdata), itemsToBeAdded)
   )
 
   const itemsIdUpdated = map((item: Item) => {

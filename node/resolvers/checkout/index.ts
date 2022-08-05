@@ -542,8 +542,7 @@ export const mutations: Record<string, Resolver> = {
 
     await addOptionsForItems(withOptions, checkout, addItem, previousItems)
 
-    // eslint-disable-next-line no-return-await
-    return withOptions.length === 0 ? addItem : await checkout.orderForm()
+    return withOptions.length === 0 ? addItem : checkout.orderForm()
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
