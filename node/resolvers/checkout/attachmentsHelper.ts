@@ -122,6 +122,7 @@ const addOptionsRecursive = async (
   checkout: Context['clients']['checkout']
 ) => {
   const recentlyAdded = getNewItemsOnly(oldItems, orderForm.items)
+  const results = []
 
   for (const item of items) {
     const parentItem = findRecentlyAddedParent(
@@ -138,15 +139,18 @@ const addOptionsRecursive = async (
       continue
     }
 
-    // eslint-disable-next-line no-await-in-loop
-    await addOptionsLogic({
-      checkout,
-      itemIndex: parentIndex,
-      options: item.options,
-      orderForm,
-      oldItems,
-    })
+    results.push(
+      addOptionsLogic({
+        checkout,
+        itemIndex: parentIndex,
+        options: item.options,
+        orderForm,
+        oldItems,
+      })
+    )
   }
+
+  await Promise.all(results)
 }
 
 const addOptionsLogic = async (input: AddOptionsLogicInput) => {
@@ -195,6 +199,8 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
       .catch(() => recentOrderForm)
   }
 
+  const results = []
+
   for (const assemblyId of idsToAdd) {
     const parsedOptions = joinedToAdd[assemblyId]
     const itemsWithRecursiveOptions = parsedOptions.items.filter(
@@ -202,16 +208,19 @@ const addOptionsLogic = async (input: AddOptionsLogicInput) => {
     )
 
     if (itemsWithRecursiveOptions.length > 0) {
-      // eslint-disable-next-line no-await-in-loop
-      await addOptionsRecursive(
-        itemsWithRecursiveOptions,
-        assemblyId,
-        recentOrderForm,
-        oldItems,
-        checkout
+      results.push(
+        addOptionsRecursive(
+          itemsWithRecursiveOptions,
+          assemblyId,
+          recentOrderForm,
+          oldItems,
+          checkout
+        )
       )
     }
   }
+
+  await Promise.all(results)
 }
 
 /**
@@ -229,6 +238,8 @@ export const addOptionsForItems = async (
 ) => {
   const recentlyAdded =
     items.length > 0 ? getNewItemsOnly(oldItems, orderForm.items) : []
+
+  const results = []
 
   for (const item of items) {
     if (!item.options || item.options.length === 0) {
@@ -249,15 +260,18 @@ export const addOptionsForItems = async (
       continue
     }
 
-    // eslint-disable-next-line no-await-in-loop
-    await addOptionsLogic({
-      checkout,
-      itemIndex: parentIndex,
-      options: item.options,
-      orderForm,
-      oldItems,
-    })
+    results.push(
+      addOptionsLogic({
+        checkout,
+        itemIndex: parentIndex,
+        options: item.options,
+        orderForm,
+        oldItems,
+      })
+    )
   }
+
+  await Promise.all(results)
 }
 
 const filterCompositionNull = (assemblyOptions: AssemblyOption[]) =>
