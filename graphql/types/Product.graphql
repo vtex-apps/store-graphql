@@ -140,12 +140,18 @@ type Seller {
   addToCartLink: String
   sellerDefault: Boolean
   commertialOffer: Offer
+  error: String
 }
 
 type Recommendation {
   buy: [Product]
   view: [Product]
   similars: [Product]
+}
+
+type ItemsWithSimulationResponse {
+  hasError: Boolean
+  items: [SKU]
 }
 
 type SKU {
