@@ -17,7 +17,7 @@ export class ProfileClientV2 extends JanusClient {
     super(context, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         VtexIdClientAutCookie: context.authToken ?? '',
       },
       timeout: FIVE_SECONDS_MS,
@@ -69,14 +69,16 @@ export class ProfileClientV2 extends JanusClient {
   private fillWithPreferences = (profile: Profile, piiRequest?: PIIRequest) => {
     return this.getPurchaseInfo(profile, piiRequest)
       .then((purchaseInfoList: PurchaseInfo[]) => {
-        const purchaseInfo = purchaseInfoList[0]
+        const [purchaseInfo] = purchaseInfoList
 
         profile.isNewsletterOptIn =
           purchaseInfo.document.clientPreferences?.isNewsletterOptIn ?? false
+
         return profile
       })
       .catch(() => {
         profile.isNewsletterOptIn = false
+
         return profile
       })
   }
@@ -92,6 +94,7 @@ export class ProfileClientV2 extends JanusClient {
       metric: 'profile-system-v2-getUserPreferences',
     }).catch<any>((e) => {
       const { status } = e.response ?? {}
+
       if (status === 404) {
         return [] as PurchaseInfo[]
       }
@@ -172,6 +175,7 @@ export class ProfileClientV2 extends JanusClient {
       .then((addresses: AddressV2[]) => this.translateToV1Address(addresses))
       .catch<any>((e) => {
         const { status } = e.response ?? {}
+
         if (status === 404) {
           return [] as AddressV2[]
         }
@@ -198,7 +202,7 @@ export class ProfileClientV2 extends JanusClient {
         state: addressV2.administrativeAreaLevel1,
         street: addressV2.route,
         userId: addressV2.profileId,
-        addressType: addressV2.addressType || 'residential',
+        addressType: addressV2.addressType ?? 'residential',
         neighborhood: addressV2.neighborhood,
       } as Address
     })
@@ -209,13 +213,13 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         document: {
           administrativeAreaLevel1: address.state,
-          addressType: address.addressType || 'residential',
+          addressType: address.addressType ?? 'residential',
           countryCode: address.country,
-          extend: address.complement || '',
+          extend: address.complement ?? '',
           geoCoordinates: address.geoCoordinates,
           localityAreaLevel1: address.city,
           name: address.addressName,
-          nearly: address.reference || '',
+          nearly: address.reference ?? '',
           postalCode: address.postalCode,
           profileId: address.userId,
           route: address.street,
@@ -230,7 +234,9 @@ export class ProfileClientV2 extends JanusClient {
     return Object.entries<string>(addressesObj).map(([key, stringifiedObj]) => {
       try {
         const address = JSON.parse(stringifiedObj) as Address
+
         address.addressName = key
+
         return address
       } catch (e) {
         return {} as Address
@@ -242,21 +248,23 @@ export class ProfileClientV2 extends JanusClient {
     const addressesV1 = this.mapAddressesObjToList(addressesData).map(
       (addr: any) => {
         addr.geoCoordinates = addr.geoCoordinate
+
         return addr
       }
     )
 
     const addressesV2 = this.translateToV2Address(addressesV1)
-    const toChange = addressesV2.filter(
+    const [toChange] = addressesV2.filter(
       (addr) => addr.document.name === addressesV1[0].addressName
-    )[0]
+    )
 
     return this.getProfileInfo(user).then((profile) => {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
-          const address = addresses.filter(
+          const [address] = addresses.filter(
             (addr) => addr.addressName === addressesV1[0].addressName
-          )[0]
+          )
+
           if (address) {
             return this.patch(
               `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
@@ -282,9 +290,10 @@ export class ProfileClientV2 extends JanusClient {
   public deleteAddress = (user: CurrentProfile, addressName: string) => {
     return this.getProfileInfo(user).then((profile) => {
       this.getUserAddresses(user, profile).then((addresses: Address[]) => {
-        const address = addresses.filter(
+        const [address] = addresses.filter(
           (addr) => addr.addressName === addressName
-        )[0]
+        )
+
         return this.delete(
           `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
           {
@@ -307,6 +316,7 @@ export class ProfileClientV2 extends JanusClient {
       metric: 'profile-system-v2-getUserPayments',
     }).catch<any>((e) => {
       const { status } = e.response ?? {}
+
       if (status === 404) {
         return [] as PaymentProfile[]
       }
@@ -360,7 +370,7 @@ export class ProfileClientV2 extends JanusClient {
       params.push(['alternativeKey', alternativeKey])
     }
 
-    const currentPIIRequest = piiRequest || this.defaultPIIRequest
+    const currentPIIRequest = piiRequest ?? this.defaultPIIRequest
 
     if (currentPIIRequest) {
       params.push(

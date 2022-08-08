@@ -14,7 +14,7 @@ export class LicenseManagerExtendedClient extends LicenseManager {
     super(context, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         VtexIdClientAutCookie: context.authToken ?? '',
       },
       timeout: FIVE_SECONDS_MS,
@@ -29,6 +29,7 @@ export class LicenseManagerExtendedClient extends LicenseManager {
       },
     }).then((account: Account) => {
       account.PIIEnabled = Boolean(account.Privacy)
+
       return account
     })
 

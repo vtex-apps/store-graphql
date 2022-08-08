@@ -104,7 +104,7 @@ export async function updateProfile(
     businessDocument: profile.corporateDocument,
     isPJ: profile.isCorporate ? 'True' : 'False',
     fancyName: profile.tradeName,
-    ...(extraFields && extraFields.customFieldsObj),
+    ...extraFields?.customFieldsObj,
   }
 
   return clients.profile
@@ -112,9 +112,9 @@ export async function updateProfile(
       currentProfile,
       newData,
       context,
-      extraFields && extraFields.customFieldsStr
+      extraFields?.customFieldsStr
     )
-    .then(() => getProfile(context, extraFields && extraFields.customFieldsStr))
+    .then(() => getProfile(context, extraFields?.customFieldsStr))
 }
 
 export function updateProfilePicture(mutationsName: string, context: Context) {
@@ -202,7 +202,7 @@ export async function saveAddress(
     context
   )
 
-  if (result && result.document) {
+  if (result?.document) {
     return result.document
   }
 

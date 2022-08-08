@@ -27,7 +27,7 @@ export const resolvers = {
         : Promise.all(
             kitItems.map(async (kitItem: any) => {
               const products = await catalog.productBySku([kitItem.itemId])
-              const { items: skus = [], ...product } = head(products) || {}
+              const { items: skus = [], ...product } = head(products) ?? {}
               const sku = find(
                 ({ itemId }: any) => itemId === kitItem.itemId,
                 skus

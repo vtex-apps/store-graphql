@@ -38,6 +38,7 @@ class CustomGraphQLError extends Error {
 
 export function throwOnGraphQLErrors<T extends Serializable>(message: string) {
   return function maybeGraphQLResponse(response: GraphQLResponse<T>) {
+    // eslint-disable-next-line no-self-compare
     if (response?.errors?.length || 0 > 0) {
       throw new CustomGraphQLError(message, response.errors!)
     }
@@ -57,7 +58,7 @@ export class Rewriter extends AppGraphQLClient {
   }
 
   public getRoute = async (id: string, type: string, bindingId: string) => {
-    const data = await this.graphql
+    const responseData = await this.graphql
       .query<GetRoutesResponse, { id: string; type: string }>(
         {
           query: getRouteQuery,
@@ -72,6 +73,6 @@ export class Rewriter extends AppGraphQLClient {
         return data.data!.internal.routes
       })
 
-    return data.find((route) => route.binding === bindingId)?.route
+    return responseData.find((route) => route.binding === bindingId)?.route
   }
 }

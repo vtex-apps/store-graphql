@@ -36,7 +36,7 @@ const checkoutCookieFormat = (orderFormId: string) =>
 const getOrderFormIdFromCookie = (cookies: Context['cookies']) => {
   const cookie = cookies.get(CHECKOUT_COOKIE)
 
-  return cookie && cookie.split('=')[1]
+  return cookie?.split('=')[1]
 }
 
 export {

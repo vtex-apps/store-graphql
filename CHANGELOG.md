@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fixing null streetNumber bug
 
+## [2.155.0] - 2022-08-08
+
+### Fixed
+
+- Remove white space on graphql schema
+
+## [2.154.2] - 2022-08-08
+
+## [2.154.1] - 2022-08-05
+### Fixed
+- Lint issues.
+
 ## [2.154.0] - 2022-08-04
 
 ### Fixed

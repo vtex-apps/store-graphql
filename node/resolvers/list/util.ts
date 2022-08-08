@@ -66,6 +66,7 @@ const validateListItem = (items: Item[], item: Item, clients: Clients) => {
   checkProduct(item, catalog)
 }
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const validateItems = (items: Item[] = [], clients: Clients) => {
   items.forEach((item) => validateListItem(items, item, clients))
 }

@@ -71,7 +71,7 @@ export const resolvers = {
         for (const assemblyOption of assemblyOptions) {
           const { composition } = assemblyOption
 
-          if (composition && composition.items) {
+          if (composition?.items) {
             for (const compItem of composition.items) {
               const { priceTable } = compItem
               const currentArray = priceTableMap[priceTable] || []

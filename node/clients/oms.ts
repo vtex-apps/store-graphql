@@ -12,7 +12,7 @@ export class OMS extends JanusClient {
     super(ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         ...(ctx.storeUserAuthToken
           ? { VtexIdclientAutCookie: ctx.storeUserAuthToken }
           : null),

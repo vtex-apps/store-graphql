@@ -44,8 +44,8 @@ export const addContextToTranslatableString = (
     from: originalFrom,
   } = parseTranslatableStringV2(message.content)
 
-  const context = (originalContext || message.context)?.toString()
-  const from = originalFrom || message.from || locale
+  const context = (originalContext ?? message.context)?.toString()
+  const from = originalFrom ?? message.from ?? locale
 
   return formatTranslatableStringV2({ content, context, from })
 }

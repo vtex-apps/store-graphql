@@ -83,10 +83,9 @@ export class Catalog extends AppClient {
     )
 
   public product = (slug: string) =>
-    this.get<Product[]>(
-      `/pub/products/search/${slug && slug.toLowerCase()}/p`,
-      { metric: 'catalog-product' }
-    )
+    this.get<Product[]>(`/pub/products/search/${slug?.toLowerCase()}/p`, {
+      metric: 'catalog-product',
+    })
 
   public productByEan = (id: string) =>
     this.get<Product[]>(`/pub/products/search?fq=alternateIds_Ean:${id}`, {
@@ -146,7 +145,7 @@ export class Catalog extends AppClient {
       headers: { resources },
     } = await this.getRaw(this.productSearchUrl(args))
 
-    const quantity = resources.split('/')[1]
+    const [, quantity] = resources.split('/')
 
     return parseInt(quantity, 10)
   }
@@ -197,7 +196,7 @@ export class Catalog extends AppClient {
     const segmentData: SegmentData | undefined = (this
       .context! as CustomIOContext).segment
 
-    const { channel: salesChannel = '' } = segmentData || {}
+    const { channel: salesChannel = '' } = segmentData ?? {}
 
     config.params = {
       ...config.params,
@@ -213,7 +212,7 @@ export class Catalog extends AppClient {
     const segmentData: SegmentData | undefined = (this
       .context! as CustomIOContext).segment
 
-    const { channel: salesChannel = '' } = segmentData || {}
+    const { channel: salesChannel = '' } = segmentData ?? {}
 
     config.params = {
       ...config.params,
@@ -239,13 +238,13 @@ export class Catalog extends AppClient {
     hideUnavailableItems = false,
   }: SearchArgs) => {
     const sanitizedQuery = encodeURIComponent(
-      this.removeSpecialCharacters(decodeURIComponent(query || '').trim())
+      this.removeSpecialCharacters(decodeURIComponent(query ?? '').trim())
     )
 
     if (hideUnavailableItems) {
       const segmentData = (this.context as CustomIOContext).segment
 
-      salesChannel = (segmentData && segmentData.channel.toString()) || ''
+      salesChannel = segmentData?.channel.toString() ?? ''
     }
 
     let url = `/pub/products/search/${sanitizedQuery}?`
@@ -255,7 +254,7 @@ export class Catalog extends AppClient {
     }
 
     if (specificationFilters && specificationFilters.length > 0) {
-      url += specificationFilters.map((filter) => `&fq=${filter}`)
+      url = `${url}${specificationFilters.map((filter) => `&fq=${filter}`)}`
     }
 
     if (priceRange) {

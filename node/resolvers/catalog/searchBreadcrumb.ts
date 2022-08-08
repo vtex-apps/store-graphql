@@ -19,7 +19,7 @@ const findClusterNameFromId = (products: Product[], clusterId: string) => {
     ({ productClusters }) => !!productClusters[clusterId]
   )
 
-  return productWithCluster && productWithCluster.productClusters[clusterId]
+  return productWithCluster?.productClusters[clusterId]
 }
 
 const findSellerFromSellerId = (products: Product[], sellerId: string) => {

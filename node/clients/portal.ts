@@ -12,7 +12,7 @@ export class Portal extends JanusClient {
     super(ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         VtexIdclientAutCookie: ctx.authToken,
       },
     })

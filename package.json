@@ -4,12 +4,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "lint": "eslint --ext js,jsx,ts,tsx .",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\""
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{ts,js,tsx,jsx}": [
@@ -24,7 +20,7 @@
     "@vtex/prettier-config": "^0.3.3",
     "eslint": "^7.12.1",
     "eslint-config-vtex": "^12.3.2",
-    "husky": "^4.2.3",
+    "husky": "^8.0.0",
     "lint-staged": "^10.1.1",
     "prettier": "^2.0.2",
     "typescript": "^4.0.5"

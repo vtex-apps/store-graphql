@@ -32,7 +32,7 @@ interface CheckoutAssemblyItem {
 interface CheckoutAttachmentOffering {
   name: string
   required: boolean
-  schema: Record<string, object>
+  schema: Record<string, Record<string, unknown>>
 }
 
 interface OrderFormItem {

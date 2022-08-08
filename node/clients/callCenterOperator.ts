@@ -12,7 +12,7 @@ export class CallCenterOperator extends ExternalClient {
     super('http://licensemanager.vtex.com.br/api/pvt/accounts', ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         ...{ Accept: 'application/vnd.vtex.ds.v10+json' },
         ...(ctx.adminUserAuthToken
           ? { VtexIdclientAutCookie: ctx.adminUserAuthToken }
