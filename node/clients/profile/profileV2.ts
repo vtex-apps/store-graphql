@@ -223,7 +223,7 @@ export class ProfileClientV2 extends JanusClient {
           postalCode: address.postalCode,
           profileId: address.userId,
           route: address.street,
-          streetNumber: address.number,
+          streetNumber: address.number ?? '',
           receiverName: address.receiverName,
           neighborhood: address.neighborhood,
         },
