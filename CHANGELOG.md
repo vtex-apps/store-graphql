@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fixing null streetNumber bug
 
+## [2.155.1] - 2022-08-08
+
 ## [2.155.0] - 2022-08-08
 
 ### Fixed
