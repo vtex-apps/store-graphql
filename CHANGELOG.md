@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Remove white space on graphql schema
+
 ## [2.154.2] - 2022-08-08
 
 ## [2.154.1] - 2022-08-05

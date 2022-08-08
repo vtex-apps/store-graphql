@@ -19,7 +19,7 @@ type PickupPoint {
   """
   isActive: Boolean
   """
-    Pickup point restrictions
+  Pickup point restrictions
   """
   pickupHolidays: [HolidayHours]
   """
