@@ -53,5 +53,11 @@
     "test": "vtex-test-tools test",
     "lint": "tsc --noEmit && eslint --ext ts ."
   },
+  "resolutions": {
+    "json-schema": "^0.4.0",
+    "jsdom": "^16.5.0",
+    "jest-environment-jsdom": "^26.0.0",
+    "node-notifier": "^8.0.1"
+  },
   "version": "2.155.28"
 }
