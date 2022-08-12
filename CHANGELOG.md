@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.155.29] - 2022-08-12
 ### Added
 - `json-schema`, `jsdom`, `jest-environment-jsdom` and `node-notifier` to resolutions yarn field
 
