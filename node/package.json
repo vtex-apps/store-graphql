@@ -57,7 +57,8 @@
     "json-schema": "^0.4.0",
     "jsdom": "^16.5.0",
     "jest-environment-jsdom": "^26.0.0",
-    "node-notifier": "^8.0.1"
+    "node-notifier": "^8.0.1",
+    "follow-redirects": "^1.14.8"
   },
   "version": "2.155.29"
 }
