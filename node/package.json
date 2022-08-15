@@ -58,7 +58,8 @@
     "jsdom": "^16.5.0",
     "jest-environment-jsdom": "^26.0.0",
     "node-notifier": "^8.0.1",
-    "follow-redirects": "^1.14.8"
+    "follow-redirects": "^1.14.8",
+    "busboy": "^1.6.0"
   },
   "version": "2.155.30"
 }
