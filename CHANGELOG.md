@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.156.0] - 2022-08-31
-### Added
-- add `isDisposable` to the address graphql
-
 ## [2.155.33] - 2022-08-31
 
 ### Added
