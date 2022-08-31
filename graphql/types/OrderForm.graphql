@@ -207,6 +207,7 @@ input OrderFormAddressInput {
   complement: String
   neighborhood: String
   geoCoordinates: [Float]
+  isDisposable: Boolean
 }
 
 input OrderFormPaymentInput {

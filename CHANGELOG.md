@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- add `isDisposable` to the address graphql
+
 ## [2.155.32] - 2022-08-16
 ### Changed
 - `withAuthMetrics` directive now logs 1 from 100 unauthorized requests
