@@ -1,5 +1,5 @@
 import { UserInputError } from '@vtex/api'
-import { compose, forEach, reject, path } from 'ramda'
+import { compose, reject, path } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -231,10 +231,13 @@ export async function setCheckoutCookies(
 
   const cleanCookies = forwardedSetCookies.map(parseAndClean)
 
-  forEach(
-    ({ name, value, options }) => ctx.cookies.set(name, value, options),
-    cleanCookies
-  )
+  cleanCookies.forEach(({ name, value, options }) => {
+    if (options.secure && !ctx.cookies.secure) {
+      ctx.cookies.secure = true
+    }
+
+    ctx.cookies.set(name, value, options)
+  })
 }
 
 export const queries: Record<string, Resolver> = {
