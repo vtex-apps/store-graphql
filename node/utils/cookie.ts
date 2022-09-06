@@ -21,7 +21,7 @@ const parseCookie = (cookie: string): ParsedCookie => {
     expires: parsed.expires,
     httpOnly: parsed.httpOnly,
     secure: parsed.secure,
-    sameSite: parsed.sameSite as "strict" | "lax" | undefined,
+    sameSite: parsed.sameSite as 'strict' | 'lax' | undefined,
   }
 
   return {
