@@ -1,5 +1,5 @@
-import { parse } from 'cookie'
-import { keys } from 'ramda'
+import { parse } from 'set-cookie-parser'
+import { SetOption } from 'cookies'
 
 const isUserLoggedIn = (ctx: Context) => {
   const {
@@ -9,15 +9,19 @@ const isUserLoggedIn = (ctx: Context) => {
   return !!ctx.cookies.get(`VtexIdclientAutCookie_${account}`)
 }
 
-const parseCookie = (cookie: string) => {
-  const parsed = parse(cookie)
-  const cookieName = keys(parsed)[0] as string
-  const cookieValue = parsed[cookieName]
+const parseCookie = (cookie: string): ParsedCookie => {
+  const [parsed] = parse(cookie)
+
+  const cookieName = parsed.name
+  const cookieValue = parsed.value
 
   const extraOptions = {
     path: parsed.path,
     domain: parsed.domain,
-    expires: parsed.expires ? new Date(parsed.expires) : undefined,
+    expires: parsed.expires,
+    httpOnly: parsed.httpOnly,
+    secure: parsed.secure,
+    sameSite: parsed.sameSite as 'strict' | 'lax' | undefined,
   }
 
   return {
@@ -45,4 +49,10 @@ export {
   checkoutCookieFormat,
   getOrderFormIdFromCookie,
   parseCookie,
+}
+
+interface ParsedCookie {
+  name: string
+  value: string
+  options: SetOption
 }
