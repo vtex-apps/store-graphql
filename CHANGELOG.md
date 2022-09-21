@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Simulation error message.
+
 ## [2.156.1] - 2022-09-09
 ### Fixed
 - Respect Checkout set-cookie directives
