@@ -149,11 +149,6 @@ type Recommendation {
   similars: [Product]
 }
 
-type ItemsWithSimulationResponse {
-  hasError: Boolean
-  items: [SKU]
-}
-
 type SKU {
   itemId: ID
   name: String @translatableV2
