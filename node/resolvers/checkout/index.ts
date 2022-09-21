@@ -380,7 +380,7 @@ export const queries: Record<string, Resolver> = {
   ) => {
     const {
       clients: { pvtCheckout },
-      vtex: { segment },
+      vtex: { segment, logger },
     } = ctx
 
     return items.map((item) => {
@@ -402,9 +402,10 @@ export const queries: Record<string, Resolver> = {
 
         const sellers = simulations.map((simulation, idx) => {
           if (simulation instanceof Error) {
-            console.error(simulations)
+            logger.error(simulation)
 
             return {
+              error: simulation.message,
               sellerId: item.sellers[idx].sellerId,
               commertialOffer: {
                 spotPrice: null,
