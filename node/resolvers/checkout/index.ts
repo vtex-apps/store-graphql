@@ -236,6 +236,10 @@ export async function setCheckoutCookies(
       ctx.cookies.secure = true
     }
 
+    if (ctx?.settings?.checkoutCrossSite) {
+      options = { ...options, sameSite: 'none' }
+    }
+
     ctx.cookies.set(name, value, options)
   })
 }

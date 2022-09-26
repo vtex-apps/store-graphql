@@ -3,6 +3,7 @@ import { WithSegment } from './withSegment'
 import { WithOrderFormId } from './withOrderFormId'
 import { ToVtexAssets } from './toVtexAssets'
 import { AuthorizationMetrics } from './authorizationMetrics'
+import { WithSettings } from './withSettings'
 
 export const schemaDirectives = {
   toVtexAssets: ToVtexAssets,
@@ -10,4 +11,5 @@ export const schemaDirectives = {
   withSegment: WithSegment,
   withOrderFormId: WithOrderFormId,
   withAuthMetrics: AuthorizationMetrics,
+  withSettings: WithSettings,
 }

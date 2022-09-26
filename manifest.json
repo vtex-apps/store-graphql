@@ -16,6 +16,18 @@
     "vtex.catalog-api-proxy": "0.x",
     "vtex.file-manager": "0.x"
   },
+  "settingsSchema": {
+    "title": "VTEX Store Config",
+    "type": "object",
+    "properties": {
+      "checkoutCrossSite": {
+        "title": "Enable checkout cookies cross-site",
+        "type": "boolean",
+        "default": false,
+        "description": "Enable checkout cookies for cross-site (SameSite='None') this only works with OrderForm legacy provider"
+      }
+    }
+  },
   "policies": [
     {
       "name": "outbound-access",
@@ -196,6 +208,15 @@
     },
     {
       "name": "vtex.rewriter:resolve-graphql"
+    },
+    {
+      "name": "read-workspace-apps"
+    },
+    {
+      "name": "read-public-registry-assets"
+    },
+    {
+      "name": "read-private-registry-assets"
     }
   ],
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"

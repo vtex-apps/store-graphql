@@ -7,6 +7,7 @@ import {
 
 import { Clients } from './clients'
 import { IdentityDataSource } from './dataSources/identity'
+import { Settings } from './directives/withSettings'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')
@@ -21,6 +22,7 @@ declare global {
     dataSources: StoreGraphQLDataSources
     originalPath: string
     vtex: CustomIOContext
+    settings: Settings
   }
 
   interface CustomIOContext extends IOContext {
