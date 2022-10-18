@@ -204,9 +204,6 @@ export class Checkout extends JanusClient {
     })
   }
 
-  public orders = () =>
-    this.get(this.routes.orders, { metric: 'checkout-orders' })
-
   public simulation = (simulation: SimulationPayload) =>
     this.post<SimulationOrderForm>(
       this.routes.simulation(this.getChannelQueryString()),
@@ -317,7 +314,6 @@ export class Checkout extends JanusClient {
         `${base}/orderForm/${orderFormId}/checkIn`,
       orderForm: (orderFormId?: string) =>
         `${base}/orderForm/${orderFormId ?? ''}`,
-      orders: `${base}/orders`,
       simulation: (queryString: string) =>
         `${base}/orderForms/simulation${queryString}`,
       changeToAnonymousUser: (orderFormId: string) =>

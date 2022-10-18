@@ -288,10 +288,6 @@ export const queries: Record<string, Resolver> = {
     return orderForm
   },
 
-  orders: (_, __, { clients: { checkout } }) => {
-    return checkout.orders()
-  },
-
   shipping: (_, args: any, { clients: { checkout } }) => {
     return checkout.simulation(args)
   },

@@ -11,6 +11,15 @@ export const queries = {
 
   order: (_: any, { id }: { id: string }, { clients: { oms } }: Context) =>
     oms.order(id),
+
+  orders: async (_: any, __: any, { clients: { oms } }: Context) => {
+    const orders = await oms.orders()
+
+    // eslint-disable-next-line no-console
+    console.log('orders oms', orders)
+
+    return orders
+  },
 }
 
 export const fieldResolvers = {
