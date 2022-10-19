@@ -118,7 +118,18 @@ export class OMS extends JanusClient {
       totals: order.totalItems, // ???
       paymentData: order.paymentNames, // ????
       shippingData: order.ShippingEstimatedDate, // ???
-      storePreferencesData: null,
+      storePreferencesDat: {
+        countryCode: null,
+        currencyCode: order.currencyCode,
+        timeZone: null,
+        currencyFormatInfo: {
+          currencyDecimalDigits: null,
+          currencyDecimalSeparator: null,
+          currencyGroupSeparator: null,
+          startsWithCurrencySymbol: null,
+        },
+        currencySymbol: null,
+      },
     }
   }
 
