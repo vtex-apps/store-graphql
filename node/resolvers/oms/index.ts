@@ -12,13 +12,13 @@ export const queries = {
   order: (_: any, { id }: { id: string }, { clients: { oms } }: Context) =>
     oms.order(id),
 
-  orders: async (_: any, __: any, { clients: { oms } }: Context) => {
-    const orders = await oms.orders()
+  orders: async (_: any, __: any, context: Context) => {
+    const {
+      clients: { oms },
+      vtex: { currentProfile },
+    } = context
 
-    // eslint-disable-next-line no-console
-    console.log('orders oms', orders)
-
-    return orders
+    return oms.orders(currentProfile)
   },
 }
 

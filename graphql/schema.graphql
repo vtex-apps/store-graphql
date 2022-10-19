@@ -309,7 +309,10 @@ type Query {
   """
   Returns user orders details
   """
-  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
+  orders: [Order]
+    @cacheControl(scope: PRIVATE)
+    @withOrderFormId
+    @withCurrentProfile
 
   """
   Returns a specified user order
