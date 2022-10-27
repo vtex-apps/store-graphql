@@ -15,7 +15,7 @@ import {
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
-import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
+import { CHECKOUT_COOKIE, OWNERSHIP_COOKIE, parseCookie } from '../../utils'
 import {
   getSimulationPayloadsByItem,
   orderFormItemToSeller,
@@ -23,7 +23,7 @@ import {
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
 
-const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH', 'CheckoutOrderFormOwnership']
+const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH', OWNERSHIP_COOKIE]
 
 const isWhitelistedSetCookie = (cookie: string) => {
   const [key] = cookie.split('=')

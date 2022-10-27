@@ -33,9 +33,14 @@ const parseCookie = (cookie: string): ParsedCookie => {
 
 /** Checkout cookie methods */
 const CHECKOUT_COOKIE = 'checkout.vtex.com'
+const OWNERSHIP_COOKIE = 'CheckoutOrderFormOwnership'
 
 const checkoutCookieFormat = (orderFormId: string) =>
   `${CHECKOUT_COOKIE}=__ofid=${orderFormId};`
+
+export function ownershipCookieFormat(ownerId: string) {
+  return `${OWNERSHIP_COOKIE}=${ownerId};`
+}
 
 const getOrderFormIdFromCookie = (cookies: Context['cookies']) => {
   const cookie = cookies.get(CHECKOUT_COOKIE)
@@ -43,9 +48,14 @@ const getOrderFormIdFromCookie = (cookies: Context['cookies']) => {
   return cookie?.split('=')[1]
 }
 
+export function getOwnerIdFromCookie(cookies: Context['cookies']) {
+  return cookies.get(OWNERSHIP_COOKIE)
+}
+
 export {
   isUserLoggedIn,
   CHECKOUT_COOKIE,
+  OWNERSHIP_COOKIE,
   checkoutCookieFormat,
   getOrderFormIdFromCookie,
   parseCookie,
