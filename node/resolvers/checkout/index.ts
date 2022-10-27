@@ -23,7 +23,7 @@ import {
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
 
-const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
+const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH', 'CheckoutOrderFormOwnership']
 
 const isWhitelistedSetCookie = (cookie: string) => {
   const [key] = cookie.split('=')
