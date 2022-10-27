@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [2.157.1] - 2022-09-22
+### Added
+- Handle the new `CheckoutOrderFormOwnership` cookie.
 
 ### Fixed
 
