@@ -15,7 +15,7 @@ import {
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
-import { CHECKOUT_COOKIE, OWNERSHIP_COOKIE, parseCookie } from '../../utils'
+import { ASPXAUTH_COOKIE, CHECKOUT_COOKIE, OWNERSHIP_COOKIE, parseCookie } from '../../utils'
 import {
   getSimulationPayloadsByItem,
   orderFormItemToSeller,
@@ -23,12 +23,13 @@ import {
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
 
-const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH', OWNERSHIP_COOKIE]
+const ALL_SET_COOKIES = [CHECKOUT_COOKIE, ASPXAUTH_COOKIE, OWNERSHIP_COOKIE]
 
-const isWhitelistedSetCookie = (cookie: string) => {
-  const [key] = cookie.split('=')
-
-  return SetCookieWhitelist.includes(key)
+const filterAllowedCookies = (setCookies: string[], allowList: string[]) => {
+  return setCookies.filter(setCookie => {
+    const [key] = setCookie.split('=')
+    return allowList.includes(key)
+  })
 }
 
 /**
@@ -220,12 +221,13 @@ export async function syncWithStoreLocale(
 
 export async function setCheckoutCookies(
   rawHeaders: Record<string, any>,
-  ctx: Context
+  ctx: Context,
+  allowList: string[] = ALL_SET_COOKIES
 ) {
   const responseSetCookies: string[] = rawHeaders?.['set-cookie'] || []
 
   const host = ctx.get('x-forwarded-host')
-  const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+  const forwardedSetCookies = filterAllowedCookies(responseSetCookies, allowList)
 
   const parseAndClean = compose(parseCookie, replaceDomain(host))
 
@@ -636,13 +638,14 @@ export const mutations: Record<string, Resolver> = {
   updateOrderFormProfile: (
     _,
     { fields },
-    { clients: { checkout }, vtex: { orderFormId } }
+    ctx,
   ) => {
+    const { clients: { checkout }, vtex: { orderFormId } } = ctx
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
 
-    return checkout.updateOrderFormProfile(orderFormId, fields)
+    return checkout.updateOrderFormProfile(orderFormId, fields, ctx)
   },
 
   updateOrderFormShipping: async (_, { address }, ctx) => {

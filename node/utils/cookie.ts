@@ -33,6 +33,7 @@ const parseCookie = (cookie: string): ParsedCookie => {
 
 /** Checkout cookie methods */
 const CHECKOUT_COOKIE = 'checkout.vtex.com'
+const ASPXAUTH_COOKIE = '.ASPXAUTH'
 const OWNERSHIP_COOKIE = 'CheckoutOrderFormOwnership'
 
 const checkoutCookieFormat = (orderFormId: string) =>
@@ -55,6 +56,7 @@ export function getOwnerIdFromCookie(cookies: Context['cookies']) {
 export {
   isUserLoggedIn,
   CHECKOUT_COOKIE,
+  ASPXAUTH_COOKIE,
   OWNERSHIP_COOKIE,
   checkoutCookieFormat,
   getOrderFormIdFromCookie,

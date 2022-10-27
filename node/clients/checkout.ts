@@ -6,8 +6,9 @@ import {
   IOContext,
 } from '@vtex/api'
 import { AxiosError } from 'axios'
+import { setCheckoutCookies } from '../resolvers/checkout'
 
-import { checkoutCookieFormat, ownershipCookieFormat, statusToError } from '../utils'
+import { checkoutCookieFormat, ownershipCookieFormat, OWNERSHIP_COOKIE, statusToError } from '../utils'
 
 export class Checkout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -100,12 +101,15 @@ export class Checkout extends JanusClient {
       { metric: 'checkout-updateOrderFormPayment' }
     )
 
-  public updateOrderFormProfile = (orderFormId: string, fields: any) =>
-    this.post(
+  public updateOrderFormProfile = async (orderFormId: string, fields: any, ctx: Context) => {
+    const { data, headers } = await this.postRaw(
       this.routes.attachmentsData(orderFormId, 'clientProfileData'),
       fields,
       { metric: 'checkout-updateOrderFormProfile' }
     )
+    setCheckoutCookies(headers, ctx, [OWNERSHIP_COOKIE])
+    return data
+  }
 
   public updateOrderFormShipping = (orderFormId: string, shipping: any) =>
     this.post(

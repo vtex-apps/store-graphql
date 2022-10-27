@@ -66,7 +66,7 @@ export const mutations = {
       await checkout.updateOrderFormProfile(orderForm.orderFormId, {
         ...clientProfileData,
         email,
-      })
+      }, ctx)
     }
 
     ctx.response.set(
