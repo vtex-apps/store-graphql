@@ -15,7 +15,12 @@ import {
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
-import { ASPXAUTH_COOKIE, CHECKOUT_COOKIE, OWNERSHIP_COOKIE, parseCookie } from '../../utils'
+import {
+  ASPXAUTH_COOKIE,
+  CHECKOUT_COOKIE,
+  OWNERSHIP_COOKIE,
+  parseCookie,
+} from '../../utils'
 import {
   getSimulationPayloadsByItem,
   orderFormItemToSeller,
@@ -26,8 +31,9 @@ import logisticPickupResolvers from '../logistics/fieldResolvers'
 const ALL_SET_COOKIES = [CHECKOUT_COOKIE, ASPXAUTH_COOKIE, OWNERSHIP_COOKIE]
 
 const filterAllowedCookies = (setCookies: string[], allowList: string[]) => {
-  return setCookies.filter(setCookie => {
+  return setCookies.filter((setCookie) => {
     const [key] = setCookie.split('=')
+
     return allowList.includes(key)
   })
 }
@@ -227,7 +233,10 @@ export async function setCheckoutCookies(
   const responseSetCookies: string[] = rawHeaders?.['set-cookie'] || []
 
   const host = ctx.get('x-forwarded-host')
-  const forwardedSetCookies = filterAllowedCookies(responseSetCookies, allowList)
+  const forwardedSetCookies = filterAllowedCookies(
+    responseSetCookies,
+    allowList
+  )
 
   const parseAndClean = compose(parseCookie, replaceDomain(host))
 
@@ -635,12 +644,12 @@ export const mutations: Record<string, Resolver> = {
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
-  updateOrderFormProfile: (
-    _,
-    { fields },
-    ctx,
-  ) => {
-    const { clients: { checkout }, vtex: { orderFormId } } = ctx
+  updateOrderFormProfile: (_, { fields }, ctx) => {
+    const {
+      clients: { checkout },
+      vtex: { orderFormId },
+    } = ctx
+
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }

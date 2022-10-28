@@ -63,10 +63,14 @@ export const mutations = {
       : {}
 
     if (clientProfileData.email !== email && orderForm.orderFormId) {
-      await checkout.updateOrderFormProfile(orderForm.orderFormId, {
-        ...clientProfileData,
-        email,
-      }, ctx)
+      await checkout.updateOrderFormProfile(
+        orderForm.orderFormId,
+        {
+          ...clientProfileData,
+          email,
+        },
+        ctx
+      )
     }
 
     ctx.response.set(
