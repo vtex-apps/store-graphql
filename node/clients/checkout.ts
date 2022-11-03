@@ -7,7 +7,13 @@ import {
 } from '@vtex/api'
 import { AxiosError } from 'axios'
 
-import { checkoutCookieFormat, statusToError } from '../utils'
+import { setCheckoutCookies } from '../resolvers/checkout'
+import {
+  checkoutCookieFormat,
+  ownershipCookieFormat,
+  OWNERSHIP_COOKIE,
+  statusToError,
+} from '../utils'
 
 export class Checkout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -24,10 +30,11 @@ export class Checkout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId, segmentToken, sessionToken } = this
+    const { orderFormId, ownerId, segmentToken, sessionToken } = this
       .context as CustomIOContext
 
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
+    const ownershipCookie = ownerId ? ownershipCookieFormat(ownerId) : ''
     const segmentTokenCookie = segmentToken
       ? `vtex_segment=${segmentToken};`
       : ''
@@ -37,7 +44,7 @@ export class Checkout extends JanusClient {
       : ''
 
     return {
-      Cookie: `${checkoutCookie}${segmentTokenCookie}${sessionTokenCookie}`,
+      Cookie: `${checkoutCookie}${ownershipCookie}${segmentTokenCookie}${sessionTokenCookie}`,
     }
   }
 
@@ -99,12 +106,21 @@ export class Checkout extends JanusClient {
       { metric: 'checkout-updateOrderFormPayment' }
     )
 
-  public updateOrderFormProfile = (orderFormId: string, fields: any) =>
-    this.post(
+  public updateOrderFormProfile = async (
+    orderFormId: string,
+    fields: any,
+    ctx: Context
+  ) => {
+    const { data, headers } = await this.postRaw(
       this.routes.attachmentsData(orderFormId, 'clientProfileData'),
       fields,
       { metric: 'checkout-updateOrderFormProfile' }
     )
+
+    setCheckoutCookies(headers, ctx, [OWNERSHIP_COOKIE])
+
+    return data
+  }
 
   public updateOrderFormShipping = (orderFormId: string, shipping: any) =>
     this.post(
