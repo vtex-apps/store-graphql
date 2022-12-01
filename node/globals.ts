@@ -29,6 +29,7 @@ declare global {
     currentProfile: CurrentProfile
     segment?: SegmentData
     orderFormId?: string
+    ownerId?: string
   }
 
   interface StoreGraphQLDataSources {

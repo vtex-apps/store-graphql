@@ -1,6 +1,8 @@
 directive @withAuthMetrics on FIELD_DEFINITION
 directive @withSettings on FIELD_DEFINITION
 
+directive @withOwnerId on FIELD_DEFINITION
+
 type Query {
   """
   Returns a specified product
@@ -293,6 +295,7 @@ type Query {
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
     @withSegment
     @withOrderFormId
+    @withOwnerId
 
   """
   Returns checkout cart details
@@ -300,6 +303,7 @@ type Query {
   orderForm: OrderForm
     @cacheControl(maxAge: ZERO, scope: PRIVATE)
     @withOrderFormId
+    @withOwnerId
     @withSegment
     @withSettings
 
@@ -311,7 +315,7 @@ type Query {
   """
   Returns user orders details
   """
-  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
+  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId @withOwnerId
 
   """
   Returns a specified user order
@@ -595,21 +599,21 @@ type Mutation {
     Optional marketing UTMi Params to add them to order form
     """
     utmiParams: OrderFormInputUTMIParams
-  ): OrderForm @withSegment @withOrderFormId
+  ): OrderForm @withSegment @withOrderFormId @withOwnerId
   cancelOrder(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     reason: String
-  ): Boolean @withOrderFormId
+  ): Boolean @withOrderFormId @withOwnerId
   updateItems(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     items: [OrderFormItemInput]
-  ): OrderForm @withSegment @withOrderFormId @cacheControl(scope: PRIVATE)
+  ): OrderForm @withSegment @withOrderFormId @withOwnerId @cacheControl(scope: PRIVATE)
 
   """
   Used to update the CL entity on masterData.
@@ -716,35 +720,35 @@ type Mutation {
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     fields: OrderFormProfileInput
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   updateOrderFormShipping(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     address: OrderFormAddressInput
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   updateOrderFormPayment(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     payments: [OrderFormPaymentInput]
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   updateOrderFormIgnoreProfile(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     ignoreProfileData: Boolean
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   addOrderFormPaymentToken(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     paymentToken: OrderFormPaymentTokenInput
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   setOrderFormCustomData(
     orderFormId: String
       @deprecated(
@@ -753,7 +757,7 @@ type Mutation {
     appId: String
     field: String
     value: String
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   addAssemblyOptions(
     orderFormId: String
       @deprecated(
@@ -762,14 +766,14 @@ type Mutation {
     itemId: String
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
-  ): OrderForm @withOrderFormId
+  ): OrderForm @withOrderFormId @withOwnerId
   updateOrderFormCheckin(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     checkin: OrderFormCheckinInput
-  ): OrderForm @withOrderFormId @cacheControl(scope: PRIVATE)
+  ): OrderForm @withOrderFormId @withOwnerId @cacheControl(scope: PRIVATE)
 
   """
   Payment
@@ -896,13 +900,14 @@ type Mutation {
     The email which will be used to impersonate a user
     """
     email: String!
-  ): Session @withOrderFormId @cacheControl(scope: PRIVATE)
+  ): Session @withOrderFormId @withOwnerId @cacheControl(scope: PRIVATE)
 
   """
   Depersonify a customer
   """
   depersonify: Boolean
     @withOrderFormId
+    @withOwnerId
     @withSegment
     @cacheControl(scope: PRIVATE)
 
@@ -962,4 +967,5 @@ type Mutation {
   newOrderForm(orderFormId: String): OrderForm
     @cacheControl(scope: PRIVATE)
     @withOrderFormId
+    @withOwnerId
 }
