@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Support cross-site stores
+## [2.159.0] - 2022-12-08
+
+### Added
+
+- Tax on simulation return
+
 ## [2.158.0] - 2022-11-03
 
 ## [2.157.1] - 2022-09-22
