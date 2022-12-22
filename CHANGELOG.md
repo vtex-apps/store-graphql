@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.160.0] - 2022-12-22
+
 ### Added
 - `PaymentSystemGroupName` to `itemsWithSimulation` response.
 

@@ -63,5 +63,5 @@
     "follow-redirects": "^1.14.8",
     "busboy": "^1.6.0"
   },
-  "version": "2.159.0"
+  "version": "2.160.0"
 }
