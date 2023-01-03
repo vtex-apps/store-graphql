@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Support cross-site stores
+## [2.160.0] - 2022-12-22
+
+### Added
+- `PaymentSystemGroupName` to `itemsWithSimulation` response.
+
 ## [2.159.0] - 2022-12-08
 
 ### Added

@@ -108,6 +108,7 @@ export const orderFormItemToSeller = (
         TotalValuePlusInterestRate: installment.total / 100,
         NumberOfInstallments: installment.count,
         PaymentSystemName: installmentOption.paymentName,
+        PaymentSystemGroupName: installmentOption.paymentGroupName,
         Name: generatePaymentName(
           installment.interestRate,
           installmentOption.paymentName,
