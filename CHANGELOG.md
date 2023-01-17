@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.161.0] - 2023-01-17
+
 ## [2.160.1] - 2023-01-17
 ### Added
 - Directive to monitor origin of requests to the orders endpoint.
