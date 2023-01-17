@@ -2,6 +2,8 @@ directive @withAuthMetrics on FIELD_DEFINITION
 
 directive @withOwnerId on FIELD_DEFINITION
 
+directive @monitorOrigin on FIELD_DEFINITION
+
 type Query {
   """
   Returns a specified product
@@ -313,7 +315,7 @@ type Query {
   """
   Returns user orders details
   """
-  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId @withOwnerId
+  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId @withOwnerId @monitorOrigin
 
   """
   Returns a specified user order
