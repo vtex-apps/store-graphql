@@ -1,15 +1,7 @@
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
-function logRequest({
-  ctx,
-  info,
-  args,
-}: {
-  ctx: any
-  info: any
-  args: any
-}) {
+function logRequest({ ctx, info, args }: { ctx: any; info: any; args: any }) {
   const {
     request: {
       headers: {
@@ -31,7 +23,7 @@ function logRequest({
       forwardedPath,
       vtexCaller,
       queryName: info?.fieldName,
-      args
+      args,
     })
   }
 }
@@ -41,11 +33,9 @@ export class MonitorOrigin extends SchemaDirectiveVisitor {
     const { resolve = defaultFieldResolver } = field
 
     field.resolve = async (root: any, args: any, ctx: any, info: any) => {
-
       try {
         return await resolve(root, args, ctx, info)
       } finally {
-
         logRequest({
           ctx,
           info,
