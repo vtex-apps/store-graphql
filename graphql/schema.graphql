@@ -2,8 +2,6 @@ directive @withAuthMetrics on FIELD_DEFINITION
 
 directive @withOwnerId on FIELD_DEFINITION
 
-directive @monitorOrigin on FIELD_DEFINITION
-
 type Query {
   """
   Returns a specified product
@@ -313,9 +311,12 @@ type Query {
   searchOrderForm(orderFormId: String!): OrderForm @cacheControl(scope: PRIVATE)
 
   """
-  Returns user orders details
+  DEPRECATED
   """
-  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId @withOwnerId @monitorOrigin
+  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
+    @deprecated(
+      reason: "Use orders endpoint of vtex.orders-graphql instead"
+    )
 
   """
   Returns a specified user order
