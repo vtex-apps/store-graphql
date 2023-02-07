@@ -80,6 +80,7 @@ declare global {
       administrativeAreaLevel1?: string
       addressName?: string
       addressType?: string
+      complement?: string
       countryCode?: string
       extend?: string
       geoCoordinates?: string[]

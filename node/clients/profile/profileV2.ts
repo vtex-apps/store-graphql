@@ -191,7 +191,7 @@ export class ProfileClientV2 extends JanusClient {
       return {
         addressName: addressV2.name ?? addressV2.addressName,
         city: addressV2.locality,
-        complement: addressV2.extend,
+        complement: addressV2.complement,
         country: addressV2.countryCode,
         geoCoordinates: addressV2.geoCoordinates ?? [],
         id: address.id,
