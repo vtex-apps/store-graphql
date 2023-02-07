@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Profile v2 address reading and updating documents.
+- Profile v2 address reading, updating and saving documents.
 
 ## [2.161.1] - 2023-01-24
 

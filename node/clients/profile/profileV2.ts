@@ -203,7 +203,7 @@ export class ProfileClientV2 extends JanusClient {
         street: addressV2.route,
         userId: addressV2.profileId,
         addressType: addressV2.addressType ?? 'residential',
-        neighborhood: addressV2.localityAreaLevel1,
+        neighborhood: addressV2.localityAreaLevel1 ?? '',
       } as Address
     })
 
@@ -213,6 +213,7 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         document: {
           administrativeAreaLevel1: address.state,
+          addressName: address.addressName,
           addressType: address.addressType ?? 'residential',
           countryCode: address.country,
           complement: address.complement ?? '',
@@ -257,7 +258,6 @@ export class ProfileClientV2 extends JanusClient {
     const [toChange] = addressesV2.filter(
       (addr) => addr.document.name === addressesV1[0].addressName
     )
-
     return this.getProfileInfo(user).then((profile) => {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
@@ -273,7 +273,6 @@ export class ProfileClientV2 extends JanusClient {
               }
             )
           }
-
           return this.post(
             `${this.baseUrl}/${profile.id}/addresses`,
             toChange.document,
