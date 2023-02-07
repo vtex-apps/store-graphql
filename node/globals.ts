@@ -78,6 +78,7 @@ declare global {
     id: string
     document: {
       administrativeAreaLevel1?: string
+      addressName?: string
       addressType?: string
       countryCode?: string
       extend?: string
