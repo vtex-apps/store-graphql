@@ -313,9 +313,12 @@ type Query {
   searchOrderForm(orderFormId: String!): OrderForm @cacheControl(scope: PRIVATE)
 
   """
-  Returns user orders details
+  DEPRECATED
   """
-  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId @withOwnerId
+  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
+    @deprecated(
+      reason: "Use orders endpoint of vtex.orders-graphql instead"
+    )
 
   """
   Returns a specified user order
