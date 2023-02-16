@@ -8,6 +8,11 @@ export class WithOwnerId extends SchemaDirectiveVisitor {
     const { resolve = defaultFieldResolver } = field
 
     field.resolve = async (root: any, args: any, ctx: Context, info: any) => {
+      const {
+        vtex: { logger },
+      } = ctx
+
+      logger.error(`Getting checkoutOwnerId from ${ctx.cookies}`)
       const checkoutOwnerId = getOwnerIdFromCookie(ctx.cookies)
 
       ctx.vtex.ownerId = checkoutOwnerId
