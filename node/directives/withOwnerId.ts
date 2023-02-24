@@ -12,7 +12,9 @@ export class WithOwnerId extends SchemaDirectiveVisitor {
         vtex: { logger },
       } = ctx
 
-      logger.error(`Getting checkoutOwnerId from ${ctx.cookies}`)
+      logger.error(
+        `Getting checkoutOwnerId from ${JSON.stringify(ctx.cookies)}`
+      )
       const checkoutOwnerId = getOwnerIdFromCookie(ctx.cookies)
 
       ctx.vtex.ownerId = checkoutOwnerId
