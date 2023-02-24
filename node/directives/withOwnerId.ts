@@ -15,7 +15,9 @@ export class WithOwnerId extends SchemaDirectiveVisitor {
       const OWNERSHIP_COOKIE = 'CheckoutOrderFormOwnership'
 
       logger.error(
-        `Getting checkoutOwnerId: ${ctx.cookies.get(OWNERSHIP_COOKIE)}`
+        `Getting checkoutOwnerId: ${ctx.cookies.get(
+          OWNERSHIP_COOKIE
+        )}; Operation: ${field.name}`
       )
       const checkoutOwnerId = getOwnerIdFromCookie(ctx.cookies)
 
