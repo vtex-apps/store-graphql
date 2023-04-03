@@ -189,11 +189,11 @@ export class ProfileClientV2 extends JanusClient {
       const addressV2 = address.document
 
       return {
-        addressName: addressV2.name,
-        city: addressV2.localityAreaLevel1,
-        complement: addressV2.extend,
+        addressName: addressV2.name ?? addressV2.addressName,
+        city: addressV2.locality,
+        complement: addressV2.complement,
         country: addressV2.countryCode,
-        geoCoordinates: addressV2.geoCoordinates,
+        geoCoordinates: addressV2.geoCoordinates ?? [],
         id: address.id,
         number: addressV2.streetNumber,
         postalCode: addressV2.postalCode,
@@ -203,7 +203,7 @@ export class ProfileClientV2 extends JanusClient {
         street: addressV2.route,
         userId: addressV2.profileId,
         addressType: addressV2.addressType ?? 'residential',
-        neighborhood: addressV2.neighborhood,
+        neighborhood: addressV2.localityAreaLevel1 ?? '',
       } as Address
     })
 
@@ -213,11 +213,13 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         document: {
           administrativeAreaLevel1: address.state,
+          addressName: address.addressName,
           addressType: address.addressType ?? 'residential',
           countryCode: address.country,
-          extend: address.complement ?? '',
-          geoCoordinates: address.geoCoordinates,
-          localityAreaLevel1: address.city,
+          complement: address.complement ?? '',
+          geoCoordinates: address.geoCoordinates ?? [],
+          locality: address.city,
+          localityAreaLevel1: address.neighborhood ?? '',
           name: address.addressName,
           nearly: address.reference ?? '',
           postalCode: address.postalCode,
@@ -225,7 +227,7 @@ export class ProfileClientV2 extends JanusClient {
           route: address.street,
           streetNumber: address.number ?? '',
           receiverName: address.receiverName,
-          neighborhood: address.neighborhood,
+          userId: address.userId,
         },
       } as AddressV2
     })
@@ -257,14 +259,12 @@ export class ProfileClientV2 extends JanusClient {
     const [toChange] = addressesV2.filter(
       (addr) => addr.document.name === addressesV1[0].addressName
     )
-
     return this.getProfileInfo(user).then((profile) => {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
             (addr) => addr.addressName === addressesV1[0].addressName
           )
-
           if (address) {
             return this.patch(
               `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
@@ -274,7 +274,6 @@ export class ProfileClientV2 extends JanusClient {
               }
             )
           }
-
           return this.post(
             `${this.baseUrl}/${profile.id}/addresses`,
             toChange.document,

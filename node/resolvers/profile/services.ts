@@ -206,6 +206,10 @@ export async function saveAddress(
     return result.document
   }
 
+  if (result?.id) {
+    return result.id
+  }
+
   const currentAddresses = await profile.getUserAddresses(
     currentProfile,
     context
