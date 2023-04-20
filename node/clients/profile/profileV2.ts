@@ -256,12 +256,14 @@ export class ProfileClientV2 extends JanusClient {
     const [toChange] = addressesV2.filter(
       (addr) => addr.id === addressesV1[0].id
     )
+
     return this.getProfileInfo(user).then((profile) => {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
             (addr) => addr.addressName === addressesV1[0].id
           )
+
           if (address) {
             return this.patch(
               `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
@@ -271,6 +273,7 @@ export class ProfileClientV2 extends JanusClient {
               }
             )
           }
+
           return this.post(
             `${this.baseUrl}/${profile.id}/addresses`,
             toChange.document,
