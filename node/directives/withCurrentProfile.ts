@@ -76,9 +76,10 @@ async function getCurrentProfileFromSession(
         ? ({ email: profile.email, userId: profile.id } as CurrentProfile)
         : null,
       // If is impersonate is a call center op
-      userType: session?.impersonate?.profile
-        ? 'CallCenterOperator'
-        : 'StoreUser',
+      userType:
+        session?.impersonate?.profile || session?.public?.impersonate
+          ? 'CallCenterOperator'
+          : 'StoreUser',
     }
   })
 }
