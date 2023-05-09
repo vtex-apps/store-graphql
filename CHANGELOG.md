@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.161.3] - 2023-05-09
+
 ### Fixed
 - B2B impersonation not loading profile page
 
