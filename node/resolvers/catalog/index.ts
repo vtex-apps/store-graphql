@@ -74,6 +74,7 @@ interface PageTypeArgs {
   query: string
 }
 
+// eslint-disable-next-line no-restricted-syntax
 enum CrossSellingInput {
   view = 'view',
   buy = 'buy',
@@ -106,9 +107,9 @@ const brandFromList = async (
   slug: string,
   catalog: Context['clients']['catalog']
 ) => {
-  const brandFromList = await getBrandFromSlug(toLower(slug), catalog)
+  const dataBrandFromList = await getBrandFromSlug(toLower(slug), catalog)
 
-  return brandFromList ? brandFromList.id : null
+  return dataBrandFromList?.id ?? null
 }
 
 const getBrandId = async (
@@ -150,21 +151,23 @@ const categoriesOnlyQuery = compose<
   string
 >(join('/'), map(prop('0')), filter(isTupleMap))
 
-const getAndParsePagetype = async (path: string, ctx: Context) => {
-  const pagetype = await ctx.clients.catalog.pageType(path).catch(() => null)
+const getAndParsePagetype = async (pathQuery: string, ctx: Context) => {
+  const pagetype = await ctx.clients.catalog
+    .pageType(pathQuery)
+    .catch(() => null)
 
   if (!pagetype) {
     return { titleTag: null, metaTagDescription: null }
   }
 
   return {
-    titleTag: pagetype.title || pagetype.name,
+    titleTag: pagetype.title ?? pagetype.name,
     metaTagDescription: pagetype.metaTagDescription,
   }
 }
 
 const getCategoryMetadata = async (
-  { map, query }: SearchMetadataArgs,
+  options: SearchMetadataArgs,
   ctx: Context
 ) => {
   const {
@@ -172,8 +175,8 @@ const getCategoryMetadata = async (
   } = ctx
 
   const queryAndMap: TupleString[] = zip(
-    (query || '').split('/'),
-    (map || '').split(',')
+    (options.query ?? '').split('/'),
+    (options.map ?? '').split(',')
   )
 
   const cleanQuery = categoriesOnlyQuery(queryAndMap)
@@ -188,7 +191,7 @@ const getCategoryMetadata = async (
           ctx
         ),
         cleanQuery.split('/')
-      ) || {}
+      ) ?? {}
 
     return {
       metaTagDescription: path(['MetaTagDescription'], category),
@@ -208,10 +211,10 @@ const getBrandMetadata = async (
     clients: { catalog },
   } = ctx
 
-  const cleanQuery = head(split('/', query || '')) || ''
+  const cleanQuery = head(split('/', query ?? '')) ?? ''
 
   if (Functions.isGoCommerceAcc(account)) {
-    const brand = (await getBrandFromSlug(toLower(cleanQuery), catalog)) || {}
+    const brand = (await getBrandFromSlug(toLower(cleanQuery), catalog)) ?? {}
 
     return {
       metaTagDescription: path(['metaTagDescription'], brand),
@@ -234,8 +237,8 @@ const getSearchMetaData = async (
   args: SearchMetadataArgs,
   ctx: Context
 ) => {
-  const map = args.map || ''
-  const firstMap = head(map.split(','))
+  const argsMap = args.map ?? ''
+  const firstMap = head(argsMap.split(','))
 
   if (firstMap === 'c') {
     return getCategoryMetadata(args, ctx)
@@ -317,44 +320,40 @@ export const queries = {
     }
   },
 
-  facets: async (
-    _: any,
-    { facets, query, map, hideUnavailableItems }: FacetsArgs,
-    ctx: Context
-  ) => {
+  facets: async (_: any, args: FacetsArgs, ctx: Context) => {
     const {
       clients: { catalog },
       clients,
     } = ctx
 
-    if (facets && facets.includes('undefined')) {
+    if (args.facets?.includes('undefined')) {
       throw new UserInputError('Bad facets parameter provided')
     }
 
     let result
     const translatedQuery = await translateToStoreDefaultLanguage(
       clients,
-      query
+      args.query
     )
 
     const segmentData = ctx.vtex.segment
-    const salesChannel = (segmentData && segmentData.channel.toString()) || ''
+    const salesChannel = segmentData?.channel.toString() ?? ''
 
-    const unavailableString = hideUnavailableItems
+    const unavailableString = args.hideUnavailableItems
       ? `&fq=isAvailablePerSalesChannel_${salesChannel}:1`
       : ''
 
-    if (facets) {
-      result = await catalog.facets(facets)
+    if (args.facets) {
+      result = await catalog.facets(args.facets)
     } else {
       result = await catalog.facets(
-        `${translatedQuery}?map=${map}${unavailableString}`
+        `${translatedQuery}?map=${args.map}${unavailableString}`
       )
     }
 
     result.queryArgs = {
       query: translatedQuery,
-      map,
+      map: args.map,
     }
 
     return result
@@ -399,6 +398,9 @@ export const queries = {
 
       case 'sku':
         products = await catalog.productBySku([value])
+        break
+
+      default:
         break
     }
 
@@ -461,6 +463,9 @@ export const queries = {
       case 'sku':
         products = await catalog.productBySku(values)
         break
+
+      default:
+        break
     }
 
     if (products.length > 0) {
@@ -492,7 +497,7 @@ export const queries = {
 
     const query = await translateToStoreDefaultLanguage(
       clients,
-      args.query || ''
+      args.query ?? ''
     )
 
     const translatedArgs = {
@@ -555,9 +560,7 @@ export const queries = {
    * @author Bruno Dias
    */
   search: async (_: any, args: any, ctx: Context) => {
-    const { map, query } = args
-
-    if (query == null || map == null) {
+    if (args.query == null || args.map == null) {
       throw new UserInputError('Search query/map cannot be null')
     }
 
@@ -600,8 +603,8 @@ export const queries = {
     return response
   },
 
-  pageType: async (_: any, { path, query }: PageTypeArgs, ctx: Context) => {
-    const response = await ctx.clients.catalog.pageType(path, query)
+  pageType: async (_: any, args: PageTypeArgs, ctx: Context) => {
+    const response = await ctx.clients.catalog.pageType(args.path, args.query)
 
     return {
       id: response.id,
@@ -642,7 +645,7 @@ export const queries = {
 
     const query = await translateToStoreDefaultLanguage(
       clients,
-      args.query || ''
+      args.query ?? ''
     )
 
     const translatedArgs = {

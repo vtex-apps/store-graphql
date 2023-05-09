@@ -83,6 +83,7 @@ export const orderFormItemToSeller = (
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
     PriceWithoutDiscount: orderFormItem.price / 100,
+    Tax: orderFormItem.tax / 100,
     AvailableQuantity:
       orderFormItem?.availability === 'available' &&
       (logisticsInfo ? logisticsInfo.stockBalance : 1)
@@ -103,10 +104,11 @@ export const orderFormItemToSeller = (
     installmentOption.installments.forEach((installment) => {
       commertialOffer.Installments.push({
         Value: installment.value / 100,
-        InterestRate: installment.interestRate,
+        InterestRate: installment.interestRate / 100,
         TotalValuePlusInterestRate: installment.total / 100,
         NumberOfInstallments: installment.count,
         PaymentSystemName: installmentOption.paymentName,
+        PaymentSystemGroupName: installmentOption.paymentGroupName,
         Name: generatePaymentName(
           installment.interestRate,
           installmentOption.paymentName,

@@ -20,7 +20,7 @@ export const resolvers = {
         headers: { resources },
       } = productsRaw
 
-      const quantity = resources.split('/')[1]
+      const [, quantity] = resources.split('/')
 
       return parseInt(quantity, 10)
     },
@@ -30,15 +30,15 @@ export const resolvers = {
       _: any,
       { vtex: { account }, clients: { catalog } }: Context
     ) => {
-      const query = translatedArgs.query || ''
-      const map = translatedArgs.map || ''
+      const query = translatedArgs.query ?? ''
+      const map = translatedArgs.map ?? ''
       const queryAndMap = zip(
         query.toLowerCase().split('/').map(decodeURIComponent),
         map.split(',')
       )
 
       const categoriesSearched = queryAndMap
-        .filter(([_, m]) => m === 'c')
+        .filter(([__, m]) => m === 'c')
         .map(([q]) => q)
 
       const categoriesCount = map.split(',').filter((m) => m === 'c').length

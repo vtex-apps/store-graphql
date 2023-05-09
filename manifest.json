@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "store-graphql",
-  "version": "2.149.3",
+  "version": "2.161.2",
   "title": "GraphQL API for the VTEX store APIs",
   "description": "GraphQL schema and resolvers for the VTEX API for the catalog and orders.",
   "credentialType": "absolute",
@@ -156,6 +156,29 @@
     },
     {
       "name": "vtex.file-manager:file-manager-read-write"
+    },
+    {
+      "name": "GetItemResource"
+    },
+    {
+      "name": "PutItemResource"
+    },
+    {
+      "name": "DeleteItemResource"
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "profile-system-beta.vtex.systems",
+        "path": "/api/profile-system/profiles/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/storage/profile-system/profiles/*"
+      }
     },
     {
       "name": "outbound-access",

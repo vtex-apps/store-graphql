@@ -6,7 +6,7 @@ import {
   URLSearchParamsInit,
 } from 'apollo-server-env'
 
-type Body = BodyInit | object
+type Body = BodyInit | Record<string, unknown>
 
 interface RequestInit extends ApolloRequestInit {
   metric?: string
@@ -20,7 +20,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
   ): Promise<TResult> {
     return this.withMetrics(
       () => super.get<TResult>(path, params, init as any),
-      init && init.metric
+      init?.metric
     )
   }
 
@@ -31,7 +31,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
   ): Promise<TResult> {
     return this.withMetrics(
       () => super.post<TResult>(path, body, init as any),
-      init && init.metric
+      init?.metric
     )
   }
 
@@ -42,7 +42,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
   ): Promise<TResult> {
     return this.withMetrics(
       () => super.patch<TResult>(path, body, init as any),
-      init && init.metric
+      init?.metric
     )
   }
 
@@ -53,7 +53,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
   ): Promise<TResult> {
     return this.withMetrics(
       () => super.put<TResult>(path, body, init as any),
-      init && init.metric
+      init?.metric
     )
   }
 
@@ -64,7 +64,7 @@ export class RESTDataSource extends ApolloRESTDataSource<ServiceContext> {
   ): Promise<TResult> {
     return this.withMetrics(
       () => super.delete<TResult>(path, params, init as any),
-      init && init.metric
+      init?.metric
     )
   }
 

@@ -45,7 +45,7 @@ export const resolvers = {
         }
       )?.Value
 
-      return spotPrice || sellingPrice
+      return spotPrice ?? sellingPrice
     },
   },
 }

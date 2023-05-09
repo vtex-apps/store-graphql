@@ -140,6 +140,7 @@ type Seller {
   addToCartLink: String
   sellerDefault: Boolean
   commertialOffer: Offer
+  error: String
 }
 
 type Recommendation {

@@ -17,7 +17,7 @@ export class MasterData extends ExternalClient {
     super(`http://api.vtex.com/${ctx.account}`, ctx, {
       ...options,
       headers: {
-        ...(options && options.headers),
+        ...options?.headers,
         ...{ Accept: 'application/vnd.vtex.ds.v10+json' },
         ...(ctx.adminUserAuthToken
           ? { VtexIdclientAutCookie: ctx.adminUserAuthToken }
@@ -55,6 +55,7 @@ export class MasterData extends ExternalClient {
 
   public createDocument = (
     acronym: string,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     fields: object,
     schema?: string,
     account?: string
@@ -70,6 +71,7 @@ export class MasterData extends ExternalClient {
   public updateDocument = (
     acronym: string,
     id: string,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     fields: object,
     account?: string,
     schema?: string

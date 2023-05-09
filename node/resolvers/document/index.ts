@@ -68,7 +68,10 @@ export const queries = {
       clients: { masterdata },
     } = context
 
-    const data = await masterdata.getSchema<object>(dataEntity, schema)
+    const data = await masterdata.getSchema<Record<string, unknown>>(
+      dataEntity,
+      schema
+    )
 
     return { ...data, name: data ? args.schema : null }
   },
@@ -84,7 +87,10 @@ export const queries = {
       clients: { masterdata },
     } = context
 
-    const data = await masterdata.getPublicSchema<object>(dataEntity, schema)
+    const data = await masterdata.getPublicSchema<Record<string, unknown>>(
+      dataEntity,
+      schema
+    )
 
     return { schema: data }
   },

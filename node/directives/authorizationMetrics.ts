@@ -20,7 +20,7 @@ function checkForAuthorization(ctx: any, info: GraphQLResolveInfo) {
   const vtexIdToken =
     ctx.cookies.get('VtexIdclientAutCookie') ?? ctx.get('VtexIdclientAutCookie')
 
-  if (!vtexIdToken) {
+  if (!vtexIdToken && Math.floor(Math.random() * 100) === 0) {
     logger.warn({
       message: 'Private route being accessed by unauthorized user',
       userAgent,

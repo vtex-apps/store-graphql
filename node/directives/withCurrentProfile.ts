@@ -136,7 +136,7 @@ async function getCurrentProfileFromCookies(
     const customerEmail = parsedCookies['vtex-impersonated-customer-email']
 
     return profile
-      .getProfileInfo({ email: customerEmail, userId: '' })
+      .getProfileInfo({ email: customerEmail, userId: '' }, context, undefined)
       .then(({ email, userId }) => ({
         currentProfile: { email, userId },
         userType: 'CallCenterOperator',
@@ -155,22 +155,28 @@ async function validatedProfile(
   } = context
 
   const { id, userId } = (await profile
-    .getProfileInfo(currentProfile, 'id')
+    .getProfileInfo(currentProfile, context, 'id')
     .catch(() => {})) || { id: '', userId: '' } // 404 case.
 
-  if (!id) {
-    // doesn't have a profile, create one
-    return profile
-      .createProfile({
-        email: currentProfile.email,
-        userId,
-      })
-      .then(({ profileId }: any) =>
-        profile.getProfileInfo({ userId: profileId, email: '' })
-      )
+  if (id) {
+    return { userId, email: currentProfile.email }
   }
 
-  return { userId, email: currentProfile.email }
+  return profile
+    .createProfile(
+      {
+        email: currentProfile.email,
+        userId,
+      } as Profile,
+      context
+    )
+    .then((newProfile: Profile) =>
+      profile.getProfileInfo(
+        { userId: newProfile.userId, email: '' },
+        context,
+        undefined
+      )
+    )
 }
 
 async function isValidCallcenterOperator(context: Context, email: string) {
@@ -187,7 +193,7 @@ async function isValidCallcenterOperator(context: Context, email: string) {
 }
 
 function isLogged(currentProfile: CurrentProfile | null) {
-  return currentProfile && currentProfile.email
+  return currentProfile?.email
 }
 
 async function checkUserAccount(

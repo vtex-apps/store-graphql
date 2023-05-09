@@ -1,5 +1,5 @@
 import { UserInputError } from '@vtex/api'
-import { compose, forEach, reject, path } from 'ramda'
+import { compose, reject, path } from 'ramda'
 
 import { headers, withAuthToken } from '../headers'
 import httpResolver from '../httpResolver'
@@ -15,7 +15,12 @@ import {
 import { resolvers as orderFormItemResolvers } from './orderFormItem'
 import paymentTokenResolver from './paymentTokenResolver'
 import { fieldResolvers as shippingFieldResolvers } from './shipping'
-import { CHECKOUT_COOKIE, parseCookie } from '../../utils'
+import {
+  ASPXAUTH_COOKIE,
+  CHECKOUT_COOKIE,
+  OWNERSHIP_COOKIE,
+  parseCookie,
+} from '../../utils'
 import {
   getSimulationPayloadsByItem,
   orderFormItemToSeller,
@@ -23,12 +28,14 @@ import {
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
 
-const SetCookieWhitelist = [CHECKOUT_COOKIE, '.ASPXAUTH']
+const ALL_SET_COOKIES = [CHECKOUT_COOKIE, ASPXAUTH_COOKIE, OWNERSHIP_COOKIE]
 
-const isWhitelistedSetCookie = (cookie: string) => {
-  const [key] = cookie.split('=')
+const filterAllowedCookies = (setCookies: string[], allowList: string[]) => {
+  return setCookies.filter((setCookie) => {
+    const [key] = setCookie.split('=')
 
-  return SetCookieWhitelist.includes(key)
+    return allowList.includes(key)
+  })
 }
 
 /**
@@ -107,7 +114,7 @@ const shouldUpdateMarketingData = (
     utmiCampaign = null,
     utmiPart = null,
     utmipage = null,
-  } = orderFormMarketingTags || {}
+  } = orderFormMarketingTags ?? {}
 
   if (
     !utmParams?.source &&
@@ -220,22 +227,28 @@ export async function syncWithStoreLocale(
 
 export async function setCheckoutCookies(
   rawHeaders: Record<string, any>,
-  ctx: Context
+  ctx: Context,
+  allowList: string[] = ALL_SET_COOKIES
 ) {
-  const responseSetCookies: string[] =
-    (rawHeaders && rawHeaders['set-cookie']) || []
+  const responseSetCookies: string[] = rawHeaders?.['set-cookie'] || []
 
   const host = ctx.get('x-forwarded-host')
-  const forwardedSetCookies = responseSetCookies.filter(isWhitelistedSetCookie)
+  const forwardedSetCookies = filterAllowedCookies(
+    responseSetCookies,
+    allowList
+  )
 
   const parseAndClean = compose(parseCookie, replaceDomain(host))
 
   const cleanCookies = forwardedSetCookies.map(parseAndClean)
 
-  forEach(
-    ({ name, value, options }) => ctx.cookies.set(name, value, options),
-    cleanCookies
-  )
+  cleanCookies.forEach(({ name, value, options }) => {
+    if (options.secure && !ctx.cookies.secure) {
+      ctx.cookies.secure = true
+    }
+
+    ctx.cookies.set(name, value, options)
+  })
 }
 
 export const queries: Record<string, Resolver> = {
@@ -378,10 +391,11 @@ export const queries: Record<string, Resolver> = {
   ) => {
     const {
       clients: { pvtCheckout },
-      vtex: { segment },
+      vtex: { segment, logger },
     } = ctx
 
     return items.map((item) => {
+      // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
         const simulationPayloads = getSimulationPayloadsByItem(
           item,
@@ -399,9 +413,10 @@ export const queries: Record<string, Resolver> = {
 
         const sellers = simulations.map((simulation, idx) => {
           if (simulation instanceof Error) {
-            console.error(simulations)
+            logger.error(simulation)
 
             return {
+              error: simulation.message,
               sellerId: item.sellers[idx].sellerId,
               commertialOffer: {
                 spotPrice: null,
@@ -483,7 +498,7 @@ export const mutations: Record<string, Resolver> = {
 
     if (shouldUpdateMarketingData(marketingData, utmParams, utmiParams)) {
       const newMarketingData = {
-        ...(marketingData || {}),
+        ...(marketingData ?? {}),
       }
 
       newMarketingData.utmCampaign = utmParams?.campaign
@@ -542,7 +557,7 @@ export const mutations: Record<string, Resolver> = {
 
     await addOptionsForItems(withOptions, checkout, addItem, previousItems)
 
-    return withOptions.length === 0 ? addItem : await checkout.orderForm()
+    return withOptions.length === 0 ? addItem : checkout.orderForm()
   },
 
   addOrderFormPaymentToken: paymentTokenResolver,
@@ -629,16 +644,17 @@ export const mutations: Record<string, Resolver> = {
     return checkout.updateOrderFormPayment(orderFormId, payments)
   },
 
-  updateOrderFormProfile: (
-    _,
-    { fields },
-    { clients: { checkout }, vtex: { orderFormId } }
-  ) => {
+  updateOrderFormProfile: (_, { fields }, ctx) => {
+    const {
+      clients: { checkout },
+      vtex: { orderFormId },
+    } = ctx
+
     if (orderFormId == null) {
       throw new Error('No orderformid in cookies')
     }
 
-    return checkout.updateOrderFormProfile(orderFormId, fields)
+    return checkout.updateOrderFormProfile(orderFormId, fields, ctx)
   },
 
   updateOrderFormShipping: async (_, { address }, ctx) => {
@@ -698,9 +714,11 @@ export const mutations: Record<string, Resolver> = {
       clients: { checkout },
     } = ctx
 
-    const { data, headers } = await checkout.newOrderForm(orderFormId)
+    const { data, headers: responseHeaders } = await checkout.newOrderForm(
+      orderFormId
+    )
 
-    await setCheckoutCookies(headers, ctx)
+    await setCheckoutCookies(responseHeaders, ctx)
 
     return data
   },

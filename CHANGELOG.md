@@ -10,6 +10,206 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - B2B impersonation not loading profile page
 
+## [2.161.2] - 2023-04-03
+
+### Fixed
+- Profile v2 address reading, updating and saving documents.
+
+## [2.161.1] - 2023-01-24
+
+## [2.161.0] - 2023-01-17
+
+### Deprecated
+- Orders endpoint. Instead, use vtex.orders-graphql endpoint.
+### Removed
+- Directive to monitor origin of requests to the orders endpoint.
+
+## [2.160.1] - 2023-01-17
+### Added
+- Directive to monitor origin of requests to the orders endpoint.
+
+## [2.160.0] - 2022-12-22
+
+### Added
+- `PaymentSystemGroupName` to `itemsWithSimulation` response.
+
+## [2.159.0] - 2022-12-08
+
+### Added
+
+- Tax on simulation return
+
+## [2.158.0] - 2022-11-03
+
+## [2.157.1] - 2022-09-22
+### Added
+- Handle the new `CheckoutOrderFormOwnership` cookie.
+
+### Fixed
+
+- Force http only
+
+## [2.157.0] - 2022-09-21
+
+### Added
+- Simulation error message.
+
+## [2.156.1] - 2022-09-09
+### Fixed
+- Respect Checkout set-cookie directives
+
+## [2.156.0] - 2022-08-31
+
+## [2.155.33] - 2022-08-31
+
+### Added
+- add `isDisposable` to the address graphql
+
+## [2.155.32] - 2022-08-16
+### Changed
+- `withAuthMetrics` directive now logs 1 from 100 unauthorized requests
+
+## [2.155.31] - 2022-08-15
+### Added
+- `busboy` to resolutions yarn field
+
+## [2.155.30] - 2022-08-15
+### Added
+- `follow-redirects` to resolutions yarn field
+
+## [2.155.29] - 2022-08-12
+### Added
+- `json-schema`, `jsdom`, `jest-environment-jsdom` and `node-notifier` to resolutions yarn field
+
+## [2.155.28] - 2022-08-11
+
+## [2.155.27] - 2022-08-11
+
+## [2.155.26] - 2022-08-11
+
+## [2.155.25] - 2022-08-11
+
+## [2.155.24] - 2022-08-11
+
+## [2.155.23] - 2022-08-10
+
+## [2.155.22] - 2022-08-10
+
+## [2.155.21] - 2022-08-10
+
+## [2.155.20] - 2022-08-10
+
+## [2.155.19] - 2022-08-10
+
+## [2.155.18] - 2022-08-10
+
+## [2.155.17] - 2022-08-10
+
+## [2.155.16] - 2022-08-10
+
+## [2.155.15] - 2022-08-10
+
+## [2.155.14] - 2022-08-10
+
+## [2.155.13] - 2022-08-10
+
+## [2.155.12] - 2022-08-10
+
+## [2.155.11] - 2022-08-10
+
+## [2.155.10] - 2022-08-10
+
+## [2.155.9] - 2022-08-10
+
+## [2.155.8] - 2022-08-10
+
+## [2.155.7] - 2022-08-10
+
+## [2.155.6] - 2022-08-10
+
+## [2.155.5] - 2022-08-10
+
+## [2.155.4] - 2022-08-10
+
+## [2.155.3] - 2022-08-10
+
+## [2.155.2] - 2022-08-08
+
+### Fixed
+- Fixing null streetNumber bug
+
+## [2.155.1] - 2022-08-08
+
+## [2.155.0] - 2022-08-08
+
+### Fixed
+
+- Remove white space on graphql schema
+
+## [2.154.2] - 2022-08-08
+
+## [2.154.1] - 2022-08-05
+### Fixed
+- Lint issues.
+
+## [2.154.0] - 2022-08-04
+
+### Fixed
+- Revert dependency update
+
+## [2.153.3] - 2022-08-04
+
+## [2.153.2] - 2022-08-04
+
+## [2.153.1] - 2022-07-28
+### Fixed
+- Revert change on how to calculate price in `commertialOffer` done at [#608](https://github.com/vtex-apps/store-graphql/pull/608)
+## [2.153.0] - 2022-07-19
+
+### Added
+- Added query to logistics to return holidays
+
+## [2.152.4] - 2022-07-12
+
+### Fixed
+- Price shouldn't consider tax, this is sellingPriceWithoutTax, considering only discounts in pricetags at `simulation.ts`
+
+## [2.152.3] - 2022-06-30
+
+### Fixed
+- Changed how to calculate price in `commertialOffer`, now considering price + pricetags instead of sellingPrice / unitMultiplier
+
+## [2.152.2] - 2022-06-28
+
+### Fixed
+- InterestRate should be in its percent format
+
+## [2.152.1] - 2022-05-23 [YANKED]
+
+### Fixed
+- Discrepancy in simulation's Price due to unitMultiplier
+
+## [2.152.0] - 2022-04-18
+
+### Fixed
+- Writing user preferences in the purchase-info data
+
+## [2.151.0] - 2022-04-04
+
+### Fixed
+- Using Janus when using the new Profile System
+
+## [2.150.0] - 2022-03-30
+
+### Added
+- support for the new Profile System that has to be used if an account is PII enabled
+
+## [2.149.4] - 2022-03-24
+
+### Changed
+
+- Upgrade `ua-parser-js` version to latest to avoid hijacked versions (https://github.com/faisalman/ua-parser-js/issues/536)
+
 ## [2.149.3] - 2022-03-03
 ### Removed
 - `withCurrentProfile` directive from `subscribeNewsletter` mutation.
