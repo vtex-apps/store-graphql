@@ -261,10 +261,15 @@ type TeaserEffect {
   parameters: [Parameter]
 }
 
+type GeneralValueTeaser {
+  value: [String]
+}
+
 type Teaser {
   name: String
   conditions: TeaserCondition
   effects: TeaserEffect
+  generalValues: [GeneralValueTeaser]
 }
 
 """
