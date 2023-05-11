@@ -346,6 +346,10 @@ interface RatesAndBenefitsData {
     featured: boolean
     id: string
     name: string
+    generalValues: {
+      key: string
+      value: string
+    }
     conditions: {
       parameters: Array<{
         name: string

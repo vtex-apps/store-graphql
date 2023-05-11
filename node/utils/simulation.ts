@@ -131,7 +131,16 @@ const getTeasers = (ratesAndBenefitsData: RatesAndBenefitsData) => {
 
   return ratesAndBenefitsData.teaser
     .filter((teaser: any) => ALLOWED_TEASER_TYPES.includes(teaser.teaserType))
-    .map((teaser: any) => ({ '<Name>k__BackingField': teaser.name, ...teaser }))
+    .map((teaser: any) => ({
+      '<Name>k__BackingField': teaser.name,
+      ...teaser,
+      generalValues: Object.keys(teaser.generalValues).map(
+        (objectKey: string) => ({
+          key: objectKey,
+          value: teaser.generalValues[objectKey],
+        })
+      ),
+    }))
 }
 
 const getDiscountHighLights = (ratesAndBenefitsData: RatesAndBenefitsData) => {

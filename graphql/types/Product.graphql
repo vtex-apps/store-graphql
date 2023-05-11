@@ -262,14 +262,15 @@ type TeaserEffect {
 }
 
 type GeneralValueTeaser {
-  value: [String]
+  key: String
+  value: String
 }
 
 type Teaser {
   name: String
+  generalValues: [GeneralValueTeaser]
   conditions: TeaserCondition
   effects: TeaserEffect
-  generalValues: [GeneralValueTeaser]
 }
 
 """
