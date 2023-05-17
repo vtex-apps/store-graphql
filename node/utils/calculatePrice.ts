@@ -13,7 +13,7 @@ export const calculatePrice = (
 
   const realPriceFromPrice = price * unitMultiplier
 
-  if (Math.trunc(realPriceFromPrice) == sellingPrice) {
+  if (Math.trunc(realPriceFromPrice) === sellingPrice) {
     return price
   }
 
