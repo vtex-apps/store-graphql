@@ -76,17 +76,19 @@ export const orderFormItemToSeller = (
 
   const sellingPrice = orderFormItem.priceDefinition.calculatedSellingPrice
 
+  const price = orderFormItem.price
+
   const haveUnitMultiplier = unitMultiplier !== 1
 
   const realPrice = haveUnitMultiplier
-    ? calculatePrice(unitMultiplier, sellingPrice)
+    ? calculatePrice(unitMultiplier, sellingPrice, price)
     : sellingPrice
 
   const commertialOffer = {
     Price: Number((realPrice / 100).toFixed(3)),
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
-    PriceWithoutDiscount: orderFormItem.price / 100,
+    PriceWithoutDiscount: price / 100,
     Tax: orderFormItem.tax / 100,
     AvailableQuantity:
       orderFormItem?.availability === 'available' &&
