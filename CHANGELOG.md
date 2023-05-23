@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.162.0] - 2023-05-23
+
 ### Fixed
 - Enable create address Name of the address using the arg of the query saveAddress
 
