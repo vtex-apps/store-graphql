@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Use `withOwnerId` directive on `searchOrderForm` query.
 
+## [2.162.0] - 2023-05-23
+
+### Fixed
+- Enable create address Name of the address using the arg of the query saveAddress
+
+## [2.161.3] - 2023-05-09
+
+### Fixed
+- B2B impersonation not loading profile page
+
+## [2.161.2] - 2023-04-03
+
+### Fixed
+- Profile v2 address reading, updating and saving documents.
+
 ## [2.161.1] - 2023-01-24
 
 ## [2.161.0] - 2023-01-17

@@ -119,6 +119,7 @@ export const sessionFields = (
         impersonate: {
           ...setProfileData(namespaces.profile, namespaces.impersonate),
         },
+        public: namespaces.public,
         utmParams: setUtmParams(namespaces.public),
         utmiParams: setUtmiParams(namespaces.public),
         orderFormId: path(['public', 'orderFormId', 'value'], namespaces),

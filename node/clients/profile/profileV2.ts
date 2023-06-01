@@ -168,7 +168,6 @@ export class ProfileClientV2 extends JanusClient {
       undefined,
       piiRequest
     )
-
     return this.get<Address[]>(url, {
       metric: 'profile-system-v2-getUserAddresses',
     })
@@ -187,13 +186,12 @@ export class ProfileClientV2 extends JanusClient {
   private translateToV1Address = (addresses: AddressV2[]) =>
     addresses.map((address: AddressV2) => {
       const addressV2 = address.document
-
       return {
-        addressName: addressV2.name,
-        city: addressV2.localityAreaLevel1,
-        complement: addressV2.extend,
+        addressName: addressV2.addressName ?? addressV2.name,
+        city: addressV2.locality,
+        complement: addressV2.complement,
         country: addressV2.countryCode,
-        geoCoordinates: addressV2.geoCoordinates,
+        geoCoordinates: addressV2.geoCoordinates ?? [],
         id: address.id,
         number: addressV2.streetNumber,
         postalCode: addressV2.postalCode,
@@ -203,7 +201,7 @@ export class ProfileClientV2 extends JanusClient {
         street: addressV2.route,
         userId: addressV2.profileId,
         addressType: addressV2.addressType ?? 'residential',
-        neighborhood: addressV2.neighborhood,
+        neighborhood: addressV2.localityAreaLevel1 ?? '',
       } as Address
     })
 
@@ -213,11 +211,13 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         document: {
           administrativeAreaLevel1: address.state,
+          addressName: address.addressName,
           addressType: address.addressType ?? 'residential',
           countryCode: address.country,
-          extend: address.complement ?? '',
-          geoCoordinates: address.geoCoordinates,
-          localityAreaLevel1: address.city,
+          complement: address.complement ?? '',
+          geoCoordinates: address.geoCoordinates ?? [],
+          locality: address.city,
+          localityAreaLevel1: address.neighborhood ?? '',
           name: address.addressName,
           nearly: address.reference ?? '',
           postalCode: address.postalCode,
@@ -225,7 +225,7 @@ export class ProfileClientV2 extends JanusClient {
           route: address.street,
           streetNumber: address.number ?? '',
           receiverName: address.receiverName,
-          neighborhood: address.neighborhood,
+          userId: address.userId,
         },
       } as AddressV2
     })
@@ -234,8 +234,7 @@ export class ProfileClientV2 extends JanusClient {
     return Object.entries<string>(addressesObj).map(([key, stringifiedObj]) => {
       try {
         const address = JSON.parse(stringifiedObj) as Address
-
-        address.addressName = key
+        address.addressName = address.addressName ?? key
 
         return address
       } catch (e) {
@@ -252,19 +251,16 @@ export class ProfileClientV2 extends JanusClient {
         return addr
       }
     )
-
     const addressesV2 = this.translateToV2Address(addressesV1)
     const [toChange] = addressesV2.filter(
       (addr) => addr.document.name === addressesV1[0].addressName
     )
-
     return this.getProfileInfo(user).then((profile) => {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
             (addr) => addr.addressName === addressesV1[0].addressName
           )
-
           if (address) {
             return this.patch(
               `${this.baseUrl}/${profile.id}/addresses/${address.id}`,
@@ -274,7 +270,6 @@ export class ProfileClientV2 extends JanusClient {
               }
             )
           }
-
           return this.post(
             `${this.baseUrl}/${profile.id}/addresses`,
             toChange.document,
