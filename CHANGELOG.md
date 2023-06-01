@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.162.1] - 2023-06-01
+
 ### Fixed
 - Use `withOwnerId` directive on `searchOrderForm` query.
 
