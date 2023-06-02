@@ -308,15 +308,17 @@ type Query {
   """
   returns a certain checkout cart details
   """
-  searchOrderForm(orderFormId: String!): OrderForm @cacheControl(scope: PRIVATE)
+  searchOrderForm(orderFormId: String!): OrderForm
+    @cacheControl(scope: PRIVATE)
+    @withOwnerId
 
   """
   DEPRECATED
   """
-  orders: [Order] @cacheControl(scope: PRIVATE) @withOrderFormId
-    @deprecated(
-      reason: "Use orders endpoint of vtex.orders-graphql instead"
-    )
+  orders: [Order]
+    @cacheControl(scope: PRIVATE)
+    @withOrderFormId
+    @deprecated(reason: "Use orders endpoint of vtex.orders-graphql instead")
 
   """
   Returns a specified user order
@@ -614,7 +616,11 @@ type Mutation {
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     items: [OrderFormItemInput]
-  ): OrderForm @withSegment @withOrderFormId @withOwnerId @cacheControl(scope: PRIVATE)
+  ): OrderForm
+    @withSegment
+    @withOrderFormId
+    @withOwnerId
+    @cacheControl(scope: PRIVATE)
 
   """
   Used to update the CL entity on masterData.

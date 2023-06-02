@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - `generalValues` to `product` query.
 
+## [2.162.1] - 2023-06-01
+
+### Fixed
+- Use `withOwnerId` directive on `searchOrderForm` query.
+
+## [2.162.0] - 2023-05-23
+
+### Fixed
+- Enable create address Name of the address using the arg of the query saveAddress
+
 ## [2.161.3] - 2023-05-09
 
 ### Fixed

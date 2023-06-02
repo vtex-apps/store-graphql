@@ -4,3 +4,4 @@ node/**/*.js.map
 .vscode/
 .DS_Store
 node/package-lock.json
+.idea/
