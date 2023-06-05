@@ -195,6 +195,7 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         number: addressV2.streetNumber,
         postalCode: addressV2.postalCode,
+        name: addressV2.name ?? '',
         receiverName: addressV2.receiverName,
         reference: addressV2.nearly,
         state: addressV2.administrativeAreaLevel1,

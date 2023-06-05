@@ -172,6 +172,7 @@ type Address {
   postalCode: String
   city: String
   reference: String
+  name: String
   addressName: String
   addressType: String
 }
