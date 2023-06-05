@@ -211,7 +211,7 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         document: {
           administrativeAreaLevel1: address.state,
-          addressName: address.addressName,
+          addressName: address.id,
           addressType: address.addressType ?? 'residential',
           countryCode: address.country,
           complement: address.complement ?? '',
@@ -234,7 +234,7 @@ export class ProfileClientV2 extends JanusClient {
     return Object.entries<string>(addressesObj).map(([key, stringifiedObj]) => {
       try {
         const address = JSON.parse(stringifiedObj) as Address
-        address.addressName = address.addressName ?? key
+        address.id = key
 
         return address
       } catch (e) {
@@ -259,7 +259,7 @@ export class ProfileClientV2 extends JanusClient {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
-            (addr) => addr.addressName === addressesV1[0].addressName
+            (addr) => addr.addressName === addressesV1[0].id
           )
           if (address) {
             return this.patch(
