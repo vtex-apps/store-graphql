@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Update name of the address
+- Add name variable to AddressInput for profile V2
 
 ## [2.163.0] - 2023-06-02
 

@@ -272,4 +272,5 @@ input AddressInput {
   reference: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   addressName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   addressType: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  name: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
 }
