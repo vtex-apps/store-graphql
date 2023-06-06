@@ -188,6 +188,7 @@ export class ProfileClientV2 extends JanusClient {
       const addressV2 = address.document
       return {
         addressName: addressV2.addressName ?? addressV2.name,
+        name: addressV2.name ?? addressV2.addressName ?? '',
         city: addressV2.locality,
         complement: addressV2.complement,
         country: addressV2.countryCode,

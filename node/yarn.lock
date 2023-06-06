@@ -6502,17 +6502,17 @@ validator@^13.7.0:
   version "0.0.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.11.0/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
 
-"vtex.messages@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.67.0/public/@types/vtex.messages":
-  version "1.67.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.67.0/public/@types/vtex.messages#bcf3584e3014c233cf360b22e4dc9f4ccb2136a7"
+"vtex.messages@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.67.6/public/@types/vtex.messages":
+  version "1.67.6"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.67.6/public/@types/vtex.messages#2a1d9b41b77dff3d7237585295c78a15cf11ef31"
 
 "vtex.rewriter@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rewriter@1.56.5/public/@types/vtex.rewriter":
   version "1.56.5"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rewriter@1.56.5/public/@types/vtex.rewriter#ef413fdf450807c382f077e50aae533a43db8416"
 
-"vtex.store-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.161.3/public/@types/vtex.store-graphql":
-  version "2.161.3"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.161.3/public/@types/vtex.store-graphql#4db8fb38d92864f7aefddfce15995ab90ddb7fd1"
+"vtex.store-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.163.0/public/@types/vtex.store-graphql":
+  version "2.163.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.163.0/public/@types/vtex.store-graphql#7dfdee5036802ffd00506e836a0925bcc685e7a3"
 
 w3c-hr-time@^1.0.2:
   version "1.0.2"
