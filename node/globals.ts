@@ -57,6 +57,7 @@ declare global {
   }
 
   interface Address {
+    name?: string
     addressName?: string
     addressType?: string
     city?: string

@@ -188,6 +188,7 @@ export class ProfileClientV2 extends JanusClient {
       const addressV2 = address.document
       return {
         addressName: addressV2.addressName ?? addressV2.name,
+        name: addressV2.name ?? addressV2.addressName ?? '',
         city: addressV2.locality,
         complement: addressV2.complement,
         country: addressV2.countryCode,
@@ -211,14 +212,14 @@ export class ProfileClientV2 extends JanusClient {
         id: address.id,
         document: {
           administrativeAreaLevel1: address.state,
-          addressName: address.addressName,
+          addressName: address.addressName ?? address.id,
           addressType: address.addressType ?? 'residential',
           countryCode: address.country,
           complement: address.complement ?? '',
           geoCoordinates: address.geoCoordinates ?? [],
           locality: address.city,
           localityAreaLevel1: address.neighborhood ?? '',
-          name: address.addressName,
+          name: (address.name ?? address.addressName) || '',
           nearly: address.reference ?? '',
           postalCode: address.postalCode,
           profileId: address.userId,
@@ -234,7 +235,7 @@ export class ProfileClientV2 extends JanusClient {
     return Object.entries<string>(addressesObj).map(([key, stringifiedObj]) => {
       try {
         const address = JSON.parse(stringifiedObj) as Address
-        address.addressName = address.addressName ?? key
+        address.id = key
 
         return address
       } catch (e) {
@@ -253,13 +254,13 @@ export class ProfileClientV2 extends JanusClient {
     )
     const addressesV2 = this.translateToV2Address(addressesV1)
     const [toChange] = addressesV2.filter(
-      (addr) => addr.document.name === addressesV1[0].addressName
+      (addr) => addr.id === addressesV1[0].id
     )
     return this.getProfileInfo(user).then((profile) => {
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
-            (addr) => addr.addressName === addressesV1[0].addressName
+            (addr) => addr.addressName === addressesV1[0].id
           )
           if (address) {
             return this.patch(
