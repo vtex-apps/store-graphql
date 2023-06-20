@@ -45,10 +45,11 @@
     "@vtex/test-tools": "2.1.1",
     "@vtex/tsconfig": "^0.2.0",
     "http2": "^3.3.7",
+    "vtex.catalog-api-proxy": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.10.4/public/_types/react",
     "vtex.file-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.11.0/public/_types/react",
     "vtex.messages": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.messages@1.67.6/public/@types/vtex.messages",
     "vtex.rewriter": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rewriter@1.56.5/public/@types/vtex.rewriter",
-    "vtex.store-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.163.0/public/@types/vtex.store-graphql"
+    "vtex.store-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.164.0/public/@types/vtex.store-graphql"
   },
   "scripts": {
     "test": "vtex-test-tools test",
