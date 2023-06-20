@@ -76,7 +76,7 @@ export const orderFormItemToSeller = (
 
   const sellingPrice = orderFormItem.priceDefinition.calculatedSellingPrice
 
-  const price = orderFormItem.price
+  const { price } = orderFormItem
 
   const haveUnitMultiplier = unitMultiplier !== 1
 

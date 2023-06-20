@@ -192,6 +192,7 @@ export async function saveAddress(
     clients: { profile },
     vtex: { currentProfile },
   } = context
+
   const addressesData = mapNewAddressToProfile(args.address, currentProfile)
   const [newId] = Object.keys(addressesData)
 
@@ -200,6 +201,7 @@ export async function saveAddress(
     addressesData,
     context
   )
+
   if (result?.document) {
     return result.document
   }
@@ -243,6 +245,7 @@ function mapNewAddressToProfile(
   id: string = generateRandomName()
 ) {
   const { geoCoordinates, ...addr } = address
+
   return {
     [id]: JSON.stringify({
       ...addr,
