@@ -3,7 +3,7 @@ export const calculatePrice = (
   sellingPrice: number,
   price: number
 ) => {
-  const minRange = ((sellingPrice - 1) * 10 + 9) / (unitMultiplier * 10)
+  const minRange = (sellingPrice * 10 - 1) / (unitMultiplier * 10)
   const maxRange = (sellingPrice * 10 + 9) / (unitMultiplier * 10)
 
   const ceilMinRange = Math.ceil(minRange)
