@@ -74,7 +74,7 @@ export const orderFormItemToSeller = (
 
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
-  const sellingPrice = orderFormItem.priceDefinition.calculatedSellingPrice
+  const sellingPrice = orderFormItem.priceDefinition?.calculatedSellingPrice ?? orderFormItem.sellingPrice
 
   const { price } = orderFormItem
 
