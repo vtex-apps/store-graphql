@@ -27,6 +27,12 @@ type PaymentProfile {
     cardNumber: String
     """ Billing address for this payment form (type definition in the Profile file)"""
     address: Address
+    """ Boolean informing whether the card is expired or not """
+    isExpired: Boolean
+    """ String representing the expiration date in the form dd/yyyy """
+    expirationDate: String
+    """ Flag indicating if the card was registered in Profile System as 'notFound' or 'billingAddressEmpty' on the Gateway side """
+    accountStatus: String
 }
 
 input PaymentInput {
