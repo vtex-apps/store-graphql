@@ -155,6 +155,12 @@ const getDiscountHighLights = (ratesAndBenefitsData: RatesAndBenefitsData) => {
     .map((rateAndBenefitsIdentifier: any) => ({
       '<Name>k__BackingField': rateAndBenefitsIdentifier.name,
       ...rateAndBenefitsIdentifier,
+      additionalInfo: Object.keys(rateAndBenefitsIdentifier.additionalInfo).map(
+        (objectKey: string) => ({
+          key: objectKey,
+          value: rateAndBenefitsIdentifier.additionalInfo[objectKey],
+        })
+      ),
     }))
 }
 

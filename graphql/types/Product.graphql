@@ -241,6 +241,7 @@ type Offer {
   """
   discountHighlights: [Discount!]
   teasers: [Teaser!]
+  additionalInfo: [AdditionalInfo!]
   """
   List of gifts associated with the product
   """
@@ -262,6 +263,11 @@ type TeaserEffect {
 }
 
 type GeneralValueTeaser {
+  key: String
+  value: String
+}
+
+type AdditionalInfo {
   key: String
   value: String
 }
