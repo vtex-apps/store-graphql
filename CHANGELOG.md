@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+### Fixed
+- Update the logic to calculate price with multiplier units
+
+### Added
+- Test for prices with multiplier units
+
 ## [2.165.0] - 2023-07-11
 
 ### Added
 - `isExpired`, `expirationDate` and `accountStatus` to `profile` query.
+
 
 ## [2.164.0] - 2023-06-12
 

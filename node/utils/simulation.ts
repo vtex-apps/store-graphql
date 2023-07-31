@@ -1,5 +1,7 @@
 import { SegmentData } from '@vtex/api'
 
+import { calculatePrice } from './calculatePrice'
+
 const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
 const getMarketingData = (segment?: SegmentData) => {
@@ -63,26 +65,30 @@ export const getSimulationPayloadsByItem = (
 
 export const orderFormItemToSeller = (
   orderFormItem: OrderFormItem & {
-    paymentData: any
+    paymentData: PaymentData
     ratesAndBenefitsData: RatesAndBenefitsData
     logisticsInfo: any[]
   }
 ) => {
   const unitMultiplier = orderFormItem.unitMultiplier ?? 1
+
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
+  const sellingPrice = orderFormItem.priceDefinition?.calculatedSellingPrice ?? orderFormItem.sellingPrice
+
+  const { price } = orderFormItem
+
+  const haveUnitMultiplier = unitMultiplier !== 1
+
+  const realPrice = haveUnitMultiplier
+    ? calculatePrice(unitMultiplier, sellingPrice, price)
+    : sellingPrice
+
   const commertialOffer = {
-    Price: orderFormItem.priceDefinition?.calculatedSellingPrice
-      ? Number(
-          (
-            orderFormItem.priceDefinition.calculatedSellingPrice /
-            (unitMultiplier * 100)
-          ).toFixed(2)
-        )
-      : orderFormItem.price / 100,
+    Price: Number((realPrice / 100).toFixed(3)),
     PriceValidUntil: orderFormItem.priceValidUntil,
     ListPrice: orderFormItem.listPrice / 100,
-    PriceWithoutDiscount: orderFormItem.price / 100,
+    PriceWithoutDiscount: price / 100,
     Tax: orderFormItem.tax / 100,
     AvailableQuantity:
       orderFormItem?.availability === 'available' &&
