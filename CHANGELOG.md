@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.166.0] - 2023-07-31
+
 
 ### Fixed
 - Update the logic to calculate price with multiplier units
