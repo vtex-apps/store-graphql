@@ -57,7 +57,7 @@ interface OrderFormItem {
   parentItemIndex: number | null
   parentAssemblyBinding: string | null
   productCategoryIds: string
-  priceTags: string[]
+  priceTags: PriceTags[]
   measurementUnit: string
   additionalInfo: {
     brandName: string
@@ -77,12 +77,20 @@ interface OrderFormItem {
     calculatedSellingPrice: number
     sellingPrices: SellingPrice[]
     total: number
-  } | null
+  }
 }
 
 interface SellingPrice {
   quantity: number
   value: number
+}
+
+interface PriceTags {
+  name: string
+  value: number
+  rawValue: number
+  isPercentual: boolean
+  identifier: string
 }
 
 interface InstallmentOption {
@@ -101,37 +109,32 @@ interface SimulationInstallment {
   count: number
 }
 
-interface PaymentData {
-  installmentOptions: InstallmentOption[]
-  paymentSystems: Array<{
-    id: string
-    name: string
-    groupName: string
-    validator: {
-      regex: string
-      mask: string
-      cardCodeRegex: string
-      cardCodeMask: string
-      weights: number[]
-      useCvv: boolean
-      useExpirationDate: boolean
-      useCardHolderName: boolean
-      useBillingAddress: boolean
-    }
-    stringId: string
-    template: string
-    requiresDocument: boolean
-    isCustom: boolean
-    description: string | null
-    requiresAuthentication: boolean
-    dueDate: string
-    availablePayments: any | null
-  }>
-  payments: any[]
-  giftCards: any[]
-  giftCardMessages: any[]
-  availableAccounts: any[]
-  availableTokens: any[]
+interface PaymentSystem {
+  id: number
+  name: string
+  groupName: string
+  validator: Validator
+  stringId: string
+  template: string
+  requiresDocument: boolean
+  displayDocument: boolean
+  isCustom: boolean
+  description: string | null
+  requiresAuthentication: boolean
+  dueDate: string
+  availablePayments: any
+}
+
+interface Validator {
+  regex: string
+  mask: string
+  cardCodeRegex: string
+  cardCodeMask: string
+  weights: number[]
+  useCvv: boolean
+  useExpirationDate: boolean
+  useCardHolderName: boolean
+  useBillingAddress: boolean
 }
 
 interface OrderForm {
@@ -333,6 +336,33 @@ interface ItemWithSimulationInput {
   sellers: Array<{
     sellerId: string
   }>
+}
+
+interface Installment {
+  count: number
+  hasInterestRate: boolean
+  interestRate: number
+  value: number
+  total: number
+  sellerMerchantInstallments: Array<{
+    id: string
+    count: number
+    hasInterestRate: boolean
+    interestRate: number
+    value: number
+    total: number
+  }>
+}
+
+interface PaymentData {
+  installmentOptions: InstallmentOption[]
+  paymentSystems: PaymentSystem[]
+  payments: any[]
+  giftCards: any[]
+  giftCardMessages: any[]
+  availableAccounts: any[]
+  availableTokens: any[]
+  availableAssociations: any
 }
 
 interface RatesAndBenefitsData {
