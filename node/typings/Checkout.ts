@@ -371,7 +371,7 @@ interface RatesAndBenefitsData {
     name: string
     featured: boolean
     description: string
-    additionalInfo: {
+    additionalInfo?: {
       key: string
       value: string
     }
