@@ -266,6 +266,11 @@ type GeneralValueTeaser {
   value: String
 }
 
+type AdditionalInfo {
+  key: String
+  value: String
+}
+
 type Teaser {
   name: String
   generalValues: [GeneralValueTeaser]
@@ -281,6 +286,10 @@ type Discount {
   Discount name
   """
   name: String
+  """
+  Additional Info
+  """
+  additionalInfo: [AdditionalInfo]
 }
 
 type DeliverySlaSamples {

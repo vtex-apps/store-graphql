@@ -74,7 +74,9 @@ export const orderFormItemToSeller = (
 
   const [logisticsInfo] = orderFormItem.logisticsInfo
 
-  const sellingPrice = orderFormItem.priceDefinition?.calculatedSellingPrice ?? orderFormItem.sellingPrice
+  const sellingPrice =
+    orderFormItem.priceDefinition?.calculatedSellingPrice ??
+    orderFormItem.sellingPrice
 
   const { price } = orderFormItem
 
@@ -161,6 +163,12 @@ const getDiscountHighLights = (ratesAndBenefitsData: RatesAndBenefitsData) => {
     .map((rateAndBenefitsIdentifier: any) => ({
       '<Name>k__BackingField': rateAndBenefitsIdentifier.name,
       ...rateAndBenefitsIdentifier,
+      additionalInfo: Object.keys(
+        rateAndBenefitsIdentifier.additionalInfo ?? {}
+      ).map((objectKey: string) => ({
+        key: objectKey,
+        value: rateAndBenefitsIdentifier.additionalInfo[objectKey],
+      })),
     }))
 }
 

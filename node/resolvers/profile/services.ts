@@ -214,7 +214,7 @@ export async function saveAddress(
     currentProfile,
     context
   )
-  
+
   return currentAddresses.find(
     (address: Address) => address.addressName === newId
   ) as Address

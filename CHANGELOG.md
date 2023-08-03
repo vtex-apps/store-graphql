@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- `additionalInfo` to `product` query.
+
 ## [2.166.1] - 2023-08-03
 
 ### Fixed

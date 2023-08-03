@@ -371,6 +371,10 @@ interface RatesAndBenefitsData {
     name: string
     featured: boolean
     description: string
+    additionalInfo?: {
+      key: string
+      value: string
+    }
   }>
   teaser: Array<{
     featured: boolean
