@@ -250,7 +250,7 @@ function mapNewAddressToProfile(
     [id]: JSON.stringify({
       ...addr,
       geoCoordinate: geoCoordinates,
-      addressName: address.addressName ?? id,
+      addressName: id,
       userId: currentProfile.userId,
     }),
   }

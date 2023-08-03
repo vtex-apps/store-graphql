@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - `additionalInfo` to `product` query.
 
+## [2.166.1] - 2023-08-03
+
+### Fixed
+- Save Address Mutation for addressId null
+
 ## [2.166.0] - 2023-07-31
 
 
