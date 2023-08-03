@@ -214,7 +214,7 @@ export async function saveAddress(
     currentProfile,
     context
   )
-  console.log(currentAddresses, newId)
+  
   return currentAddresses.find(
     (address: Address) => address.addressName === newId
   ) as Address
