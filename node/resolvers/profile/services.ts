@@ -214,7 +214,7 @@ export async function saveAddress(
     currentProfile,
     context
   )
-
+  
   return currentAddresses.find(
     (address: Address) => address.addressName === newId
   ) as Address
@@ -250,7 +250,7 @@ function mapNewAddressToProfile(
     [id]: JSON.stringify({
       ...addr,
       geoCoordinate: geoCoordinates,
-      addressName: address.addressName ?? id,
+      addressName: id,
       userId: currentProfile.userId,
     }),
   }
