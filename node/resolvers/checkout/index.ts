@@ -396,7 +396,6 @@ export const queries: Record<string, Resolver> = {
     } = ctx
 
     const changeSeller = isSellerFlagged(ctx.vtex.account)
-    console.log(changeSeller)
     return items.map((item) => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
