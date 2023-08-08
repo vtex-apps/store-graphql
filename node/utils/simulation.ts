@@ -1,6 +1,8 @@
 import { SegmentData } from '@vtex/api'
 
 import { calculatePrice } from './calculatePrice'
+import { isBase64 } from './region'
+import atob from 'atob'
 
 const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
@@ -41,13 +43,23 @@ const getMarketingData = (segment?: SegmentData) => {
 export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   segment?: SegmentData,
-  regionId?: string
+  regionId?: string,
+  changeSeller?: Boolean
 ) => {
+  let sellerSelected = '1'
+  if (changeSeller) {
+    const regionV1 = isBase64(regionId)
+    sellerSelected = regionV1 && regionId ? atob(regionId) : '1'
+  }
   const payloadItems = item.sellers.map((seller) => {
+    const sellerId =
+      seller.sellerId === '1'
+        ? sellerSelected?.split('SW#')[1]
+        : seller.sellerId
     return {
       id: item.itemId,
       quantity: 1,
-      seller: seller.sellerId,
+      seller: sellerId ? sellerId : seller.sellerId,
     } as PayloadItem
   })
 

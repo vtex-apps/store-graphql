@@ -27,6 +27,7 @@ import {
 } from '../../utils/simulation'
 import { LogisticPickupPoint } from '../logistics/types'
 import logisticPickupResolvers from '../logistics/fieldResolvers'
+import { isSellerFlagged } from '../../utils/flags/isSellerFlag'
 
 const ALL_SET_COOKIES = [CHECKOUT_COOKIE, ASPXAUTH_COOKIE, OWNERSHIP_COOKIE]
 
@@ -394,13 +395,16 @@ export const queries: Record<string, Resolver> = {
       vtex: { segment, logger },
     } = ctx
 
+    const changeSeller = isSellerFlagged(ctx.vtex.account)
+    console.log(changeSeller)
     return items.map((item) => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
         const simulationPayloads = getSimulationPayloadsByItem(
           item,
           segment,
-          regionId
+          regionId,
+          changeSeller
         )
 
         const simulationPromises = simulationPayloads.map((payload) =>
@@ -511,9 +515,8 @@ export const mutations: Record<string, Resolver> = {
       if (newMarketingData.marketingTags == null) {
         delete newMarketingData.marketingTags
       } else if (Array.isArray(newMarketingData.marketingTags)) {
-        newMarketingData.marketingTags = newMarketingData.marketingTags.filter(
-          Boolean
-        )
+        newMarketingData.marketingTags =
+          newMarketingData.marketingTags.filter(Boolean)
       }
 
       const atLeastOneValidField = Object.values(newMarketingData).some(
