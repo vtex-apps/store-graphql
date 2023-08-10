@@ -44,10 +44,10 @@ export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   segment?: SegmentData,
   regionId?: string,
-  changeSeller?: Boolean
+  useSellerFromRegion?: Boolean
 ) => {
   let sellerSelected = '1'
-  if (changeSeller) {
+  if (useSellerFromRegion) {
     const regionV1 = isBase64(regionId)
     sellerSelected = regionV1 && regionId ? atob(regionId) : '1'
   }

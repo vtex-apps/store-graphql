@@ -1,4 +1,4 @@
-export const sellerFlag = [
+export const regionFlag = [
     'casinofr',
     'casinofrprod',
     'casinofrqa',
