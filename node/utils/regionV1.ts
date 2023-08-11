@@ -1,5 +1,6 @@
 export function isRegionV1(regionId: string) {
-  return !regionId.includes('v2')
+  const regex = /v\d+/; 
+  return !regex.test(regionId);
 }
 
 export function isUniqueSeller(regionId: string) {
