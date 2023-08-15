@@ -6,7 +6,7 @@ import atob from 'atob'
 
 const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
-const isMarketplace = '1'
+const MARKETPLACE_SELLER_ID = '1'
 
 const getMarketingData = (segment?: SegmentData) => {
   if (
@@ -50,7 +50,7 @@ export const getSimulationPayloadsByItem = (
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     let sellerFromRegion = null
-    if (useSellerFromRegion && regionId && seller.sellerId === isMarketplace) {
+    if (useSellerFromRegion && regionId && seller.sellerId === MARKETPLACE_SELLER_ID) {
       const regionV1 = isRegionV1(regionId)
       const sellerList = regionV1 ? atob(regionId) : null
       if (sellerList) {
