@@ -12,7 +12,8 @@ const getMarketingData = (segment?: SegmentData) => {
   if (
     !segment?.utm_campaign &&
     !segment?.utm_source &&
-    !segment?.utmi_campaign
+    !segment?.utmi_campaign &&
+    !segment?.campaigns
   ) {
     return
   }
@@ -36,6 +37,13 @@ const getMarketingData = (segment?: SegmentData) => {
     marketingData = {
       ...marketingData,
       utmiCampaign: segment?.utmi_campaign,
+    }
+  }
+
+  if (segment?.campaigns) {
+    marketingData = {
+      ...marketingData,
+      campaigns: [{ id: segment?.campaigns }],
     }
   }
 

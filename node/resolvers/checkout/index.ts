@@ -394,7 +394,6 @@ export const queries: Record<string, Resolver> = {
       clients: { pvtCheckout },
       vtex: { segment, logger },
     } = ctx
-
     const changeSeller = isSellerFlaggedForChangingOnSimulationBasedOnRegion(ctx.vtex.account)
     return items.map((item) => {
       // eslint-disable-next-line no-async-promise-executor
@@ -405,7 +404,6 @@ export const queries: Record<string, Resolver> = {
           regionId,
           changeSeller
         )
-
         const simulationPromises = simulationPayloads.map((payload) =>
           pvtCheckout.simulation(payload, salesChannel)
         )
