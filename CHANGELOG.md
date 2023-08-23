@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Campaigns context added to checkout simulation
+
 ## [2.168.0] - 2023-08-15
 ### Added
 - `sellerFlag` to change the seller at the simulation
