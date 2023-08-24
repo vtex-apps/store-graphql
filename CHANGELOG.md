@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.169.0] - 2023-08-24
+
 ### Added
 - Campaigns context added to checkout simulation
 
