@@ -395,7 +395,10 @@ export const queries: Record<string, Resolver> = {
       vtex: { segment, logger },
     } = ctx
 
-    const changeSeller = isSellerFlaggedForChangingOnSimulationBasedOnRegion(ctx.vtex.account)
+    const changeSeller = isSellerFlaggedForChangingOnSimulationBasedOnRegion(
+      ctx.vtex.account
+    )
+
     return items.map((item) => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
@@ -514,8 +517,9 @@ export const mutations: Record<string, Resolver> = {
       if (newMarketingData.marketingTags == null) {
         delete newMarketingData.marketingTags
       } else if (Array.isArray(newMarketingData.marketingTags)) {
-        newMarketingData.marketingTags =
-          newMarketingData.marketingTags.filter(Boolean)
+        newMarketingData.marketingTags = newMarketingData.marketingTags.filter(
+          Boolean
+        )
       }
 
       const atLeastOneValidField = Object.values(newMarketingData).some(
