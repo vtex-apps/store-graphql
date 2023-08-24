@@ -1,9 +1,8 @@
 import { SegmentData } from '@vtex/api'
+import atob from 'atob'
 
 import { calculatePrice } from './calculatePrice'
 import { isRegionV1, isUniqueSeller } from './regionV1'
-
-import atob from 'atob'
 
 const ALLOWED_TEASER_TYPES = ['Catalog', 'Profiler', 'ConditionalPrice']
 
@@ -55,12 +54,16 @@ export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   segment?: SegmentData,
   regionId?: string,
-  useSellerFromRegion?: Boolean
+  useSellerFromRegion?: boolean
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     let sellerFromRegion = null
 
-    if (useSellerFromRegion && regionId && seller.sellerId === MARKETPLACE_SELLER_ID) {
+    if (
+      useSellerFromRegion &&
+      regionId &&
+      seller.sellerId === MARKETPLACE_SELLER_ID
+    ) {
       const regionV1 = isRegionV1(regionId)
       const sellerList = regionV1 ? atob(regionId) : null
 
@@ -70,11 +73,11 @@ export const getSimulationPayloadsByItem = (
         sellerFromRegion = uniqueSeller ? sellerList.split('SW#')[1] : null
       }
     }
-    
+
     return {
       id: item.itemId,
       quantity: 1,
-      seller: sellerFromRegion ? sellerFromRegion : seller.sellerId,
+      seller: sellerFromRegion || seller.sellerId,
     } as PayloadItem
   })
 

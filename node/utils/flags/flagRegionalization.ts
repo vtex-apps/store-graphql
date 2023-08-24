@@ -1,5 +1,7 @@
-import { regionFlag } from "./regionFlag";
+import { regionFlag } from './regionFlag'
 
-export function isSellerFlaggedForChangingOnSimulationBasedOnRegion(sellerName: string) {
-    return regionFlag.includes(sellerName);
+export function isSellerFlaggedForChangingOnSimulationBasedOnRegion(
+  sellerName: string
+) {
+  return regionFlag.includes(sellerName)
 }
