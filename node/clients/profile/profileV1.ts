@@ -77,13 +77,28 @@ export class ProfileClientV1 extends JanusClient {
       }
     )
 
-  public deleteAddress = (user: CurrentProfile, addressName: string) =>
-    this.delete(
-      `${this.baseUrl}/${getUserIdentification(user)}/addresses/${addressName}`,
-      {
-        metric: 'profile-system-deleteAddress',
-      }
-    )
+  public deleteAddress(user: CurrentProfile, addressName: string) {
+    return this.getProfileInfo(user).then((profile) => {
+      this.getUserAddresses(user, profile).then((addresses: Address[]) => {
+        const [address] = addresses.filter(
+          (addr) => addr.addressName === addressName
+        )
+
+        if (!address) {
+          return Promise.resolve()
+        }
+
+        return this.delete(
+          `${this.baseUrl}/${getUserIdentification(
+            user
+          )}/addresses/${addressName}`,
+          {
+            metric: 'profile-system-deleteAddress',
+          }
+        )
+      })
+    })
+  }
 
   public updatePersonalPreferences = (
     user: CurrentProfile,
