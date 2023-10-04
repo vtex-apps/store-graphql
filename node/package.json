@@ -14,7 +14,7 @@
     "jwt-decode": "^2.2.0",
     "node-fetch": "^2.6.7",
     "p-map-series": "^2.1.0",
-    "qs": "^6.6.0",
+    "qs": "^6.7.3",
     "querystring": "^0.2.0",
     "ramda": "^0.26.1",
     "set-cookie-parser": "^2.5.1",
