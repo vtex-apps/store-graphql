@@ -1,1 +1,6 @@
-export const regionFlag = ['casinofr', 'casinofrprod', 'casinofrqa']
+export const regionFlag = [
+  'casinofr',
+  'casinofrprod',
+  'casinofrqa',
+  'casinofrst',
+]
