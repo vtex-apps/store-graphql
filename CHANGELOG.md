@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### CHANGED
+- Use `GET` instead of `POST` when calling the simulation API.
+
 ## [2.170.1] - 2023-10-31
 
 ### Added

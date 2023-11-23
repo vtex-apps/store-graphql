@@ -6,6 +6,7 @@ import {
 } from '@vtex/api'
 
 import { statusToError } from '../utils'
+import jsonToQuerystring from '../utils/jsonToQuerystring'
 
 export class PvtCheckout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
@@ -43,23 +44,25 @@ export class PvtCheckout extends JanusClient {
   }
 
   public simulation = (simulation: SimulationPayload, salesChannel?: string) =>
-    this.post<SimulationOrderForm>(
-      this.routes.simulation(this.getChannelQueryString(salesChannel)),
-      simulation,
+    this.get<SimulationOrderForm>(
+      this.routes.simulation(
+        `${this.getChannelQueryString(salesChannel)}&${jsonToQuerystring(
+          'request',
+          simulation
+        )}`
+      ),
       {
         metric: 'pvt-checkout-simulation',
       }
     )
 
-  protected post = <T>(url: string, data?: any, config: RequestConfig = {}) => {
+  protected get = <T>(url: string, config: RequestConfig = {}) => {
     config.headers = {
       ...config.headers,
       ...this.getCommonHeaders(),
     }
 
-    return this.http.post<T>(url, data, config).catch(statusToError) as Promise<
-      T
-    >
+    return this.http.get<T>(url, config).catch(statusToError) as Promise<T>
   }
 
   private get routes() {
