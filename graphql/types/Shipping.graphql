@@ -82,7 +82,7 @@ type LogisticsItem {
   rewardValue: Int
   sellingPrice: Int
   measurementUnit: String
-  unitMultiplier: Int
+  unitMultiplier: Float
   availability: String
 }
 
