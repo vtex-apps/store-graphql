@@ -46,7 +46,7 @@ type OrderItem {
   detailUrl: String
   availability: String
   measurementUnit: String
-  unitMultiplier: Int
+  unitMultiplier: Float
   parentItemIndex: Int
   parentAssemblyBinding: String
   bundleItems: [OrderItem]
