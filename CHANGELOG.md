@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.170.2] - 2024-05-02
+
 ### Changed
 - unitMultiplier type from Int to float in OrderItem and LogisticsItem
 
