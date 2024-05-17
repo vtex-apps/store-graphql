@@ -188,7 +188,11 @@ export class Checkout extends JanusClient {
     return this.post<OrderForm>(
       this.routes.orderForm(orderFormId),
       { expectedOrderFormSections: ['items'] },
-      { metric: 'checkout-orderForm' }
+      { metric: 'checkout-orderForm',
+      headers: {
+        'VtexIdclientAutCookie': this.context.adminUserAuthToken
+      }
+       },
     )
   }
 
