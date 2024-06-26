@@ -78,7 +78,7 @@ export async function getPayments(context: Context) {
   const addresses = await getAddresses(context)
 
   const paymentData = PIIEnabled
-    ? paymentsRawData[0].document.paymentData
+    ? paymentsRawData[0]?.document?.paymentData
     : JSON.parse(paymentsRawData.paymentData)
 
   const { availableAccounts } = paymentData
