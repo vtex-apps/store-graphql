@@ -69,7 +69,7 @@ export async function getPayments(context: Context) {
   const { PIIEnabled } = await licenseManagerExtended.getCurrentAccount()
   const paymentsRawData = await profile.getUserPayments(currentProfile, context)
   const isPaymentDataEmpty = PIIEnabled
-    ? !paymentsRawData[0].document.paymentData
+    ? !paymentsRawData[0]?.document?.paymentData
     : !paymentsRawData?.paymentData
 
   if (isPaymentDataEmpty) {
