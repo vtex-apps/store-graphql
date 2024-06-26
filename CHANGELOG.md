@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Filter out "pickup" addresses type temporarily while is still being saved at Profile V2.
+
 ## [2.170.2] - 2024-05-02
 
 ### Changed
