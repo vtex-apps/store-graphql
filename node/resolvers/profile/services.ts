@@ -57,7 +57,15 @@ export function getAddresses(context: Context, currentUserProfile?: Profile) {
     vtex: { currentProfile },
   } = context
 
-  return profile.getUserAddresses(currentProfile, context, currentUserProfile)
+  // Filter out temporarily addresses with addressType "pickup" because its also saved at Profile V2
+  return profile
+    .getUserAddresses(currentProfile, context, currentUserProfile)
+    .then((addresses: any[]) => {
+      const residentialAddresses = addresses.filter(
+        (address: { addressType: string }) => address.addressType !== 'pickup'
+      )
+      return residentialAddresses
+    })
 }
 
 export async function getPayments(context: Context) {

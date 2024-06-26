@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Retrieve saved cards from a profile at my account for PII accounts
 
+## [2.170.3] - 2024-06-26
+
+### Fixed
+- Filter out "pickup" addresses type temporarily while is still being saved at Profile V2.
+
+
 ## [2.170.2] - 2024-05-02
 
 ### Changed
