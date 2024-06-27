@@ -200,7 +200,7 @@ export class ProfileClientV2 extends JanusClient {
         postalCode: addressV2.postalCode,
         receiverName: addressV2.receiverName,
         reference: addressV2.nearly,
-        state: addressV2.administrativeAreaLevel1,
+        state: addressV2.administrativeAreaLevel1 ?? '',
         street: addressV2.route,
         userId: addressV2.profileId,
         addressType: addressV2.addressType ?? 'residential',
@@ -213,7 +213,7 @@ export class ProfileClientV2 extends JanusClient {
       return {
         id: address.id,
         document: {
-          administrativeAreaLevel1: address.state,
+          administrativeAreaLevel1: address.state ?? '',
           addressName: address.addressName ?? address.id,
           addressType: address.addressType ?? 'residential',
           countryCode: address.country,
