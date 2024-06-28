@@ -70,18 +70,26 @@ export function getAddresses(context: Context, currentUserProfile?: Profile) {
 
 export async function getPayments(context: Context) {
   const {
-    clients: { profile },
+    clients: { profile, licenseManagerExtended },
     vtex: { currentProfile },
   } = context
 
+  const { PIIEnabled } = await licenseManagerExtended.getCurrentAccount()
   const paymentsRawData = await profile.getUserPayments(currentProfile, context)
+  const isPaymentDataEmpty = PIIEnabled
+    ? !paymentsRawData[0]?.document?.paymentData
+    : !paymentsRawData?.paymentData
 
-  if (!paymentsRawData?.paymentData) {
+  if (isPaymentDataEmpty) {
     return null
   }
-
   const addresses = await getAddresses(context)
-  const { availableAccounts } = JSON.parse(paymentsRawData.paymentData)
+
+  const paymentData = PIIEnabled
+    ? paymentsRawData[0]?.document?.paymentData
+    : JSON.parse(paymentsRawData.paymentData)
+
+  const { availableAccounts } = paymentData
 
   return availableAccounts.map((account: any) => {
     const { bin, availableAddresses, accountId, ...cleanAccount } = account

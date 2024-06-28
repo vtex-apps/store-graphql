@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Retrieve saved cards from a profile at my account for PII accounts
+
 ## [2.170.4] - 2024-06-27
 
 ### Added
 - fallback value for administrativeAreaLevel1 for profile V2
+
 
 ## [2.170.3] - 2024-06-26
 

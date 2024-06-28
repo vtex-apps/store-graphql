@@ -308,13 +308,11 @@ export class ProfileClientV2 extends JanusClient {
   }
 
   public getUserPayments = (user: CurrentProfile, piiRequest?: PIIRequest) => {
-    const { userKey, alternativeKey } = this.getUserKeyAndAlternateKey(user)
     const url = this.getPIIUrl(
-      `${this.baseUrl}/${userKey}/purchase-info/unmask`,
-      alternativeKey,
+      `${this.baseUrl}/${user.userId}/purchase-info`,
+      undefined,
       piiRequest
     )
-
     return this.get(url, {
       metric: 'profile-system-v2-getUserPayments',
     }).catch<any>((e) => {
