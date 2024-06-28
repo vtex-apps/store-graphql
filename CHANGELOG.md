@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.171.0] - 2024-06-28
+
 ### Fixed
 - Retrieve saved cards from a profile at my account for PII accounts
 
