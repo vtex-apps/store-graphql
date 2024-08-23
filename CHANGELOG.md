@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Check user email with toLowerCase
+
 ## [2.171.0] - 2024-06-28
 
 ### Fixed
