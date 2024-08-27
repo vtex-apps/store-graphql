@@ -261,7 +261,7 @@ async function checkUserAccount(
     !(
       tokenUser.account === account &&
       (isUserCallCenterOperator ||
-        tokenUser.id.toLowerCase() === currentProfile?.userId.toLowerCase())
+        tokenUser.user.toLowerCase() === currentProfile?.email.toLowerCase())
     )
   ) {
     throw new AuthenticationError('')
