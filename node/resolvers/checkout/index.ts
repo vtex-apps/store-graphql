@@ -304,6 +304,20 @@ export const queries: Record<string, Resolver> = {
     return checkout.orders()
   },
 
+  // orders: async (_, __, { clients: { checkout } }) => {
+  //   try {
+  //     const result = await checkout.orders()
+
+  //     return result
+  //   } catch (err) {
+  //     if (err.response && err.response.status === 405) {
+  //       return []
+  //     }
+
+  //     throw err
+  //   }
+  // },
+
   shipping: (_, args: any, { clients: { checkout } }) => {
     return checkout.simulation(args)
   },
