@@ -2472,7 +2472,3 @@ Added documentSchema query to make it possible for retrieving masterdata schema 
 ### Added
 
 - **Resolver** Login resolver to provide GraphQL queries and mutations.
-
-
-[Unreleased]: https://github.com/vtex-apps/store-graphql/compare/v2.171.1-beta...HEAD
-[2.171.1-beta]: https://github.com/vtex-apps/store-graphql/compare/v2.171.0...v2.171.1-beta
