@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.171.1-beta] - 2024-09-03
+### Deprecated
+- Checkout orders endpoint. Now returns empty array
 
 ## [2.171.0] - 2024-06-28
 
