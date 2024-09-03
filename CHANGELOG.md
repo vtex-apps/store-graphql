@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.171.1-beta] - 2024-09-03
+
 ## [2.171.0] - 2024-06-28
 
 ### Fixed
@@ -2469,3 +2471,7 @@ Added documentSchema query to make it possible for retrieving masterdata schema 
 ### Added
 
 - **Resolver** Login resolver to provide GraphQL queries and mutations.
+
+
+[Unreleased]: https://github.com/vtex-apps/store-graphql/compare/v2.171.1-beta...HEAD
+[2.171.1-beta]: https://github.com/vtex-apps/store-graphql/compare/v2.171.0...v2.171.1-beta
