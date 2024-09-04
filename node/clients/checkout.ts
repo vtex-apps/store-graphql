@@ -220,8 +220,15 @@ export class Checkout extends JanusClient {
     })
   }
 
+  // Deprecated: This endpoint is deprecated and any request will return an empty array
   public orders = () =>
-    this.get(this.routes.orders, { metric: 'checkout-orders' })
+    this.get(this.routes.orders, { metric: 'checkout-orders' }).catch((err) => {
+      if (err.response && err.response.status === 405) {
+        return []
+      }
+
+      throw err
+    })
 
   public simulation = (simulation: SimulationPayload) =>
     this.post<SimulationOrderForm>(
