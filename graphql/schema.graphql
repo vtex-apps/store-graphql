@@ -575,6 +575,7 @@ type Query {
     items: [ItemInput]
     regionId: String
     salesChannel: String
+    postalCode: String
   ): [SKU] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
 }
 

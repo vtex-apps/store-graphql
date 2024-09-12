@@ -54,7 +54,9 @@ export const getSimulationPayloadsByItem = (
   item: ItemWithSimulationInput,
   segment?: SegmentData,
   regionId?: string,
-  useSellerFromRegion?: boolean
+  useSellerFromRegion?: boolean,
+  postalCode?: string,
+  countryCode?: string
 ) => {
   const payloadItems = item.sellers.map((seller) => {
     let sellerFromRegion = null
@@ -74,11 +76,18 @@ export const getSimulationPayloadsByItem = (
       }
     }
 
-    return {
+    const payLoad: PayloadItem = {
       id: item.itemId,
       quantity: 1,
       seller: sellerFromRegion || seller.sellerId,
-    } as PayloadItem
+    }
+
+    if (countryCode && postalCode) {
+      payLoad.country = countryCode
+      payLoad.postalCode = postalCode
+    }
+
+    return payLoad
   })
 
   return payloadItems.map((payloadItem) => {

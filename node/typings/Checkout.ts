@@ -241,6 +241,8 @@ interface PayloadItem {
   seller: string
   parentItemIndex?: number | null
   parentAssemblyBinding?: string | null
+  country?: string
+  postalCode?: string
 }
 
 interface SimulationPayload {
