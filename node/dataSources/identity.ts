@@ -10,6 +10,7 @@ export interface DefaultUser {
 export interface User extends DefaultUser {
   id: string
   user: string
+  customerId: string
   account: string
   audience: string
 }
