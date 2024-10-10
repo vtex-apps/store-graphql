@@ -383,10 +383,12 @@ export const queries: Record<string, Resolver> = {
       items,
       regionId,
       salesChannel,
+      postalCode,
     }: {
       items: ItemWithSimulationInput[]
       regionId?: string
       salesChannel?: string
+      postalCode?: string
     },
     ctx: Context
   ) => {
@@ -399,6 +401,8 @@ export const queries: Record<string, Resolver> = {
       ctx.vtex.account
     )
 
+    const countryCode = ctx.vtex.segment?.countryCode
+
     return items.map((item) => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
@@ -406,7 +410,9 @@ export const queries: Record<string, Resolver> = {
           item,
           segment,
           regionId,
-          changeSeller
+          changeSeller,
+          postalCode,
+          countryCode
         )
 
         const simulationPromises = simulationPayloads.map((payload) =>
