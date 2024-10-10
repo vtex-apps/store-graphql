@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.172.0] - 2024-10-10
+
 ### Added
 
 - Postal Code optional argument on itemsWithSimulation query
