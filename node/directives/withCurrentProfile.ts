@@ -261,9 +261,10 @@ async function checkUserAccount(
     !(
       tokenUser.account === account &&
       (isUserCallCenterOperator ||
-        tokenUser.user.toLowerCase() === currentProfile?.email.toLowerCase())
+        tokenUser.user.toLowerCase() === currentProfile?.email.toLowerCase() ||
+        tokenUser.customerId === currentProfile?.userId)
     )
   ) {
-    throw new AuthenticationError('')
+    throw new AuthenticationError('Information conflict in tokenUser')
   }
 }
