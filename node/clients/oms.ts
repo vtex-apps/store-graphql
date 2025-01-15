@@ -53,7 +53,7 @@ export class OMS extends JanusClient {
     }
   }
 
-  public getRmailRetificationConfig() {
+  public getEmailRetificationConfig() {
     return this.http.get('/api/oms/configuration/email-rectification-enabled', {
       headers: { VtexIdclientAutCookie: this.context.authToken },
     })

@@ -31,7 +31,7 @@ export async function getEmailRetificationConfig(
   // @ts-ignore
   ctx.status = 200
   // @ts-ignore
-  ctx.body = await ctx.clients.oms.getRmailRetificationConfig()
+  ctx.body = await ctx.clients.oms.getEmailRetificationConfig()
 
   await next()
 }
