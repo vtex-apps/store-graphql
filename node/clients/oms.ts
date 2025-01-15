@@ -52,4 +52,10 @@ export class OMS extends JanusClient {
       order: (id: string) => `${base}/pvt/orders/${id}`,
     }
   }
+
+  public getRmailRetificationConfig() {
+    return this.http.get('/api/oms/configuration/email-rectification-enabled', {
+      headers: { VtexIdclientAutCookie: this.context.authToken },
+    })
+  }
 }

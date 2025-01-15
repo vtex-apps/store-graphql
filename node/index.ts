@@ -1,11 +1,12 @@
 import './globals'
 
-import { LRUCache, Service } from '@vtex/api'
+import { LRUCache, method, Service } from '@vtex/api'
 
 import { Clients } from './clients'
 import { dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
+import { getEmailRetificationConfig } from './routes'
 
 const TWO_SECONDS_MS = 2 * 1000
 const THREE_SECONDS_MS = 3 * 1000
@@ -61,5 +62,10 @@ export default new Service<Clients, void, CustomContext>({
     dataSources,
     resolvers,
     schemaDirectives,
+  },
+  routes: {
+    'rectification-config': method({
+      GET: [getEmailRetificationConfig],
+    }),
   },
 })

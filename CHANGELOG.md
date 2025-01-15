@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.172.1] - 2024-10-16
 ### Added
+
+- '/_v/private/rectification-config' route to check if rectification is enabled for the current user.
+
+## [2.172.1] - 2024-10-16
+
+### Added
+
 - Validation for customerID due to email rectification
 
 ## [2.172.0] - 2024-10-10
