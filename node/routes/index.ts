@@ -9,13 +9,7 @@ export async function getEmailRetificationConfig(
 ) {
   try {
     const { storeUserAuthToken } = ctx.vtex
-    const userStoreToken = storeUserAuthToken?.includes('.')
-      ? storeUserAuthToken.split('.')[1]
-      : ''
-
-    const { account } = JSON.parse(
-      Buffer.from(userStoreToken, 'base64').toString()
-    )
+    const { account } = decodeToken(storeUserAuthToken ?? '')
 
     if (account !== ctx.vtex.account) {
       setForbiddenStatus(ctx)
@@ -34,6 +28,17 @@ export async function getEmailRetificationConfig(
   ctx.body = await ctx.clients.oms.getEmailRetificationConfig()
 
   await next()
+}
+
+function decodeToken(token: string) {
+  if (!token || !token.includes('.')) {
+    throw new Error('Invalid token')
+  }
+
+  const [, encodedPayload] = token.split('.')
+  const payload = Buffer.from(encodedPayload, 'base64').toString()
+
+  return JSON.parse(payload)
 }
 
 function setForbiddenStatus(ctx: Context) {
