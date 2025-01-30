@@ -5,5 +5,11 @@
   "timeout": 40,
   "minReplicas": 50,
   "maxReplicas": 200,
-  "cpu": 30
+  "cpu": 30,
+  "routes": {
+    "rectification-config": {
+      "path": "/_v/private/rectification-config",
+      "public": true
+    }
+  }
 }
