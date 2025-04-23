@@ -5,6 +5,6 @@ metadata:
   annotations:
     github.com/project-slug: vtex-apps/store-graphql
 spec:
-  type: other
-  lifecycle: unknown
+  type: service
+  lifecycle: production
   owner: te-0013
