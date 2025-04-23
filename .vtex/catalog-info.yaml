@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: store-graphql
+  annotations:
+    github.com/project-slug: vtex-apps/store-graphql
+spec:
+  type: service
+  lifecycle: production
+  owner: te-0013
