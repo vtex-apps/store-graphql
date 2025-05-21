@@ -4,7 +4,10 @@ metadata:
   name: store-graphql
   annotations:
     github.com/project-slug: vtex-apps/store-graphql
+    vtex.com/application-id: RHF69SGK
+    vtex.com/platform-flow-id: Shopper#1
 spec:
   type: service
   lifecycle: production
+  system: store-framework
   owner: te-0013
