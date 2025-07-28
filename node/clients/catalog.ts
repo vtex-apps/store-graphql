@@ -15,7 +15,7 @@ interface AutocompleteArgs {
 }
 
 const inflightKey = ({ baseURL, url, params, headers }: RequestConfig) => {
-  const segmentToken = headers['x-vtex-segment']
+  const segmentToken = headers && headers['x-vtex-segment']
   const segmentQs = segmentToken ? `&segmentToken=${segmentToken}` : ''
 
   return (

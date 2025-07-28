@@ -113,8 +113,11 @@ export async function updateProfile(
 
   const extraFields = customFields && mapCustomFieldsToObjNStr(customFields)
 
+  // Remove email field from profile to prevent sending it in the payload
+  const { email, ...profileWithoutEmail } = profile
+
   const newData = {
-    ...profile,
+    ...profileWithoutEmail,
     // Read the comments in Profile in fieldResolvers.ts files
     // to understand the following transformations
     businessDocument: profile.corporateDocument,
