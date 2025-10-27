@@ -82,6 +82,8 @@ export const resolvers = {
         vtex: { account },
       } = ctx
 
+      console.log('SearchBreadcrumb:name', { obj, ctx })
+
       const { queryUnit, mapUnit, index, queryArray, products } = obj
       const defaultName = queryArray[index]
       const isVtex = !Functions.isGoCommerceAcc(account)

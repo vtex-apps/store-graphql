@@ -71,3 +71,21 @@ type SessionPickup {
   name: String
   address: Address
 }
+
+"""
+Information about the authenticated user
+"""
+type AuthenticatedUser {
+  """
+  User email
+  """
+  user: String
+  """
+  User ID
+  """
+  userId: String
+  """
+  User locale
+  """
+  locale: String
+}

@@ -24,6 +24,7 @@ declare global {
   }
 
   interface CustomIOContext extends IOContext {
+    getAuthenticatedUser(): unknown
     currentProfile: CurrentProfile
     segment?: SegmentData
     orderFormId?: string
