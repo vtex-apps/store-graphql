@@ -1,5 +1,6 @@
-import { ResolverError, UserInputError } from '@vtex/api'
 import { stringify } from 'querystring'
+
+import { ResolverError, UserInputError } from '@vtex/api'
 import http, { Method } from 'axios'
 import { parse, serialize } from 'cookie'
 
