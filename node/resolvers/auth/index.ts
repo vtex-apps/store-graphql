@@ -1,8 +1,8 @@
-import { stringify } from 'querystring'
-
 import { ResolverError, UserInputError } from '@vtex/api'
+import { stringify } from 'querystring'
 import http, { Method } from 'axios'
 import { parse, serialize } from 'cookie'
+
 import { withAuthToken } from '../headers'
 import paths from '../paths'
 import { GetLoginSessionsResponse } from './types'
