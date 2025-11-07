@@ -581,7 +581,7 @@ type Query {
   """
   Returns information about the currently authenticated user
   """
-  authenticatedUser: AuthenticatedUser @cacheControl(scope: PRIVATE)
+  authenticatedUser: AuthenticatedUserInfo @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {

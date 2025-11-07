@@ -6,6 +6,14 @@ export interface AuthenticatedUserResponse {
   locale: string
 }
 
+export interface AuthenticatedUserInfoResponse {
+  id: string
+  email: string
+  name: string
+  passwordLastUpdate: string | null
+  organizationUnit: string | null
+}
+
 export class VtexId extends AppClient {
   private baseUrl = 'vtexid.vtex.com.br'
 
@@ -14,16 +22,19 @@ export class VtexId extends AppClient {
   }
 
   public getAuthenticatedUser = () => {
-    const { storeUserAuthToken = '' } = this.context
+    const { storeUserAuthToken = '', account } = this.context
 
     if (!storeUserAuthToken) {
       throw new Error('User is not authenticated')
     }
 
     return this.http.get<AuthenticatedUserResponse>(
-      `http://${this.baseUrl}/api/vtexid/pub/authenticated/user?authToken=${storeUserAuthToken}`,
+      `http://${this.baseUrl}/api/vtexid/user/info?an=${account}&scope=${account}`,
       {
         metric: 'vtexid-authenticated-user',
+        headers: {
+          Cookie: `VtexIdclientAutCookie_${account}=${storeUserAuthToken}`,
+        },
       }
     )
   }
