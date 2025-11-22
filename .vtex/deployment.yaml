@@ -4,6 +4,7 @@
     - name: techdocs-v1
       parameters:
         entityReference: default/component/store-graphql
+        sourceDir: docs
         indexFile: README.md
       when:
         - event: push
