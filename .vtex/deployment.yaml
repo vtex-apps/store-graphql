@@ -1,0 +1,16 @@
+- name: store-graphql
+  referenceId: RHF69SGK
+  pipelines:
+    - name: techdocs-v1
+      parameters:
+        entityReference: default/component/store-graphql
+        indexFile: README.md
+      when:
+        - event: push
+          source: branch
+          regex: master
+          path:
+            - "docs/**"
+            - ".vtex/deployment.yaml"
+            - ".vtex/deployment.json"
+            - "README.md"
