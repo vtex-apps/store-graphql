@@ -3,6 +3,7 @@ import { IOClients } from '@vtex/api'
 import { CallCenterOperator } from './callCenterOperator'
 import { Catalog } from './catalog'
 import { Checkout } from './checkout'
+import { VtexId } from './vtexid'
 import { PvtCheckout } from './PvtCheckout'
 import { MasterData } from './masterdata'
 import { ProfileClient } from './profile'
@@ -70,5 +71,9 @@ export class Clients extends IOClients {
 
   public get rewriter() {
     return this.getOrSet('rewriter', Rewriter)
+  }
+
+  public get vtexId() {
+    return this.getOrSet('vtexId', VtexId)
   }
 }

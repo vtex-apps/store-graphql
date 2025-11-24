@@ -114,6 +114,13 @@ const checkPasswordFormat = (password: any) => {
 
 export const queries = {
   /**
+   * Get information about the currently authenticated user
+   */
+  authenticatedUser: async (_: any, __: any, ctx: any) => {
+    return ctx.clients.vtexId.getAuthenticatedUser()
+  },
+
+  /**
    * Request to the VTEX ID API the list of available login
    * options to the user authentication.
    */
