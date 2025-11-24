@@ -2,6 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: store-graphql
+  description: GraphQL API built on VTEX IO Platform as an abstraction layer for VTEX public REST APIs, providing unified access to catalog, logistics, checkout, OMS, and profile system services for commerce stores
   annotations:
     github.com/project-slug: vtex-apps/store-graphql
     vtex.com/application-id: RHF69SGK
