@@ -73,24 +73,6 @@ type SessionPickup {
 }
 
 """
-Information about the authenticated user
-"""
-type AuthenticatedUser {
-  """
-  User email
-  """
-  user: String
-  """
-  User ID
-  """
-  userId: String
-  """
-  User locale
-  """
-  locale: String
-}
-
-"""
 Detailed information about the authenticated user from VTEX ID
 """
 type AuthenticatedUserInfo {
