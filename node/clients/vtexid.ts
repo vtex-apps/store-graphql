@@ -6,14 +6,6 @@ export interface AuthenticatedUserResponse {
   locale: string
 }
 
-export interface AuthenticatedUserInfoResponse {
-  id: string
-  email: string
-  name: string
-  passwordLastUpdate: string | null
-  organizationUnit: string | null
-}
-
 export class VtexId extends JanusClient {
   public getAuthenticatedUser = () => {
     const { storeUserAuthToken = '', account } = this.context
