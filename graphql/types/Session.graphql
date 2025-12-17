@@ -71,3 +71,29 @@ type SessionPickup {
   name: String
   address: Address
 }
+
+"""
+Detailed information about the authenticated user from VTEX ID
+"""
+type AuthenticatedUserInfo {
+  """
+  User unique identifier
+  """
+  id: String
+  """
+  User email address
+  """
+  email: String
+  """
+  User display name
+  """
+  name: String
+  """
+  Date when password was last updated
+  """
+  passwordLastUpdate: String
+  """
+  Organization unit the user belongs to
+  """
+  organizationUnit: String
+}

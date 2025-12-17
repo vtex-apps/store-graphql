@@ -577,6 +577,11 @@ type Query {
     salesChannel: String
     postalCode: String
   ): [SKU] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+
+  """
+  Returns information about the currently authenticated user
+  """
+  authenticatedUser: AuthenticatedUserInfo @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
