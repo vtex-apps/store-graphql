@@ -18,7 +18,7 @@ export const queries = {
     } = args
 
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const fieldsWithId = union(fields, ['id'])
@@ -45,7 +45,7 @@ export const queries = {
   document: async (_: any, args: DocumentArgs, context: Context) => {
     const { acronym, fields, id, account } = args
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const data = await masterdata.getDocument(acronym, id, fields, account)
@@ -65,7 +65,7 @@ export const queries = {
     const { dataEntity, schema } = args
 
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const data = await masterdata.getSchema<Record<string, unknown>>(
@@ -84,7 +84,7 @@ export const queries = {
     const { dataEntity, schema } = args
 
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const data = await masterdata.getPublicSchema<Record<string, unknown>>(
@@ -114,7 +114,7 @@ export const mutations = {
     } = args
 
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const response = (await masterdata.createDocument(
@@ -147,7 +147,7 @@ export const mutations = {
     } = args
 
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const response = (await masterdata.createDocument(
@@ -185,7 +185,7 @@ export const mutations = {
     }
 
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
       vtex: { account },
     } = context
 
@@ -211,7 +211,7 @@ export const mutations = {
   ) => {
     const { acronym, documentId } = args
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
       vtex: { account },
     } = context
 

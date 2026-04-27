@@ -16,10 +16,10 @@ export const resolvers = {
     try {
       return portal.storeConfigs(currentSite ? currentSite.id : 'default')
     } catch (e) {
-      ctx.clients.logger.info(
-        JSON.stringify(currentSite),
-        'portal-storegraphql-errors'
-      )
+      ctx.vtex.logger.info({
+        message: JSON.stringify(currentSite),
+        key: 'portal-storegraphql-errors',
+      })
 
       return null
     }

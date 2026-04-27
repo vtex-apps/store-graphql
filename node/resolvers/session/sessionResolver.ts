@@ -74,12 +74,14 @@ const profileFields = (
 const setProfileData = (
   profile: SessionProfile,
   user: SessionImpersonate | SessionAuthentication
-) =>
-  path(['storeUserId', 'value'], user) && {
-    profile: {
-      ...profileFields(profile, user),
-    },
-  }
+): { profile: ProfileFields } | Record<string, never> =>
+  path(['storeUserId', 'value'], user)
+    ? {
+        profile: {
+          ...profileFields(profile, user),
+        },
+      }
+    : {}
 
 const setUtmParams = (publicFields: SessionPublic) => ({
   source: path(['utm_source', 'value'], publicFields),

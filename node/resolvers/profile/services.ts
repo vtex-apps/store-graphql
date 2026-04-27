@@ -39,7 +39,7 @@ export function getPasswordLastUpdate(context: Context) {
   } = context
 
   const url = paths.getUser(account)
-  const parsedCookies = parse(cookie)
+  const parsedCookies = parse(cookie ?? '')
   const userCookie: string = parsedCookies[`VtexIdclientAutCookie_${account}`]
 
   if (!userCookie) return null
