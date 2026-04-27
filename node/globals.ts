@@ -1,24 +1,26 @@
 import {
   IOContext,
   MetricsAccumulator,
+  ParamsContext,
+  RecorderState,
   SegmentData,
   ServiceContext,
 } from '@vtex/api'
 
 import { Clients } from './clients'
-import { IdentityDataSource } from './dataSources/identity'
 
-if (!global.metrics) {
+if (!(global as Record<string, unknown>).metrics) {
   console.error('No global.metrics at require time')
-  global.metrics = new MetricsAccumulator()
+  const g = global as Record<string, unknown>
+
+  g.metrics = new MetricsAccumulator()
 }
 
 declare global {
-  type Context = ServiceContext<Clients, void, CustomContext>
+  type Context = ServiceContext<Clients, RecorderState, CustomContext>
 
-  interface CustomContext {
+  interface CustomContext extends ParamsContext {
     cookie: string
-    dataSources: StoreGraphQLDataSources
     originalPath: string
     vtex: CustomIOContext
   }
@@ -29,10 +31,6 @@ declare global {
     segment?: SegmentData
     orderFormId?: string
     ownerId?: string
-  }
-
-  interface StoreGraphQLDataSources {
-    identity: IdentityDataSource
   }
 
   interface UserAddress {

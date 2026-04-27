@@ -1,9 +1,8 @@
 import './globals'
 
-import { LRUCache, method, Service } from '@vtex/api'
+import { LRUCache, method, RecorderState, Service } from '@vtex/api'
 
 import { Clients } from './clients'
-import { dataSources } from './dataSources'
 import { schemaDirectives } from './directives'
 import { resolvers } from './resolvers'
 import { getEmailRetificationConfig } from './routes'
@@ -24,7 +23,7 @@ metrics.trackCache('segment', segmentCache)
 metrics.trackCache('catalog', catalogCache)
 metrics.trackCache('messages', messagesCache)
 
-export default new Service<Clients, void, CustomContext>({
+export default new Service<Clients, RecorderState, CustomContext>({
   clients: {
     implementation: Clients,
     options: {
@@ -59,10 +58,9 @@ export default new Service<Clients, void, CustomContext>({
     },
   },
   graphql: {
-    dataSources,
     resolvers,
-    schemaDirectives,
-  },
+    schemaDirectives: schemaDirectives as any,
+  } as any,
   routes: {
     'rectification-config': method({
       GET: [getEmailRetificationConfig],
