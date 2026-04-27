@@ -1,7 +1,7 @@
 import { path } from 'ramda'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
-import type { DefaultUser, User } from '../../dataSources/identity'
+import type { DefaultUser, User } from '../../clients/identity'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -27,7 +27,7 @@ const checkUserAuthorization = async ({
 }: CheckUserAuthorizationParams): Promise<boolean> => {
   const {
     vtex: { storeUserAuthToken, account },
-    dataSources: { identity },
+    clients: { identity },
   } = context
 
   let validUser = !!storeUserAuthToken
