@@ -1,10 +1,6 @@
 {
   "extends": "@vtex/tsconfig",
-  "include": [
-    "typings",
-    "typings.d.ts",
-    "**/*.ts"
-  ],
+  "include": ["typings", "typings.d.ts", "**/*.ts"],
   "compilerOptions": {
     "alwaysStrict": true,
     "esModuleInterop": true,
@@ -19,9 +15,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "es2019",
-    "lib": [
-      "ES2019"
-    ]
+    "target": "es2022",
+    "lib": ["ES2022"]
   }
 }
