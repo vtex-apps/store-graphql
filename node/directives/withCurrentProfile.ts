@@ -92,7 +92,7 @@ async function getStoreUserProfileFromCookie(
     clients: { identity },
   } = context
 
-  return identity.getUserWithToken(userToken!).then((data) => {
+  return identity.getUserWithToken(userToken!).then((data: any) => {
     if (data && 'id' in data) {
       return {
         currentProfile: { userId: data.id, email: data.user },

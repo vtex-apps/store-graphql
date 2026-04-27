@@ -37,6 +37,10 @@ export class ProfileClientV1 extends JanusClient {
         },
       }
     ).then((profile) => {
+      if (!profile || typeof profile !== 'object') {
+        return {} as Profile
+      }
+
       profile.pii = false
 
       return profile

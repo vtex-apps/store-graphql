@@ -1,4 +1,4 @@
-import { ExternalClient, IOContext, InstanceOptions } from '@vtex/api'
+import { ExternalClient, InstanceOptions, IOContext } from '@vtex/api'
 
 export interface DefaultUser {
   authStatus: string
@@ -12,28 +12,29 @@ export interface User extends DefaultUser {
   audience: string
 }
 
+const BASE_URL = 'http://portal.vtexcommercestable.com.br'
+
 export class IdentityClient extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {
-    super('http://portal.vtexcommercestable.com.br/api/vtexid', context, {
+    super(BASE_URL, context, {
       ...options,
       headers: {
         ...options?.headers,
-        'X-Vtex-Proxy-To': 'http://portal.vtexcommercestable.com.br',
+        'X-Vtex-Proxy-To': BASE_URL,
       },
     })
   }
 
-  public getUserWithToken = (token: string) => {
-    return this.http.post<DefaultUser | User>(
-      `credential/validate?an=${this.context.account}`,
+  public getUserWithToken = (token: string) =>
+    this.http.post<DefaultUser | User>(
+      `/api/vtexid/credential/validate?an=${this.context.account}`,
       { token },
       {
         headers: {
-          'Proxy-Authorization': this.context.authToken,
-          VtexIdClientAutCookie: this.context.authToken,
+          'Proxy-Authorization': this.context.authToken ?? '',
+          VtexIdClientAutCookie: this.context.authToken ?? '',
         },
         metric: 'vtexid-getUserWithToken',
       }
     )
-  }
 }
