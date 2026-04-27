@@ -1,6 +1,9 @@
 directive @withAuthMetrics on FIELD_DEFINITION
-
 directive @withOwnerId on FIELD_DEFINITION
+directive @withSegment on FIELD_DEFINITION
+directive @withOrderFormId on FIELD_DEFINITION
+directive @withCurrentProfile on FIELD_DEFINITION
+directive @toVtexAssets on FIELD_DEFINITION
 
 type Query {
   """
