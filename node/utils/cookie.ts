@@ -35,6 +35,8 @@ const parseCookie = (cookie: string): ParsedCookie => {
 const CHECKOUT_COOKIE = 'checkout.vtex.com'
 const ASPXAUTH_COOKIE = '.ASPXAUTH'
 const OWNERSHIP_COOKIE = 'CheckoutOrderFormOwnership'
+const RC_SESSION_COOKIE = 'VtexRCSessionIdv7'
+const RC_MAC_COOKIE = 'VtexRCMacIdv7'
 
 const checkoutCookieFormat = (orderFormId: string) =>
   `${CHECKOUT_COOKIE}=__ofid=${orderFormId};`
@@ -53,11 +55,21 @@ export function getOwnerIdFromCookie(cookies: Context['cookies']) {
   return cookies.get(OWNERSHIP_COOKIE)
 }
 
+export function getRcSessionIdFromCookie(cookies: Context['cookies']) {
+  return cookies.get(RC_SESSION_COOKIE)
+}
+
+export function getRcMacIdFromCookie(cookies: Context['cookies']) {
+  return cookies.get(RC_MAC_COOKIE)
+}
+
 export {
   isUserLoggedIn,
   CHECKOUT_COOKIE,
   ASPXAUTH_COOKIE,
   OWNERSHIP_COOKIE,
+  RC_SESSION_COOKIE,
+  RC_MAC_COOKIE,
   checkoutCookieFormat,
   getOrderFormIdFromCookie,
   parseCookie,

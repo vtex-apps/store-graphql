@@ -29,6 +29,8 @@ declare global {
     segment?: SegmentData
     orderFormId?: string
     ownerId?: string
+    rcSessionIdv7?: string
+    rcMacIdv7?: string
   }
 
   interface StoreGraphQLDataSources {
