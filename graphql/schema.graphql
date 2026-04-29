@@ -1,3 +1,5 @@
+scalar Upload
+
 directive @withAuthMetrics on FIELD_DEFINITION
 directive @withOwnerId on FIELD_DEFINITION
 directive @withSegment on FIELD_DEFINITION
