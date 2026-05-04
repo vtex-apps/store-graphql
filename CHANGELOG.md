@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.175.0] - 2026-05-04
+
 ### Fixed
 - Fix `TypeError` on `subscribeNewsletter` mutation for new emails on Profile System V1
 
