@@ -1,6 +1,9 @@
 directive @withAuthMetrics on FIELD_DEFINITION
-
 directive @withOwnerId on FIELD_DEFINITION
+directive @withSegment on FIELD_DEFINITION
+directive @withOrderFormId on FIELD_DEFINITION
+directive @withCurrentProfile on FIELD_DEFINITION
+directive @toVtexAssets on FIELD_DEFINITION
 
 type Query {
   """
@@ -16,6 +19,7 @@ type Query {
     """
     identifier: ProductUniqueIdentifier
   ): Product
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -69,6 +73,7 @@ type Query {
     """
     hideUnavailableItems: Boolean = false
   ): ProductSearch
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -83,6 +88,7 @@ type Query {
     """
     map: String = ""
   ): SearchMetadata
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -136,6 +142,7 @@ type Query {
     """
     hideUnavailableItems: Boolean = false
   ): [Product]
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -144,6 +151,7 @@ type Query {
     identifier: ProductUniqueIdentifier
     type: CrossSelingInputEnum
   ): [Product]
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -152,6 +160,7 @@ type Query {
     field: ProductUniqueIdentifierField!
     values: [ID!]
   ): [Product]
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -178,6 +187,7 @@ type Query {
     """
     hideUnavailableItems: Boolean = false
   ): Facets
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -231,6 +241,7 @@ type Query {
     """
     to: Int = 9
   ): Search
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: SHORT)
     @withSegment
     @deprecated(reason: "Use the 'products' and 'facets' queries separately")
@@ -243,7 +254,7 @@ type Query {
     Category id
     """
     id: Int
-  ): Category @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+  ): Category @auth(scope: PUBLIC) @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
   Returns categories tree
@@ -253,7 +264,9 @@ type Query {
     Category tree level. Default: 3
     """
     treeLevel: Int = 3
-  ): [Category] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
+  ): [Category]
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
   Returns a specified brand
@@ -263,12 +276,14 @@ type Query {
     Brand id
     """
     id: Int
-  ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): Brand @auth(scope: PUBLIC) @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Returns brands list
   """
-  brands: [Brand] @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  brands: [Brand]
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Returns orderForm shipping simulation
@@ -291,6 +306,7 @@ type Query {
     """
     country: String
   ): ShippingData
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
     @withSegment
     @withOrderFormId
@@ -300,6 +316,7 @@ type Query {
   Returns checkout cart details
   """
   orderForm: OrderForm
+    @auth(scope: PUBLIC)
     @cacheControl(maxAge: ZERO, scope: PRIVATE)
     @withOrderFormId
     @withOwnerId
@@ -309,6 +326,7 @@ type Query {
   returns a certain checkout cart details
   """
   searchOrderForm(orderFormId: String!): OrderForm
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
     @withOwnerId
 
@@ -316,6 +334,7 @@ type Query {
   DEPRECATED
   """
   orders: [Order]
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
     @withOrderFormId
     @deprecated(reason: "Use orders endpoint of vtex.orders-graphql instead")
@@ -323,12 +342,12 @@ type Query {
   """
   Returns a specified user order
   """
-  order(id: String!): Order @cacheControl(scope: PRIVATE)
+  order(id: String!): Order @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Returns the specified store configurations
   """
-  storeConfigs: StoreConfigs
+  storeConfigs: StoreConfigs @auth(scope: PUBLIC)
 
   """
   Returns user profile details
@@ -338,7 +357,10 @@ type Query {
     Comma separated fields
     """
     customFields: String
-  ): Profile @cacheControl(scope: PRIVATE) @withCurrentProfile
+  ): Profile
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
+    @withCurrentProfile
 
   """
   Get auto complete suggestions in search
@@ -353,6 +375,7 @@ type Query {
     """
     searchTerm: String
   ): Suggestions
+    @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
     @withSegment
     @deprecated(reason: "Use the query defined in the search-graphql app")
@@ -393,7 +416,7 @@ type Query {
     Defines which account will be required
     """
     account: String
-  ): [Document] @cacheControl(scope: PUBLIC, maxAge: SHORT)
+  ): [Document] @auth(scope: PUBLIC) @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """
   Get document
@@ -415,7 +438,7 @@ type Query {
     Defines in which account the request will be made
     """
     account: String
-  ): Document @cacheControl(scope: PUBLIC, maxAge: SHORT)
+  ): Document @auth(scope: PUBLIC) @cacheControl(scope: PUBLIC, maxAge: SHORT)
 
   """
   Get a document schema
@@ -429,7 +452,7 @@ type Query {
     MasterData schema name.
     """
     schema: String
-  ): DocumentSchema
+  ): DocumentSchema @auth(scope: PUBLIC)
 
   documentPublicSchema(
     """
@@ -440,7 +463,7 @@ type Query {
     MasterData schema name.
     """
     schema: String!
-  ): DocumentSchemaV2 @cacheControl(scope: PUBLIC)
+  ): DocumentSchemaV2 @auth(scope: PUBLIC) @cacheControl(scope: PUBLIC)
 
   """
   Get the benefits associated with a list of products
@@ -450,17 +473,24 @@ type Query {
     List of Products
     """
     items: [ShippingItem]
-  ): [Benefit] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [Benefit]
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
 
   """
   Get the options available to authenticate users
   """
-  loginOptions: LoginOptions @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  loginOptions: LoginOptions
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Get an object containing the list of the user's loginSessions
   """
-  loginSessionsInfo: LoginSessionsInfo @cacheControl(scope: PRIVATE)
+  loginSessionsInfo: LoginSessionsInfo
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
 
   """
   Get the IDs for the provided search context slugs
@@ -470,7 +500,9 @@ type Query {
     department: String
     category: String
     subcategory: String
-  ): SearchContext @deprecated(reason: "Use the 'pageType' query")
+  ): SearchContext
+    @auth(scope: PUBLIC)
+    @deprecated(reason: "Use the 'pageType' query")
 
   """
   Get search page type
@@ -484,12 +516,14 @@ type Query {
     URL's querystring including '?'
     """
     query: String
-  ): PageType @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  ): PageType @auth(scope: PUBLIC) @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Get logistics information about the store
   """
-  logistics: LogisticsData @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+  logistics: LogisticsData
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
   Get a list of pickup points near specified lat and long
@@ -507,7 +541,7 @@ type Query {
     max distance of pickup points from given coordinates, in kilometers, default value 50
     """
     maxDistance: Int = 50
-  ): NearPickupPointQueryResponse
+  ): NearPickupPointQueryResponse @auth(scope: PUBLIC)
 
   skuPickupSLAs(
     itemId: String
@@ -515,7 +549,7 @@ type Query {
     lat: String
     long: String
     country: String
-  ): [CheckoutSLA]
+  ): [CheckoutSLA] @auth(scope: PUBLIC)
 
   skuPickupSLA(
     itemId: String
@@ -524,17 +558,17 @@ type Query {
     long: String
     country: String
     pickupId: String
-  ): CheckoutSLA
+  ): CheckoutSLA @auth(scope: PUBLIC)
 
   """
   Get pickup point by its id
   """
-  pickupPoint(id: String!): PickupPoint
+  pickupPoint(id: String!): PickupPoint @auth(scope: PUBLIC)
 
   """
   Get profile information to session users
   """
-  getSession: Session @cacheControl(scope: PRIVATE)
+  getSession: Session @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Get the Wish List informations by the received id
@@ -544,7 +578,7 @@ type Query {
     The list document id
     """
     id: ID
-  ): List
+  ): List @auth(scope: PUBLIC)
 
   """
   Get all lists from the received owner
@@ -562,26 +596,34 @@ type Query {
     The page size
     """
     pageSize: Int = 15
-  ): [List]
+  ): [List] @auth(scope: PUBLIC)
 
   """
   Get logged in user's last order
   """
-  userLastOrder: Order @cacheControl(scope: PRIVATE)
+  userLastOrder: Order @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
-  checkProfileAllowed: UserCondition @cacheControl(scope: PRIVATE) @withSegment
+  checkProfileAllowed: UserCondition
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
+    @withSegment
 
   itemsWithSimulation(
     items: [ItemInput]
     regionId: String
     salesChannel: String
     postalCode: String
-  ): [SKU] @cacheControl(scope: SEGMENT, maxAge: SHORT) @withSegment
+  ): [SKU]
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: SEGMENT, maxAge: SHORT)
+    @withSegment
 
   """
   Returns information about the currently authenticated user
   """
-  authenticatedUser: AuthenticatedUserInfo @cacheControl(scope: PRIVATE)
+  authenticatedUser: AuthenticatedUserInfo
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
@@ -608,14 +650,14 @@ type Mutation {
     Optional marketing UTMi Params to add them to order form
     """
     utmiParams: OrderFormInputUTMIParams
-  ): OrderForm @withSegment @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withSegment @withOrderFormId @withOwnerId
   cancelOrder(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     reason: String
-  ): Boolean @withOrderFormId @withOwnerId
+  ): Boolean @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   updateItems(
     orderFormId: String
       @deprecated(
@@ -623,6 +665,7 @@ type Mutation {
       )
     items: [OrderFormItemInput]
   ): OrderForm
+    @auth(scope: PUBLIC)
     @withSegment
     @withOrderFormId
     @withOwnerId
@@ -642,7 +685,10 @@ type Mutation {
     Extra fields that can be added to the CL.
     """
     customFields: [ProfileCustomFieldInput]
-  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
+  ): Profile
+    @auth(scope: PUBLIC)
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
 
   """
   Updates one address related to a customer profile. This is the AD entity on MasterData.
@@ -657,13 +703,17 @@ type Mutation {
     Address's field.
     """
     fields: AddressInput
-  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
+  ): Profile
+    @auth(scope: PUBLIC)
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
 
   """
   Creates one address related to a customer profile. This is the AD entity on MasterData.
   The user needs to be signed in or impersonated to perform this mutation.
   """
   createAddress(fields: AddressInput): Profile
+    @auth(scope: PUBLIC)
     @withCurrentProfile
     @cacheControl(scope: PRIVATE)
     @deprecated(reason: "Prefer the saveAddress mutation instead.")
@@ -673,6 +723,7 @@ type Mutation {
   The user needs to be signed in or impersonated to perform this mutation.
   """
   saveAddress(address: AddressInput!): Address!
+    @auth(scope: PUBLIC)
     @withCurrentProfile
     @cacheControl(scope: PRIVATE)
 
@@ -685,7 +736,10 @@ type Mutation {
     Address's id.
     """
     id: String
-  ): Profile @withCurrentProfile @cacheControl(scope: PRIVATE)
+  ): Profile
+    @auth(scope: PUBLIC)
+    @withCurrentProfile
+    @cacheControl(scope: PRIVATE)
 
   """
   Updates the Profile Picture by erasing the old ones DEPRECATED
@@ -699,7 +753,11 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String @deprecated
-  ): Profile @withCurrentProfile @deprecated @cacheControl(scope: PRIVATE)
+  ): Profile
+    @auth(scope: PUBLIC)
+    @withCurrentProfile
+    @deprecated
+    @cacheControl(scope: PRIVATE)
 
   """
   Uploads the Profile Picture by appending to the existing ones DEPRECATED
@@ -713,7 +771,11 @@ type Mutation {
     Attachment's field name (default: profilePicture)
     """
     field: String
-  ): Profile @withCurrentProfile @deprecated @cacheControl(scope: PRIVATE)
+  ): Profile
+    @auth(scope: PUBLIC)
+    @withCurrentProfile
+    @deprecated
+    @cacheControl(scope: PRIVATE)
 
   """
   Subscribe to newsletter
@@ -722,7 +784,7 @@ type Mutation {
     email: String
     isNewsletterOptIn: Boolean
     fields: NewsletterFieldsInput
-  ): Boolean @cacheControl(scope: PRIVATE)
+  ): Boolean @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Order Form
@@ -733,35 +795,35 @@ type Mutation {
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     fields: OrderFormProfileInput
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   updateOrderFormShipping(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     address: OrderFormAddressInput
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   updateOrderFormPayment(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     payments: [OrderFormPaymentInput]
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   updateOrderFormIgnoreProfile(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     ignoreProfileData: Boolean
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   addOrderFormPaymentToken(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     paymentToken: OrderFormPaymentTokenInput
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   setOrderFormCustomData(
     orderFormId: String
       @deprecated(
@@ -770,7 +832,7 @@ type Mutation {
     appId: String
     field: String
     value: String
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   addAssemblyOptions(
     orderFormId: String
       @deprecated(
@@ -779,24 +841,29 @@ type Mutation {
     itemId: String
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
-  ): OrderForm @withOrderFormId @withOwnerId
+  ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   updateOrderFormCheckin(
     orderFormId: String
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
     checkin: OrderFormCheckinInput
-  ): OrderForm @withOrderFormId @withOwnerId @cacheControl(scope: PRIVATE)
+  ): OrderForm
+    @auth(scope: PUBLIC)
+    @withOrderFormId
+    @withOwnerId
+    @cacheControl(scope: PRIVATE)
 
   """
   Payment
   """
-  createPaymentSession: PaymentSession
+  createPaymentSession: PaymentSession @auth(scope: PUBLIC)
   createPaymentTokens(
     sessionId: String
     payments: [PaymentInput]
-  ): [PaymentToken]
+  ): [PaymentToken] @auth(scope: PUBLIC)
   setPlaceholder(fields: PlaceholderInput): Boolean
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
 
   """
@@ -807,7 +874,7 @@ type Mutation {
     User email
     """
     email: String!
-  ): Boolean @cacheControl(scope: PRIVATE)
+  ): Boolean @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Access key sign in mode
@@ -821,7 +888,7 @@ type Mutation {
     Access key that was received
     """
     code: String!
-  ): String @cacheControl(scope: PRIVATE)
+  ): String @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Classic sign in mode
@@ -835,7 +902,7 @@ type Mutation {
     User password
     """
     password: String!
-  ): String @cacheControl(scope: PRIVATE)
+  ): String @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   OAuth to login with Social Account
@@ -849,7 +916,7 @@ type Mutation {
     The URL to be redirected after authentication
     """
     redirectUrl: String
-  ): String @cacheControl(scope: PRIVATE)
+  ): String @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   To recovery password you need to get your email, password and access code
@@ -867,7 +934,7 @@ type Mutation {
     Access Code
     """
     code: String!
-  ): String @cacheControl(scope: PRIVATE)
+  ): String @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Change password using email and old password
@@ -889,12 +956,13 @@ type Mutation {
     Your app's identification to help VTEX ID track requests
     """
     vtexIdVersion: String
-  ): String @cacheControl(scope: PRIVATE)
+  ): String @auth(scope: PUBLIC) @cacheControl(scope: PRIVATE)
 
   """
   Invalidate VtexIdclientAutCookie
   """
   logout: Boolean
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
     @deprecated(
       reason: "See https://github.com/vtex-apps/store-graphql/issues/182"
@@ -903,7 +971,9 @@ type Mutation {
   """
   Logs out from a specific login session
   """
-  logOutFromSession(sessionId: ID): ID @cacheControl(scope: PRIVATE)
+  logOutFromSession(sessionId: ID): ID
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
 
   """
   Impersonate a customer
@@ -913,12 +983,17 @@ type Mutation {
     The email which will be used to impersonate a user
     """
     email: String!
-  ): Session @withOrderFormId @withOwnerId @cacheControl(scope: PRIVATE)
+  ): Session
+    @auth(scope: PUBLIC)
+    @withOrderFormId
+    @withOwnerId
+    @cacheControl(scope: PRIVATE)
 
   """
   Depersonify a customer
   """
   depersonify: Boolean
+    @auth(scope: PUBLIC)
     @withOrderFormId
     @withOwnerId
     @withSegment
@@ -932,32 +1007,37 @@ type Mutation {
     document: DocumentInput
     account: String
     schema: String
-  ): DocumentResponse @withAuthMetrics
+  ): DocumentResponse @auth(scope: PUBLIC) @withAuthMetrics
   updateDocument(
     acronym: String!
     document: DocumentInput
     account: String
     schema: String
-  ): DocumentResponse @withAuthMetrics
+  ): DocumentResponse @auth(scope: PUBLIC) @withAuthMetrics
   deleteDocument(acronym: String!, documentId: String!): DocumentResponse
+    @auth(scope: PUBLIC)
     @withAuthMetrics
   uploadAttachment(
     acronym: String!
     documentId: String!
     field: String!
     file: Upload!
-  ): AttachmentResponse @withAuthMetrics
+  ): AttachmentResponse @auth(scope: PUBLIC) @withAuthMetrics
   createDocumentV2(
     dataEntity: String!
     document: DocumentInputV2
     account: String
     schema: String
-  ): DocumentResponseV2 @cacheControl(scope: PRIVATE) @withAuthMetrics
+  ): DocumentResponseV2
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
+    @withAuthMetrics
 
   """
   List
   """
   createList(list: ListInput): List
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
     @withAuthMetrics
   """
@@ -967,17 +1047,23 @@ type Mutation {
   Otherwise, update it.
   """
   updateList(id: ID!, list: ListInput): List
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
     @withAuthMetrics
-  deleteList(id: ID!): List @cacheControl(scope: PRIVATE) @withAuthMetrics
+  deleteList(id: ID!): List
+    @auth(scope: PUBLIC)
+    @cacheControl(scope: PRIVATE)
+    @withAuthMetrics
 
   savePickupInSession(address: OrderFormAddressInput, name: String): Session
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
 
   """
   Set new orderForm.
   """
   newOrderForm(orderFormId: String): OrderForm
+    @auth(scope: PUBLIC)
     @cacheControl(scope: PRIVATE)
     @withOrderFormId
     @withOwnerId

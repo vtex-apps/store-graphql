@@ -6,7 +6,7 @@ import { AuthenticationError, ResolverError } from '@vtex/api'
 
 import { getSession } from '../resolvers/session/service'
 import { SessionFields } from '../resolvers/session/sessionResolver'
-import { DefaultUser, User } from '../dataSources/identity'
+import { DefaultUser, User } from '../clients/identity'
 
 type UserType = 'StoreUser' | 'CallCenterOperator'
 interface ProfileInfos<ProfileType = CurrentProfile | null> {
@@ -89,10 +89,10 @@ async function getStoreUserProfileFromCookie(
 ): Promise<ProfileInfos> {
   const {
     vtex: { storeUserAuthToken: userToken },
-    dataSources: { identity },
+    clients: { identity },
   } = context
 
-  return identity.getUserWithToken(userToken!).then((data) => {
+  return identity.getUserWithToken(userToken!).then((data: any) => {
     if (data && 'id' in data) {
       return {
         currentProfile: { userId: data.id, email: data.user },
@@ -206,7 +206,7 @@ async function checkUserAccount(
   resolverInfo: GraphQLResolveInfo
 ) {
   const {
-    dataSources: { identity },
+    clients: { identity },
     vtex: { adminUserAuthToken, storeUserAuthToken, account },
   } = context
 

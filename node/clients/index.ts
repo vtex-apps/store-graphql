@@ -3,6 +3,7 @@ import { IOClients } from '@vtex/api'
 import { CallCenterOperator } from './callCenterOperator'
 import { Catalog } from './catalog'
 import { Checkout } from './checkout'
+import { IdentityClient } from './identity'
 import { VtexId } from './vtexid'
 import { PvtCheckout } from './PvtCheckout'
 import { MasterData } from './masterdata'
@@ -17,8 +18,12 @@ import { Session } from './session'
 import { Rewriter } from './rewriter'
 
 export class Clients extends IOClients {
-  public get masterdata() {
-    return this.getOrSet('masterdata', MasterData)
+  public get identity() {
+    return this.getOrSet('identity', IdentityClient)
+  }
+
+  public get masterdataClient() {
+    return this.getOrSet('masterdataClient', MasterData)
   }
 
   public get checkout() {

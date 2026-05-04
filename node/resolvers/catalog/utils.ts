@@ -118,7 +118,7 @@ export const searchContextGetCategory = async (
   args: CategoryArgs,
   catalog: Context['clients']['catalog'],
   isVtex: boolean,
-  logger: Context['clients']['logger']
+  logger: Context['vtex']['logger']
 ) => {
   if (!isVtex) {
     return getIdFromTree(args, catalog)
@@ -138,10 +138,10 @@ export const searchContextGetCategory = async (
   const pageType = await catalog.pageType(url).catch(() => null)
 
   if (!pageType) {
-    logger.info(
-      `category ${url}, args ${JSON.stringify(args)}`,
-      'pagetype-category-error'
-    )
+    logger.info({
+      message: `category ${url}, args ${JSON.stringify(args)}`,
+      key: 'pagetype-category-error',
+    })
   }
 
   if (!pageType || !typesPossible.includes(pageType.pageType)) {

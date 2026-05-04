@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Fix `TypeError` on `subscribeNewsletter` mutation for new emails on Profile System V1
+
 ### Changed
 
+- Migrate Node.js builder from `node@4.x` to `node@7.x` (Node.js 20 runtime)
+- Migrate GraphQL builder from `graphql@1.x` to `graphql@2.x`
 - Update DK Catalog platform-flow-id
 
 ## [2.174.0] - 2025-12-17

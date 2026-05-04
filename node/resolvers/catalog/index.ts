@@ -116,7 +116,7 @@ const getBrandId = async (
   brand: string | undefined,
   catalog: Context['clients']['catalog'],
   isVtex: boolean,
-  logger: Context['clients']['logger']
+  logger: Context['vtex']['logger']
 ) => {
   if (!brand) {
     return null
@@ -130,7 +130,10 @@ const getBrandId = async (
   const brandPagetype = await catalog.pageType(slugified).catch(() => null)
 
   if (!brandPagetype) {
-    logger.info(`brand ${brand}, slug ${slugified}`, 'pagetype-brand-error')
+    logger.info({
+      message: `brand ${brand}, slug ${slugified}`,
+      key: 'pagetype-brand-error',
+    })
   }
 
   if (!brandPagetype || brandPagetype.pageType !== 'Brand') {
@@ -580,7 +583,7 @@ export const queries = {
   searchContextFromParams: async (
     _: any,
     args: SearchContextParams,
-    { clients: { catalog, logger }, vtex: { account } }: Context
+    { clients: { catalog }, vtex: { account, logger } }: Context
   ) => {
     const isVtex = !Functions.isGoCommerceAcc(account)
     const response: SearchContext = {
@@ -589,10 +592,7 @@ export const queries = {
       contextKey: 'search',
     }
 
-    const [brandId, categoryId] = await Promise.all<
-      string | null,
-      string | number | null
-    >([
+    const [brandId, categoryId] = await Promise.all([
       getBrandId(args.brand, catalog, isVtex, logger),
       searchContextGetCategory(args, catalog, isVtex, logger),
     ])

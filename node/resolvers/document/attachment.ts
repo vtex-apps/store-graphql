@@ -5,7 +5,7 @@ import { generateRandomName } from '../../utils'
 
 export async function uploadAttachment(args: any, ctx: Context) {
   const {
-    clients: { masterdata },
+    clients: { masterdataClient: masterdata },
   } = ctx
 
   const { acronym, documentId, field, file } = args

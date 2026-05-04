@@ -70,8 +70,8 @@ export default <T = any>(options: HttpResolverOptions): HttpResolver<T> => {
     }
 
     if (enableCookies && cookie) {
-      config.headers.cookie = cookie
-      config.headers.host = host
+      config.headers.cookie = cookie as string
+      config.headers.host = (Array.isArray(host) ? host[0] : host) ?? ''
     }
 
     const { hostname } = parse(builtUrl)

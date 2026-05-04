@@ -55,7 +55,7 @@ const addListItem = async (item: Item, masterdata: MasterData) => {
 const addItems = async (
   // eslint-disable-next-line @typescript-eslint/default-param-last
   items: Item[] = [],
-  { clients, clients: { masterdata } }: Context
+  { clients, clients: { masterdataClient: masterdata } }: Context
 ) => {
   validateItems(items, clients)
   const promises = map(async (item) => addListItem(item, masterdata), items)
@@ -111,7 +111,7 @@ export const queries = {
   list: async (
     _: any,
     { id }: any,
-    { clients: { masterdata, catalog } }: Context
+    { clients: { masterdataClient: masterdata, catalog } }: Context
   ) => {
     const list = await masterdata.getDocument<any>(acronymList, id, fields)
     const items = await getListItems(list.items, catalog, masterdata)
@@ -125,7 +125,7 @@ export const queries = {
     context: Context
   ) => {
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     const lists = (await masterdata.searchDocuments<any>(
@@ -151,7 +151,7 @@ export const mutation = {
     context: Context
   ) => {
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     try {
@@ -170,7 +170,7 @@ export const mutation = {
   deleteList: async (
     _: any,
     { id }: any,
-    { clients: { masterdata } }: Context
+    { clients: { masterdataClient: masterdata } }: Context
   ) => {
     const { items } = await masterdata.getDocument<any>(acronymList, id, fields)
 
@@ -191,7 +191,7 @@ export const mutation = {
     context: Context
   ) => {
     const {
-      clients: { masterdata },
+      clients: { masterdataClient: masterdata },
     } = context
 
     try {
