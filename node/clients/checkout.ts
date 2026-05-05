@@ -30,7 +30,7 @@ export class Checkout extends JanusClient {
   }
 
   private getCommonHeaders = () => {
-    const { orderFormId, ownerId, segmentToken, sessionToken } = this
+    const { orderFormId, ownerId, segmentToken, sessionToken, rcSessionIdv7, rcMacIdv7 } = this
       .context as CustomIOContext
 
     const checkoutCookie = orderFormId ? checkoutCookieFormat(orderFormId) : ''
@@ -43,8 +43,11 @@ export class Checkout extends JanusClient {
       ? `vtex_session=${sessionToken};`
       : ''
 
+    const rcSessionCookie = rcSessionIdv7 ? `VtexRCSessionIdv7=${rcSessionIdv7};` : ''
+    const rcMacCookie = rcMacIdv7 ? `VtexRCMacIdv7=${rcMacIdv7};` : ''
+
     return {
-      Cookie: `${checkoutCookie}${ownershipCookie}${segmentTokenCookie}${sessionTokenCookie}`,
+      Cookie: `${checkoutCookie}${ownershipCookie}${segmentTokenCookie}${sessionTokenCookie}${rcSessionCookie}${rcMacCookie}`,
     }
   }
 
