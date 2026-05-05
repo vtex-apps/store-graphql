@@ -186,9 +186,9 @@ type OrderFormShippingData {
 scalar InputValues
 
 input OrderFormItemInput {
-  id: Int
-  index: Int
-  quantity: Int
+  id: FlexibleInt
+  index: FlexibleInt
+  quantity: FlexibleInt
   seller: ID
   inputValues: InputValues
   options: [AssemblyOptionInput]
@@ -197,16 +197,16 @@ input OrderFormItemInput {
 input OrderFormAddressInput {
   addressId: String
   addressType: String
-  postalCode: String
+  postalCode: FlexibleString
   country: String
   receiverName: String
   city: String
   state: String
   street: String
-  number: String
+  number: FlexibleString
   complement: String
   neighborhood: String
-  geoCoordinates: [Float]
+  geoCoordinates: [FlexibleFloat]
   isDisposable: Boolean
 }
 

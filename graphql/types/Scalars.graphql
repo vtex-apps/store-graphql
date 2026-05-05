@@ -1,0 +1,19 @@
+"""
+Quantity as String (legacy SDL). Accepts JSON numbers or numeric strings; resolvers receive the same representation as before String coercion.
+"""
+scalar FlexibleQuantity
+
+"""
+Float (legacy SDL). Accepts JSON numbers or numeric strings; resolvers receive a finite number like GraphQL Float.
+"""
+scalar FlexibleFloat
+
+"""
+Integer argument (e.g. category id, pagination). Accepts JSON number or numeric string.
+"""
+scalar FlexibleInt
+
+"""
+String field that may arrive as JSON number or string from legacy clients (e.g. SKU id, house number, postal code).
+"""
+scalar FlexibleString

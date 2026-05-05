@@ -87,7 +87,7 @@ type LogisticsItem {
 }
 
 input ShippingItem {
-  id: String
-  quantity: String
-  seller: String
+  id: FlexibleString
+  quantity: FlexibleQuantity
+  seller: ID
 }

@@ -305,7 +305,19 @@ export const queries: Record<string, Resolver> = {
   },
 
   shipping: (_, args: any, { clients: { checkout } }) => {
-    return checkout.simulation(args)
+    if (!args?.items?.length) {
+      return checkout.simulation(args)
+    }
+
+    const items = args.items.map((item: any) => ({
+      ...item,
+      quantity:
+        typeof item.quantity === 'string'
+          ? parseInt(item.quantity, 10) || 0
+          : item.quantity,
+    }))
+
+    return checkout.simulation({ ...args, items })
   },
 
   skuPickupSLAs: async (
@@ -334,7 +346,7 @@ export const queries: Record<string, Resolver> = {
 
     const [simulation, allPickupsOutput] = await Promise.all([
       checkout.simulation(simulationPayload),
-      logistics.nearPickupPoints(lat, long),
+      logistics.nearPickupPoints(String(lat), String(long)),
     ])
 
     const slas = simulation?.logisticsInfo?.[0]?.slas ?? []

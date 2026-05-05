@@ -71,7 +71,7 @@ export const queries = {
         : [
             {
               id: args.id,
-              quantity: DEFAULT_QUANTITY,
+              quantity: parseInt(DEFAULT_QUANTITY, 10),
               seller: DEFAULT_SELLER,
             },
           ],

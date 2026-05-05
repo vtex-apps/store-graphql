@@ -32,6 +32,7 @@ import {
   queries as profileQueries,
 } from './profile'
 import { resolvers as portalResolvers } from './portal'
+import { scalarResolvers } from './scalars'
 import {
   mutations as sessionMutations,
   queries as sessionQueries,
@@ -39,6 +40,7 @@ import {
 } from './session'
 
 export const resolvers = {
+  ...scalarResolvers,
   ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
   ...profileFieldResolvers,

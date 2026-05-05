@@ -253,7 +253,7 @@ type Query {
     """
     Category id
     """
-    id: Int
+    id: FlexibleInt
   ): Category @auth(scope: PUBLIC) @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
@@ -263,7 +263,7 @@ type Query {
     """
     Category tree level. Default: 3
     """
-    treeLevel: Int = 3
+    treeLevel: FlexibleInt = 3
   ): [Category]
     @auth(scope: PUBLIC)
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
@@ -275,7 +275,7 @@ type Query {
     """
     Brand id
     """
-    id: Int
+    id: FlexibleInt
   ): Brand @auth(scope: PUBLIC) @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
@@ -300,7 +300,7 @@ type Query {
     """
     geoCoordinates for freight calculator
     """
-    geoCoordinates: [String]
+    geoCoordinates: [FlexibleString]
     """
     Country of postal code
     """
@@ -395,11 +395,11 @@ type Query {
     """
     Pagination. Default: 1
     """
-    page: Int = 1
+    page: FlexibleInt = 1
     """
     Items returned in the page. Default: 15
     """
-    pageSize: Int = 15
+    pageSize: FlexibleInt = 15
     """
     Filters the results. eg.: _where=email=my@email.com
     """
@@ -532,11 +532,11 @@ type Query {
     """
     Desired latitude coordinate, for example: -22.944370
     """
-    lat: String!
+    lat: FlexibleString!
     """
     Desired longitude coordinate, for example: -43.182553
     """
-    long: String!
+    long: FlexibleString!
     """
     max distance of pickup points from given coordinates, in kilometers, default value 50
     """
@@ -546,16 +546,16 @@ type Query {
   skuPickupSLAs(
     itemId: String
     seller: String
-    lat: String
-    long: String
+    lat: FlexibleString
+    long: FlexibleString
     country: String
   ): [CheckoutSLA] @auth(scope: PUBLIC)
 
   skuPickupSLA(
     itemId: String
     seller: String
-    lat: String
-    long: String
+    lat: FlexibleString
+    long: FlexibleString
     country: String
     pickupId: String
   ): CheckoutSLA @auth(scope: PUBLIC)
@@ -591,11 +591,11 @@ type Query {
     """
     The page that will be fetched
     """
-    page: Int = 1
+    page: FlexibleInt = 1
     """
     The page size
     """
-    pageSize: Int = 15
+    pageSize: FlexibleInt = 15
   ): [List] @auth(scope: PUBLIC)
 
   """
@@ -831,7 +831,7 @@ type Mutation {
       )
     appId: String
     field: String
-    value: String
+    value: FlexibleString
   ): OrderForm @auth(scope: PUBLIC) @withOrderFormId @withOwnerId
   addAssemblyOptions(
     orderFormId: String

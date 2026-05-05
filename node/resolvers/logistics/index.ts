@@ -11,7 +11,7 @@ export const queries = {
     _: any,
     { lat, long, maxDistance }: NearPickupPointsArgs,
     { clients: { logistics } }: Context
-  ) => logistics.nearPickupPoints(lat, long, maxDistance),
+  ) => logistics.nearPickupPoints(String(lat), String(long), maxDistance),
 
   pickupPoint: (
     _: any,
