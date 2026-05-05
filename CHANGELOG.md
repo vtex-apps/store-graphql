@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Revert GraphQL builder from `graphql@2.x` to `graphql@1.x` (remove `@auth` from schema). Node builder remains `node@7.x`.
+
 ## [2.175.0] - 2026-05-04
 
 ### Fixed
