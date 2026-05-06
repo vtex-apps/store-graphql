@@ -16,6 +16,10 @@ const coercibleBehavior: Record<
 > = {
   Int: {
     parseValue(value) {
+      if (typeof value === 'string' && value.trim() === '') {
+        throw new Error(`Int cannot represent non-integer value: ${value}`)
+      }
+
       const num = Number(value)
 
       if (!Number.isFinite(num) || !Number.isInteger(num)) {

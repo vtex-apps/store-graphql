@@ -511,19 +511,19 @@ type Query {
     maxDistance: Int = 50
   ): NearPickupPointQueryResponse
   skuPickupSLAs(
-    itemId: String
-    seller: String
+    itemId: String @coerce
+    seller: String @coerce
     lat: String @coerce
     long: String @coerce
     country: String
   ): [CheckoutSLA]
   skuPickupSLA(
-    itemId: String
-    seller: String
+    itemId: String @coerce
+    seller: String @coerce
     lat: String @coerce
     long: String @coerce
     country: String
-    pickupId: String
+    pickupId: String @coerce
   ): CheckoutSLA
   """
   Get pickup point by its id
@@ -772,7 +772,7 @@ type Mutation {
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
-    itemId: String
+    itemId: String @coerce
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
   ): OrderForm @withOrderFormId @withOwnerId

@@ -195,7 +195,7 @@ input OrderFormItemInput {
 }
 
 input OrderFormAddressInput {
-  addressId: String
+  addressId: String @coerce
   addressType: String
   postalCode: String @coerce
   country: String
