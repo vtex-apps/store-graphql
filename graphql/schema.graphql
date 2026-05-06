@@ -246,7 +246,7 @@ type Query {
     """
     Category id
     """
-    id: Int
+    id: Int @coerce
   ): Category @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
