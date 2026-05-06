@@ -256,7 +256,7 @@ type Query {
     """
     Category tree level. Default: 3
     """
-    treeLevel: Int = 3
+    treeLevel: Int = 3 @coerce
   ): [Category] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
@@ -266,7 +266,7 @@ type Query {
     """
     Brand id
     """
-    id: Int
+    id: Int @coerce
   ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
@@ -289,7 +289,7 @@ type Query {
     """
     geoCoordinates for freight calculator
     """
-    geoCoordinates: [String]
+    geoCoordinates: [String] @coerce
     """
     Country of postal code
     """
@@ -500,11 +500,11 @@ type Query {
     """
     Desired latitude coordinate, for example: -22.944370
     """
-    lat: String!
+    lat: String! @coerce
     """
     Desired longitude coordinate, for example: -43.182553
     """
-    long: String!
+    long: String! @coerce
     """
     max distance of pickup points from given coordinates, in kilometers, default value 50
     """
@@ -513,15 +513,15 @@ type Query {
   skuPickupSLAs(
     itemId: String
     seller: String
-    lat: String
-    long: String
+    lat: String @coerce
+    long: String @coerce
     country: String
   ): [CheckoutSLA]
   skuPickupSLA(
     itemId: String
     seller: String
-    lat: String
-    long: String
+    lat: String @coerce
+    long: String @coerce
     country: String
     pickupId: String
   ): CheckoutSLA

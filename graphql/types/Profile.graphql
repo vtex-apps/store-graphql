@@ -264,10 +264,12 @@ input AddressInput {
   neighborhood: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   country: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   state: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
-  number: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  number: String @coerce @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   street: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
-  geoCoordinates: [Float]
-  postalCode: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
+  geoCoordinates: [Float] @coerce
+  postalCode: String
+    @coerce
+    @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   city: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   reference: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
   addressName: String @sanitize(allowHTMLTags: false, stripIgnoreTag: true)
