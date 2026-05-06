@@ -1,4 +1,5 @@
 import { mutations as authMutations, queries as authQueries } from './auth'
+import { CoercibleFloat, CoercibleInt, CoercibleString } from '../scalars'
 import {
   fieldResolvers as benefitsFieldResolvers,
   queries as benefitsQueries,
@@ -39,6 +40,9 @@ import {
 } from './session'
 
 export const resolvers = {
+  Int: CoercibleInt,
+  Float: CoercibleFloat,
+  String: CoercibleString,
   ...catalogFieldResolvers,
   ...benefitsFieldResolvers,
   ...profileFieldResolvers,
