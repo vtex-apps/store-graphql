@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.177.0] - 2026-05-07
+
 ### Changed
 
 - Migrate GraphQL builder from `graphql@1.x` to `graphql@2.x`
