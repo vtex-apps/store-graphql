@@ -186,27 +186,27 @@ type OrderFormShippingData {
 scalar InputValues
 
 input OrderFormItemInput {
-  id: Int
-  index: Int
-  quantity: Int
+  id: Int @coerce
+  index: Int @coerce
+  quantity: Int @coerce
   seller: ID
   inputValues: InputValues
   options: [AssemblyOptionInput]
 }
 
 input OrderFormAddressInput {
-  addressId: String
+  addressId: String @coerce
   addressType: String
-  postalCode: String
+  postalCode: String @coerce
   country: String
   receiverName: String
   city: String
   state: String
   street: String
-  number: String
+  number: String @coerce
   complement: String
   neighborhood: String
-  geoCoordinates: [Float]
+  geoCoordinates: [Float] @coerce
   isDisposable: Boolean
 }
 

@@ -371,10 +371,10 @@ enum CrossSelingInputEnum {
 }
 
 input ItemInput {
-  itemId: ID
+  itemId: ID @coerce
   sellers: [SellerInput]
 }
 
 input SellerInput {
-  sellerId: ID
+  sellerId: ID @coerce
 }

@@ -4,6 +4,7 @@ import { WithOrderFormId } from './withOrderFormId'
 import { ToVtexAssets } from './toVtexAssets'
 import { AuthorizationMetrics } from './authorizationMetrics'
 import { WithOwnerId } from './withOwnerId'
+import { Coerce } from './coerce'
 
 export const schemaDirectives = {
   toVtexAssets: ToVtexAssets,
@@ -12,4 +13,5 @@ export const schemaDirectives = {
   withOrderFormId: WithOrderFormId,
   withOwnerId: WithOwnerId,
   withAuthMetrics: AuthorizationMetrics,
+  coerce: Coerce,
 }

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Add @coerce Schema directive for surgical per-field scalar coercion
+
 ## [2.175.1] - 2026-05-05
 
 ### Changed

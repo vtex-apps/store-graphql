@@ -4,6 +4,7 @@ directive @withSegment on FIELD_DEFINITION
 directive @withOrderFormId on FIELD_DEFINITION
 directive @withCurrentProfile on FIELD_DEFINITION
 directive @toVtexAssets on FIELD_DEFINITION
+directive @coerce on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
 
 type Query {
   """
@@ -245,7 +246,7 @@ type Query {
     """
     Category id
     """
-    id: Int
+    id: Int @coerce
   ): Category @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
@@ -255,7 +256,7 @@ type Query {
     """
     Category tree level. Default: 3
     """
-    treeLevel: Int = 3
+    treeLevel: Int = 3 @coerce
   ): [Category] @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
 
   """
@@ -265,7 +266,7 @@ type Query {
     """
     Brand id
     """
-    id: Int
+    id: Int @coerce
   ): Brand @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
 
   """
@@ -288,7 +289,7 @@ type Query {
     """
     geoCoordinates for freight calculator
     """
-    geoCoordinates: [String]
+    geoCoordinates: [String] @coerce
     """
     Country of postal code
     """
@@ -499,30 +500,30 @@ type Query {
     """
     Desired latitude coordinate, for example: -22.944370
     """
-    lat: String!
+    lat: String! @coerce
     """
     Desired longitude coordinate, for example: -43.182553
     """
-    long: String!
+    long: String! @coerce
     """
     max distance of pickup points from given coordinates, in kilometers, default value 50
     """
     maxDistance: Int = 50
   ): NearPickupPointQueryResponse
   skuPickupSLAs(
-    itemId: String
-    seller: String
-    lat: String
-    long: String
+    itemId: String @coerce
+    seller: String @coerce
+    lat: String @coerce
+    long: String @coerce
     country: String
   ): [CheckoutSLA]
   skuPickupSLA(
-    itemId: String
-    seller: String
-    lat: String
-    long: String
+    itemId: String @coerce
+    seller: String @coerce
+    lat: String @coerce
+    long: String @coerce
     country: String
-    pickupId: String
+    pickupId: String @coerce
   ): CheckoutSLA
   """
   Get pickup point by its id
@@ -771,7 +772,7 @@ type Mutation {
       @deprecated(
         reason: "Field is no longer needed. Checkout cookie is automatically taken into account now"
       )
-    itemId: String
+    itemId: String @coerce
     assemblyOptionsId: String
     options: [AssemblyOptionInput]
   ): OrderForm @withOrderFormId @withOwnerId
