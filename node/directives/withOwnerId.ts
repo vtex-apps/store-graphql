@@ -1,16 +1,16 @@
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
-import { getOwnerIdFromCookie } from '../utils'
+import { getOwnerIdFromCookie, getRcSessionIdFromCookie, getRcMacIdFromCookie } from '../utils'
 
 export class WithOwnerId extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
     field.resolve = async (root: any, args: any, ctx: Context, info: any) => {
-      const checkoutOwnerId = getOwnerIdFromCookie(ctx.cookies)
-
-      ctx.vtex.ownerId = checkoutOwnerId
+      ctx.vtex.ownerId = getOwnerIdFromCookie(ctx.cookies)
+      ctx.vtex.rcSessionIdv7 = getRcSessionIdFromCookie(ctx.cookies)
+      ctx.vtex.rcMacIdv7 = getRcMacIdFromCookie(ctx.cookies)
 
       return resolve(root, args, ctx, info)
     }

@@ -53,11 +53,24 @@ export function getOwnerIdFromCookie(cookies: Context['cookies']) {
   return cookies.get(OWNERSHIP_COOKIE)
 }
 
+const RC_SESSION_COOKIE = 'VtexRCSessionIdv7'
+const RC_MAC_COOKIE = 'VtexRCMacIdv7'
+
+export function getRcSessionIdFromCookie(cookies: Context['cookies']) {
+  return cookies.get(RC_SESSION_COOKIE)
+}
+
+export function getRcMacIdFromCookie(cookies: Context['cookies']) {
+  return cookies.get(RC_MAC_COOKIE)
+}
+
 export {
   isUserLoggedIn,
   CHECKOUT_COOKIE,
   ASPXAUTH_COOKIE,
   OWNERSHIP_COOKIE,
+  RC_SESSION_COOKIE,
+  RC_MAC_COOKIE,
   checkoutCookieFormat,
   getOrderFormIdFromCookie,
   parseCookie,
