@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.177.1] - 2026-05-11
+
 ### Added
 
 - Forward `VtexRCSessionIdv7` and `VtexRCMacIdv7` cookies to the Checkout API
