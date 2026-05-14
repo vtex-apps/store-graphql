@@ -7,6 +7,8 @@ metadata:
     github.com/project-slug: vtex-apps/store-graphql
     vtex.com/application-id: RHF69SGK
     vtex.com/platform-flow-id: Shopper#1,Shopper#2,Shopper#4,Shopper#5
+    vtex.com/sdd-check-skip: 'true'
+    vtex.com/sdd-check-skip-reason: Non-core component. SDD adoption deferred to next adoption wave
 spec:
   type: service
   lifecycle: production
