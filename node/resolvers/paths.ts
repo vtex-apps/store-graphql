@@ -48,15 +48,18 @@ const paths = {
     `${paths.gateway(account)}/pub/sessions/${sessionId}/tokens`,
 
   /** VTEX ID API */
-  accessKeySignIn: () => `${paths.vtexIdPub}/authentication/accesskey/validate`,
-  classicSignIn: () => `${paths.vtexIdPub}/authentication/classic/validate`,
-  getUser: (accountName: any) =>
-    `${paths.vtexIdPvt}/user/detailedinfo?scope=${accountName}`,
+  accessKeySignIn: (account: string) =>
+    `${paths.vtexIdPub}/authentication/accesskey/validate?an=${account}`,
+  classicSignIn: (account: string) =>
+    `${paths.vtexIdPub}/authentication/classic/validate?an=${account}`,
+  getUser: (accountName: string) =>
+    `${paths.vtexIdPvt}/user/detailedinfo?scope=${accountName}&an=${accountName}`,
   oAuth: (authenticationToken: any, providerName: any) =>
     `${paths.vtexIdPub}/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=${providerName}`,
-  setPassword: () => `${paths.vtexIdPub}/authentication/classic/setpassword`,
-  sendEmailVerification: () =>
-    `${paths.vtexIdPub}/authentication/accesskey/send`,
+  setPassword: (account: string) =>
+    `${paths.vtexIdPub}/authentication/classic/setpassword?an=${account}`,
+  sendEmailVerification: (account: string) =>
+    `${paths.vtexIdPub}/authentication/accesskey/send?an=${account}`,
   sessionToken: (scope: any, account: any, redirect = '/', returnUrl = '/') =>
     `${
       paths.vtexIdPub

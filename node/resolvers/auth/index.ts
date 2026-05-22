@@ -207,7 +207,7 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.accessKeySignIn(),
+      url: paths.accessKeySignIn(ioContext.account),
       body: {
         accesskey: args.code,
         authenticationToken: VtexSessionToken,
@@ -238,7 +238,7 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.classicSignIn(),
+      url: paths.classicSignIn(ioContext.account),
       body: {
         authenticationToken: VtexSessionToken,
         login: args.email,
@@ -343,7 +343,7 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.setPassword(),
+      url: paths.setPassword(ioContext.account),
       body,
     })
 
@@ -379,7 +379,7 @@ export const mutations = {
     } = await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.setPassword(),
+      url: paths.setPassword(ioContext.account),
       body,
       vtexIdVersion: args.vtexIdVersion,
     })
@@ -409,7 +409,7 @@ export const mutations = {
     await makeRequest({
       ctx: ioContext,
       method: 'POST',
-      url: paths.sendEmailVerification(),
+      url: paths.sendEmailVerification(ioContext.account),
       body: {
         authenticationToken: VtexSessionToken,
         email: args.email,
