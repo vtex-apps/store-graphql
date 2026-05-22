@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.177.2] - 2026-05-22
+
 ### Fixed
 
 - Add `an={account}` query string to VTEX ID authentication and user info calls.
