@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Use `PATCH` instead of `PUT` when updating `clientPreferences` on Profile System V2 to avoid overwriting `paymentData` (saved cards) in the `purchase-info` entity.
+
 ## [2.177.2] - 2026-05-22
 
 ### Fixed
