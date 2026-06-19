@@ -130,7 +130,7 @@ export class ProfileClientV2 extends JanusClient {
       },
     }
 
-    return this.put(
+    return this.patch(
       `${this.baseUrl}/${currentUserProfile.id}/purchase-info`,
       purchaseInfo,
       {
