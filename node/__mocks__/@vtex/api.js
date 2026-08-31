@@ -40,6 +40,15 @@ class ResolverWarning extends Error {
   }
 }
 
+// Enough of the real base class for a client to be instantiated in a test.
+// `http` is left for the test to define, since asserting on it is the point.
+class JanusClient {
+  constructor(context, options) {
+    this.context = context
+    this.options = options
+  }
+}
+
 module.exports = {
   UserInputError,
   ResolverError,
@@ -47,6 +56,7 @@ module.exports = {
   ForbiddenError,
   AuthenticationError,
   ResolverWarning,
+  JanusClient,
   LRUCache: jest
     .fn()
     .mockImplementation(() => ({ get: jest.fn(), set: jest.fn() })),

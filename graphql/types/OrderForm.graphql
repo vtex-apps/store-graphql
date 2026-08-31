@@ -192,6 +192,13 @@ input OrderFormItemInput {
   seller: ID
   inputValues: InputValues
   options: [AssemblyOptionInput]
+  """
+  Signed price (Pricing Fallback) returned by the search for this SKU and
+  seller, forwarded as-is to the checkout REST API so it can close the cart
+  with that price while the Pricing system is unavailable. Optional: when it
+  is absent the payload reaches checkout exactly as before.
+  """
+  priceToken: String
 }
 
 input OrderFormAddressInput {

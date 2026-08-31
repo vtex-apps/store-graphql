@@ -15,6 +15,10 @@ import {
   statusToError,
 } from '../utils'
 
+const hasPriceToken = (items: unknown) =>
+  Array.isArray(items) &&
+  items.some((item) => typeof item?.priceToken === 'string' && item.priceToken)
+
 export class Checkout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -59,12 +63,19 @@ export class Checkout extends JanusClient {
     return queryString
   }
 
-  public addItem = (orderFormId: string, items: any) =>
-    this.post<OrderForm>(
-      this.routes.addItem(orderFormId, this.getChannelQueryString()),
-      { orderItems: items },
-      { metric: 'checkout-addItem' }
-    )
+  public addItem = (orderFormId: string, items: any) => {
+    const url = this.routes.addItem(orderFormId, this.getChannelQueryString())
+    const body = { orderItems: items }
+    const config = { metric: 'checkout-addItem' }
+
+    // Only the PATCH route honors `priceToken` (signed price, Pricing Fallback
+    // V2); on POST the field is accepted and dropped. Carts without a token
+    // keep the POST they have always used, so the route only changes for the
+    // scenario that needs it.
+    return hasPriceToken(items)
+      ? this.patch<OrderForm>(url, body, config)
+      : this.post<OrderForm>(url, body, config)
+  }
 
   public cancelOrder = (orderFormId: string, reason: string) =>
     this.post(
