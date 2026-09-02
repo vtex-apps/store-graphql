@@ -62,6 +62,28 @@ describe('addItem route selection', () => {
     })
   })
 
+  it('drops `index` on PATCH, which would turn the add into an update', async () => {
+    const { client, http } = createClient()
+
+    await client.addItem(ORDER_FORM_ID, [
+      { ...itemWithToken, index: 0 },
+      { ...itemWithoutToken, index: 1 },
+    ])
+
+    expect(http.patch.mock.calls[0][1]).toEqual({
+      orderItems: [itemWithToken, itemWithoutToken],
+    })
+  })
+
+  it('keeps `index` on POST, where checkout ignores it', async () => {
+    const { client, http } = createClient()
+    const item = { ...itemWithoutToken, index: 3 }
+
+    await client.addItem(ORDER_FORM_ID, [item])
+
+    expect(http.post.mock.calls[0][1]).toEqual({ orderItems: [item] })
+  })
+
   it('sends the same payload and metric on both routes', async () => {
     const withToken = createClient()
     const withoutToken = createClient()
