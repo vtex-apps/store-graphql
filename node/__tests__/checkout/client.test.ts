@@ -70,6 +70,7 @@ describe('addItem route selection', () => {
       { ...itemWithoutToken, index: 1 },
     ])
 
+    expect(http.patch).toHaveBeenCalledTimes(1)
     expect(http.patch.mock.calls[0][1]).toEqual({
       orderItems: [itemWithToken, itemWithoutToken],
     })
@@ -81,20 +82,21 @@ describe('addItem route selection', () => {
 
     await client.addItem(ORDER_FORM_ID, [item])
 
+    expect(http.post).toHaveBeenCalledTimes(1)
     expect(http.post.mock.calls[0][1]).toEqual({ orderItems: [item] })
   })
 
-  it('sends the same payload and metric on both routes', async () => {
+  it('reports the same metric on both routes', async () => {
     const withToken = createClient()
     const withoutToken = createClient()
 
     await withToken.client.addItem(ORDER_FORM_ID, [itemWithToken])
-    await withoutToken.client.addItem(ORDER_FORM_ID, [itemWithToken])
+    await withoutToken.client.addItem(ORDER_FORM_ID, [itemWithoutToken])
 
     expect(withToken.http.patch.mock.calls[0][2]).toMatchObject({
       metric: 'checkout-addItem',
     })
-    expect(withoutToken.http.patch.mock.calls[0][2]).toMatchObject({
+    expect(withoutToken.http.post.mock.calls[0][2]).toMatchObject({
       metric: 'checkout-addItem',
     })
   })
