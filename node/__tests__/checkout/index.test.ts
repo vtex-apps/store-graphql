@@ -42,6 +42,51 @@ test('should call add item with correct param', async () => {
   expect(checkoutClient.updateOrderFormMarketingData).toBeCalledTimes(0)
 })
 
+describe('priceToken forwarding', () => {
+  const itemWithToken = {
+    id: 100,
+    quantity: 1,
+    seller: '1',
+    priceToken: 'signed.price.token',
+  }
+
+  it('forwards priceToken to the checkout client', async () => {
+    await mutations.addItem(
+      {},
+      { orderFormId: orderForm.orderFormId, items: [itemWithToken] },
+      mockContext as any
+    )
+
+    const { addItem } = mockContext.clients.checkout
+
+    expect(addItem).toHaveBeenCalledTimes(1)
+    // `toEqual` rather than `toMatchObject`: the point is that nothing was
+    // added to or removed from the item on the way to the client.
+    expect(addItem.mock.calls[0][1]).toEqual([itemWithToken])
+  })
+
+  it('strips `options` without taking priceToken with it', async () => {
+    const { addItem } = mockContext.clients.checkout
+
+    // With `options` present the resolver runs a second phase to attach the
+    // assembly options, and that phase reads the order form this call returns.
+    addItem.mockResolvedValueOnce(orderForm)
+
+    await mutations.addItem(
+      {},
+      {
+        orderFormId: orderForm.orderFormId,
+        items: [{ ...itemWithToken, options: [{ id: 1, quantity: 1, seller: '1' }] }],
+      },
+      mockContext as any
+    )
+
+    // The resolver drops `options` because assembly options are attached in a
+    // second call. `priceToken` has to survive that same map.
+    expect(addItem.mock.calls[0][1]).toEqual([itemWithToken])
+  })
+})
+
 test.each([
   null,
   {

@@ -224,6 +224,7 @@ interface OrderFormItemInput {
   seller?: string
   inputValues: Record<string, string>
   options?: AssemblyOptionInput[]
+  priceToken?: string
 }
 
 interface AssemblyOptionInput {

@@ -15,6 +15,10 @@ import {
   statusToError,
 } from '../utils'
 
+const hasPriceToken = (items: unknown) =>
+  Array.isArray(items) &&
+  items.some((item) => typeof item?.priceToken === 'string' && item.priceToken)
+
 export class Checkout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -59,12 +63,27 @@ export class Checkout extends JanusClient {
     return queryString
   }
 
-  public addItem = (orderFormId: string, items: any) =>
-    this.post<OrderForm>(
-      this.routes.addItem(orderFormId, this.getChannelQueryString()),
-      { orderItems: items },
-      { metric: 'checkout-addItem' }
-    )
+  public addItem = (orderFormId: string, items: any) => {
+    const url = this.routes.addItem(orderFormId, this.getChannelQueryString())
+    const config = { metric: 'checkout-addItem' }
+
+    // Only the PATCH route honors `priceToken` (signed price, Pricing Fallback
+    // V2); on POST the field is accepted and dropped. Carts without a token
+    // keep the POST they have always used, so the route only changes for the
+    // scenario that needs it.
+    if (!hasPriceToken(items)) {
+      return this.post<OrderForm>(url, { orderItems: items }, config)
+    }
+
+    // On PATCH an `index` makes checkout update that cart line instead of
+    // adding a new one, and callers send it as a position in their own local
+    // list, not as a cart target: the v1 minicart picks it off every item it
+    // syncs. `checkout-graphql`, which has always added through PATCH, drops it
+    // for the same reason.
+    const orderItems = items.map(({ index, ...rest }: any) => rest)
+
+    return this.patch<OrderForm>(url, { orderItems }, config)
+  }
 
   public cancelOrder = (orderFormId: string, reason: string) =>
     this.post(

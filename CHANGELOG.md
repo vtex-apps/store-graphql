@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Optional `priceToken` on `OrderFormItemInput` (Pricing Fallback V2), forwarded as-is to the checkout REST API on `addItem`, so the storefront apps that still add to cart through this app can send the signed price returned by the search and the cart can be closed while the Pricing system is unavailable. When at least one item carries a token the request uses `PATCH /orderForm/{id}/items`, which is the route that honors it; carts without a token keep using `POST`. On the `PATCH` route `index` is dropped from the payload, because there it selects a cart line to update instead of adding a new one.
+
 ## [2.177.3] - 2026-06-19
 
 ### Fixed
