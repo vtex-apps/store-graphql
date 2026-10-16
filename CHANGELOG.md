@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Catalog entity type in `.vtex/catalog-info.yaml` from `service` to `backend-api`.
+
 ## [2.178.0] - 2026-09-17
 
 ### Added

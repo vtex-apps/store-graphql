@@ -10,7 +10,7 @@ metadata:
     vtex.com/sdd-check-skip: 'true'
     vtex.com/sdd-check-skip-reason: Non-core component. SDD adoption deferred to next adoption wave
 spec:
-  type: service
+  type: backend-api
   lifecycle: production
   system: store-framework
   owner: te-0013
