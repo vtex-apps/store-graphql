@@ -3,6 +3,7 @@ import {
   IOContext,
   JanusClient,
   RequestConfig,
+  UserInputError,
 } from '@vtex/api'
 
 import { statusToError } from '../../utils'
@@ -67,17 +68,19 @@ export class ProfileClientV2 extends JanusClient {
   }
 
   private fillWithPreferences = (profile: Profile, piiRequest?: PIIRequest) => {
+    if (!profile.id) {
+      profile.isNewsletterOptIn = false
+
+      return Promise.resolve(profile)
+    }
+
     return this.getPurchaseInfo(profile, piiRequest)
+      .catch((): PurchaseInfo[] => [])
       .then((purchaseInfoList: PurchaseInfo[]) => {
         const [purchaseInfo] = purchaseInfoList
 
         profile.isNewsletterOptIn =
-          purchaseInfo.document.clientPreferences?.isNewsletterOptIn ?? false
-
-        return profile
-      })
-      .catch(() => {
-        profile.isNewsletterOptIn = false
+          purchaseInfo?.document?.clientPreferences?.isNewsletterOptIn ?? false
 
         return profile
       })
@@ -118,15 +121,15 @@ export class ProfileClientV2 extends JanusClient {
     personalPreferences: PersonalPreferences,
     currentUserProfile: Profile
   ) => {
-    const parsedPersonalPreferences = Object.fromEntries(
-      Object.entries(personalPreferences).map(([key, value]) => {
-        return [key, value === 'True']
-      })
-    )
+    if (!currentUserProfile.id) {
+      return Promise.reject(
+        new UserInputError('Profile not found for newsletter subscription')
+      )
+    }
 
     const purchaseInfo = {
       clientPreferences: {
-        ...parsedPersonalPreferences,
+        isNewsletterOptIn: personalPreferences.isNewsletterOptIn === 'True',
       },
     }
 
@@ -163,6 +166,10 @@ export class ProfileClientV2 extends JanusClient {
     currentUserProfile: Profile,
     piiRequest?: PIIRequest
   ) => {
+    if (!currentUserProfile.id) {
+      return Promise.resolve([] as Address[])
+    }
+
     const url = this.getPIIUrl(
       `${this.baseUrl}/${currentUserProfile.id}/addresses`,
       undefined,
@@ -262,6 +269,10 @@ export class ProfileClientV2 extends JanusClient {
     )
 
     return this.getProfileInfo(user).then((profile) => {
+      if (!profile.id) {
+        throw new UserInputError('Profile not found for address update')
+      }
+
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
