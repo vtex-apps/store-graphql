@@ -1,5 +1,3 @@
-import { join } from 'ramda'
-
 const paths = {
   /** Checkout API
    * Docs: https://documenter.getpostman.com/view/18468/vtex-checkout-api/6Z2QYJM
@@ -99,13 +97,6 @@ const paths = {
       `http://api.vtex.com/${account}/dataentities/AD/documents/${id}`,
     attachments: (id: any, field: any) =>
       `http://api.vtex.com/${account}/dataentities/CL/documents/${id}/${field}/attachments`,
-    filterAddress: (id: any) =>
-      `http://api.vtex.com/${account}/dataentities/AD/search?userId=${id}&_fields=userId,id,receiverName,complement,neighborhood,country,state,number,street,postalCode,city,reference,addressName,addressType,geoCoordinate`,
-    filterUser: (email: any, customFields?: any) =>
-      join(',', [
-        `http://api.vtex.com/${account}/dataentities/CL/search?email=${email}&_fields=userId,id,firstName,lastName,birthDate,gender,homePhone,businessPhone,document,email,isCorporate,tradeName,corporateName,stateRegistration,corporateDocument,profilePicture`,
-        customFields,
-      ]),
     payments: (id: any) =>
       `http://${account}.vtexcommercestable.com.br/api/profile-system/pvt/profiles/${id}/vcs-checkout`,
     profile: (id: any) =>
