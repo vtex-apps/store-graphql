@@ -1,7 +1,10 @@
+import { UserInputError } from '@vtex/api'
 import { path } from 'ramda'
+import validator from 'validator'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
 import type { DefaultUser, User } from '../../clients/identity'
+import { incrementCounter } from '../../utils/metrics'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -54,8 +57,18 @@ const checkUserAuthorization = async ({
   return validUser
 }
 
+const normalizeEmail = (email?: string | null) => {
+  const normalized = (email ?? '').trim()
+
+  if (!validator.isEmail(normalized) || /[/\\?#%\s]/.test(normalized)) {
+    throw new UserInputError('Invalid email')
+  }
+
+  return normalized
+}
+
 interface SubscribeNewsletterArgs {
-  email: string
+  email?: string | null
   fields?: {
     name?: string
     phone?: string
@@ -89,9 +102,10 @@ export const mutations = {
 
   subscribeNewsletter: async (
     _: any,
-    { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
+    { email: rawEmail, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
+    const email = normalizeEmail(rawEmail)
     const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
@@ -104,7 +118,21 @@ export const mutations = {
 
     const userProfile = await profile
       .getProfileInfo({ email, userId: '' }, context, undefined)
-      .catch(() => ({}))
+      .catch((e) => {
+        if (e?.response?.status === 404) {
+          return {}
+        }
+
+        incrementCounter('subscribe_newsletter_total', {
+          outcome: 'read_error',
+        })
+        context.vtex.logger.warn({
+          message: 'subscribeNewsletter profile read failed',
+          status: e?.response?.status,
+          code: e?.code,
+        })
+        throw e
+      })
 
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
@@ -144,13 +172,25 @@ export const mutations = {
       })
     }
 
-    if (updateData) {
-      await profile.updatePersonalPreferences(
+    if (!updateData) {
+      incrementCounter('subscribe_newsletter_total', { outcome: 'not_owner' })
+
+      return true
+    }
+
+    await profile
+      .updatePersonalPreferences(
         { email, userId: '' },
         updatedPersonalPreferences,
-        context
+        context,
+        userProfile
       )
-    }
+      .catch((e) => {
+        incrementCounter('subscribe_newsletter_total', {
+          outcome: 'write_error',
+        })
+        throw e
+      })
 
     return true
   },
