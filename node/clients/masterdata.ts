@@ -1,5 +1,6 @@
 import {
   InstanceOptions,
+  IOResponse,
   IOContext,
   ExternalClient,
   RequestConfig,
@@ -9,6 +10,7 @@ import FormData from 'form-data'
 import validator from 'validator'
 
 import { statusToError } from '../utils'
+import { trackAccess } from './masterdataAccess'
 
 const DATAENTITIES_PREFIX = '/dataentities'
 
@@ -30,14 +32,18 @@ export class MasterData extends ExternalClient {
   }
 
   public getSchema = <T>(dataEntity: string, schema: string) =>
-    this.get<T>(this.routes.schema(dataEntity, schema), {
-      metric: 'masterdata-getSchema',
-    })
+    trackAccess(this.context, 'getSchema', dataEntity, () =>
+      this.get<T>(this.routes.schema(dataEntity, schema), {
+        metric: 'masterdata-getSchema',
+      })
+    )
 
   public getPublicSchema = <T>(dataEntity: string, schema: string) =>
-    this.get<T>(this.routes.publicSchema(dataEntity, schema), {
-      metric: 'masterdata-getPublicSchema',
-    })
+    trackAccess(this.context, 'getPublicSchema', dataEntity, () =>
+      this.get<T>(this.routes.publicSchema(dataEntity, schema), {
+        metric: 'masterdata-getPublicSchema',
+      })
+    )
 
   public getDocument = <T>(
     acronym: string,
@@ -45,13 +51,15 @@ export class MasterData extends ExternalClient {
     fields: string[],
     account?: string
   ) =>
-    this.get<T>(this.routes.document(acronym, id), {
-      metric: 'masterdata-getDocument',
-      params: {
-        _fields: generateFieldsArg(fields),
-        ...(account ? { an: account } : null),
-      },
-    })
+    trackAccess(this.context, 'getDocument', acronym, () =>
+      this.get<T>(this.routes.document(acronym, id), {
+        metric: 'masterdata-getDocument',
+        params: {
+          _fields: generateFieldsArg(fields),
+          ...(account ? { an: account } : null),
+        },
+      })
+    )
 
   public createDocument = (
     acronym: string,
@@ -60,13 +68,15 @@ export class MasterData extends ExternalClient {
     schema?: string,
     account?: string
   ) =>
-    this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
-      metric: 'masterdata-createDocument',
-      params: {
-        ...(schema ? { _schema: schema } : null),
-        ...(account ? { an: account } : null),
-      },
-    })
+    trackAccess(this.context, 'createDocument', acronym, () =>
+      this.post<DocumentResponse>(this.routes.documents(acronym), fields, {
+        metric: 'masterdata-createDocument',
+        params: {
+          ...(schema ? { _schema: schema } : null),
+          ...(account ? { an: account } : null),
+        },
+      })
+    )
 
   public updateDocument = (
     acronym: string,
@@ -76,13 +86,15 @@ export class MasterData extends ExternalClient {
     account?: string,
     schema?: string
   ) =>
-    this.patch(this.routes.document(acronym, id), fields, {
-      metric: 'masterdata-updateDocument',
-      params: {
-        ...(schema ? { _schema: schema } : null),
-        ...(account ? { an: account } : null),
-      },
-    })
+    trackAccess(this.context, 'updateDocument', acronym, () =>
+      this.patch(this.routes.document(acronym, id), fields, {
+        metric: 'masterdata-updateDocument',
+        params: {
+          ...(schema ? { _schema: schema } : null),
+          ...(account ? { an: account } : null),
+        },
+      })
+    )
 
   public searchDocuments = <T>(
     acronym: string,
@@ -92,24 +104,52 @@ export class MasterData extends ExternalClient {
     schema?: string,
     sort?: string,
     account?: string
-  ) => {
-    return this.get<T[]>(this.routes.search(acronym), {
-      headers: paginationArgsToHeaders(pagination),
-      metric: 'masterdata-searchDocuments',
-      params: {
-        _fields: generateFieldsArg(fields),
-        _where: where,
-        _sort: sort,
-        ...(schema ? { _schema: schema } : null),
-        ...(account ? { an: account } : null),
-      },
-    })
-  }
+  ) =>
+    this.searchDocumentsRaw<T>(
+      acronym,
+      fields,
+      where,
+      pagination,
+      schema,
+      sort,
+      account
+    ).then((response) => response.data)
+
+  public searchDocumentsRaw = <T>(
+    acronym: string,
+    fields: string[],
+    where: string,
+    pagination: PaginationArgs,
+    schema?: string,
+    sort?: string,
+    account?: string
+  ) =>
+    trackAccess(
+      this.context,
+      'searchDocuments',
+      acronym,
+      () =>
+        this.http
+          .getRaw<T[]>(this.routes.search(acronym), {
+            headers: paginationArgsToHeaders(pagination),
+            metric: 'masterdata-searchDocuments',
+            params: {
+              _fields: generateFieldsArg(fields),
+              _where: where,
+              _sort: sort,
+              ...(schema ? { _schema: schema } : null),
+              ...(account ? { an: account } : null),
+            },
+          })
+          .catch(statusToError) as Promise<IOResponse<T[]>>
+    )
 
   public deleteDocument = (acronym: string, id: string) =>
-    this.delete(this.routes.document(acronym, id), {
-      metric: 'masterdata-deleteDocument',
-    })
+    trackAccess(this.context, 'deleteDocument', acronym, () =>
+      this.delete(this.routes.document(acronym, id), {
+        metric: 'masterdata-deleteDocument',
+      })
+    )
 
   public uploadAttachment = (
     acronym: string,
