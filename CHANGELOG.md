@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- `documents` and `document` reads made with a shopper or admin cookie are now private instead of public, so they skip the edge cache, and `updateDocument` forwards `schema` to Master Data.
 - Catalog entity type in `.vtex/catalog-info.yaml` from `service` to `backend-api`.
 
 ### Fixed
 
-- Master Data documents: keep `null` field values as `null`, mark PII-masked search responses as private and no-store and credentialed `documents`/`document` reads as private, forward `schema` on `updateDocument`, and report a `masterdata_access_total` counter plus a warning log on forbidden calls.
+- Master Data documents: keep `null` field values as `null`, mark PII-masked `documents` search responses (`X-VTEX-MD-PII-Masked: true`) as private and no-store, and report a `masterdata_access_total` counter (operation, caller, acronym, outcome) plus a warning log on forbidden calls.
 
 ## [2.178.0] - 2026-09-17
 
