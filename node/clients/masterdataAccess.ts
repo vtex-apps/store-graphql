@@ -20,6 +20,7 @@ export const bucketAcronym = (acronym: string) =>
   KNOWN_ACRONYMS.includes(acronym) ? acronym : 'other'
 
 export const outcomeOf = (error: unknown) => {
+  if ((error as any)?.response?.status === 404) return 'not_found'
   if (error instanceof ForbiddenError) return 'forbidden'
   if (error instanceof AuthenticationError) return 'unauthorized'
   if (error instanceof UserInputError) return 'bad_request'
@@ -27,8 +28,14 @@ export const outcomeOf = (error: unknown) => {
   return 'error'
 }
 
-const masterDataMessage = (error: any) =>
-  error?.response?.data?.Message ?? error?.response?.data?.message
+const SAFE_ACRONYM = /^[A-Za-z0-9]{1,16}$/
+
+const masterDataMessage = (error: any) => {
+  const message =
+    error?.response?.data?.Message ?? error?.response?.data?.message
+
+  return typeof message === 'string' ? message.slice(0, 200) : undefined
+}
 
 const count = (attributes: Record<string, string>) =>
   incrementCounter('masterdata_access_total', attributes)
@@ -58,7 +65,7 @@ export async function trackAccess<T>(
       ctx.logger.warn({
         message: 'Master Data access forbidden',
         operation,
-        acronym,
+        acronym: SAFE_ACRONYM.test(acronym) ? acronym : labels.acronym,
         reason: masterDataMessage(error),
       })
     }

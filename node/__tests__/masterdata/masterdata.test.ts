@@ -355,6 +355,7 @@ describe('access metrics', () => {
     expect(outcomeOf(new ForbiddenError('x'))).toBe('forbidden')
     expect(outcomeOf(new UserInputError('x'))).toBe('bad_request')
     expect(outcomeOf(new Error('x'))).toBe('error')
+    expect(outcomeOf({ response: { status: 404 } })).toBe('not_found')
   })
 
   it('counts a successful call', async () => {
@@ -406,6 +407,24 @@ describe('access metrics', () => {
       acronym: 'CL',
       reason: 'Cannot write in private fields',
     })
+  })
+
+  it('logs the bucketed acronym when the raw one is not a short code', async () => {
+    const { client, http } = createClient()
+
+    http.get.mockRejectedValue({
+      response: { status: 403, data: { Message: 'x'.repeat(500) } },
+      message: 'Request failed with status code 403',
+    })
+
+    await expect(
+      client.getDocument('not a code!'.repeat(5), '1', ['id'])
+    ).rejects.toBeInstanceOf(ForbiddenError)
+
+    const [payload] = warn.mock.calls[warn.mock.calls.length - 1]
+
+    expect(payload.acronym).toBe('other')
+    expect(payload.reason).toHaveLength(200)
   })
 
   it('logs the raw acronym while the metric buckets it', async () => {

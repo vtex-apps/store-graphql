@@ -7,6 +7,7 @@ import {
 } from '@vtex/api'
 
 import { statusToError } from '../../utils'
+import { ProfileNotFoundError } from './errors'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
@@ -131,7 +132,9 @@ export class ProfileClientV2 extends JanusClient {
   ) => {
     if (!currentUserProfile.id) {
       return Promise.reject(
-        new UserInputError('Profile not found for newsletter subscription')
+        new ProfileNotFoundError(
+          'Profile not found for newsletter subscription'
+        )
       )
     }
 
@@ -141,13 +144,19 @@ export class ProfileClientV2 extends JanusClient {
       },
     }
 
-    return this.patch(
-      `${this.baseUrl}/${currentUserProfile.id}/purchase-info`,
-      purchaseInfo,
-      {
-        metric: 'profile-system-v2-subscribeNewsletter',
+    const url = `${this.baseUrl}/${currentUserProfile.id}/purchase-info`
+
+    return this.patch(url, purchaseInfo, {
+      metric: 'profile-system-v2-subscribeNewsletter',
+    }).catch<any>((e) => {
+      if (e.response?.status === 404) {
+        return this.post(url, purchaseInfo, {
+          metric: 'profile-system-v2-createPurchaseInfo',
+        })
       }
-    )
+
+      throw e
+    })
   }
 
   public updateProfileInfo = (

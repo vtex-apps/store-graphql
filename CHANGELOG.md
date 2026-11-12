@@ -9,13 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Profile System V2 no longer saves the newsletter lead fields (`firstName`, `homePhone`, binding data); only `isNewsletterOptIn` is stored.
+- `documents` and `document` reads made with a shopper or admin cookie are now private instead of public, so they skip the edge cache, and `updateDocument` forwards `schema` to Master Data.
 - Catalog entity type in `.vtex/catalog-info.yaml` from `service` to `backend-api`.
 
 ### Fixed
 
-- `subscribeNewsletter` trims and validates the email, fails on profile read errors other than 404, reads the profile once, surfaces write failures and VTEX ID outages (5xx, timeout, network) during the owner check instead of answering `true`; outcomes (`ok`, `invalid_email`, `read_error`, `not_owner`, `identity_error`, `user_input_error`, `write_error`) are counted in `subscribe_newsletter_total` (label `outcome`).
-- Profile System V2: send only `isNewsletterOptIn` in `clientPreferences`, never call `.../profiles/undefined/...` (purchase-info, addresses) for a profile without id, and log `purchase-info` read failures other than 404; `subscribeNewsletter` for an email without a profile now fails with `UserInputError` instead of a raw 404 error.
-- Master Data documents: keep `null` field values as `null`, mark PII-masked search responses as private and no-store and credentialed `documents`/`document` reads as private, forward `schema` on `updateDocument`, and report a `masterdata_access_total` counter plus a warning log on forbidden calls.
+- `subscribeNewsletter` trims and validates the email, fails on profile read errors other than 404, reads the profile once, applies the owner check to every existing profile (V1 and V2), answers `true` without a write for a new email on a PII account, surfaces write failures and VTEX ID outages (5xx, timeout, network) instead of answering `true`; outcomes (`ok`, `invalid_email`, `read_error`, `not_owner`, `identity_error`, `no_profile`, `user_input_error`, `write_error`) are counted in `subscribe_newsletter_total` (label `outcome`).
+- Profile System V2: send only `isNewsletterOptIn` in `clientPreferences`, never call `.../profiles/undefined/...` (purchase-info, addresses) for a profile without id (`ProfileNotFoundError` instead), create the `purchase-info` document when the patch returns 404, and log `purchase-info` read failures other than 404.
+- Master Data documents: keep `null` field values as `null`, mark PII-masked `documents` search responses (`X-VTEX-MD-PII-Masked: true`) as private and no-store, and report a `masterdata_access_total` counter (operation, caller, acronym, outcome) plus a warning log on forbidden calls.
 
 ### Removed
 

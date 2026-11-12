@@ -4,6 +4,7 @@ import validator from 'validator'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
 import type { DefaultUser, User } from '../../clients/identity'
+import { ProfileNotFoundError } from '../../clients/profile/errors'
 import { incrementCounter } from '../../utils/metrics'
 import fieldR from './fieldResolvers'
 import {
@@ -146,6 +147,7 @@ export const mutations = {
         throw e
       })
 
+    // `fields` are only persisted by the V1 profile client
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
 
@@ -177,7 +179,7 @@ export const mutations = {
 
     let updateData = true
 
-    if (userProfile.createdIn) {
+    if (userProfile.createdIn || userProfile.id) {
       updateData = await checkUserAuthorization({
         context,
         email,
@@ -200,14 +202,23 @@ export const mutations = {
       return true
     }
 
-    await profile
+    const stored = await profile
       .updatePersonalPreferences(
         { email, userId: '' },
         updatedPersonalPreferences,
         context,
         userProfile
       )
+      .then(() => true)
       .catch((e) => {
+        if (e instanceof ProfileNotFoundError) {
+          incrementCounter('subscribe_newsletter_total', {
+            outcome: 'no_profile',
+          })
+
+          return false
+        }
+
         incrementCounter('subscribe_newsletter_total', {
           outcome:
             e instanceof UserInputError ? 'user_input_error' : 'write_error',
@@ -215,7 +226,9 @@ export const mutations = {
         throw e
       })
 
-    incrementCounter('subscribe_newsletter_total', { outcome: 'ok' })
+    if (stored) {
+      incrementCounter('subscribe_newsletter_total', { outcome: 'ok' })
+    }
 
     return true
   },

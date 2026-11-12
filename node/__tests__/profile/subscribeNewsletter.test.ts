@@ -1,3 +1,4 @@
+import { ProfileNotFoundError } from '../../clients/profile/errors'
 import { mutations } from '../../resolvers/profile'
 
 jest.mock('@vtex/api', () => ({
@@ -220,22 +221,51 @@ describe('subscribeNewsletter authorization and write', () => {
     expectOutcome('identity_error')
   })
 
-  it('keeps master owner semantics for a V2 profile without createdIn', async () => {
+  it('returns true without writing for an anonymous caller on an existing V2 profile', async () => {
     getProfileInfo.mockResolvedValue({ id: 'x', pii: true })
 
     await expect(subscribe('a@b.com')).resolves.toBe(true)
-    expect(updatePersonalPreferences).toHaveBeenCalledTimes(1)
+    expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expect(getUserWithToken).not.toHaveBeenCalled()
+    expectOutcome('not_owner')
   })
 
-  it('surfaces the client UserInputError for a new V2 email', async () => {
+  it('returns true without writing for another user on an existing V2 profile', async () => {
+    getProfileInfo.mockResolvedValue({ id: 'x', pii: true })
+    getUserWithToken.mockResolvedValue({
+      id: '1',
+      account: 'store',
+      user: 'other@b.com',
+    })
+
+    await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
+      true
+    )
+    expect(updatePersonalPreferences).not.toHaveBeenCalled()
+    expectOutcome('not_owner')
+  })
+
+  it('answers true and counts no_profile for a new V2 email', async () => {
     getProfileInfo.mockResolvedValue({ isNewsletterOptIn: false })
     updatePersonalPreferences.mockRejectedValue(
-      new UserInputError('Profile not found for newsletter subscription')
+      new ProfileNotFoundError('Profile not found for newsletter subscription')
     )
 
-    await expect(subscribe('a@b.com')).rejects.toBeInstanceOf(UserInputError)
+    await expect(subscribe('a@b.com')).resolves.toBe(true)
     expect(getCurrentAccount).not.toHaveBeenCalled()
+    expectOutcome('no_profile')
+    expect(
+      (global as any).diagnosticsMetrics.incrementCounter
+    ).not.toHaveBeenCalledWith('subscribe_newsletter_total', 1, {
+      outcome: 'ok',
+    })
+  })
+
+  it('still surfaces other UserInputErrors from the write', async () => {
+    getProfileInfo.mockResolvedValue({})
+    updatePersonalPreferences.mockRejectedValue(new UserInputError('400'))
+
+    await expect(subscribe('a@b.com')).rejects.toBeInstanceOf(UserInputError)
     expectOutcome('user_input_error')
   })
 
