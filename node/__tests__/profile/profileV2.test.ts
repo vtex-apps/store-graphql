@@ -1,6 +1,9 @@
 import { UserInputError } from '@vtex/api'
 
-import { ProfileClientV2 } from '../../clients/profile/profileV2'
+import {
+  ProfileClientV2,
+  ProfileNotFoundError,
+} from '../../clients/profile/profileV2'
 
 const mockGet = jest.fn()
 const mockPatch = jest.fn()
@@ -76,6 +79,7 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
     )
 
     await expect(result).rejects.toBeInstanceOf(UserInputError)
+    await expect(result).rejects.toBeInstanceOf(ProfileNotFoundError)
     await expect(result).rejects.toThrow('Profile not found')
 
     expect(mockPatch).not.toHaveBeenCalled()
@@ -107,7 +111,7 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       expect(mockPost).not.toHaveBeenCalled()
     })
 
-    it.each([404, 500, 403])(
+    it.each([500, 403])(
       'propagates a %s from the patch without posting',
       async (status) => {
         mockPatch.mockRejectedValue({ response: { status } })
@@ -116,6 +120,24 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
         expect(mockPost).not.toHaveBeenCalled()
       }
     )
+
+    it('creates the purchase-info document when the patch returns 404', async () => {
+      mockPatch.mockRejectedValue({ response: { status: 404 } })
+      mockPost.mockResolvedValue({ id: 'profile-1' })
+
+      await expect(update()).resolves.toEqual({ id: 'profile-1' })
+      expect(mockPost).toHaveBeenCalledTimes(1)
+      expect(mockPost).toHaveBeenCalledWith(url, body, expect.anything())
+    })
+
+    it('propagates a failure of the creation after a 404', async () => {
+      const failure = { response: { status: 500 } }
+
+      mockPatch.mockRejectedValue({ response: { status: 404 } })
+      mockPost.mockRejectedValue(failure)
+
+      await expect(update()).rejects.toBe(failure)
+    })
   })
 })
 
