@@ -40,7 +40,10 @@ export const queries = {
     if (cacheControl && response.headers['x-vtex-md-pii-masked'] === 'true') {
       cacheControl.scope = 'private'
       cacheControl.noCache = true
+      cacheControl.noStore = true
     }
+
+    setPrivateIfCredentialed(context)
 
     return map((document: any) => ({
       cacheId: document.id,
@@ -56,6 +59,8 @@ export const queries = {
     } = context
 
     const data = await masterdata.getDocument(acronym, id, fields, account)
+
+    setPrivateIfCredentialed(context)
 
     return {
       cacheId: id,
@@ -241,9 +246,21 @@ const cacheControlOf = (context: Context) =>
       cacheControl?: {
         scope: 'public' | 'segment' | 'private'
         noCache: boolean
+        noStore: boolean
       }
     }
   }).graphql?.cacheControl
+
+const setPrivateIfCredentialed = (context: Context) => {
+  const cacheControl = cacheControlOf(context)
+
+  if (
+    cacheControl &&
+    (context.vtex.adminUserAuthToken || context.vtex.storeUserAuthToken)
+  ) {
+    cacheControl.scope = 'private'
+  }
+}
 
 export const mapKeyAndStringifiedValues = (document: any) =>
   Object.keys(document).map((key) => ({

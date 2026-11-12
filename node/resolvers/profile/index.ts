@@ -71,6 +71,8 @@ const normalizeEmail = (email?: string | null) => {
   const normalized = (email ?? '').trim()
 
   if (!validator.isEmail(normalized) || /[/\\?#%\s]/.test(normalized)) {
+    incrementCounter('subscribe_newsletter_total', { outcome: 'invalid_email' })
+
     throw new UserInputError('Invalid email')
   }
 
@@ -207,10 +209,13 @@ export const mutations = {
       )
       .catch((e) => {
         incrementCounter('subscribe_newsletter_total', {
-          outcome: 'write_error',
+          outcome:
+            e instanceof UserInputError ? 'user_input_error' : 'write_error',
         })
         throw e
       })
+
+    incrementCounter('subscribe_newsletter_total', { outcome: 'ok' })
 
     return true
   },

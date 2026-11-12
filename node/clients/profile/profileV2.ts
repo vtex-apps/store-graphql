@@ -75,7 +75,15 @@ export class ProfileClientV2 extends JanusClient {
     }
 
     return this.getPurchaseInfo(profile, piiRequest)
-      .catch((): PurchaseInfo[] => [])
+      .catch((e: any): PurchaseInfo[] => {
+        this.context.logger.warn({
+          message: 'profile-system-v2 purchase-info read failed',
+          status: e?.response?.status ?? e?.status,
+          code: e?.code,
+        })
+
+        return []
+      })
       .then((purchaseInfoList: PurchaseInfo[]) => {
         const [purchaseInfo] = purchaseInfoList
 

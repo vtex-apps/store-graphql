@@ -84,13 +84,15 @@ export class ProfileClient extends JanusClient {
   ) =>
     this.getProfileClient(context).then((profileClient) => {
       if (!currentUserProfile) {
-        return profileClient.getProfileInfo(user).then((userProfile) => {
-          profileClient.updatePersonalPreferences(
-            user,
-            personalPreferences,
-            userProfile
+        return profileClient
+          .getProfileInfo(user)
+          .then((userProfile) =>
+            profileClient.updatePersonalPreferences(
+              user,
+              personalPreferences,
+              userProfile
+            )
           )
-        })
       }
 
       return profileClient.updatePersonalPreferences(

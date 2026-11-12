@@ -6,13 +6,15 @@ const mockGet = jest.fn()
 const mockPatch = jest.fn()
 const mockPost = jest.fn()
 const mockDelete = jest.fn()
+const mockWarn = jest.fn()
 
 jest.mock('@vtex/api', () => ({
   UserInputError: class extends Error {},
   ForbiddenError: class extends Error {},
   NotFoundError: class extends Error {},
   JanusClient: class {
-    constructor() {
+    constructor(context: unknown) {
+      ;(this as any).context = context
       ;(this as any).http = {
         get: mockGet,
         patch: mockPatch,
@@ -27,6 +29,7 @@ function createClient() {
   return new ProfileClientV2({
     authToken: 'fake-token',
     account: 'testaccount',
+    logger: { warn: mockWarn },
   } as any)
 }
 
@@ -210,5 +213,21 @@ describe('ProfileClientV2.getProfileInfo', () => {
     const result = await createClient().getProfileInfo(user)
 
     expect(result).toMatchObject({ id: 'profile-1', isNewsletterOptIn: false })
+    expect(mockWarn).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 500 })
+    )
+  })
+
+  it('does not warn when the purchase-info document does not exist', async () => {
+    mockGet.mockImplementation((url: string) =>
+      url.includes('/purchase-info')
+        ? Promise.reject({ response: { status: 404 } })
+        : Promise.resolve([{ id: 'profile-1', document: {} }])
+    )
+
+    const result = await createClient().getProfileInfo(user)
+
+    expect(result).toMatchObject({ id: 'profile-1', isNewsletterOptIn: false })
+    expect(mockWarn).not.toHaveBeenCalled()
   })
 })
