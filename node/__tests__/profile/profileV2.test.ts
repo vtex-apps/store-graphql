@@ -1,9 +1,7 @@
 import { UserInputError } from '@vtex/api'
 
-import {
-  ProfileClientV2,
-  ProfileNotFoundError,
-} from '../../clients/profile/profileV2'
+import { ProfileNotFoundError } from '../../clients/profile/errors'
+import { ProfileClientV2 } from '../../clients/profile/profileV2'
 
 const mockGet = jest.fn()
 const mockPatch = jest.fn()

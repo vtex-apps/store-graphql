@@ -7,10 +7,9 @@ import {
 } from '@vtex/api'
 
 import { statusToError } from '../../utils'
+import { ProfileNotFoundError } from './errors'
 
 const FIVE_SECONDS_MS = 5 * 1000
-
-export class ProfileNotFoundError extends UserInputError {}
 
 export class ProfileClientV2 extends JanusClient {
   protected account: string
