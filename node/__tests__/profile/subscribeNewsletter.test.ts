@@ -176,6 +176,49 @@ describe('subscribeNewsletter authorization and write', () => {
     expectOutcome('not_owner')
   })
 
+  it('does not call VTEX ID for an anonymous caller', async () => {
+    getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
+
+    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(getUserWithToken).not.toHaveBeenCalled()
+    expectOutcome('not_owner')
+  })
+
+  it.each([400, 401, 403])(
+    'treats a %s from VTEX ID as not the owner',
+    async (status) => {
+      getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
+      getUserWithToken.mockRejectedValue(httpError(status))
+
+      await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
+        true
+      )
+      expect(updatePersonalPreferences).not.toHaveBeenCalled()
+      expectOutcome('not_owner')
+    }
+  )
+
+  it.each([
+    ['a 500', httpError(500)],
+    ['a 503', httpError(503)],
+    ['a 408', httpError(408)],
+    ['a 429', httpError(429)],
+    [
+      'a timeout without response',
+      Object.assign(new Error('timeout'), { code: 'ECONNABORTED' }),
+    ],
+  ])('fails the mutation on %s from VTEX ID', async (_, error) => {
+    const context = createContext('token')
+
+    getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
+    getUserWithToken.mockRejectedValue(error)
+
+    await expect(subscribe('a@b.com', context)).rejects.toBe(error)
+    expect(updatePersonalPreferences).not.toHaveBeenCalled()
+    expect(context.vtex.logger.warn).toHaveBeenCalledTimes(1)
+    expectOutcome('identity_error')
+  })
+
   it('keeps master owner semantics for a V2 profile without createdIn', async () => {
     getProfileInfo.mockResolvedValue({ id: 'x', pii: true })
 
