@@ -7,7 +7,7 @@ import {
 
 import { incrementCounter } from '../utils/metrics'
 
-const KNOWN_ACRONYMS = ['CL', 'AD']
+const KNOWN_ACRONYMS = ['CL', 'AD', 'WL', 'LP']
 
 export const callerOf = (ctx: IOContext) => {
   if (ctx.storeUserAuthToken) return 'shopper'
@@ -58,7 +58,7 @@ export async function trackAccess<T>(
       ctx.logger.warn({
         message: 'Master Data access forbidden',
         operation,
-        acronym: labels.acronym,
+        acronym,
         reason: masterDataMessage(error),
       })
     }
