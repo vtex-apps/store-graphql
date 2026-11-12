@@ -24,6 +24,12 @@ interface CheckUserAuthorizationParams {
   email: string
 }
 
+const isIdentityOutage = (e: any) => {
+  const status = e?.response?.status
+
+  return !e?.response || status >= 500 || status === 408 || status === 429
+}
+
 const checkUserAuthorization = async ({
   context,
   email,
@@ -35,11 +41,15 @@ const checkUserAuthorization = async ({
 
   let validUser = !!storeUserAuthToken
 
-  const tokenUser = await identity
-    .getUserWithToken(storeUserAuthToken ?? '')
-    .catch(() => {
-      return { authStatus: '' } as DefaultUser
-    })
+  const tokenUser = (storeUserAuthToken
+    ? await identity.getUserWithToken(storeUserAuthToken).catch((e) => {
+        if (isIdentityOutage(e)) {
+          throw e
+        }
+
+        return { authStatus: '' } as DefaultUser
+      })
+    : { authStatus: '' }) as DefaultUser | User
 
   validUser =
     validUser &&
@@ -169,6 +179,16 @@ export const mutations = {
       updateData = await checkUserAuthorization({
         context,
         email,
+      }).catch((e) => {
+        incrementCounter('subscribe_newsletter_total', {
+          outcome: 'identity_error',
+        })
+        context.vtex.logger.warn({
+          message: 'subscribeNewsletter identity check failed',
+          status: e?.response?.status,
+          code: e?.code,
+        })
+        throw e
       })
     }
 
