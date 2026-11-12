@@ -157,10 +157,12 @@ export class MasterData extends ExternalClient {
     fields: string,
     formData: FormData
   ) =>
-    this.post<any>(this.routes.attachments(acronym, id, fields), formData, {
-      headers: formData.getHeaders(),
-      metric: 'masterdata-uploadAttachment',
-    })
+    trackAccess(this.context, 'uploadAttachment', acronym, () =>
+      this.post<any>(this.routes.attachments(acronym, id, fields), formData, {
+        headers: formData.getHeaders(),
+        metric: 'masterdata-uploadAttachment',
+      })
+    )
 
   protected get = <T>(url: string, config?: RequestConfig) => {
     return this.http.get<T>(url, config).catch(statusToError)

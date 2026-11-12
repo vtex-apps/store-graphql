@@ -72,7 +72,9 @@ const resolverContext = (
   ({
     clients: { masterdataClient: client },
     vtex: { account: 'storecomponents', ...vtex },
-    graphql: { cacheControl: { scope: 'public', noCache: false } },
+    graphql: {
+      cacheControl: { scope: 'public', noCache: false, noStore: false },
+    },
   } as any)
 
 const searchArgs = {
@@ -125,10 +127,11 @@ describe('documents cache control', () => {
     expect(context.graphql.cacheControl).toEqual({
       scope: 'private',
       noCache: true,
+      noStore: true,
     })
   })
 
-  it('keeps schema defaults for credentialed unmasked responses', async () => {
+  it('makes credentialed unmasked responses private but cacheable', async () => {
     const { client, http } = createClient()
 
     http.getRaw.mockResolvedValue({ data: [], headers: {} })
@@ -144,12 +147,14 @@ describe('documents cache control', () => {
     )
 
     expect(searchContext.graphql.cacheControl).toEqual({
-      scope: 'public',
+      scope: 'private',
       noCache: false,
+      noStore: false,
     })
     expect(docContext.graphql.cacheControl).toEqual({
-      scope: 'public',
+      scope: 'private',
       noCache: false,
+      noStore: false,
     })
   })
 
@@ -164,6 +169,7 @@ describe('documents cache control', () => {
     expect(context.graphql.cacheControl).toEqual({
       scope: 'public',
       noCache: false,
+      noStore: false,
     })
   })
 
@@ -181,6 +187,7 @@ describe('documents cache control', () => {
     expect(context.graphql.cacheControl).toEqual({
       scope: 'public',
       noCache: false,
+      noStore: false,
     })
   })
 
@@ -232,10 +239,12 @@ describe('credentialed reads outside documents', () => {
     expect(storeContext.graphql.cacheControl).toEqual({
       scope: 'public',
       noCache: false,
+      noStore: false,
     })
     expect(adminContext.graphql.cacheControl).toEqual({
       scope: 'public',
       noCache: false,
+      noStore: false,
     })
   })
 
@@ -251,6 +260,7 @@ describe('credentialed reads outside documents', () => {
     expect(context.graphql.cacheControl).toEqual({
       scope: 'public',
       noCache: false,
+      noStore: false,
     })
   })
 })
@@ -336,6 +346,8 @@ describe('access metrics', () => {
   it('buckets acronyms', () => {
     expect(bucketAcronym('CL')).toBe('CL')
     expect(bucketAcronym('AD')).toBe('AD')
+    expect(bucketAcronym('WL')).toBe('WL')
+    expect(bucketAcronym('LP')).toBe('LP')
     expect(bucketAcronym('XYZ')).toBe('other')
   })
 
@@ -394,6 +406,43 @@ describe('access metrics', () => {
       acronym: 'CL',
       reason: 'Cannot write in private fields',
     })
+  })
+
+  it('logs the raw acronym while the metric buckets it', async () => {
+    const { client, http } = createClient()
+
+    http.get.mockRejectedValue({
+      response: { status: 403, data: { Message: 'denied' } },
+      message: 'Request failed with status code 403',
+    })
+
+    await expect(client.getDocument('XYZ', '1', ['id'])).rejects.toBeInstanceOf(
+      ForbiddenError
+    )
+
+    expect(incrementCounter).toHaveBeenCalledWith(
+      'masterdata_access_total',
+      1,
+      expect.objectContaining({ acronym: 'other', outcome: 'forbidden' })
+    )
+    expect(warn).toHaveBeenCalledWith(
+      expect.objectContaining({ acronym: 'XYZ' })
+    )
+  })
+
+  it('counts attachment uploads', async () => {
+    const { client, http } = createClient()
+
+    http.post.mockResolvedValue({})
+    await client.uploadAttachment('CL', 'abc', 'file', {
+      getHeaders: () => ({}),
+    } as any)
+
+    expect(incrementCounter).toHaveBeenCalledWith(
+      'masterdata_access_total',
+      1,
+      expect.objectContaining({ operation: 'uploadAttachment', acronym: 'CL' })
+    )
   })
 
   it('maps a forbidden search to ForbiddenError', async () => {

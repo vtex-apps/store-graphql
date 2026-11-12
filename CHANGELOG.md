@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Master Data documents: keep `null` field values as `null`, mark PII-masked search responses as private and no-cache, forward `schema` on `updateDocument`, and report a `masterdata_access_total` counter plus a warning log on forbidden calls.
+- Master Data documents: keep `null` field values as `null`, mark PII-masked search responses as private and no-store and credentialed `documents`/`document` reads as private, forward `schema` on `updateDocument`, and report a `masterdata_access_total` counter plus a warning log on forbidden calls.
 
 ## [2.178.0] - 2026-09-17
 
