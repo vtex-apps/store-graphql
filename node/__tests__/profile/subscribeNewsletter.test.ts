@@ -82,6 +82,7 @@ describe('subscribeNewsletter email validation', () => {
     await expect(rejection).rejects.toThrow('Invalid email')
     await expect(rejection).rejects.toBeInstanceOf(UserInputError)
     expect(getProfileInfo).not.toHaveBeenCalled()
+    expectOutcome('invalid_email')
   })
 
   it('trims the email without changing its case', async () => {
@@ -235,7 +236,7 @@ describe('subscribeNewsletter authorization and write', () => {
 
     await expect(subscribe('a@b.com')).rejects.toBeInstanceOf(UserInputError)
     expect(getCurrentAccount).not.toHaveBeenCalled()
-    expectOutcome('write_error')
+    expectOutcome('user_input_error')
   })
 
   it('writes an existing V2 profile for its authenticated owner', async () => {
@@ -309,6 +310,13 @@ describe('subscribeNewsletter authorization and write', () => {
 
     await expect(subscribe('a@b.com')).rejects.toThrow('408')
     expectOutcome('write_error')
+  })
+
+  it('counts ok after a successful write', async () => {
+    getProfileInfo.mockResolvedValue({})
+
+    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expectOutcome('ok')
   })
 })
 
