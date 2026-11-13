@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Profile System V2: send only `isNewsletterOptIn` in `clientPreferences`, never call `.../profiles/undefined/...` (purchase-info, addresses) for a profile without id (`ProfileNotFoundError` instead), create the `purchase-info` document when the patch returns 404, and log `purchase-info` read failures other than 404.
 - Master Data documents: keep `null` field values as `null`, mark PII-masked `documents` search responses (`X-VTEX-MD-PII-Masked: true`) as private and no-store, and report a `masterdata_access_total` counter (operation, caller, acronym, outcome) plus a warning log on forbidden calls.
+- Lint CI job out-of-memory crash: root `typescript` bumped from 4.0.5 to 4.9.5 so it reads the `ES2022` tsconfig; the formatting and `isNaN` lint errors it hid are fixed.
 
 ## [2.178.0] - 2026-09-17
 

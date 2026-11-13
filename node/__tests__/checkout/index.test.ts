@@ -76,7 +76,9 @@ describe('priceToken forwarding', () => {
       {},
       {
         orderFormId: orderForm.orderFormId,
-        items: [{ ...itemWithToken, options: [{ id: 1, quantity: 1, seller: '1' }] }],
+        items: [
+          { ...itemWithToken, options: [{ id: 1, quantity: 1, seller: '1' }] },
+        ],
       },
       mockContext as any
     )
