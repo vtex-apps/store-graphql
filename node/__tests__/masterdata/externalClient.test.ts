@@ -1,3 +1,5 @@
+import { MasterData } from '../../clients/masterdata'
+
 jest.mock('@vtex/api/lib/clients/IOClient', () => ({
   IOClient: class {
     public context: unknown
@@ -15,8 +17,6 @@ jest.mock('@vtex/api', () => ({
     '@vtex/api/lib/clients/external/ExternalClient'
   ).ExternalClient,
 }))
-
-import { MasterData } from '../../clients/masterdata'
 
 const createClient = (extra: Record<string, unknown> = {}) =>
   new MasterData({
