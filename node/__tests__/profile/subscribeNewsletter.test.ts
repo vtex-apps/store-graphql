@@ -102,7 +102,7 @@ describe('subscribeNewsletter profile read', () => {
   it('treats 404 as a new profile', async () => {
     getProfileInfo.mockRejectedValue(httpError(404))
 
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
     expect(updatePersonalPreferences).toHaveBeenCalledWith(
       { email: 'a@b.com', userId: '' },
       { isNewsletterOptIn: 'True' },
@@ -157,7 +157,7 @@ describe('subscribeNewsletter authorization and write', () => {
   it('returns true without writing for a non-owner of an existing profile', async () => {
     getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
 
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
     expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expectOutcome('not_owner')
   })
@@ -171,9 +171,7 @@ describe('subscribeNewsletter authorization and write', () => {
     getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
     getUserWithToken.mockResolvedValue(tokenUser)
 
-    await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
-      true
-    )
+    expect(await subscribe('a@b.com', createContext('token'))).toBe(true)
     expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expectOutcome('not_owner')
   })
@@ -181,7 +179,7 @@ describe('subscribeNewsletter authorization and write', () => {
   it('does not call VTEX ID for an anonymous caller', async () => {
     getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
 
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
     expect(getUserWithToken).not.toHaveBeenCalled()
     expectOutcome('not_owner')
   })
@@ -192,9 +190,7 @@ describe('subscribeNewsletter authorization and write', () => {
       getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
       getUserWithToken.mockRejectedValue(httpError(status))
 
-      await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
-        true
-      )
+      expect(await subscribe('a@b.com', createContext('token'))).toBe(true)
       expect(updatePersonalPreferences).not.toHaveBeenCalled()
       expectOutcome('not_owner')
     }
@@ -224,7 +220,7 @@ describe('subscribeNewsletter authorization and write', () => {
   it('returns true without writing for an anonymous caller on an existing V2 profile', async () => {
     getProfileInfo.mockResolvedValue({ id: 'x', pii: true })
 
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
     expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expect(getUserWithToken).not.toHaveBeenCalled()
     expectOutcome('not_owner')
@@ -238,9 +234,7 @@ describe('subscribeNewsletter authorization and write', () => {
       user: 'other@b.com',
     })
 
-    await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
-      true
-    )
+    expect(await subscribe('a@b.com', createContext('token'))).toBe(true)
     expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expectOutcome('not_owner')
   })
@@ -251,7 +245,7 @@ describe('subscribeNewsletter authorization and write', () => {
       new ProfileNotFoundError('Profile not found for newsletter subscription')
     )
 
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
     expect(getCurrentAccount).not.toHaveBeenCalled()
     expectOutcome('no_profile')
     expect(
@@ -280,9 +274,7 @@ describe('subscribeNewsletter authorization and write', () => {
       user: 'a@b.com',
     })
 
-    await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
-      true
-    )
+    expect(await subscribe('a@b.com', createContext('token'))).toBe(true)
     expect(updatePersonalPreferences).toHaveBeenCalledTimes(1)
     expect(updatePersonalPreferences.mock.calls[0][3]).toBe(userProfile)
   })
@@ -295,9 +287,7 @@ describe('subscribeNewsletter authorization and write', () => {
       user: 'A@B.com',
     })
 
-    await expect(subscribe('a@b.com', createContext('token'))).resolves.toBe(
-      true
-    )
+    expect(await subscribe('a@b.com', createContext('token'))).toBe(true)
     expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expectOutcome('not_owner')
   })
@@ -310,9 +300,7 @@ describe('subscribeNewsletter authorization and write', () => {
       user: '\u212Aa@b.com',
     })
 
-    await expect(subscribe('ka@b.com', createContext('token'))).resolves.toBe(
-      true
-    )
+    expect(await subscribe('ka@b.com', createContext('token'))).toBe(true)
     expect(updatePersonalPreferences).not.toHaveBeenCalled()
     expectOutcome('not_owner')
   })
@@ -327,9 +315,7 @@ describe('subscribeNewsletter authorization and write', () => {
         user: raw,
       })
 
-      await expect(subscribe(` ${raw} `, createContext('token'))).resolves.toBe(
-        true
-      )
+      expect(await subscribe(` ${raw} `, createContext('token'))).toBe(true)
       expect(updatePersonalPreferences).toHaveBeenCalledTimes(1)
     }
   )
@@ -345,7 +331,7 @@ describe('subscribeNewsletter authorization and write', () => {
   it('counts ok after a successful write', async () => {
     getProfileInfo.mockResolvedValue({})
 
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
     expectOutcome('ok')
   })
 })
@@ -374,7 +360,7 @@ describe('subscribeNewsletter metrics failures', () => {
     const readError = httpError(503)
 
     getProfileInfo.mockResolvedValueOnce({ createdIn: '2020-01-01' })
-    await expect(subscribe('a@b.com')).resolves.toBe(true)
+    expect(await subscribe('a@b.com')).toBe(true)
 
     const context = createContext()
 
