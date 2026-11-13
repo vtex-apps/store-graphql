@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Catalog entity type in `.vtex/catalog-info.yaml` from `service` to `backend-api`.
 
+### Fixed
+
+- Lint CI job out-of-memory crash: root `typescript` bumped from 4.0.5 to 4.9.5 so it reads the `ES2022` tsconfig; the formatting and `isNaN` lint errors it hid are fixed.
+
 ## [2.178.0] - 2026-09-17
 
 ### Added
