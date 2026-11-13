@@ -123,7 +123,7 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       mockPatch.mockRejectedValue({ response: { status: 404 } })
       mockPost.mockResolvedValue({ id: 'profile-1' })
 
-      await expect(update()).resolves.toEqual({ id: 'profile-1' })
+      expect(await update()).toEqual({ id: 'profile-1' })
       expect(mockPost).toHaveBeenCalledTimes(1)
       expect(mockPost).toHaveBeenCalledWith(url, body, expect.anything())
     })
@@ -157,9 +157,7 @@ describe('ProfileClientV2.deleteAddress', () => {
   it('deletes the matching address', async () => {
     mockDelete.mockResolvedValue({})
     await createClient().deleteAddress(user, 'home')
-    for (let i = 0; i < 20 && !mockDelete.mock.calls.length; i++) {
-      await new Promise((resolve) => setImmediate(resolve))
-    }
+    await new Promise((resolve) => setImmediate(resolve))
 
     expect(mockDelete).toHaveBeenCalledWith(
       'api/storage/profile-system/profiles/profile-1/addresses/addr-1',
@@ -180,9 +178,9 @@ describe('ProfileClientV2 without a profile id', () => {
 
   it('getUserAddresses resolves empty without calling the API', async () => {
     mockGet.mockResolvedValue([{ id: 'u', addressName: 'home' }])
-    await expect(
-      createClient().getUserAddresses(user, {} as Profile)
-    ).resolves.toEqual([])
+    expect(await createClient().getUserAddresses(user, {} as Profile)).toEqual(
+      []
+    )
     expect(mockGet).not.toHaveBeenCalled()
   })
 
