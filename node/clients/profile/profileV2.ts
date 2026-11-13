@@ -3,9 +3,11 @@ import {
   IOContext,
   JanusClient,
   RequestConfig,
+  UserInputError,
 } from '@vtex/api'
 
 import { statusToError } from '../../utils'
+import { ProfileNotFoundError } from './errors'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
@@ -67,17 +69,27 @@ export class ProfileClientV2 extends JanusClient {
   }
 
   private fillWithPreferences = (profile: Profile, piiRequest?: PIIRequest) => {
+    if (!profile.id) {
+      profile.isNewsletterOptIn = false
+
+      return Promise.resolve(profile)
+    }
+
     return this.getPurchaseInfo(profile, piiRequest)
+      .catch((e: any): PurchaseInfo[] => {
+        this.context.logger.warn({
+          message: 'profile-system-v2 purchase-info read failed',
+          status: e?.response?.status ?? e?.status,
+          code: e?.code,
+        })
+
+        return []
+      })
       .then((purchaseInfoList: PurchaseInfo[]) => {
         const [purchaseInfo] = purchaseInfoList
 
         profile.isNewsletterOptIn =
-          purchaseInfo.document.clientPreferences?.isNewsletterOptIn ?? false
-
-        return profile
-      })
-      .catch(() => {
-        profile.isNewsletterOptIn = false
+          purchaseInfo?.document?.clientPreferences?.isNewsletterOptIn ?? false
 
         return profile
       })
@@ -118,25 +130,33 @@ export class ProfileClientV2 extends JanusClient {
     personalPreferences: PersonalPreferences,
     currentUserProfile: Profile
   ) => {
-    const parsedPersonalPreferences = Object.fromEntries(
-      Object.entries(personalPreferences).map(([key, value]) => {
-        return [key, value === 'True']
-      })
-    )
+    if (!currentUserProfile.id) {
+      return Promise.reject(
+        new ProfileNotFoundError(
+          'Profile not found for newsletter subscription'
+        )
+      )
+    }
 
     const purchaseInfo = {
       clientPreferences: {
-        ...parsedPersonalPreferences,
+        isNewsletterOptIn: personalPreferences.isNewsletterOptIn === 'True',
       },
     }
 
-    return this.patch(
-      `${this.baseUrl}/${currentUserProfile.id}/purchase-info`,
-      purchaseInfo,
-      {
-        metric: 'profile-system-v2-subscribeNewsletter',
+    const url = `${this.baseUrl}/${currentUserProfile.id}/purchase-info`
+
+    return this.patch(url, purchaseInfo, {
+      metric: 'profile-system-v2-subscribeNewsletter',
+    }).catch<any>((e) => {
+      if (e.response?.status === 404) {
+        return this.post(url, purchaseInfo, {
+          metric: 'profile-system-v2-createPurchaseInfo',
+        })
       }
-    )
+
+      throw e
+    })
   }
 
   public updateProfileInfo = (
@@ -163,6 +183,10 @@ export class ProfileClientV2 extends JanusClient {
     currentUserProfile: Profile,
     piiRequest?: PIIRequest
   ) => {
+    if (!currentUserProfile.id) {
+      return Promise.resolve([] as Address[])
+    }
+
     const url = this.getPIIUrl(
       `${this.baseUrl}/${currentUserProfile.id}/addresses`,
       undefined,
@@ -262,6 +286,10 @@ export class ProfileClientV2 extends JanusClient {
     )
 
     return this.getProfileInfo(user).then((profile) => {
+      if (!profile.id) {
+        throw new UserInputError('Profile not found for address update')
+      }
+
       return this.getUserAddresses(user, profile).then(
         (addresses: Address[]) => {
           const [address] = addresses.filter(
