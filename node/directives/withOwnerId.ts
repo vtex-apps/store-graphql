@@ -1,7 +1,11 @@
 import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
-import { getOwnerIdFromCookie, getRcSessionIdFromCookie, getRcMacIdFromCookie } from '../utils'
+import {
+  getOwnerIdFromCookie,
+  getRcSessionIdFromCookie,
+  getRcMacIdFromCookie,
+} from '../utils'
 
 export class WithOwnerId extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
