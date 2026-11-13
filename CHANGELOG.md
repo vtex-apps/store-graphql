@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Root `typescript` devDependency from 4.0.5 to 4.9.5 so the Lint CI job reads the `ES2022` tsconfig and no longer runs out of memory; fixes the formatting and `isNaN` errors it exposed.
 - Catalog entity type in `.vtex/catalog-info.yaml` from `service` to `backend-api`.
+
+### Fixed
+
+- Lint CI job out-of-memory crash: root `typescript` bumped from 4.0.5 to 4.9.5 so it reads the `ES2022` tsconfig; the formatting and `isNaN` lint errors it hid are fixed.
 
 ## [2.178.0] - 2026-09-17
 
