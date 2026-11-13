@@ -16,7 +16,7 @@ import { queries as listQueries } from '../../resolvers/list'
 jest.mock('@vtex/api', () => {
   const api = jest.requireActual('../../__mocks__/@vtex/api')
 
-  class ForbiddenError extends Error {
+  class MockForbiddenError extends Error {
     constructor(error: any) {
       super(error.message)
       Object.assign(this, { response: error.response })
@@ -25,7 +25,7 @@ jest.mock('@vtex/api', () => {
 
   return {
     ...api,
-    ForbiddenError,
+    ForbiddenError: MockForbiddenError,
     ExternalClient: class {
       public context: unknown
       public options: unknown
@@ -196,9 +196,9 @@ describe('documents cache control', () => {
 
     http.getRaw.mockResolvedValue({ data: [{ id: '1' }], headers: {} })
 
-    await expect(
-      client.searchDocuments('CL', ['id'], '', { page: 1, pageSize: 1 })
-    ).resolves.toEqual([{ id: '1' }])
+    expect(
+      await client.searchDocuments('CL', ['id'], '', { page: 1, pageSize: 1 })
+    ).toEqual([{ id: '1' }])
   })
 })
 
@@ -494,9 +494,9 @@ describe('access metrics', () => {
     try {
       const { client, http } = createClient()
 
-      await expect(
-        client.updateDocument('CL', '1', { email: 'a' })
-      ).resolves.toBeDefined()
+      expect(
+        await client.updateDocument('CL', '1', { email: 'a' })
+      ).toBeDefined()
 
       http.patch.mockRejectedValue({
         response: { status: 403, data: {} },
@@ -519,7 +519,7 @@ describe('access metrics', () => {
 
     http.get.mockResolvedValue({ id: '1' })
 
-    await expect(client.getDocument('CL', '1', ['id'])).resolves.toEqual({
+    expect(await client.getDocument('CL', '1', ['id'])).toEqual({
       id: '1',
     })
   })
