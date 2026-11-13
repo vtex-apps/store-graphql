@@ -44,7 +44,7 @@ const coercibleBehavior: Record<
     parseValue(value) {
       const parsed = parseFloat(String(value))
 
-      if (isNaN(parsed)) {
+      if (Number.isNaN(parsed)) {
         throw new Error(`Float cannot represent non-numeric value: ${value}`)
       }
 
@@ -56,7 +56,7 @@ const coercibleBehavior: Record<
       if (ast.kind === KIND.STRING) {
         const parsed = parseFloat(ast.value)
 
-        if (!isNaN(parsed)) return parsed
+        if (!Number.isNaN(parsed)) return parsed
       }
 
       return null
