@@ -146,7 +146,6 @@ export const mutations = {
         throw e
       })
 
-    // `fields` are only persisted by the V1 profile client
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
 
