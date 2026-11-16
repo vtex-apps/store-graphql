@@ -7,7 +7,7 @@ import {
 } from '@vtex/api'
 
 import { statusToError } from '../../utils'
-import { ProfileNotFoundError } from './errors'
+import { ProfileAlreadyExistsError, ProfileNotFoundError } from './errors'
 
 const FIVE_SECONDS_MS = 5 * 1000
 
@@ -118,12 +118,34 @@ export class ProfileClientV2 extends JanusClient {
   public createProfile = (profile: Profile) =>
     this.post<ProfileV2>(`${this.baseUrl}`, profile, {
       metric: 'profile-system-v2-createProfile',
-    }).then((profileV2: ProfileV2) => {
-      return {
-        ...(profileV2.document as Profile),
-        id: profileV2.id,
-      }
     })
+      .catch<any>((e: any) => {
+        const status = e?.response?.status
+        const message = e?.response?.data?.message
+
+        if (
+          status === 409 ||
+          (status === 400 &&
+            typeof message === 'string' &&
+            message.includes('Duplicated key'))
+        ) {
+          throw new ProfileAlreadyExistsError('Profile already exists')
+        }
+
+        throw e
+      })
+      .then((profileV2: ProfileV2) => {
+        if (!profileV2?.id) {
+          throw new Error(
+            'Profile System V2 returned no id for the new profile'
+          )
+        }
+
+        return {
+          ...(profileV2.document as Profile),
+          id: profileV2.id,
+        }
+      })
 
   public updatePersonalPreferences = (
     user: CurrentProfile,

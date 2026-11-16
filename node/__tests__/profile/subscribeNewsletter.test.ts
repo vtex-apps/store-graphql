@@ -1,3 +1,4 @@
+import { ProfileAlreadyExistsError } from '../../clients/profile/errors'
 import { mutations } from '../../resolvers/profile'
 
 jest.mock('@vtex/api', () => ({
@@ -255,6 +256,20 @@ describe('subscribeNewsletter authorization and write', () => {
     ).not.toHaveBeenCalledWith('subscribe_newsletter_total', 1, {
       outcome: 'ok',
     })
+  })
+
+  it('concurrent duplicate signup: write rejects with ProfileAlreadyExistsError, resolves true, outcome profile_exists and no ok or profile_created', async () => {
+    getProfileInfo.mockResolvedValue({ isNewsletterOptIn: false })
+    updatePersonalPreferences.mockRejectedValue(
+      new ProfileAlreadyExistsError('Profile already exists')
+    )
+
+    expect(await subscribe('a@b.com')).toBe(true)
+    expectOutcome('profile_exists')
+
+    const { calls } = (global as any).diagnosticsMetrics.incrementCounter.mock
+
+    expect(calls).toHaveLength(1)
   })
 
   it('still surfaces other UserInputErrors from the write', async () => {
