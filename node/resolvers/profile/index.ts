@@ -4,7 +4,6 @@ import validator from 'validator'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
 import type { DefaultUser, User } from '../../clients/identity'
-import { ProfileNotFoundError } from '../../clients/profile/errors'
 import { incrementCounter } from '../../utils/metrics'
 import fieldR from './fieldResolvers'
 import {
@@ -202,23 +201,14 @@ export const mutations = {
       return true
     }
 
-    const stored = await profile
+    await profile
       .updatePersonalPreferences(
         { email, userId: '' },
         updatedPersonalPreferences,
         context,
         userProfile
       )
-      .then(() => true)
       .catch((e) => {
-        if (e instanceof ProfileNotFoundError) {
-          incrementCounter('subscribe_newsletter_total', {
-            outcome: 'no_profile',
-          })
-
-          return false
-        }
-
         incrementCounter('subscribe_newsletter_total', {
           outcome:
             e instanceof UserInputError ? 'user_input_error' : 'write_error',
@@ -226,9 +216,10 @@ export const mutations = {
         throw e
       })
 
-    if (stored) {
-      incrementCounter('subscribe_newsletter_total', { outcome: 'ok' })
-    }
+    incrementCounter('subscribe_newsletter_total', {
+      outcome:
+        userProfile.createdIn || userProfile.id ? 'ok' : 'profile_created',
+    })
 
     return true
   },

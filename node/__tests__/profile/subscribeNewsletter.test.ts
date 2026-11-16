@@ -1,4 +1,3 @@
-import { ProfileNotFoundError } from '../../clients/profile/errors'
 import { mutations } from '../../resolvers/profile'
 
 jest.mock('@vtex/api', () => ({
@@ -239,15 +238,18 @@ describe('subscribeNewsletter authorization and write', () => {
     expectOutcome('not_owner')
   })
 
-  it('answers true and counts no_profile for a new V2 email', async () => {
+  it('new V2 email: write called with a profile without id, resolves true, outcome profile_created and no ok', async () => {
     getProfileInfo.mockResolvedValue({ isNewsletterOptIn: false })
-    updatePersonalPreferences.mockRejectedValue(
-      new ProfileNotFoundError('Profile not found for newsletter subscription')
-    )
 
     expect(await subscribe('a@b.com')).toBe(true)
     expect(getCurrentAccount).not.toHaveBeenCalled()
-    expectOutcome('no_profile')
+    expect(updatePersonalPreferences).toHaveBeenCalledWith(
+      { email: 'a@b.com', userId: '' },
+      { isNewsletterOptIn: 'True' },
+      expect.anything(),
+      { isNewsletterOptIn: false }
+    )
+    expectOutcome('profile_created')
     expect(
       (global as any).diagnosticsMetrics.incrementCounter
     ).not.toHaveBeenCalledWith('subscribe_newsletter_total', 1, {
@@ -329,9 +331,14 @@ describe('subscribeNewsletter authorization and write', () => {
   })
 
   it('counts ok after a successful write', async () => {
-    getProfileInfo.mockResolvedValue({})
+    getProfileInfo.mockResolvedValue({ createdIn: '2020-01-01' })
+    getUserWithToken.mockResolvedValue({
+      id: '1',
+      account: 'store',
+      user: 'a@b.com',
+    })
 
-    expect(await subscribe('a@b.com')).toBe(true)
+    expect(await subscribe('a@b.com', createContext('token'))).toBe(true)
     expectOutcome('ok')
   })
 })
