@@ -1,6 +1,9 @@
 import { UserInputError } from '@vtex/api'
 
-import { ProfileNotFoundError } from '../../clients/profile/errors'
+import {
+  ProfileAlreadyExistsError,
+  ProfileNotFoundError,
+} from '../../clients/profile/errors'
 import { ProfileClientV2 } from '../../clients/profile/profileV2'
 
 const mockGet = jest.fn()
@@ -10,7 +13,15 @@ const mockDelete = jest.fn()
 const mockWarn = jest.fn()
 
 jest.mock('@vtex/api', () => ({
-  UserInputError: class extends Error {},
+  UserInputError: class extends Error {
+    constructor(e: any) {
+      super(typeof e === 'string' ? e : e?.message)
+
+      if (typeof e === 'object') {
+        Object.assign(this, e)
+      }
+    }
+  },
   ForbiddenError: class extends Error {},
   NotFoundError: class extends Error {},
   JanusClient: class {
@@ -113,6 +124,48 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       expect(mockPatch).not.toHaveBeenCalled()
     })
 
+    it.each([
+      [
+        '400 Duplicated key',
+        400,
+        'DynamoDB Put Item Document Error: Duplicated key',
+      ],
+      ['409', 409, 'conflict'],
+    ])(
+      'rejects with ProfileAlreadyExistsError on a %s create without writing purchase-info',
+      async (_, status, message) => {
+        mockPost.mockRejectedValue({ response: { status, data: { message } } })
+
+        await expect(
+          subscribe({ email: 'old@example.com', userId: '' })
+        ).rejects.toBeInstanceOf(ProfileAlreadyExistsError)
+        expect(mockPost).toHaveBeenCalledTimes(1)
+        expect(mockPatch).not.toHaveBeenCalled()
+      }
+    )
+
+    it('propagates a 400 create failure with another message', async () => {
+      mockPost.mockRejectedValue({
+        response: { status: 400, data: { message: 'Invalid email' } },
+      })
+
+      const result = subscribe({ email: 'bad@example.com', userId: '' })
+
+      await expect(result).rejects.toBeInstanceOf(UserInputError)
+      await expect(result).rejects.not.toBeInstanceOf(ProfileAlreadyExistsError)
+      expect(mockPatch).not.toHaveBeenCalled()
+    })
+
+    it('rejects without writing purchase-info when the create response has no id', async () => {
+      mockPost.mockResolvedValue({ meta: {} })
+
+      await expect(
+        subscribe({ email: 'new@example.com', userId: '' })
+      ).rejects.toThrow('returned no id')
+      expect(mockPost).toHaveBeenCalledTimes(1)
+      expect(mockPatch).not.toHaveBeenCalled()
+    })
+
     it('rejects with ProfileNotFoundError without HTTP calls when there is no email', async () => {
       const result = subscribe({ email: '', userId: '' })
 
@@ -176,6 +229,15 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       expect(await update()).toEqual({ id: 'profile-1' })
       expect(mockPost).toHaveBeenCalledTimes(1)
       expect(mockPost).toHaveBeenCalledWith(url, body, expect.anything())
+    })
+
+    it('propagates a 409 from the patch as is', async () => {
+      const failure = { response: { status: 409 } }
+
+      mockPatch.mockRejectedValue(failure)
+
+      await expect(update()).rejects.toBe(failure)
+      expect(mockPost).not.toHaveBeenCalled()
     })
 
     it('propagates a failure of the creation after a 404', async () => {
