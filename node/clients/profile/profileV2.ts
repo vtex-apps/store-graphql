@@ -116,21 +116,28 @@ export class ProfileClientV2 extends JanusClient {
   }
 
   public createProfile = (profile: Profile) =>
-    this.post<ProfileV2>(`${this.baseUrl}`, profile).then(
-      (profileV2: ProfileV2) => {
-        return {
-          ...(profileV2.document as Profile),
-          id: profileV2.id,
-        }
+    this.post<ProfileV2>(`${this.baseUrl}`, profile, {
+      metric: 'profile-system-v2-createProfile',
+    }).then((profileV2: ProfileV2) => {
+      return {
+        ...(profileV2.document as Profile),
+        id: profileV2.id,
       }
-    )
+    })
 
   public updatePersonalPreferences = (
-    _: CurrentProfile,
+    user: CurrentProfile,
     personalPreferences: PersonalPreferences,
     currentUserProfile: Profile
   ) => {
-    if (!currentUserProfile.id) {
+    if (currentUserProfile.id) {
+      return this.saveNewsletterOptIn(
+        currentUserProfile.id,
+        personalPreferences
+      )
+    }
+
+    if (!user.email) {
       return Promise.reject(
         new ProfileNotFoundError(
           'Profile not found for newsletter subscription'
@@ -138,13 +145,25 @@ export class ProfileClientV2 extends JanusClient {
       )
     }
 
+    return this.createProfile({
+      email: user.email,
+      userId: '',
+    } as Profile).then((created) =>
+      this.saveNewsletterOptIn(created.id, personalPreferences)
+    )
+  }
+
+  private saveNewsletterOptIn = (
+    profileId: string,
+    personalPreferences: PersonalPreferences
+  ) => {
     const purchaseInfo = {
       clientPreferences: {
         isNewsletterOptIn: personalPreferences.isNewsletterOptIn === 'True',
       },
     }
 
-    const url = `${this.baseUrl}/${currentUserProfile.id}/purchase-info`
+    const url = `${this.baseUrl}/${profileId}/purchase-info`
 
     return this.patch(url, purchaseInfo, {
       metric: 'profile-system-v2-subscribeNewsletter',
