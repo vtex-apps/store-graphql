@@ -69,18 +69,68 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
     }
   )
 
-  it('rejects without HTTP call when the profile has no id', async () => {
-    const result = createClient().updatePersonalPreferences(
-      user,
-      { isNewsletterOptIn: 'True' },
-      {} as Profile
-    )
+  describe('when the profile has no id', () => {
+    const prefs = { isNewsletterOptIn: 'True' } as const
+    const profilesUrl = 'api/storage/profile-system/profiles'
+    const newUrl = `${profilesUrl}/new-1/purchase-info`
+    const body = { clientPreferences: { isNewsletterOptIn: true } }
+    const subscribe = (u: typeof user) =>
+      createClient().updatePersonalPreferences(u, prefs, {} as Profile)
 
-    await expect(result).rejects.toBeInstanceOf(UserInputError)
-    await expect(result).rejects.toBeInstanceOf(ProfileNotFoundError)
-    await expect(result).rejects.toThrow('Profile not found')
+    it('creates the profile, then patches and posts purchase-info on the new id', async () => {
+      mockPost
+        .mockResolvedValueOnce({ id: 'new-1', meta: {} })
+        .mockResolvedValueOnce({})
+      mockPatch.mockRejectedValue({ response: { status: 404 } })
 
-    expect(mockPatch).not.toHaveBeenCalled()
+      await subscribe({ email: 'new@example.com', userId: '' })
+
+      expect(mockPost).toHaveBeenNthCalledWith(
+        1,
+        profilesUrl,
+        { email: 'new@example.com', userId: '' },
+        expect.objectContaining({ metric: 'profile-system-v2-createProfile' })
+      )
+      expect(mockPatch).toHaveBeenCalledWith(newUrl, body, expect.anything())
+      expect(mockPost).toHaveBeenNthCalledWith(
+        2,
+        newUrl,
+        body,
+        expect.anything()
+      )
+      expect(mockGet).not.toHaveBeenCalled()
+    })
+
+    it('propagates a create failure without patching or posting purchase-info', async () => {
+      const failure = { response: { status: 500 } }
+
+      mockPost.mockRejectedValue(failure)
+
+      await expect(
+        subscribe({ email: 'new@example.com', userId: '' })
+      ).rejects.toBe(failure)
+      expect(mockPost).toHaveBeenCalledTimes(1)
+      expect(mockPatch).not.toHaveBeenCalled()
+    })
+
+    it('rejects with ProfileNotFoundError without HTTP calls when there is no email', async () => {
+      const result = subscribe({ email: '', userId: '' })
+
+      await expect(result).rejects.toBeInstanceOf(UserInputError)
+      await expect(result).rejects.toBeInstanceOf(ProfileNotFoundError)
+      expect(mockPost).not.toHaveBeenCalled()
+      expect(mockPatch).not.toHaveBeenCalled()
+    })
+
+    it('never creates a profile when the id exists', async () => {
+      mockPatch.mockResolvedValue({})
+
+      await createClient().updatePersonalPreferences(user, prefs, {
+        id: 'profile-1',
+      } as Profile)
+
+      expect(mockPost).not.toHaveBeenCalled()
+    })
   })
 
   describe('purchase-info patch', () => {
