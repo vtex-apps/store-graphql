@@ -100,8 +100,9 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
         1,
         profilesUrl,
         { email: 'new@example.com', userId: '' },
-        expect.objectContaining({ metric: 'profile-system-v2-createProfile' })
+        { metric: 'profile-system-v2-createProfile', retries: 0 }
       )
+      expect(mockWarn).not.toHaveBeenCalled()
       expect(mockPatch).toHaveBeenCalledWith(newUrl, body, expect.anything())
       expect(mockPost).toHaveBeenNthCalledWith(
         2,
@@ -110,6 +111,40 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
         expect.anything()
       )
       expect(mockGet).not.toHaveBeenCalled()
+    })
+
+    it('warns with the profile id and rethrows when the patch fails after the create', async () => {
+      const failure = { response: { status: 500 } }
+
+      mockPost.mockResolvedValueOnce({ id: 'new-1', meta: {} })
+      mockPatch.mockRejectedValue(failure)
+
+      await expect(
+        subscribe({ email: 'new@example.com', userId: '' })
+      ).rejects.toBe(failure)
+      expect(mockWarn).toHaveBeenCalledTimes(1)
+      expect(mockWarn).toHaveBeenCalledWith(
+        expect.objectContaining({ profileId: 'new-1', status: 500 })
+      )
+      expect(JSON.stringify(mockWarn.mock.calls)).not.toContain('example.com')
+    })
+
+    it('warns and rethrows when the purchase-info post fails after the create', async () => {
+      const failure = { response: { status: 503 } }
+
+      mockPost
+        .mockResolvedValueOnce({ id: 'new-1', meta: {} })
+        .mockRejectedValueOnce(failure)
+      mockPatch.mockRejectedValue({ response: { status: 404 } })
+
+      await expect(
+        subscribe({ email: 'new@example.com', userId: '' })
+      ).rejects.toBe(failure)
+      expect(mockWarn).toHaveBeenCalledTimes(1)
+      expect(mockWarn).toHaveBeenCalledWith(
+        expect.objectContaining({ profileId: 'new-1', status: 503 })
+      )
+      expect(JSON.stringify(mockWarn.mock.calls)).not.toContain('example.com')
     })
 
     it('propagates a create failure without patching or posting purchase-info', async () => {
@@ -122,6 +157,7 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       ).rejects.toBe(failure)
       expect(mockPost).toHaveBeenCalledTimes(1)
       expect(mockPatch).not.toHaveBeenCalled()
+      expect(mockWarn).not.toHaveBeenCalled()
     })
 
     it.each([
@@ -237,6 +273,7 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       mockPatch.mockRejectedValue(failure)
 
       await expect(update()).rejects.toBe(failure)
+      expect(mockWarn).not.toHaveBeenCalled()
       expect(mockPost).not.toHaveBeenCalled()
     })
 
@@ -247,6 +284,7 @@ describe('ProfileClientV2.updatePersonalPreferences', () => {
       mockPost.mockRejectedValue(failure)
 
       await expect(update()).rejects.toBe(failure)
+      expect(mockWarn).not.toHaveBeenCalled()
     })
   })
 })

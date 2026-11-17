@@ -118,6 +118,7 @@ export class ProfileClientV2 extends JanusClient {
   public createProfile = (profile: Profile) =>
     this.post<ProfileV2>(`${this.baseUrl}`, profile, {
       metric: 'profile-system-v2-createProfile',
+      retries: 0,
     })
       .catch<any>((e: any) => {
         const status = e?.response?.status
@@ -171,7 +172,18 @@ export class ProfileClientV2 extends JanusClient {
       email: user.email,
       userId: '',
     } as Profile).then((created) =>
-      this.saveNewsletterOptIn(created.id, personalPreferences)
+      this.saveNewsletterOptIn(created.id, personalPreferences).catch<any>(
+        (e: any) => {
+          this.context.logger.warn({
+            message:
+              'profile-system-v2 profile created but purchase-info write failed',
+            profileId: created.id,
+            status: e?.response?.status ?? e?.status,
+          })
+
+          throw e
+        }
+      )
     )
   }
 
