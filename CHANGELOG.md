@@ -9,11 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Profile System V2 no longer saves the newsletter lead fields (`firstName`, `homePhone`, binding data); only `isNewsletterOptIn` is stored.
 - `documents` and `document` reads made with a shopper or admin cookie are now private instead of public, so they skip the edge cache, and `updateDocument` forwards `schema` to Master Data.
 - Catalog entity type in `.vtex/catalog-info.yaml` from `service` to `backend-api`.
 
 ### Fixed
 
+- Profile System V2: send only `isNewsletterOptIn` in `clientPreferences`, and create the `purchase-info` document when the patch returns 404.
+- Profile System V2: never call `.../profiles/undefined/...` (purchase-info, addresses) for a profile without id; reject with `ProfileNotFoundError`.
+- Profile System V2: when `subscribeNewsletter` receives a new email, create the profile before storing `isNewsletterOptIn`, like Profile System V1. A duplicate create raises `ProfileAlreadyExistsError` without writing, a create without `id` fails, the create is never retried, and a failed write right after the create is logged with the profile id.
+- Profile System V2: log `purchase-info` read failures other than 404.
 - Master Data documents: keep `null` field values as `null`, mark PII-masked `documents` search responses (`X-VTEX-MD-PII-Masked: true`) as private and no-store, and report a `masterdata_access_total` counter (operation, caller, acronym, outcome) plus a warning log on forbidden calls.
 - Lint CI job out-of-memory crash: root `typescript` bumped from 4.0.5 to 4.9.5 so it reads the `ES2022` tsconfig; the formatting and `isNaN` lint errors it hid are fixed.
 
