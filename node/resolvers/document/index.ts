@@ -22,7 +22,7 @@ export const queries = {
     } = context
 
     const fieldsWithId = union(fields, ['id'])
-    const data = (await masterdata.searchDocuments(
+    const response = await masterdata.searchDocumentsRaw(
       acronym,
       fieldsWithId,
       where,
@@ -33,13 +33,23 @@ export const queries = {
       schema,
       sort,
       account
-    )) as any
+    )
+
+    const cacheControl = cacheControlOf(context)
+
+    if (cacheControl && response.headers['x-vtex-md-pii-masked'] === 'true') {
+      cacheControl.scope = 'private'
+      cacheControl.noCache = true
+      cacheControl.noStore = true
+    }
+
+    setPrivateIfCredentialed(context)
 
     return map((document: any) => ({
       cacheId: document.id,
       id: document.id,
       fields: mapKeyAndStringifiedValues(document),
-    }))(data)
+    }))(response.data as any[])
   },
 
   document: async (_: any, args: DocumentArgs, context: Context) => {
@@ -49,6 +59,8 @@ export const queries = {
     } = context
 
     const data = await masterdata.getDocument(acronym, id, fields, account)
+
+    setPrivateIfCredentialed(context)
 
     return {
       cacheId: id,
@@ -176,6 +188,7 @@ export const mutations = {
       acronym,
       document: { fields },
       account: accountName,
+      schema,
     } = args
 
     const documentId = prop('id', parseFieldsToJson(fields)) as string
@@ -193,7 +206,8 @@ export const mutations = {
       acronym,
       documentId,
       parseFieldsToJson(fields),
-      accountName
+      accountName,
+      schema
     )
 
     return {
@@ -226,15 +240,35 @@ export const mutations = {
   },
 }
 
-/**
- * Map a document object to a list of {key: 'property', value: 'propertyValue'},
- * Uses `JSON.stringify` in every value.
- */
-const mapKeyAndStringifiedValues = (document: any) =>
+const cacheControlOf = (context: Context) =>
+  ((context as unknown) as {
+    graphql?: {
+      cacheControl?: {
+        scope: 'public' | 'segment' | 'private'
+        noCache: boolean
+        noStore: boolean
+      }
+    }
+  }).graphql?.cacheControl
+
+const setPrivateIfCredentialed = (context: Context) => {
+  const cacheControl = cacheControlOf(context)
+
+  if (
+    cacheControl &&
+    (context.vtex.adminUserAuthToken || context.vtex.storeUserAuthToken)
+  ) {
+    cacheControl.scope = 'private'
+  }
+}
+
+export const mapKeyAndStringifiedValues = (document: any) =>
   Object.keys(document).map((key) => ({
     key,
     value:
-      typeof document[key] === 'string'
+      document[key] == null
+        ? null
+        : typeof document[key] === 'string'
         ? document[key]
         : JSON.stringify(document[key]),
   }))
