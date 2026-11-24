@@ -1,7 +1,11 @@
+import { UserInputError } from '@vtex/api'
 import { path } from 'ramda'
+import validator from 'validator'
 import { MutationSaveAddressArgs } from 'vtex.store-graphql'
 
 import type { DefaultUser, User } from '../../clients/identity'
+import { ProfileAlreadyExistsError } from '../../clients/profile/errors'
+import { incrementCounter } from '../../utils/metrics'
 import fieldR from './fieldResolvers'
 import {
   createAddress,
@@ -21,6 +25,12 @@ interface CheckUserAuthorizationParams {
   email: string
 }
 
+const isIdentityOutage = (e: any) => {
+  const status = e?.response?.status
+
+  return !e?.response || status >= 500 || status === 408 || status === 429
+}
+
 const checkUserAuthorization = async ({
   context,
   email,
@@ -32,11 +42,15 @@ const checkUserAuthorization = async ({
 
   let validUser = !!storeUserAuthToken
 
-  const tokenUser = await identity
-    .getUserWithToken(storeUserAuthToken ?? '')
-    .catch(() => {
-      return { authStatus: '' } as DefaultUser
-    })
+  const tokenUser = (storeUserAuthToken
+    ? await identity.getUserWithToken(storeUserAuthToken).catch((e) => {
+        if (isIdentityOutage(e)) {
+          throw e
+        }
+
+        return { authStatus: '' } as DefaultUser
+      })
+    : { authStatus: '' }) as DefaultUser | User
 
   validUser =
     validUser &&
@@ -54,8 +68,20 @@ const checkUserAuthorization = async ({
   return validUser
 }
 
+const normalizeEmail = (email?: string | null) => {
+  const normalized = (email ?? '').trim()
+
+  if (!validator.isEmail(normalized) || /[/\\?#%\s]/.test(normalized)) {
+    incrementCounter('subscribe_newsletter_total', { outcome: 'invalid_email' })
+
+    throw new UserInputError('Invalid email')
+  }
+
+  return normalized
+}
+
 interface SubscribeNewsletterArgs {
-  email: string
+  email?: string | null
   fields?: {
     name?: string
     phone?: string
@@ -89,9 +115,10 @@ export const mutations = {
 
   subscribeNewsletter: async (
     _: any,
-    { email, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
+    { email: rawEmail, fields, isNewsletterOptIn }: SubscribeNewsletterArgs,
     context: Context
   ) => {
+    const email = normalizeEmail(rawEmail)
     const { profile } = context.clients
     const optIn =
       isNewsletterOptIn === undefined || isNewsletterOptIn === true
@@ -104,7 +131,21 @@ export const mutations = {
 
     const userProfile = await profile
       .getProfileInfo({ email, userId: '' }, context, undefined)
-      .catch(() => ({}))
+      .catch((e) => {
+        if (e?.response?.status === 404) {
+          return {}
+        }
+
+        incrementCounter('subscribe_newsletter_total', {
+          outcome: 'read_error',
+        })
+        context.vtex.logger.warn({
+          message: 'subscribeNewsletter profile read failed',
+          status: e?.response?.status,
+          code: e?.code,
+        })
+        throw e
+      })
 
     if (fields) {
       const { name, phone, bindingId, bindingUrl } = fields
@@ -137,20 +178,56 @@ export const mutations = {
 
     let updateData = true
 
-    if (userProfile.createdIn) {
+    if (userProfile.createdIn || userProfile.id) {
       updateData = await checkUserAuthorization({
         context,
         email,
+      }).catch((e) => {
+        incrementCounter('subscribe_newsletter_total', {
+          outcome: 'identity_error',
+        })
+        context.vtex.logger.warn({
+          message: 'subscribeNewsletter identity check failed',
+          status: e?.response?.status,
+          code: e?.code,
+        })
+        throw e
       })
     }
 
-    if (updateData) {
+    if (!updateData) {
+      incrementCounter('subscribe_newsletter_total', { outcome: 'not_owner' })
+
+      return true
+    }
+
+    try {
       await profile.updatePersonalPreferences(
         { email, userId: '' },
         updatedPersonalPreferences,
-        context
+        context,
+        userProfile
       )
+    } catch (e) {
+      if (e instanceof ProfileAlreadyExistsError) {
+        incrementCounter('subscribe_newsletter_total', {
+          outcome: 'profile_exists',
+        })
+
+        return true
+      }
+
+      incrementCounter('subscribe_newsletter_total', {
+        outcome:
+          e instanceof UserInputError ? 'user_input_error' : 'write_error',
+      })
+      throw e
     }
+
+    incrementCounter('subscribe_newsletter_total', {
+      outcome:
+        userProfile.createdIn || userProfile.id ? 'ok' : 'profile_created',
+    })
 
     return true
   },

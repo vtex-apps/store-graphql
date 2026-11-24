@@ -15,12 +15,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- `subscribeNewsletter` trims and validates the email, fails on profile read errors other than 404, reads the profile once, applies the owner check to every existing profile (V1 and V2), creates the profile and stores `isNewsletterOptIn` for a new email on a PII account (like Profile System V1), always answering `true` so it is not an email existence oracle (a concurrent duplicate signup, rejected by the profile create, also answers `true` without writing), surfaces write failures and VTEX ID outages (5xx, timeout, network) instead of answering `true`; outcomes (`ok`, `invalid_email`, `read_error`, `not_owner`, `identity_error`, `profile_created`, `profile_exists`, `user_input_error`, `write_error`) are counted in `subscribe_newsletter_total` (label `outcome`).
 - Profile System V2: send only `isNewsletterOptIn` in `clientPreferences`, and create the `purchase-info` document when the patch returns 404.
 - Profile System V2: never call `.../profiles/undefined/...` (purchase-info, addresses) for a profile without id; reject with `ProfileNotFoundError`.
 - Profile System V2: when `subscribeNewsletter` receives a new email, create the profile before storing `isNewsletterOptIn`, like Profile System V1. A duplicate create raises `ProfileAlreadyExistsError` without writing, a create without `id` fails, the create is never retried, and a failed write right after the create is logged with the profile id.
 - Profile System V2: log `purchase-info` read failures other than 404.
 - Master Data documents: keep `null` field values as `null`, mark PII-masked `documents` search responses (`X-VTEX-MD-PII-Masked: true`) as private and no-store, and report a `masterdata_access_total` counter (operation, caller, acronym, outcome) plus a warning log on forbidden calls.
 - Lint CI job out-of-memory crash: root `typescript` bumped from 4.0.5 to 4.9.5 so it reads the `ES2022` tsconfig; the formatting and `isNaN` lint errors it hid are fixed.
+
+### Removed
+
+- Unused `filterAddress` and `filterUser` paths from `paths.profile`.
 
 ## [2.178.0] - 2026-09-17
 
