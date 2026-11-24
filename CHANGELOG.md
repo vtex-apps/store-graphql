@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.179.0] - 2026-11-24
+
 ### Changed
 
 - Profile System V2 no longer saves the newsletter lead fields (`firstName`, `homePhone`, binding data); only `isNewsletterOptIn` is stored.
